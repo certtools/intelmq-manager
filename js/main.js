@@ -191,24 +191,18 @@ function load_bots(config, load_config) {
 
 function load_runtime(config) {
     nodes = read_runtime_conf(config);
-    
-    alert(JSON.stringify(nodes));
         
     load_file('startup-file', load_startup);
 }
 
 function load_startup(config) {
-    nodes = read_startup_conf(config, nodes);
-    
-    alert(JSON.stringify(nodes));
+    nodes = read_startup_conf(config, nodes);   
     
     load_file('pipeline-file', load_pipeline);
 }
 
 function load_pipeline(config) {
     edges = read_pipeline_conf(config);
-    
-    alert(JSON.stringify(edges));
         
     disable_file_submit();
     draw();
@@ -235,6 +229,13 @@ function fill_bot(id, group, name) {
     }
     
     for (key in bot) {
+        var startup = false;
+        for (index in STARTUP_KEYS) {
+            if (key == STARTUP_KEYS[index]) {
+                startup = true;
+            }
+        }
+        
         element = document.getElementById("node-" + key)
         
         if (!element) {
@@ -245,6 +246,11 @@ function fill_bot(id, group, name) {
             cell1.innerHTML = key;
             element = document.createElement("input");
             element.setAttribute('type', 'text');
+            
+            if (startup) {
+                element.setAttribute('disabled', 'true');
+            }
+            
             element.setAttribute('id', 'node-' + key);
             cell2.appendChild(element);
         }
@@ -264,8 +270,6 @@ function draw() {
         edges: convert_edges(edges)
     }
     
-    alert(JSON.stringify(data));
-    
     popup = document.getElementById("graph-popUp");
     span = document.getElementById('graph-popUp-title');
     table = document.getElementById("graph-popUp-fields");
@@ -279,9 +283,6 @@ function draw() {
 
 function create_form(title, data, callback){
     span.innerHTML = title;
-    
-    popup.style.top = Math.max(window.innerHeight * 0.5 - 300, 0) + "px";
-    popup.style.left = Math.max(window.innerWidth * 0.5 - 150, 0) + "px";
     
     var saveButton = document.getElementById('graph-popUp-save');
     var cancelButton = document.getElementById('graph-popUp-cancel');
@@ -361,7 +362,8 @@ function saveData(data,callback) {
         }
     }
     
-    data.label = node['id'];// + ' [' + node['name'] + ' - ' + node['group'] + ']';
+    if (nodes[node['id']] != nodes
+    data.label = node['id'];
     //TODO: Editar nao pode mudar group
     
     nodes[data.id] = node;

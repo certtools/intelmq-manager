@@ -71,13 +71,15 @@ div.table_description {
 }
 
 #graph-popUp-title {
+  width: 100%;
   font-size:28px;
 }
 
 #graph-popUp {
   display:none;
   position:absolute;
-  top:100px;
+  top:25%;
+  left:25%;
   margin: auto;
   z-index:299;
   background-color: #f9f9f9;
@@ -85,6 +87,18 @@ div.table_description {
   border-width:3px;
   border-color: #5394ed;
   padding:10px;
+  width:50%;
   text-align: center;
-  width:300px;
+}
+
+#graph-popUp-fields {
+  width: 100%;
+}
+
+#graph-popUp-fields input {
+  width: 100%;
+}
+
+#graph-popUp-fields td {
+  text-align: right;
 }
