@@ -1,0 +1,12 @@
+<?php
+
+    session_start();
+    $node = array();
+
+    foreach ($_GET as $key => $value) {
+        $node[$key] = $value;
+    }
+
+    $_SESSION["data"]["nodes"][$_GET["id"]] = $node;
+
+?>

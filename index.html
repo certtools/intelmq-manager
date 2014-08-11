@@ -1,0 +1,114 @@
+<!doctype html>
+<html>
+    <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        
+        <title>IntelMQ Controller</title>
+        
+        <script type="text/javascript" src="http://code.jquery.com/jquery-2.1.1.min.js"></script>
+        <script type="text/javascript" src="./bootstrap/js/bootstrap.min.js"></script>
+        <script type="text/javascript" src="./vis.js/vis.js"></script>
+        <script type="text/javascript" src="./js/main.js"></script>
+        <script type="text/javascript" src="./js/runtime.js"></script>
+        <script type="text/javascript" src="./js/startup.js"></script>
+        <script type="text/javascript" src="./js/pipeline.js"></script>
+
+        <link type="text/css" rel="stylesheet" href="./bootstrap/css/bootstrap.min.css">
+        <link type="text/css" rel="stylesheet" href="./vis.js/vis.css">
+        <link type="text/css" rel="stylesheet" href="./css/custom.css">
+    </head>
+
+    <body>
+        <div id="graph-popUp">
+            <span id="graph-popUp-title">node</span> <br>
+            <table id="graph-popUp-fields" style="margin:auto;">
+                <tr>
+                    <td>id</td><td><input id="node-id" value="new value"></td>
+                </tr>
+                <tr>
+                    <td>name</td><td><input id="node-name" value=""></td>
+                </tr>
+                <tr>
+                    <td>group</td><td><input id="node-group" value=""></td>
+                </tr>
+                <tr>
+                    <td>module</td><td><input id="node-module" value=""></td>
+                </tr>
+                <tr>
+                    <td>description</td><td><input id="node-description" value=""></td>
+                </tr>
+            </table>
+            <input type="button" value="add field" id="graph-popUp-add"></button>
+            <input type="button" value="save" id="graph-popUp-save"></button>
+            <input type="button" value="cancel" id="graph-popUp-cancel"></button>
+        </div>
+        <div class="container-fluid" style="z-index">
+            <div id="page-header" class="page-header">
+                <h3>IntelMQ Controller</h3>
+                <ul class="nav nav-pills" role="tablist">
+                    <li class="active"><a href="#graph-tab" role="tab" data-toggle="tab">Graph</a></li>
+                    <li><a href="#runtime-tab" role="tab" data-toggle="tab">runtime.conf</a></li>
+                    <li><a href="#pipeline-tab" role="tab" data-toggle="tab">pipeline.conf</a></li>
+                    <li><a href="#startup-tab" role="tab" data-toggle="tab">startup.conf</a></li>
+                </ul>
+            </div>
+            <div id="tab-content" class="tab-content">
+                <div class="tab-pane active" id="graph-tab">
+                    <div class="row" id="file-select">
+                        <div class="col-xs-12">
+                            <p>Please load the following files from IntelMQ:</p>
+                            <div class="form-group">
+                                <label for="runtime-file">runtime.conf</label>
+                                <input id="runtime-file" type="file" name="runtime-file">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="startup-file">startup.conf</label>
+                                <input id="startup-file" type="file" name="startup-file">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="pipeline-file">pipeline.conf</label>
+                                <input id="pipeline-file" type="file" name="pipeline-file">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="bots-file">bots.conf</label>
+                                <input id="bots-file" type="file" name="bots-file">
+                            </div>
+                            
+                            <input type="button" class="btn btn-primary" value="submit" onclick="verify_files(true)">
+                            <input type="button" class="btn btn-primary" value="start from scratch" onclick="verify_files(false)">
+                        </div>
+                    </div>
+                    <br />
+                    <div class="row" id="graph-row">
+                        <div class="col-xs-2" id="available-bots">
+                            <h4>Available bots:</h4>
+                        </div>
+                        <div class="col-xs-10" id="mygraph">
+                        </div>
+                    </div>
+                </div>
+                <div class="tab-pane" id="runtime-tab">
+                    <div class="row" id="runtime-generation">
+                        <div class="col-xs-12" id="runtime-conf-content">
+                        </div>
+                    </div>
+                </div>
+                <div class="tab-pane" id="pipeline-tab">
+                    <div class="row" id="pipeline-generation">
+                        <div class="col-xs-12" id="pipeline-conf-content">
+                        </div>
+                    </div>
+                </div>
+                <div class="tab-pane" id="startup-tab">
+                    <div class="row" id="startup-generation">
+                        <div class="col-xs-12" id="startup-conf-content">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>
