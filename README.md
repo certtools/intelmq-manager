@@ -1,4 +1,5 @@
-intelmqhelper
-=============
+**ALMOST COMPATIBLE WITH INTELMQ**
 
-Graphical interface to generate configurations for IntelMQ bots.
+# IntelMQ Helper
+
+Graphical interface to manage configurations for IntelMQ.
