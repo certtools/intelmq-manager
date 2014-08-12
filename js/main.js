@@ -231,6 +231,11 @@ function fill_bot(id, group, name) {
         bot = bots[group][name];
     } else {
         bot = nodes[id];
+        var element = document.createElement("input");
+        element.setAttribute('type', 'hidden');
+        element.setAttribute('id', 'old-id-from-node');
+        element.setAttribute('value', id);
+        popup.appendChild(element);
     }
     
     for (key in bot) {
@@ -345,6 +350,19 @@ function clearPopUp() {
 function saveData(data,callback) {
     var idInput = document.getElementById('node-id');
     var groupInput = document.getElementById('node-group');
+    var oldIdInput = document.getElementById('old-id-from-node');
+    
+    if (idInput == undefined && groupInput == undefined) {
+        return;
+    }
+    
+    if (oldIdInput != undefined) {
+        if (idInput.value != oldIdInput.value) {
+            if(!confirm("When you edit an ID what you are doing in fact is to create a clone of the current bot. You will have to delete the old one manually. Proceed with the operation?")) {
+                return;
+            }
+        }
+    }
     
     data.id = idInput.value;
     data.group = groupInput.value;
