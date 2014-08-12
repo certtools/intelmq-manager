@@ -23,6 +23,20 @@ function generate_pipeline_conf(edges) {
         new_edges[edge.to].from.push(edge.from + '-queue');
     }
     
+    for (id in new_edges) {
+        var edge = new_edges[id];
+        
+        if (edge['from'].length > 0) {
+            edge['from'] = id + '-queue';
+        } else {
+            edge['from'] = undefined;
+        }
+        
+        if (edge['to'].length == 0) {
+            edge['to'] = undefined;
+        }
+    }
+    
     conf_string = JSON.stringify(new_edges, undefined, 4);
     
     return conf_string.replace(/\n/g, '\n<br>').replace(/ /g, "&nbsp;");
