@@ -362,7 +362,6 @@ function saveData(data,callback) {
         }
     }
     
-    if (nodes[node['id']] != nodes
     data.label = node['id'];
     //TODO: Editar nao pode mudar group
     
