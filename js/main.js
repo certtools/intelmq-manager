@@ -217,6 +217,9 @@ function fill_bot(id, group, name) {
         var cell1 = new_row.insertCell(0);
         var cell2 = new_row.insertCell(1);
         
+        cell1.setAttribute('class', 'node-key');
+        cell2.setAttribute('class', 'node-value');
+        
         cell1.innerHTML = 'id';
         var element = document.createElement("input");
         element.setAttribute('type', 'text');
@@ -242,6 +245,9 @@ function fill_bot(id, group, name) {
             new_row = table.insertRow(-1);
             cell1 = new_row.insertCell(0);
             cell2 = new_row.insertCell(1);
+            
+            cell1.setAttribute('class', 'node-key');
+            cell2.setAttribute('class', 'node-value');
             
             cell1.innerHTML = key;
             element = document.createElement("input");
@@ -300,6 +306,9 @@ function load_form(data){
         cell1 = new_row.insertCell(0);
         cell2 = new_row.insertCell(1);
         
+        cell1.setAttribute('class', 'node-key');
+        cell2.setAttribute('class', 'node-value');
+        
         cell1.innerHTML = key
         cell2_content = document.createElement("input");
         cell2_content.setAttribute('type', 'text');
@@ -312,6 +321,9 @@ function add_field() {
     new_row = table.insertRow(-1);
     cell1 = new_row.insertCell(0);
     cell2 = new_row.insertCell(1);
+    
+    cell1.setAttribute('class', 'node-key');
+    cell2.setAttribute('class', 'node-value');
     
     cell1_content = document.createElement("input");
     cell2_content = document.createElement("input");
