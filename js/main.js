@@ -28,6 +28,8 @@ var GROUP_COLORS = {
 
 var STARTUP_KEYS = ['group', 'name', 'module', 'description'];
 
+var BOT_ID_REGEX = /^[0-9a-zA-Z-]+$/;
+
 var popup = document.getElementById("graph-popUp");
 var span = document.getElementById('graph-popUp-title');
 var table = document.getElementById("graph-popUp-fields");
@@ -292,11 +294,10 @@ function create_form(title, data, callback){
     
     var saveButton = document.getElementById('graph-popUp-save');
     var cancelButton = document.getElementById('graph-popUp-cancel');
-    var addFieldButton = document.getElementById('graph-popUp-add');
     saveButton.onclick = saveData.bind(this,data,callback);
-    addFieldButton.onclick = add_field.bind();
     cancelButton.onclick = clearPopUp.bind();
     
+    table.innerHTML="<p>Please select one of the bots on the left</p>";
     popup.style.display = 'block';
 }
 
@@ -315,21 +316,6 @@ function load_form(data){
         cell2_content.setAttribute('value', data.custom_fields[key]);
         cell2.appendChild(cell2_content);
     }
-}
-
-function add_field() {
-    new_row = table.insertRow(-1);
-    cell1 = new_row.insertCell(0);
-    cell2 = new_row.insertCell(1);
-    
-    cell1.setAttribute('class', 'node-key');
-    cell2.setAttribute('class', 'node-value');
-    
-    cell1_content = document.createElement("input");
-    cell2_content = document.createElement("input");
-    
-    cell1.appendChild(cell1_content);
-    cell2.appendChild(cell2_content);
 }
 
 function delete_field(row) {
@@ -364,6 +350,11 @@ function saveData(data,callback) {
     data.group = groupInput.value;
     //data.level = GROUP_LEVELS[data.group];
     
+    if (!BOT_ID_REGEX.test(data.id)) {
+        alert("Bot ID's can only be composed of numbers, letters and hiphens");
+        return;
+    }
+    
     node = {};
     
     var inputs = document.getElementsByTagName("input");
@@ -375,7 +366,6 @@ function saveData(data,callback) {
     }
     
     data.label = node['id'];
-    //TODO: Editar nao pode mudar group
     
     nodes[data.id] = node;
     
