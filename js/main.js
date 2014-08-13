@@ -1,7 +1,3 @@
-var nodes = {};
-var edges = {};
-var graph = null;
-var bots = {};
 
 var CORE_FIELDS = 5;
 
@@ -30,6 +26,11 @@ var STARTUP_KEYS = ['group', 'name', 'module', 'description'];
 
 var BOT_ID_REGEX = /^[0-9a-zA-Z-]+$/;
 
+var nodes = {};
+var edges = {};
+var graph = null;
+var bots = {};
+
 var popup = document.getElementById("graph-popUp");
 var span = document.getElementById('graph-popUp-title');
 var table = document.getElementById("graph-popUp-fields");
@@ -49,6 +50,8 @@ window.onresize = function(event) {
     header_style = header.currentStyle || window.getComputedStyle(header);
     
     content.style.height = (window.innerHeight - header.offsetHeight - parseInt(header_style.marginTop) - parseInt(header_style.marginBottom) - 20) + "px";
+    
+    graph.redraw();
 }
 
 function convert_edges(edges) {
@@ -142,7 +145,7 @@ function load_bots(config, load_config) {
         
         available_bots = document.getElementById("available-bots")
         group_title = document.createElement('h5');
-        group_title.innerHTML = "&nbsp;&nbsp;" + bot_group;
+        group_title.innerHTML = bot_group;
         group_title.style.borderBottomStyle = "solid";
         group_title.style.borderBottomWidth = "2px";
         group_title.style.borderBottomColor = GROUP_COLORS[bot_group];
@@ -277,6 +280,8 @@ function fill_bot(id, group, name) {
         
         element.setAttribute('value', bot[key]);    
     }
+    
+    popup.setAttribute('class', "with-bot");
 }
 
 function draw() {
@@ -311,6 +316,7 @@ function create_form(title, data, callback){
     
     table.innerHTML="<p>Please select one of the bots on the left</p>";
     popup.style.display = 'block';
+    popup.setAttribute('class', "without-bot");
 }
 
 function load_form(data){
@@ -352,6 +358,8 @@ function clearPopUp() {
             table.rows[i].setAttribute('value', '');
         }
     }
+    
+    popup.setAttribute('class', "without-bot");
 }
 
 function saveData(data,callback) {
