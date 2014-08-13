@@ -47,15 +47,17 @@ function read_pipeline_conf(config) {
     var i = 0;
     
     for (from in config) {
-        for (index in config[from].to) {
-               var edge_id = 'edge' + i++;
-               var new_edge = {
-                   'id': edge_id,
-                   'from': from,
-                   'to': config[from].to[index]
-               };
-               
-               edges.push(new_edge);
+        if (config[from].to != undefined) {
+            for (index in config[from].to) {
+                var edge_id = 'edge' + i++;
+                var new_edge = {
+                    'id': edge_id,
+                    'from': from,
+                    'to': config[from].to[index].replace(/-queue$/, "")
+                };
+                
+                edges.push(new_edge);
+            }
         }
     }
     

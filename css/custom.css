@@ -63,6 +63,10 @@
 
 /* Class related CSS */
 
+.btn {
+    padding: 5px;
+}
+
 .node-key {
     width: 25%;
 }
