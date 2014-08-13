@@ -99,10 +99,12 @@ function load_file(elem_id, callback, argument) {
     reader.onload = (function (event) {
         try {
             obj = JSON.parse(event.target.result);
-            callback(obj, argument);
         } catch(err) {
             callback(event.target.result, argument);
+            return;
         }
+        
+        callback(obj, argument);
     });
     reader.readAsText(file);
 }
@@ -115,12 +117,14 @@ function verify_files(load_config) {
             /* Do nothing */
         } else {
             alert('There are some files missing');
+            return;
         }
     }
     if (document.getElementById("bots-file").files[0]) {
         load_file('bots-file', load_bots, load_config);
     } else {
         alert('You need to load at least the bots.conf file.');
+        return;
     }
 
     var body = document.getElementsByTagName('body')[0];
@@ -140,6 +144,7 @@ function verify_files(load_config) {
 }
 
 function load_bots(config, load_config) {
+    console.dir(load_config);
     for(bot_group in config) {
         var group = config[bot_group];
         

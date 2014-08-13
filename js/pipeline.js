@@ -7,33 +7,33 @@ function generate_pipeline_conf(edges) {
         
         if (!new_edges[edge.from]) {
             new_edges[edge.from] = {
-                'from': [],
-                'to': []
+                'source-queue': [],
+                'destination-queues': []
             }
         }
         
         if (!new_edges[edge.to]) {
             new_edges[edge.to] = {
-                'from': [],
-                'to': []
+                'source-queue': [],
+                'destination-queues': []
             }
         }
         
-        new_edges[edge.from].to.push(edge.to + '-queue');
-        new_edges[edge.to].from.push(edge.from + '-queue');
+        new_edges[edge.from]['destination-queues'].push(edge.to + '-queue');
+        new_edges[edge.to]['source-queue'].push(edge.from + '-queue');
     }
     
     for (id in new_edges) {
         var edge = new_edges[id];
         
-        if (edge['from'].length > 0) {
-            edge['from'] = id + '-queue';
+        if (edge['source-queue'].length > 0) {
+            edge['source-queue'] = id + '-queue';
         } else {
-            edge['from'] = undefined;
+            edge['source-queue'] = undefined;
         }
         
-        if (edge['to'].length == 0) {
-            edge['to'] = undefined;
+        if (edge['destination-queues'].length == 0) {
+            edge['destination-queues'] = undefined;
         }
     }
     
@@ -43,17 +43,20 @@ function generate_pipeline_conf(edges) {
 }
 
 function read_pipeline_conf(config) {
+    console.info("Starting function");
     var edges = [];
     var i = 0;
     
+    console.info("Reading config: " + JSON.stringify(config))
     for (from in config) {
-        if (config[from].to != undefined) {
-            for (index in config[from].to) {
+        if (config[from]['destination-queues'] != undefined) {
+            console.dir(config[from]);
+            for (index in config[from]['destination-queues']) {
                 var edge_id = 'edge' + i++;
                 var new_edge = {
                     'id': edge_id,
                     'from': from,
-                    'to': config[from].to[index].replace(/-queue$/, "")
+                    'to': config[from]['destination-queues'][index].replace(/-queue$/, "")
                 };
                 
                 edges.push(new_edge);
@@ -61,5 +64,9 @@ function read_pipeline_conf(config) {
         }
     }
     
+    console.info("Returning edges:");
+    console.dir(edges);
+    
+    console.info("Getting tha fuck out");
     return edges;
 }
