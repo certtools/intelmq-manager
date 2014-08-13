@@ -511,9 +511,6 @@ function continue_drawing(connectionCount, container, data) {
         onDelete: function(data,callback) {
             callback(data);
             
-            console.info("Deleting:");
-            console.dir(data);
-            
             for (index in data.edges) {
                 delete edges[data.edges[index]];
             }
