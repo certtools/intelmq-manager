@@ -525,24 +525,27 @@ function continue_drawing(connectionCount, container, data) {
     graph.on("resize", function(params) {console.log(params.width,params.height)});
 }
 
-function download(data) {
-    window.open('data:text/plain;charset=utf-8,' + encodeURIComponent(data));
+function download(data, name) {
+    var link = document.createElement("a");
+    link.setAttribute('download', name);
+    link.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(data));
+    link.click();
 }
 
 function download_pipeline() {
-    var data = generate_runtime_conf(nodes);
+    var data = generate_runtime_conf(nodes, 'pipeline.conf');
     data = data.replace(/<br>/g, '').replace(/&nbsp;/g, " ");
     download(data);
 }
 
 function download_runtime() {
-    var data = generate_startup_conf(nodes);
+    var data = generate_startup_conf(nodes, 'runtime.conf');
     data = data.replace(/<br>/g, '').replace(/&nbsp;/g, " ");
     download(data);
 }
 
 function download_startup() {
-    var data = generate_pipeline_conf(edges);
+    var data = generate_pipeline_conf(edges, 'startup.conf');
     data = data.replace(/<br>/g, '').replace(/&nbsp;/g, " ");
     download(data);
 }

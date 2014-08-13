@@ -43,14 +43,11 @@ function generate_pipeline_conf(edges) {
 }
 
 function read_pipeline_conf(config) {
-    console.info("Starting function");
     var edges = [];
     var i = 0;
     
-    console.info("Reading config: " + JSON.stringify(config))
     for (from in config) {
         if (config[from]['destination-queues'] != undefined) {
-            console.dir(config[from]);
             for (index in config[from]['destination-queues']) {
                 var edge_id = 'edge' + i++;
                 var new_edge = {
@@ -64,9 +61,5 @@ function read_pipeline_conf(config) {
         }
     }
     
-    console.info("Returning edges:");
-    console.dir(edges);
-    
-    console.info("Getting tha fuck out");
     return edges;
 }
