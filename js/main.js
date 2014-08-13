@@ -537,19 +537,19 @@ function download(data, name, element, raw) {
 }
 
 function download_pipeline(element, raw) {
-    var data = generate_runtime_conf(nodes);
+    var data = generate_pipeline_conf(edges);
     data = data.replace(/<br>/g, '').replace(/&nbsp;/g, " ");
     download(data, 'pipeline.conf', element, raw);
 }
 
 function download_runtime(element, raw) {
-    var data = generate_startup_conf(nodes);
+    var data = generate_runtime_conf(nodes);
     data = data.replace(/<br>/g, '').replace(/&nbsp;/g, " ");
     download(data, 'runtime.conf', element, raw);
 }
 
 function download_startup(element, raw) {
-    var data = generate_pipeline_conf(edges);
+    var data = generate_startup_conf(nodes);
     data = data.replace(/<br>/g, '').replace(/&nbsp;/g, " ");
     download(data, 'startup.conf', element, raw);
 }
