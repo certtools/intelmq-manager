@@ -51,7 +51,9 @@ window.onresize = function(event) {
     
     content.style.height = (window.innerHeight - header.offsetHeight - parseInt(header_style.marginTop) - parseInt(header_style.marginBottom) - 20) + "px";
     
-    graph.redraw();
+    if (graph != null && graph != undefined) {
+        graph.redraw();
+    }
 }
 
 function convert_edges(edges) {
@@ -212,7 +214,7 @@ function load_startup(config) {
 }
 
 function load_pipeline(config) {
-    edges = read_pipeline_conf(config);
+    edges = read_pipeline_conf(config, nodes);
         
     disable_file_submit();
     draw();
@@ -509,6 +511,9 @@ function continue_drawing(connectionCount, container, data) {
         onDelete: function(data,callback) {
             callback(data);
             
+            console.info("Deleting:");
+            console.dir(data);
+            
             for (index in data.edges) {
                 delete edges[data.edges[index]];
             }
@@ -522,6 +527,7 @@ function continue_drawing(connectionCount, container, data) {
             document.getElementById('pipeline-conf-content').innerHTML = generate_pipeline_conf(edges);
         }
     };
+    
     graph = new vis.Graph(container, data, options);
 }
 

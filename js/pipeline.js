@@ -42,21 +42,24 @@ function generate_pipeline_conf(edges) {
     return conf_string.replace(/\n/g, '\n<br>').replace(/ /g, "&nbsp;");
 }
 
-function read_pipeline_conf(config) {
-    var edges = [];
+function read_pipeline_conf(config, nodes) {
+    var edges = {};
     var i = 0;
     
     for (from in config) {
         if (config[from]['destination-queues'] != undefined) {
             for (index in config[from]['destination-queues']) {
-                var edge_id = 'edge' + i++;
-                var new_edge = {
-                    'id': edge_id,
-                    'from': from,
-                    'to': config[from]['destination-queues'][index].replace(/-queue$/, "")
-                };
-                
-                edges.push(new_edge);
+                var to_node = config[from]['destination-queues'][index].replace(/-queue$/, "");
+                if(nodes[from] != undefined && nodes[to_node] != undefined) {
+                    var edge_id = 'edge' + i++;
+                    var new_edge = {
+                        'id': edge_id,
+                        'from': from,
+                        'to': to_node
+                    };
+                    
+                    edges[edge_id]=new_edge;
+                }
             }
         }
     }
