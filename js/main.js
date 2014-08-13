@@ -77,7 +77,7 @@ function convert_nodes(nodes) {
         new_node.id = nodes[index]['id'];
         new_node.label = nodes[index]['id'];
         new_node.group = nodes[index]['group'];
-        new_node.title = JSON.stringify(node).replace(/\n/g, '\n<br>').replace(/ /g, "&nbsp;");
+        new_node.title = JSON.stringify(new_node).replace(/\n/g, '\n<br>').replace(/ /g, "&nbsp;");
         
         new_nodes.push(new_node);
     }
