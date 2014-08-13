@@ -85,7 +85,7 @@
 
 .tab-content {
     overflow-y: auto;
-    overflow-x: hidden;
+    overflow-x: auto;
 }
 
 .with-bot {

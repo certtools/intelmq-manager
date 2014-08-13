@@ -93,37 +93,46 @@
                 </div>
                 <div class="tab-pane" id="runtime-tab">
                     <div class="row" id="runtime-generation">
-                        <div class="col-xs-12" id="runtime-conf-content">
+                        <div class="col-sm-11" id="runtime-conf-content">
                         </div>
-                        <div class="col-xs-12" style="height: 10px;">
-                            <!--Placeholder-->
-                        </div>
-                        <div class="col-xs-12">
-                            <input type="button" class="btn btn-primary" value="download configuration" onclick="download_runtime()">
+                        <div class="col-sm-1">
+                            <a href="#" class="btn btn-primary" onclick="download_runtime(this, false)">
+                                <span class="glyphicon glyphicon-floppy-disk">
+                                </span>
+                            </a>
+                            <a href="#" class="btn btn-primary" onclick="download_runtime(this, true)">
+                                Raw
+                            </a>
                         </div>
                     </div>
                 </div>
                 <div class="tab-pane" id="pipeline-tab">
                     <div class="row" id="pipeline-generation">
-                        <div class="col-xs-12" id="pipeline-conf-content">
+                        <div class="col-sm-11" id="pipeline-conf-content">
                         </div>
-                        <div class="col-xs-12" style="height: 10px;">
-                            <!--Placeholder-->
-                        </div>
-                        <div class="col-xs-12">
-                            <input type="button" class="btn btn-primary" value="download configuration" onclick="download_pipeline()">
+                        <div class="col-sm-1">
+                            <a href="#" class="btn btn-primary" onclick="download_pipeline(this, false)">
+                                <span class="glyphicon glyphicon-floppy-disk">
+                                </span>
+                            </a>
+                            <a href="#" class="btn btn-primary" onclick="download_pipeline(this, true)">
+                                Raw
+                            </a>
                         </div>
                     </div>
                 </div>
                 <div class="tab-pane" id="startup-tab">
                     <div class="row" id="startup-generation">
-                        <div class="col-xs-12" id="startup-conf-content">
+                        <div class="col-sm-11" id="startup-conf-content">
                         </div>
-                        <div class="col-xs-12" style="height: 10px;">
-                            <!--Placeholder-->
-                        </div>
-                        <div class="col-xs-12">
-                            <input type="button" class="btn btn-primary" value="download configuration" onclick="download_startup()">
+                        <div class="col-sm-1">
+                            <a href="#" class="btn btn-primary" onclick="download_startup(this, false)">
+                                <span class="glyphicon glyphicon-floppy-disk">
+                                </span>
+                            </a>
+                            <a href="#" class="btn btn-primary" onclick="download_startup(this, true)">
+                                Raw
+                            </a>
                         </div>
                     </div>
                 </div>

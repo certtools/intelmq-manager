@@ -144,7 +144,6 @@ function verify_files(load_config) {
 }
 
 function load_bots(config, load_config) {
-    console.dir(load_config);
     for(bot_group in config) {
         var group = config[bot_group];
         
@@ -521,31 +520,33 @@ function continue_drawing(connectionCount, container, data) {
         }
     };
     graph = new vis.Graph(container, data, options);
-
-    graph.on("resize", function(params) {console.log(params.width,params.height)});
 }
 
-function download(data, name) {
-    var link = document.createElement("a");
-    link.setAttribute('download', name);
-    link.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(data));
-    link.click();
+function download(data, name, element, raw) {
+    var data_link = 'data:text/plain;charset=utf-8,' + encodeURIComponent(data);
+    
+    if (raw) {
+        window.open(data_link);
+    } else {
+        element.setAttribute('download', name);
+        element.setAttribute('href', data_link);
+    }
 }
 
-function download_pipeline() {
-    var data = generate_runtime_conf(nodes, 'pipeline.conf');
+function download_pipeline(element, raw) {
+    var data = generate_runtime_conf(nodes);
     data = data.replace(/<br>/g, '').replace(/&nbsp;/g, " ");
-    download(data);
+    download(data, 'pipeline.conf', element, raw);
 }
 
-function download_runtime() {
-    var data = generate_startup_conf(nodes, 'runtime.conf');
+function download_runtime(element, raw) {
+    var data = generate_startup_conf(nodes);
     data = data.replace(/<br>/g, '').replace(/&nbsp;/g, " ");
-    download(data);
+    download(data, 'runtime.conf', element, raw);
 }
 
-function download_startup() {
-    var data = generate_pipeline_conf(edges, 'startup.conf');
+function download_startup(element, raw) {
+    var data = generate_pipeline_conf(edges);
     data = data.replace(/<br>/g, '').replace(/&nbsp;/g, " ");
-    download(data);
+    download(data, 'startup.conf', element, raw);
 }
