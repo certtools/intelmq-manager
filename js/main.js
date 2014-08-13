@@ -525,3 +525,24 @@ function continue_drawing(connectionCount, container, data) {
     graph.on("resize", function(params) {console.log(params.width,params.height)});
 }
 
+function download(data) {
+    window.open('data:text/plain;charset=utf-8,' + encodeURIComponent(data));
+}
+
+function download_pipeline() {
+    var data = generate_runtime_conf(nodes);
+    data = data.replace(/<br>/g, '').replace(/&nbsp;/g, " ");
+    download(data);
+}
+
+function download_runtime() {
+    var data = generate_startup_conf(nodes);
+    data = data.replace(/<br>/g, '').replace(/&nbsp;/g, " ");
+    download(data);
+}
+
+function download_startup() {
+    var data = generate_pipeline_conf(edges);
+    data = data.replace(/<br>/g, '').replace(/&nbsp;/g, " ");
+    download(data);
+}
