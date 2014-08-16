@@ -112,24 +112,31 @@ function load_file(elem_id, callback, argument) {
     reader.readAsText(file);
 }
 
-function verify_files(load_config) {
-    if (load_config) {
+function check_files(operation) {
+    if (operation == "load-operation") {
+        // Load configuration
         if (document.getElementById("startup-file").files[0] && 
             document.getElementById("pipeline-file").files[0] && 
-            document.getElementById("runtime-file").files[0]) {
-            /* Do nothing */
+            document.getElementById("runtime-file").files[0] &&
+            document.getElementById("bots-file-load").files[0]
+           ){
+            load_file('bots-file-load', load_bots, true);
+        
         } else {
             alert('There are some files missing');
             return;
         }
     }
-    if (document.getElementById("bots-file").files[0]) {
-        load_file('bots-file', load_bots, load_config);
-    } else {
-        alert('You need to load at least the bots.conf file.');
-        return;
+    else {
+        // New configuration
+        if (document.getElementById("bots-file-start").files[0]) {
+            load_file('bots-file-start', load_bots, false);
+        } else {
+            alert('You need to load at least the bots list file.');
+            return;
+        }
     }
-
+    
     var body = document.getElementsByTagName('body')[0];
     var container = document.getElementsByClassName('container-fluid')[0];
     var header = document.getElementById('page-header');

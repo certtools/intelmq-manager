@@ -43,49 +43,60 @@
         </div>
         <div class="container-fluid" style="z-index">
             <div id="page-header" class="page-header">
-                <h3>IntelMQ Controller</h3>
+                <h3>IntelMQ Control Platform</h3>
                 <ul class="nav nav-pills" role="tablist">
                     <li class="active"><a href="#graph-tab" role="tab" data-toggle="tab">Graph</a></li>
-                    <li><a href="#runtime-tab" role="tab" data-toggle="tab">runtime.conf</a></li>
-                    <li><a href="#pipeline-tab" role="tab" data-toggle="tab">pipeline.conf</a></li>
-                    <li><a href="#startup-tab" role="tab" data-toggle="tab">startup.conf</a></li>
+                    <li><a href="#runtime-tab" role="tab" data-toggle="tab">Runtime Configuration</a></li>
+                    <li><a href="#pipeline-tab" role="tab" data-toggle="tab">Pipeline Configuration</a></li>
+                    <li><a href="#startup-tab" role="tab" data-toggle="tab">Startup Configuration</a></li>
                 </ul>
             </div>
             <div id="tab-content" class="tab-content">
                 <div class="tab-pane active" id="graph-tab">
                     <div class="row" id="file-select">
                         <div class="col-xs-12">
-                            <p>To start configuring your IntelMQ you have to at least have the 'available-bots.json' file available from you computer. This file is in every IntelMQ distribution in the root of the bots folder. Please use the file that came with your version of IntelMQ for compatibility reasons.</p>
-                            <p>If you already have an implemented configuration you can copy the 3 configuration files to the machine you are using to run this interface and load it in the appropriate places bellow.
-                            
+                            <h4>Start a new configuration ...</h4>
+                            <br>
                             <div class="form-group">
-                                <label for="bots-file">available-bots.json</label>
-                                <input id="bots-file" type="file" name="bots-file">
+                                <label for="bots-file">Bots List</label>
+                                <a href="https://github.com/certtools/intelmq/blob/master/intelmq/bots/BOTS">(get default list)</a>
+                                <input id="bots-file-start" type="file" name="bots-file-start">
                             </div>
-                            
+                            <input type="button" class="btn btn-primary" value="New Configuration" onclick="check_files('start-operation')">
+                            <br>
+                            <br>
+                            <br>
+                            <h4>Load an existing configuration ...</h4>
+                            <br>
                             <div class="form-group">
-                                <label for="runtime-file">runtime.conf</label>
+                                <label for="bots-file">Bots List</label>
+                                <a href="https://github.com/certtools/intelmq/blob/master/intelmq/bots/BOTS">(get default list)</a>
+                                <input id="bots-file-load" type="file" name="bots-file-load">
+                            </div>
+                            <div class="form-group">
+                                <label for="runtime-file">Runtime Configuration</label>
+                                <a href="https://github.com/certtools/intelmq/blob/master/intelmq/conf/runtime.conf">(get default configuration)</a>
                                 <input id="runtime-file" type="file" name="runtime-file">
                             </div>
                             
                             <div class="form-group">
-                                <label for="startup-file">startup.conf</label>
+                                <label for="startup-file">Startup Configuration</label>
+                                <a href="https://github.com/certtools/intelmq/blob/master/intelmq/conf/startup.conf">(get default configuration)</a>
                                 <input id="startup-file" type="file" name="startup-file">
                             </div>
                             
                             <div class="form-group">
-                                <label for="pipeline-file">pipeline.conf</label>
+                                <label for="pipeline-file">Pipeline Configuration</label>
+                                <a href="https://github.com/certtools/intelmq/blob/master/intelmq/conf/pipeline.conf">(get default configuration)</a>
                                 <input id="pipeline-file" type="file" name="pipeline-file">
                             </div>
-                            
-                            <input type="button" class="btn btn-primary" value="submit" onclick="verify_files(true)">
-                            <input type="button" class="btn btn-primary" value="start from scratch" onclick="verify_files(false)">
+                            <input type="button" class="btn btn-primary" value="Load Configuration" onclick="check_files('load-operation')">
                         </div>
                     </div>
                     <br />
                     <div class="row" id="graph-row">
                         <div class="col-xs-2" id="available-bots">
-                            <h4>Available bots:</h4>
+                            <h4>Bots List</h4>
                         </div>
                         <div class="col-xs-10" id="mygraph">
                         </div>
