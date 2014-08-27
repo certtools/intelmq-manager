@@ -1,15 +1,25 @@
-var RELOAD_EVERY = 10; /* 10 seconds */
+
+var LEVEL_CLASS = {
+    'DEBUG': 'success',
+    'INFO': 'info',
+    'WARNING': 'warning',
+    'ERROR': 'danger',
+    'CRITICAL': 'danger'
+}
+
+var RELOAD_EVERY = 2; /* 10 seconds */
 
 var bot_logs = {};
 var bot_queues = {};
 var reload_data = setInterval(function () {
-    load_bot_log();
+    load_bot_queues();
 }, RELOAD_EVERY * 1000);
 
 
 $('#log-table').dataTable({
         scrollY: window.innerHeight * 0.5,
         pageLength: 10,
+        order: [0, 'asc'],
         columns: [
             { "data": "date" },
             { "data": "bot_id" },
@@ -24,6 +34,8 @@ function redraw() {
     
     for (index in bot_logs) {
         var log_row = bot_logs[index];
+        
+        log_row['DT_RowClass'] = LEVEL_CLASS[log_row['log_level']];
         
         $('#log-table').dataTable().fnAddData(log_row);
     }
@@ -42,21 +54,30 @@ function redraw() {
     
     if (bot_info) {
         if (bot_info['source_queue']) {
-            var source_queue = document.createElement('li');
-            source_queue.innerHTML = bot_info['source_queue'][0] + ': ' + bot_info['source_queue'][1];
-            source_queue_element.appendChild(source_queue);
+            var source_queue = source_queue_element.insertRow();
+            var cell0 = source_queue.insertCell(0);
+            cell0.innerHTML = bot_info['source_queue'][0]
+            
+            var cell1 = source_queue.insertCell(1);
+            cell1.innerHTML = bot_info['source_queue'][1]
         }
         
         for (index in bot_info['destination_queues']) {
-            var destination_queue = document.createElement('li');
-            destination_queue.innerHTML = bot_info['destination_queues'][index][0] + ': ' + bot_info['destination_queues'][index][1];
-            destination_queues_element.appendChild(destination_queue);
+            var destination_queue = destination_queues_element.insertRow();
+            
+            var cell0 = destination_queue.insertCell(0);
+            cell0.innerHTML = bot_info['destination_queues'][index][0];
+            
+            var cell1 = destination_queue.insertCell(1);
+            cell1.innerHTML = bot_info['destination_queues'][index][1];
+
         }
     }
+    
+    $('#log-table').dataTable().fnAdjustColumnSizing();
 }
 
 function load_bot_log() {
-    $('#queues-panel-title').addClass('waiting');
     $('#logs-panel-title').addClass('waiting');
     
     var number_of_lines = 100;
@@ -74,10 +95,14 @@ function load_bot_log() {
             alert('Error loading bot logs');
         });
         
-    load_bot_queues(bot_id);
+    load_bot_queues();
 }
 
-function load_bot_queues(bot_id) {
+function load_bot_queues() {
+    $('#queues-panel-title').addClass('waiting');
+    
+    var bot_id = document.getElementById('monitor-target').innerHTML;
+    
     $.getJSON(MANAGEMENT_SCRIPT + '?scope=queues')
         .done(function (data) {
             bot_queues = data;
