@@ -1,154 +1,131 @@
-<!doctype html>
-<html>
-    <head>
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        
-        <title>IntelMQ Control Platform</title>
-        
-        <script type="text/javascript" src="./jquery/jquery-2.1.1.min.js"></script>
-        <script type="text/javascript" src="./bootstrap/js/bootstrap.min.js"></script>
-        <script type="text/javascript" src="./vis.js/vis.js"></script>
-        <script type="text/javascript" src="./js/main.js"></script>
-        <script type="text/javascript" src="./js/runtime.js"></script>
-        <script type="text/javascript" src="./js/startup.js"></script>
-        <script type="text/javascript" src="./js/pipeline.js"></script>
+<!DOCTYPE html>
+<html lang="en">
 
-        <link type="text/css" rel="stylesheet" href="./bootstrap/css/bootstrap.min.css">
-        <link type="text/css" rel="stylesheet" href="./vis.js/vis.css">
-        <link type="text/css" rel="stylesheet" href="./css/custom.css">
-    </head>
+<head>
 
-    <body>
-        <div id="graph-popUp" class="without-bot">
-            <span id="graph-popUp-title">node</span> <br>
-            <table id="graph-popUp-fields" style="margin:auto;">
-                <tr>
-                    <td>id</td><td><input id="node-id" value="new value"></td>
-                </tr>
-                <tr>
-                    <td>name</td><td><input id="node-name" value=""></td>
-                </tr>
-                <tr>
-                    <td>group</td><td><input id="node-group" value=""></td>
-                </tr>
-                <tr>
-                    <td>module</td><td><input id="node-module" value=""></td>
-                </tr>
-                <tr>
-                    <td>description</td><td><input id="node-description" value=""></td>
-                </tr>
-            </table>
-            <input type="button" value="save" id="graph-popUp-save"></button>
-            <input type="button" value="cancel" id="graph-popUp-cancel"></button>
-        </div>
-        <div class="container-fluid" style="z-index">
-            <div id="page-header" class="page-header">
-                <h2>IntelMQ Control Platform</h2>
-                <ul class="nav nav-pills" role="tablist">
-                    <li class="active"><a href="#graph-tab" role="tab" data-toggle="tab">Graph</a></li>
-                    <li><a href="#runtime-tab" role="tab" data-toggle="tab">Runtime Configuration</a></li>
-                    <li><a href="#pipeline-tab" role="tab" data-toggle="tab">Pipeline Configuration</a></li>
-                    <li><a href="#startup-tab" role="tab" data-toggle="tab">Startup Configuration</a></li>
-                </ul>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>IntelMQ Control Platform</title>
+
+    <!-- Bootstrap Core CSS -->
+    <link href="plugins/bootstrap/bootstrap.min.css" rel="stylesheet">
+
+    <!-- MetisMenu CSS -->
+    <link href="plugins/metisMenu/metisMenu.min.css" rel="stylesheet">
+    
+    <!-- Vis.JS Plugin JavaScript -->
+    <link href="plugins/vis.js/vis.css" rel="stylesheet" type="text/css">
+    
+    <!-- Custom Fonts -->
+    <link href="plugins/font-awesome-4.1.0/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+    
+    <!-- Custom CSS -->
+    <link href="css/sb-admin-2.css" rel="stylesheet">
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+</head>
+
+<body>
+
+    <div id="wrapper">
+        <!-- Page Content -->
+        <div class="container">
+            <!-- Jumbotron Header -->
+            <header class="jumbotron">
+                <div class="page-header-text">
+                    <span>IntelMQ Control Platform</span>
+                </div>
+            </header>
+
+            <hr>
+
+            <!-- Title -->
+            <div class="row center-row">
+                <div class="col-lg-12">
+                    <h3>Available Features</h3>
+                </div>
             </div>
-            <div id="tab-content" class="tab-content">
-                <div class="tab-pane active" id="graph-tab">
-                    <div class="row" id="file-select">
-                        <div class="col-xs-12">
-                            <h3>Start a new configuration ...</h3>
-                            <br>
-                            <div class="form-group">
-                                <label for="bots-file">Bots List</label>
-                                <a href="https://github.com/certtools/intelmq/blob/master/intelmq/bots/BOTS">(get default list)</a>
-                                <input id="bots-file-start" type="file" name="bots-file-start">
+            <!-- /.row -->
+
+            <!-- Page Features -->
+            <div class="row center-row">
+                <div class="col-md-9 col-sm-12 center-row-content">
+                    <div class="col-md-4 col-sm-12">
+                        <div class="thumbnail">
+                            <img src="./images/config.png" alt="" width="100%" height="100%">
+                            <div class="caption">
+                                <h3>Configuration</h3>
+                                <p>This is where you go to take a big shit load of mindoverload.</p>
+                                <p><a href="configs.html#new" class="btn btn-default">New Configuration</a></p>
+                                <p><a href="configs.html#load" class="btn btn-default">Load Configuration</a></p>
                             </div>
-                            <input type="button" class="btn btn-primary" value="New Configuration" onclick="check_files('start-operation')">
-                            <br>
-                            <br>
-                            <br>
-                            <br>
-                            <h3>Load existing configurations ...</h3>
-                            <br>
-                            <div class="form-group">
-                                <label for="bots-file">Bots List</label>
-                                <a href="https://github.com/certtools/intelmq/blob/master/intelmq/bots/BOTS">(get default list)</a>
-                                <input id="bots-file-load" type="file" name="bots-file-load">
-                            </div>
-                            <div class="form-group">
-                                <label for="runtime-file">Runtime Configuration</label>
-                                <a href="https://github.com/certtools/intelmq/blob/master/intelmq/conf/runtime.conf">(get default configuration)</a>
-                                <input id="runtime-file" type="file" name="runtime-file">
-                            </div>
-                            
-                            <div class="form-group">
-                                <label for="startup-file">Startup Configuration</label>
-                                <a href="https://github.com/certtools/intelmq/blob/master/intelmq/conf/startup.conf">(get default configuration)</a>
-                                <input id="startup-file" type="file" name="startup-file">
-                            </div>
-                            
-                            <div class="form-group">
-                                <label for="pipeline-file">Pipeline Configuration</label>
-                                <a href="https://github.com/certtools/intelmq/blob/master/intelmq/conf/pipeline.conf">(get default configuration)</a>
-                                <input id="pipeline-file" type="file" name="pipeline-file">
-                            </div>
-                            <input type="button" class="btn btn-primary" value="Load Configurations" onclick="check_files('load-operation')">
                         </div>
                     </div>
-                    <br />
-                    <div class="row" id="graph-row">
-                        <div class="col-xs-2" id="available-bots">
-                            <h4>Bots List</h4>
-                        </div>
-                        <div class="col-xs-10" id="mygraph">
-                        </div>
-                    </div>
-                </div>
-                <div class="tab-pane" id="runtime-tab">
-                    <div class="row" id="runtime-generation">
-                        <div class="col-sm-11" id="runtime-conf-content">
-                        </div>
-                        <div class="col-sm-1">
-                            <a href="#" class="btn btn-primary" onclick="download_runtime(this, false)">
-                                <span class="glyphicon glyphicon-floppy-disk">
-                                </span>
-                            </a>
-                            <a href="#" class="btn btn-primary" onclick="download_runtime(this, true)">
-                                Raw
-                            </a>
+
+                    <div class="col-md-4 col-sm-12">
+                        <div class="thumbnail">
+                            <img src="./images/botnet.png" alt="">
+                            <div class="caption">
+                                <h3>Management</h3>
+                                <p>Wanna see if your configurations are a piece of garbage? Go here.</p>
+                                <p>
+                                    <a href="management.html" class="btn btn-default">View</a>
+                                </p>
+                            </div>
                         </div>
                     </div>
-                </div>
-                <div class="tab-pane" id="pipeline-tab">
-                    <div class="row" id="pipeline-generation">
-                        <div class="col-sm-11" id="pipeline-conf-content">
-                        </div>
-                        <div class="col-sm-1">
-                            <a href="#" class="btn btn-primary" onclick="download_pipeline(this, false)">
-                                <span class="glyphicon glyphicon-floppy-disk">
-                                </span>
-                            </a>
-                            <a href="#" class="btn btn-primary" onclick="download_pipeline(this, true)">
-                                Raw
-                            </a>
-                        </div>
-                    </div>
-                </div>
-                <div class="tab-pane" id="startup-tab">
-                    <div class="row" id="startup-generation">
-                        <div class="col-sm-11" id="startup-conf-content">
-                        </div>
-                        <div class="col-sm-1">
-                            <a href="#" class="btn btn-primary" onclick="download_startup(this, false)">
-                                <span class="glyphicon glyphicon-floppy-disk">
-                                </span>
-                            </a>
-                            <a href="#" class="btn btn-primary" onclick="download_startup(this, true)">
-                                Raw
-                            </a>
+
+                    <div class="col-md-4 col-sm-12">
+                        <div class="thumbnail">
+                            <img src="./images/monitor.png" alt="" >
+                            <div class="caption">
+                                <h3>Monitor</h3>
+                                <p>Where shit happens.</p>
+                                <p>
+                                    <a href="monitor.html" class="btn btn-default">View</a>
+                                </p>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
+            <!-- /.row -->
+            
         </div>
-    </body>
+        <!-- /.container -->
+
+    </div>
+    <!-- /#wrapper -->
+
+    <!-- jQuery Version 1.11.0 -->
+    <script src="plugins/jquery-1.11.0.js"></script>
+
+    <!-- Bootstrap Core JavaScript -->
+    <script src="plugins/bootstrap/bootstrap.min.js"></script>
+    
+    <!-- Metis Menu Plugin JavaScript -->
+    <script src="plugins/metisMenu/metisMenu.js"></script>
+    
+    <!-- Vis.JS Plugin JavaScript -->
+    <script src="plugins/vis.js/vis.js"></script>
+    
+    <!-- Custom Theme JavaScript -->
+    <script src="js/sb-admin-2.js"></script>
+    
+    <!-- Custom Application JavaScript -->
+    <script src="js/static.js"></script>
+    <script src="js/main.js"></script>
+
+</body>
+
 </html>

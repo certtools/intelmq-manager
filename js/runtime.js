@@ -29,7 +29,7 @@ function generate_runtime_conf(nodes) {
         bot['id'] = save_keys[id]['id'];
     }
     
-    return conf_string.replace(/\n/g, '\n<br>').replace(/ /g, "&nbsp;");
+    return conf_string;
 }
 
 function read_runtime_conf(config) {

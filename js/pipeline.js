@@ -39,7 +39,7 @@ function generate_pipeline_conf(edges) {
     
     conf_string = JSON.stringify(new_edges, undefined, 4);
     
-    return conf_string.replace(/\n/g, '\n<br>').replace(/ /g, "&nbsp;");
+    return conf_string;
 }
 
 function read_pipeline_conf(config, nodes) {

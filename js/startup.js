@@ -17,7 +17,7 @@ function generate_startup_conf(nodes) {
     
     conf_string = JSON.stringify(new_nodes, undefined, 4);
     
-    return conf_string.replace(/\n/g, '\n<br>').replace(/ /g, "&nbsp;");
+    return conf_string;
 }
 
 function read_startup_conf(config, nodes) {

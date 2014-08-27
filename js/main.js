@@ -1,59 +1,163 @@
-
-var CORE_FIELDS = 5;
-
-var ACCEPTED_NEIGHBORS = {
-    'Collector': ['Parser'],
-    'Parser': ['Expert', 'Output'],
-    'Expert': ['Expert', 'Output'],
-    'Output': []
-}
-
-var GROUP_LEVELS = {   
-    'Collector': 0,
-    'Parser': 1,
-    'Expert': 2,
-    'Output': 3
-}
-
-var GROUP_COLORS = {
-    'Collector': '#FF0000',
-    'Parser': '#00FF00',
-    'Expert': '#0000FF',
-    'Output': '#FFFF00'    
-}
-
-var STARTUP_KEYS = ['group', 'name', 'module', 'description'];
-
-var BOT_ID_REGEX = /^[0-9a-zA-Z-]+$/;
-
 var nodes = {};
 var edges = {};
-var graph = null;
 var bots = {};
 
-var popup = document.getElementById("graph-popUp");
-var span = document.getElementById('graph-popUp-title');
-var table = document.getElementById("graph-popUp-fields");
+var graph = null;
+var graph_container = null;
+var popup = null;
+var span = null;
+var table = null;
 
-window.onresize = function(event) {
+$(window).on('hashchange', function() {
+  location.reload();
+});
+
+function resize() {
+    // Resize body
     var body = document.getElementsByTagName('body')[0];
-    var container = document.getElementsByClassName('container-fluid')[0];
-    var header = document.getElementById('page-header');
-    var content = document.getElementById('tab-content');
-    
     body.style.height = window.innerHeight + "px";
+    body.style.overflowX = "hidden";
     body.style.overflowY = "hidden";
     
-    container.style.height = window.innerHeight + "px";
-    container.style.overflowY = "hidden";
     
-    header_style = header.currentStyle || window.getComputedStyle(header);
-    
-    content.style.height = (window.innerHeight - header.offsetHeight - parseInt(header_style.marginTop) - parseInt(header_style.marginBottom) - 20) + "px";
+    var graph_container = document.getElementById('graph-container');
+    graph_container.style.height = (window.innerHeight - graph_container.offsetTop) + "px";
+    graph_container.style.overflowX = "auto";
+    graph_container.style.overflowY = "auto";
     
     if (graph != null && graph != undefined) {
         graph.redraw();
     }
+    
+    load_html_elements();
+}
+
+function load_html_elements() {
+    // Load popup, span and table
+    graph_container = document.getElementById('graph-container');
+    popup = document.getElementById("graph-popUp");
+    span = document.getElementById('graph-popUp-title');
+    table = document.getElementById("graph-popUp-fields");
+}
+
+function load_file(url, callback) {
+    $.getJSON(url)
+        .done(function (json) {
+            callback(json);
+        })
+        .fail(function (jqxhr, textStatus, error) {
+            var err = textStatus + ", " + error;
+            alert('Failed to obtain JSON: ' + err);
+        });
+}
+
+function load_bots(config) {
+    var available_bots = document.getElementById("side-menu")
+    //available_bots.innerHTML = '';
+    
+    for(bot_group in config) {
+        var group = config[bot_group];
+        
+        group_title = document.createElement('a');
+        group_title.innerHTML = bot_group + '<span class="fa arrow"></span>';
+        
+        var new_element = group_title.cloneNode(true);
+        
+        bots_submenu = document.createElement('ul');
+        bots_submenu.setAttribute('class', 'nav nav-second-level collapse');
+
+        group_menu = document.createElement('li');
+        group_menu.appendChild(new_element);
+        group_menu.appendChild(bots_submenu);
+        group_menu.style.borderBottomColor = GROUP_COLORS[bot_group];
+        
+        available_bots.appendChild(group_menu);
+        
+        for (bot_name in group) {
+            var bot = group[bot_name];
+            
+            var bot_title = document.createElement('a');
+            bot_title.setAttribute('data-toggle', 'tooltip');
+            bot_title.setAttribute('data-placement', 'right');
+            bot_title.setAttribute('title', bot['description']);
+            bot_title.setAttribute('onclick', 'fill_bot(undefined, "' + bot_group + '", "' + bot_name + '")');
+            bot_title.innerHTML = bot_name;
+            
+            var bot_submenu = document.createElement('li');
+            bot_submenu.appendChild(bot_title);
+            
+            bots_submenu.appendChild(bot_submenu);
+            
+            if (bots[bot_group] === undefined) {
+                bots[bot_group] = {};
+            }
+            
+            bots[bot_group][bot_name] = {
+                'name': bot_name,
+                'group': bot_group,
+                'module': bot['module'],
+                'description': bot['description']
+            }
+            
+            for (parameter in bot['parameters']) {
+                var value = bot['parameters'][parameter];
+                bots[bot_group][bot_name][parameter] = value;
+            }
+        }
+    }
+    
+    $('#side-menu').metisMenu({'restart': true});
+    
+    if (window.location.hash == '#load') {
+        load_file(RUNTIME_FILE, load_runtime);
+    } else {
+        draw();
+        resize();
+    }
+}
+
+function load_runtime(config) {
+    nodes = read_runtime_conf(config);
+        
+    load_file(STARTUP_FILE, load_startup);
+}
+
+function load_startup(config) {
+    nodes = read_startup_conf(config, nodes);   
+    
+    load_file(PIPELINE_FILE, load_pipeline);
+}
+
+function load_pipeline(config) {
+    edges = read_pipeline_conf(config, nodes);
+        
+    draw();
+    resize();
+}
+
+function save_data_on_files() {
+    if(!confirm("By clicking 'OK' you are replacing the configuration in your files by the one represented by the graph on this page. Do you agree?")) {
+        return;
+    }
+    
+    var alert_error = function (file, jqxhr, textStatus, error) {
+        alert('There was an error saving ' + file + ':\nStatus: ' + textStatus + '\nError: ' + error);
+    }
+
+    $.post('./php/save.php?file=runtime', generate_runtime_conf(nodes))
+        .fail(function (jqxhr, textStatus, error) {
+            alert_error('runtime', jqxhr, textStatus, error);
+        });
+        
+    $.post('./php/save.php?file=startup', generate_startup_conf(nodes))
+        .fail(function (jqxhr, textStatus, error) {
+            alert_error('startup', jqxhr, textStatus, error);
+        });
+        
+    $.post('./php/save.php?file=pipeline', generate_pipeline_conf(edges))
+        .fail(function (jqxhr, textStatus, error) {
+            alert_error('pipeline', jqxhr, textStatus, error);
+        });
 }
 
 function convert_edges(edges) {
@@ -85,146 +189,6 @@ function convert_nodes(nodes) {
     }
     
     return new_nodes;
-}
-
-function disable_file_submit() {
-    var file_form = document.getElementById("file-select");
-    var graph_row = document.getElementById("graph-row");
-    file_form.style.display = 'none';
-    graph_row.style.display = 'block';
-}
-
-function load_file(elem_id, callback, argument) {
-    var file = document.getElementById(elem_id).files[0];
-    var file_result = undefined;
-    
-    var reader = new FileReader();
-    reader.onload = (function (event) {
-        try {
-            obj = JSON.parse(event.target.result);
-        } catch(err) {
-            callback(event.target.result, argument);
-            return;
-        }
-        
-        callback(obj, argument);
-    });
-    reader.readAsText(file);
-}
-
-function check_files(operation) {
-    if (operation == "load-operation") {
-        // Load configuration
-        if (document.getElementById("startup-file").files[0] && 
-            document.getElementById("pipeline-file").files[0] && 
-            document.getElementById("runtime-file").files[0] &&
-            document.getElementById("bots-file-load").files[0]
-           ){
-            load_file('bots-file-load', load_bots, true);
-        
-        } else {
-            alert('There are some files missing');
-            return;
-        }
-    }
-    else {
-        // New configuration
-        if (document.getElementById("bots-file-start").files[0]) {
-            load_file('bots-file-start', load_bots, false);
-        } else {
-            alert('You need to load at least the bots list file.');
-            return;
-        }
-    }
-    
-    var body = document.getElementsByTagName('body')[0];
-    var container = document.getElementsByClassName('container-fluid')[0];
-    var header = document.getElementById('page-header');
-    var content = document.getElementById('tab-content');
-    
-    body.style.height = window.innerHeight + "px";
-    body.style.overflowY = "hidden";
-    
-    container.style.height = window.innerHeight + "px";
-    container.style.overflowY = "hidden";
-    
-    header_style = header.currentStyle || window.getComputedStyle(header);
-    
-    content.style.height = (window.innerHeight - header.offsetHeight - parseInt(header_style.marginTop) - parseInt(header_style.marginBottom) - 20) + "px";
-}
-
-function load_bots(config, load_config) {
-    for(bot_group in config) {
-        var group = config[bot_group];
-        
-        available_bots = document.getElementById("available-bots")
-        group_title = document.createElement('h5');
-        group_title.innerHTML = bot_group;
-        group_title.style.borderBottomStyle = "solid";
-        group_title.style.borderBottomWidth = "2px";
-        group_title.style.borderBottomColor = GROUP_COLORS[bot_group];
-        
-        //console.dir(group_title.style.borderBottom);
-        available_bots.appendChild(group_title);
-        
-        for (bot_name in group) {
-            var bot = group[bot_name];
-            
-            var bot_title = document.createElement('button');
-            bot_title.setAttribute('type', 'button');
-            bot_title.setAttribute('class', 'btn btn-link');
-            bot_title.setAttribute('data-toggle', 'tooltip');
-            bot_title.setAttribute('data-placement', 'right');
-            bot_title.setAttribute('title', bot['description']);
-            bot_title.setAttribute('onclick', 'fill_bot(undefined, "' + bot_group + '", "' + bot_name + '")');
-            bot_title.innerHTML = bot_name;
-            
-            available_bots.appendChild(bot_title);
-            available_bots.appendChild(document.createElement('br'));
-            
-            if (bots[bot_group] === undefined) {
-                bots[bot_group] = {};
-            }
-            
-            bots[bot_group][bot_name] = {
-                'name': bot_name,
-                'group': bot_group,
-                'module': bot['module'],
-                'description': bot['description']
-            }
-            
-            for (parameter in bot['parameters']) {
-                var value = bot['parameters'][parameter];
-                bots[bot_group][bot_name][parameter] = value;
-            }
-        }
-    }
- 
-    if (load_config) {
-        load_file('runtime-file', load_runtime);
-    } else {
-        disable_file_submit();
-        draw();
-    }
-}
-
-function load_runtime(config) {
-    nodes = read_runtime_conf(config);
-        
-    load_file('startup-file', load_startup);
-}
-
-function load_startup(config) {
-    nodes = read_startup_conf(config, nodes);   
-    
-    load_file('pipeline-file', load_pipeline);
-}
-
-function load_pipeline(config) {
-    edges = read_pipeline_conf(config, nodes);
-        
-    disable_file_submit();
-    draw();
 }
 
 function fill_bot(id, group, name) {
@@ -298,84 +262,6 @@ function fill_bot(id, group, name) {
     popup.setAttribute('class', "with-bot");
 }
 
-function draw() {
-    var connectionCount = [];
-
-    // create a graph
-    var container = document.getElementById('mygraph');
-
-    var data = {
-        nodes: convert_nodes(nodes),
-        edges: convert_edges(edges)
-    }
-    
-    popup = document.getElementById("graph-popUp");
-    span = document.getElementById('graph-popUp-title');
-    table = document.getElementById("graph-popUp-fields");
-    
-    document.getElementById('pipeline-conf-content').innerHTML = generate_pipeline_conf(edges);
-    document.getElementById('runtime-conf-content').innerHTML = generate_runtime_conf(nodes);
-    document.getElementById('startup-conf-content').innerHTML = generate_startup_conf(nodes);
-    
-    continue_drawing(connectionCount, container, data);
-}
-
-function create_form(title, data, callback){
-    span.innerHTML = title;
-    
-    var saveButton = document.getElementById('graph-popUp-save');
-    var cancelButton = document.getElementById('graph-popUp-cancel');
-    saveButton.onclick = saveData.bind(this,data,callback);
-    cancelButton.onclick = clearPopUp.bind();
-    
-    table.innerHTML="<p>Please select one of the bots on the left</p>";
-    popup.style.display = 'block';
-    popup.setAttribute('class', "without-bot");
-}
-
-function load_form(data){
-    for (key in data.custom_fields) {
-        new_row = table.insertRow(-1);
-        cell1 = new_row.insertCell(0);
-        cell2 = new_row.insertCell(1);
-        
-        cell1.setAttribute('class', 'node-key');
-        cell2.setAttribute('class', 'node-value');
-        
-        cell1.innerHTML = key
-        cell2_content = document.createElement("input");
-        cell2_content.setAttribute('type', 'text');
-        cell2_content.setAttribute('value', data.custom_fields[key]);
-        cell2.appendChild(cell2_content);
-    }
-}
-
-function delete_field(row) {
-    table.deleteRow(row.parentElement.parentElement.rowIndex);
-}
-
-function clearPopUp() {
-    var saveButton = document.getElementById('graph-popUp-save');
-    var cancelButton = document.getElementById('graph-popUp-cancel');
-    saveButton.onclick = null;
-    cancelButton.onclick = null;
-
-    popup.style.display = 'none';
-    span.innerHTML = "";
-
-    for (i = table.rows.length-1; i >= 0; i--) { 
-        var position = table.rows[i].rowIndex;
-        
-        if (position >= CORE_FIELDS) {
-            table.deleteRow(position);
-        } else {
-            table.rows[i].setAttribute('value', '');
-        }
-    }
-    
-    popup.setAttribute('class', "without-bot");
-}
-
 function saveData(data,callback) {
     var idInput = document.getElementById('node-id');
     var groupInput = document.getElementById('node-group');
@@ -417,15 +303,53 @@ function saveData(data,callback) {
     data.title = JSON.stringify(node, undefined, 2).replace(/\n/g, '\n<br>').replace(/ /g, "&nbsp;");
     
     nodes[data.id] = node;
-    
-    document.getElementById('runtime-conf-content').innerHTML = generate_runtime_conf(nodes);
-    document.getElementById('startup-conf-content').innerHTML = generate_startup_conf(nodes);
 
     clearPopUp();
     callback(data);
 }
 
-function continue_drawing(connectionCount, container, data) {
+function create_form(title, data, callback){
+    span.innerHTML = title;
+    
+    var saveButton = document.getElementById('graph-popUp-save');
+    var cancelButton = document.getElementById('graph-popUp-cancel');
+    saveButton.onclick = saveData.bind(this,data,callback);
+    cancelButton.onclick = clearPopUp.bind();
+    
+    table.innerHTML="<p>Please select one of the bots on the left</p>";
+    popup.style.display = 'block';
+    popup.setAttribute('class', "without-bot");
+}
+
+function clearPopUp() {
+    var saveButton = document.getElementById('graph-popUp-save');
+    var cancelButton = document.getElementById('graph-popUp-cancel');
+    saveButton.onclick = null;
+    cancelButton.onclick = null;
+
+    popup.style.display = 'none';
+    span.innerHTML = "";
+
+    for (i = table.rows.length-1; i >= 0; i--) { 
+        var position = table.rows[i].rowIndex;
+        
+        if (position >= CORE_FIELDS) {
+            table.deleteRow(position);
+        } else {
+            table.rows[i].setAttribute('value', '');
+        }
+    }
+    
+    popup.setAttribute('class', "without-bot");
+}
+
+function draw() {
+    load_html_elements();
+    
+    var data = {
+        nodes: convert_nodes(nodes),
+        edges: convert_edges(edges)
+    }
     var options = {
         physics: {
             barnesHut: {
@@ -436,7 +360,14 @@ function continue_drawing(connectionCount, container, data) {
                 springLength: 200
             }
         },
+        tooltip: {
+            fontFace: 'arial',
+        },
+        nodes: {
+            fontFace: 'arial'
+        },
         edges: {
+            fontFace: 'arial',
             length: 500,
             width: 3,
             style: 'arrow',
@@ -447,7 +378,6 @@ function continue_drawing(connectionCount, container, data) {
 //                shape: 'circle',
                 shape: 'box',
                 color: GROUP_COLORS['Collector'],
-                fontColor: "#FFFFFF"
             },
             Parser: {
 //                shape: 'ellipse',
@@ -466,7 +396,10 @@ function continue_drawing(connectionCount, container, data) {
             }
         },
         stabilize: false,
-        dataManipulation: true,
+        dataManipulation: {
+            enabled: true,
+            initiallyVisible: true
+        },
         navigation: true,
         onAdd: function(data,callback) {
             create_form("Add Node", data, callback);            
@@ -512,8 +445,6 @@ function continue_drawing(connectionCount, container, data) {
             }
             
             edges[data.id]={'from': data.from, 'to': data.to};
-            
-            document.getElementById('pipeline-conf-content').innerHTML = generate_pipeline_conf(edges);
         },
         onDelete: function(data,callback) {
             callback(data);
@@ -525,41 +456,19 @@ function continue_drawing(connectionCount, container, data) {
             for (index in data.nodes) {
                 delete nodes[data.nodes[index]];
             }
-            
-            document.getElementById('runtime-conf-content').innerHTML = generate_runtime_conf(nodes);
-            document.getElementById('startup-conf-content').innerHTML = generate_startup_conf(nodes);
-            document.getElementById('pipeline-conf-content').innerHTML = generate_pipeline_conf(edges);
         }
     };
     
-    graph = new vis.Graph(container, data, options);
+    graph = new vis.Graph(graph_container, data, options);
 }
 
-function download(data, name, element, raw) {
-    var data_link = 'data:text/plain;charset=utf-8,' + encodeURIComponent(data);
-    
-    if (raw) {
-        window.open(data_link);
-    } else {
-        element.setAttribute('download', name);
-        element.setAttribute('href', data_link);
-    }
-}
+/*
+ * Application entry point
+ */
 
-function download_pipeline(element, raw) {
-    var data = generate_pipeline_conf(edges);
-    data = data.replace(/<br>/g, '').replace(/&nbsp;/g, " ");
-    download(data, 'pipeline.conf', element, raw);
-}
+// Dynamically load available bots
+load_file(BOTS_FILE, load_bots);
 
-function download_runtime(element, raw) {
-    var data = generate_runtime_conf(nodes);
-    data = data.replace(/<br>/g, '').replace(/&nbsp;/g, " ");
-    download(data, 'runtime.conf', element, raw);
-}
+// Dynamically adapt to fit screen
+window.onresize = resize; 
 
-function download_startup(element, raw) {
-    var data = generate_startup_conf(nodes);
-    data = data.replace(/<br>/g, '').replace(/&nbsp;/g, " ");
-    download(data, 'startup.conf', element, raw);
-}
