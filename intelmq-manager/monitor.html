@@ -84,23 +84,34 @@
         <div id="page-wrapper-with-sidebar">
             <div class="row">
                 <div id="graph-container" class="col-md-12">
-                    <div class="col-md-3">
+                    <div class="col-md-12">
                         <div class="panel panel-default" id="queues-panel">
                             <div class="panel-heading">
                                 <h4 id="queues-panel-title">Queues<h4>
                             </div>
                             <div class="panel-body">
-                                <div><strong>Source Queue:</strong></div>
-                                <ul id="source-queue">
-                                </ul>
-                                <br>
-                                <div><strong>Destination Queues:</strong></div>
-                                <ul id="destination-queues">
-                                </ul>
+                                <div class="col-md-6">
+                                    <table class="table">
+                                        <thead>
+                                            <tr><th>Source Queue</th><th>Count</th></tr>
+                                        </thead>
+                                        <tbody id="source-queue">
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <div class="col-md-6">
+                                    <table class="table">
+                                        <thead>
+                                            <tr><th>Destination Queue</th><th>Count</th></tr>
+                                        </thead>
+                                        <tbody id="destination-queues">
+                                        </tbody>
+                                    </table>
+                                </div>
                             </div>
                         </div>
                     </div>
-                    <div class="col-md-9">
+                    <div class="col-md-12">
                         <div class="panel panel-default" id="logs-panel">
                             <div class="panel-heading">
                                 <h4 id="logs-panel-title">Logs<h4>
@@ -118,7 +129,7 @@
                                 <div class="table-responsive">
                                     <table class="table" id="log-table">
                                         <thead>
-                                            <tr><th>Time</th><th>Bot ID</th><th>Level</th><th>Message</th></tr>
+                                            <tr><th>Time</th><th>ID</th><th>Level</th><th>Message</th></tr>
                                         </thead>
                                         <tbody id="log-table-body">
                                         </tbody>
