@@ -525,3 +525,22 @@ div.graph-manipulationUI.notification{
     margin: 2px;
     font-weight: bold;
 }
+
+#logs-panel {
+    margin-top: 15px;
+}
+
+#queues-panel {
+    margin-top: 15px;
+}
+
+.waiting {
+    background-image: url('../images/waiting.gif');
+    background-repeat:  no-repeat;
+    background-size: 16px;
+    background-position: right 10px center;
+}
+
+.row {
+    margin: 0px;
+}

@@ -30,10 +30,10 @@ $(function() {
 // Resize body
 var body = document.getElementsByTagName('body')[0];
 body.style.height = window.innerHeight + "px";
-body.style.overflowX = "hidden";
-body.style.overflowY = "hidden";
+body.style.overflowX = "auto";
+body.style.overflowY = "auto";
 
 var container = document.getElementById('page-wrapper-with-sidebar') || document.getElementById('page-wrapper');
 container.style.height = (window.innerHeight - container.offsetTop) + "px";
-container.style.overflowX = "hidden";
-container.style.overflowY = "hidden";
+container.style.overflowX = "auto";
+container.style.overflowY = "auto";

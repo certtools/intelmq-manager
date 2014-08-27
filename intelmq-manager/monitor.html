@@ -17,8 +17,8 @@
     <!-- MetisMenu CSS -->
     <link href="plugins/metisMenu/metisMenu.min.css" rel="stylesheet">
     
-    <!-- Vis.JS Plugin JavaScript -->
-    <link href="plugins/vis.js/vis.css" rel="stylesheet" type="text/css">
+    <!-- DataTables CSS -->
+    <link href="plugins/dataTables/dataTables.bootstrap.css" rel="stylesheet">
     
     <!-- Custom Fonts -->
     <link href="plugins/font-awesome-4.1.0/css/font-awesome.min.css" rel="stylesheet" type="text/css">
@@ -53,22 +53,10 @@
             <!-- /.navbar-header -->
 
             <ul class="nav navbar-top-links navbar-left">
-                <li class="dropdown">
-                    <a class="dropdown-toggle" data-toggle="dropdown" href="#">
-                        <span class="top-menu-text"><img src="./images/config.png" width="24px" height="24px">&nbsp;Configuration <i class="fa fa-caret-down"></i></span>
+                <li>
+                    <a href="configs.html#load">
+                        <span class="top-menu-text"><img src="./images/config.png" width="24px" height="24px">&nbsp;Configuration</span>
                     </a>
-                    <ul class="dropdown-menu dropdown-messages">
-                        <li>
-                            <a href="configs.html#new">
-                                New Configuration
-                            </a>
-                        </li>
-                        <li>
-                            <a href="configs.html#load">
-                                Load Configuration
-                            </a>
-                        </li>
-                    </ul>
                 </li>
                 <li>
                     <a href="management.html">
@@ -93,38 +81,56 @@
 
 
         <!-- Page Content -->
-        <div id="page-wrapper">
+        <div id="page-wrapper-with-sidebar">
             <div class="row">
                 <div id="graph-container" class="col-md-12">
-                    <h4>This functionality, for now, is only available using the command line.</h4><br>
-                    <h4>Example:</h4>
-                    <pre>
-# tail -f /var/log/intelmq/*
-
-==> /var/log/intelmq/dragon-research-group-ssh-collector.log <==
-2014-08-27 17:35:09,233 - dragon-research-group-ssh-collector - INFO - Destination queues 'dragon-research-group-ssh-parser-queue'
-2014-08-27 17:35:09,233 - dragon-research-group-ssh-collector - INFO - Bot start processing
-2014-08-27 17:35:09,234 - dragon-research-group-ssh-collector - INFO - Connecting to pipeline queues
-2014-08-27 17:35:09,336 - dragon-research-group-ssh-collector - INFO - Connected to pipeline queues. Start processing
-2014-08-27 17:35:09,336 - dragon-research-group-ssh-collector - INFO - Downloading report from http://dragonresearchgroup.org/insight/sshpwauth.txt
-
-==> /var/log/intelmq/cymru-expert.log <==
-2014-08-27 17:35:09,537 - cymru-expert - INFO - Source queue 'cymru-expert-queue'
-2014-08-27 17:35:09,537 - cymru-expert - INFO - Destination queues 'archive-queue'
-2014-08-27 17:35:09,537 - cymru-expert - INFO - Bot start processing
-2014-08-27 17:35:09,537 - cymru-expert - INFO - Connecting to pipeline queues
-2014-08-27 17:35:09,631 - cymru-expert - INFO - Connected to pipeline queues. Start processing
-
-==> /var/log/intelmq/deduplicator-expert.log <==
-2014-08-27 17:35:09,262 - deduplicator-expert - INFO - Source queue 'deduplicator-expert-queue'
-2014-08-27 17:35:09,262 - deduplicator-expert - INFO - Destination queues 'sanitizer-expert-queue'
-2014-08-27 17:35:09,262 - deduplicator-expert - INFO - Bot start processing
-2014-08-27 17:35:09,262 - deduplicator-expert - INFO - Connecting to pipeline queues
-2014-08-27 17:35:09,393 - deduplicator-expert - INFO - Connected to pipeline queues. Start processing
-                    </pre>
+                    <div class="col-md-3">
+                        <div class="panel panel-default" id="queues-panel">
+                            <div class="panel-heading">
+                                <h4 id="queues-panel-title">Queues<h4>
+                            </div>
+                            <div class="panel-body">
+                                <div><strong>Source Queue:</strong></div>
+                                <ul id="source-queue">
+                                </ul>
+                                <br>
+                                <div><strong>Destination Queues:</strong></div>
+                                <ul id="destination-queues">
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-9">
+                        <div class="panel panel-default" id="logs-panel">
+                            <div class="panel-heading">
+                                <h4 id="logs-panel-title">Logs<h4>
+                            </div>
+                            <div class="panel-body">
+                                <div class="panel-div">Monitoring: <span id="monitor-target">None</span></div>
+                                <div class="panel-div">Log Level: <select id="log-level-indicator" onchange="load_bot_log()">
+                                    <option value="ALL">All</option>
+                                    <option value="DEBUG">Debug</option>
+                                    <option value="INFO">Info</option>
+                                    <option value="ERROR">Error</option>
+                                    <option value="CRITICAL">Critical</option>
+                                </select></div>
+                                <br>
+                                <div class="table-responsive">
+                                    <table class="table" id="log-table">
+                                        <thead>
+                                            <tr><th>Time</th><th>Bot ID</th><th>Level</th><th>Message</th></tr>
+                                        </thead>
+                                        <tbody id="log-table-body">
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
+    </div>
     
     <!-- jQuery Version 1.11.0 -->
     <script src="plugins/jquery-1.11.0.js"></script>
@@ -135,9 +141,18 @@
     <!-- Metis Menu Plugin JavaScript -->
     <script src="plugins/metisMenu/metisMenu.js"></script>
     
+    <!-- DataTables JavaScript -->
+    <script src="plugins/dataTables/jquery.dataTables.js"></script>
+    <script src="plugins/dataTables/dataTables.bootstrap.js"></script>
+    
     <!-- Custom Theme JavaScript -->
     <script src="js/sb-admin-2.js"></script>
+    
+    <!-- Custom Application JavaScript -->
+    <script src="js/static.js"></script>
+    <script src="js/monitor.js"></script>
 
 </body>
 
 </html>
+

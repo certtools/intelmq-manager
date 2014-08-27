@@ -8,9 +8,9 @@
     );
         
     /* Uncomment this if you used the RedHat-based installation guide */
-    //$CONTROLLER = "scl enable python27 'intelmqctl %s'"
+    $CONTROLLER = "scl enable python27 'intelmqctl %s'"
     
     /* Uncomment this if you used the Debian-based installation guide */
-    $CONTROLLER = "intelmqctl %s"
+    //$CONTROLLER = "intelmqctl %s"
     
 ?>
