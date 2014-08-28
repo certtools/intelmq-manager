@@ -1,9 +1,9 @@
 <?php
     
     $FILES = array(
-        'bots' => '/tmp/bots.conf',
-        'runtime' => '/tmp/runtime.conf',
-        'startup' => '/tmp/startup.conf',
-        'pipeline' => '/tmp/pipeline.conf');
+        'bots' => '/etc/intelmq/bots.conf',
+        'runtime' => '/etc/intelmq/runtime.conf',
+        'startup' => '/etc/intelmq/startup.conf',
+        'pipeline' => '/etc/intelmq/pipeline.conf');
     
 ?>
