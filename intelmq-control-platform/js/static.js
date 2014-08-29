@@ -25,7 +25,7 @@ var STARTUP_KEYS = ['group', 'name', 'module', 'description'];
 
 var BOT_ID_REGEX = /^[0-9a-zA-Z-]+$/;
 
-var BOTS_FILE = "http://192.168.56.101/intelmq-control-platform/sb-admin-2/php/load_configs.php?file=bots";
-var RUNTIME_FILE = "http://192.168.56.101/intelmq-control-platform/sb-admin-2/php/load_configs.php?file=runtime";
-var STARTUP_FILE = "http://192.168.56.101/intelmq-control-platform/sb-admin-2/php/load_configs.php?file=startup";
-var PIPELINE_FILE = "http://192.168.56.101/intelmq-control-platform/sb-admin-2/php/load_configs.php?file=pipeline";
+var BOTS_FILE = "http://192.168.56.160/php/load_configs.php?file=bots";
+var RUNTIME_FILE = "http://192.168.56.160/php/load_configs.php?file=runtime";
+var STARTUP_FILE = "http://192.168.56.160/php/load_configs.php?file=startup";
+var PIPELINE_FILE = "http://192.168.56.160/php/load_configs.php?file=pipeline";
