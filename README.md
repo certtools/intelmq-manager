@@ -1,4 +1,4 @@
-# IntelMQ Control Platform
+# IntelMQ Manager
 
 IntelMQ Control Platform is a graphical interface to manage configurations for IntelMQ framework.
 
