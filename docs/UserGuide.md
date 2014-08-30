@@ -14,13 +14,13 @@ yum install ....
 ```
 
 
-## Install IntelMQ Control Platform
+## Install IntelMQ Manager
 
 ```
-git clone https://<your_user_account>@github.com/certtools/intelmq-control-platform.git
+git clone https://<your_user_account>@github.com/certtools/intelmq-manager.git
 ```
 
-## Update IntelMQ Control Platform
+## Update IntelMQ Manager
 
 ....
 
