@@ -7,11 +7,13 @@ var BOT_CLASS = {
 
 var bot_status = {};
 
-window.onresize = function () {
-    $('#bot-table').dataTable({
+$('#bot-table').dataTable({
         scrollY: window.innerHeight * 0.5,
         pageLength: 10
-    }); 
+    });
+
+window.onresize = function () {
+    $('#bot-table').dataTable().draw();
 };
 
 function update_bot_status() {
@@ -53,10 +55,7 @@ function update_bot_status() {
         '<button type="submit" class="btn btn-default" onclick="start_botnet()"><span class="glyphicon glyphicon-play"></span></button>' + 
         '<button type="submit" class="btn btn-default" onclick="stop_botnet()"><span class="glyphicon glyphicon-stop"></span></button>';
     
-    $('#bot-table').dataTable({
-        scrollY: window.innerHeight * 0.5,
-        pageLength: 10
-    });
+    $('#bot-table').dataTable().draw();
 }
 
 $.getJSON(MANAGEMENT_SCRIPT + '?scope=botnet&action=status')
