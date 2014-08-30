@@ -33,7 +33,7 @@ body.style.height = window.innerHeight + "px";
 body.style.overflowX = "hidden";
 body.style.overflowY = "hidden";
 
-var container = document.getElementById('page-wrapper-with-sidebar');
+var container = document.getElementById('page-wrapper-with-sidebar') || document.getElementById('page-wrapper');
 container.style.height = (window.innerHeight - container.offsetTop) + "px";
 container.style.overflowX = "hidden";
 container.style.overflowY = "hidden";

@@ -17,14 +17,15 @@
     <!-- MetisMenu CSS -->
     <link href="plugins/metisMenu/metisMenu.min.css" rel="stylesheet">
     
-    <!-- Vis.JS Plugin JavaScript -->
-    <link href="plugins/vis.js/vis.css" rel="stylesheet" type="text/css">
+    <!-- DataTables CSS -->
+    <link href="plugins/dataTables/dataTables.bootstrap.css" rel="stylesheet">
     
     <!-- Custom Fonts -->
     <link href="plugins/font-awesome-4.1.0/css/font-awesome.min.css" rel="stylesheet" type="text/css">
     
     <!-- Custom CSS -->
     <link href="css/sb-admin-2.css" rel="stylesheet">
+    <link href="css/management.css" rel="stylesheet">
 
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -96,25 +97,34 @@
         <div id="page-wrapper">
             <div class="row">
                 <div id="graph-container" class="col-md-12">
-                    <h4>This functionality, for now, is only available using the command line.</h4><br>
-                    <h4>Example:</h4>
-                    <pre>
-# intelmqctl -h
-usage: 
-        intelmqctl --bot [start|stop|restart|status] --id=cymru-expert
-        intelmqctl --botnet [start|stop|restart|status]
-        intelmqctl --list [bots]
-
-optional arguments:
-  -h, --help            show this help message and exit
-  -v, --version         show program's version number and exit
-  --id BOT_ID           bot ID
-  --bot [start|stop|restart|status]
-  --botnet [start|stop|restart|status]
-  --list [bots]
-
-description: intelmqctl is the tool to control intelmq system
-                    </pre>
+                    <div class="col-md-2">
+                        <div class="panel panel-default" id="botnet-status-panel">
+                            <div class="panel-heading">
+                                <h4>Botnet Status:<h4>
+                            </div>
+                            <div class="panel-body">
+                                <div class="panel-div">Status: <span id="botnet-status" class="bg-warning">Unknown</span></div><div id="botnet-buttons"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-10">
+                        <div class="panel panel-default" id="bot-table-panel">
+                            <div class="panel-heading">
+                                <h4>Individual Bot Status:<h4>
+                            </div>
+                            <div class="panel-body">
+                                <div class="table-responsive">
+                                    <table class="table" id="bot-table">
+                                        <thead>
+                                            <tr><th>Bot ID</th><th>Status</th><th>Actions</th></tr>
+                                        </thead>
+                                        <tbody id="bot-table-body">
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -128,8 +138,16 @@ description: intelmqctl is the tool to control intelmq system
     <!-- Metis Menu Plugin JavaScript -->
     <script src="plugins/metisMenu/metisMenu.js"></script>
     
+    <!-- DataTables JavaScript -->
+    <script src="plugins/dataTables/jquery.dataTables.js"></script>
+    <script src="plugins/dataTables/dataTables.bootstrap.js"></script>
+    
     <!-- Custom Theme JavaScript -->
     <script src="js/sb-admin-2.js"></script>
+    
+    <!-- Custom Application JavaScript -->
+    <script src="js/static.js"></script>
+    <script src="js/management.js"></script>
 
 </body>
 

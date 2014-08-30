@@ -25,7 +25,12 @@ var STARTUP_KEYS = ['group', 'name', 'module', 'description'];
 
 var BOT_ID_REGEX = /^[0-9a-zA-Z-]+$/;
 
-var BOTS_FILE = "http://192.168.56.160/php/load_configs.php?file=bots";
-var RUNTIME_FILE = "http://192.168.56.160/php/load_configs.php?file=runtime";
-var STARTUP_FILE = "http://192.168.56.160/php/load_configs.php?file=startup";
-var PIPELINE_FILE = "http://192.168.56.160/php/load_configs.php?file=pipeline";
+var ROOT = window.location.href.substring(0,window.location.href.lastIndexOf('/')+1);
+
+var LOAD_CONFIG_SCRIPT = ROOT + "php/load_configs.php";
+var MANAGEMENT_SCRIPT = ROOT + "php/controller.php"
+
+var BOTS_FILE = LOAD_CONFIG_SCRIPT + "?file=bots";
+var RUNTIME_FILE = LOAD_CONFIG_SCRIPT + "?file=runtime";
+var STARTUP_FILE = LOAD_CONFIG_SCRIPT + "?file=startup";
+var PIPELINE_FILE = LOAD_CONFIG_SCRIPT + "?file=pipeline";
