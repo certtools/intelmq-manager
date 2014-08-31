@@ -9,11 +9,16 @@ var bot_status = {};
 
 $('#bot-table').dataTable({
         scrollY: window.innerHeight * 0.5,
-        pageLength: 10
+        pageLength: 10,
+        columns: [
+            { "data": "bot_id" },
+            { "data": "bot_status" },
+            { "data": "actions" }
+        ]
     });
 
 window.onresize = function () {
-    $('#bot-table').dataTable().draw();
+    $('#bot-table').dataTable().fnDraw();
 };
 
 function update_bot_status() {
@@ -24,7 +29,7 @@ function update_bot_status() {
     var botnet_buttons_element = document.getElementById('botnet-buttons');
     var bot_table_element = document.getElementById('bot-table-body');
     
-    bot_table_element.innerHTML = '';
+    $('#bot-table').dataTable().fnClearTable();
     
     for (bot_id in bot_status) {
         var bot_class = 'bg-danger';
@@ -34,18 +39,18 @@ function update_bot_status() {
             botnet_status = 'running';
         }
         
-        var table_row = bot_table_element.insertRow(-1);
-        var bot_id_cell = table_row.insertCell(0);
-        var status_cell = table_row.insertCell(1);
-        var buttons_cell = table_row.insertCell(2);
-        
-        bot_id_cell.innerHTML = bot_id;
-        status_cell.innerHTML = bot_status[bot_id];
-        table_row.setAttribute('class', BOT_CLASS[bot_status[bot_id]]);
-        
-        buttons_cell.innerHTML = '' +
+        buttons_cell = '' +
             '<button type="submit" class="btn btn-default" onclick="start_bot(\'' + bot_id + '\')"><span class="glyphicon glyphicon-play"></span></button>' + 
             '<button type="submit" class="btn btn-default" onclick="stop_bot(\'' + bot_id + '\')"><span class="glyphicon glyphicon-stop"></span></button>';
+
+        bot_row = {
+            'bot_id': bot_id,
+            'bot_status': bot_status[bot_id],
+            'actions': buttons_cell,
+            'DT_RowClass': BOT_CLASS[bot_status[bot_id]]
+        };
+
+        $('#bot-table').dataTable().fnAddData(bot_row);
     }
     
     botnet_status_element.setAttribute('class', 'bg-' + BOT_CLASS[botnet_status]);
@@ -55,7 +60,7 @@ function update_bot_status() {
         '<button type="submit" class="btn btn-default" onclick="start_botnet()"><span class="glyphicon glyphicon-play"></span></button>' + 
         '<button type="submit" class="btn btn-default" onclick="stop_botnet()"><span class="glyphicon glyphicon-stop"></span></button>';
     
-    $('#bot-table').dataTable().draw();
+    $('#bot-table').dataTable().fnDraw();
 }
 
 $.getJSON(MANAGEMENT_SCRIPT + '?scope=botnet&action=status')
@@ -97,7 +102,7 @@ function start_botnet() {
             update_bot_status();
         })
         .fail(function () {
-            alert('Error starting botnet bot');
+            alert('Error starting botnet');
         });
 }
 
@@ -108,6 +113,6 @@ function stop_botnet() {
             update_bot_status();
         })
         .fail(function () {
-            alert('Error stopping botnet bot');
+            alert('Error stopping botnet');
         });    
 }

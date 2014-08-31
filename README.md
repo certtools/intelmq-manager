@@ -20,3 +20,15 @@ After editing the bots' configuration and pipeline, simply click "Save Configura
 ### Future Work
 
 In the near future this interface will also allow you to start and stop bots, read their logs and see other messages regarding the overall health of the system.
+
+### Reminder
+
+When using IntelMQ Manager do not forget that in order for it to change the configuration files it needs read and write access to the files in the /etc/intelmq folder (or equivalent configuration folder in your setup).
+
+Also, by default IntelMQ Manager launchs the bots using the apache account, which means that the apache account will need to have read/write access to the following folders:
+/var/log/intelmq/
+/var/run/intelmq/
+/var/lib/intelmq/
+
+In order to centralize the scripting efforts all the work is done by the 'intelmqctl' script and the web manager only calls the script with the appropriate parameters. For that reason the apache user will have to be able to execute the 'intelmqctl' script.
+
