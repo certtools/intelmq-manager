@@ -17,6 +17,11 @@ $('#bot-table').dataTable({
         ]
     });
 
+var container = document.getElementById('page-wrapper-with-sidebar') || document.getElementById('page-wrapper');
+container.style.height = (window.innerHeight - container.offsetTop) + "px";
+container.style.overflowX = "auto";
+container.style.overflowY = "auto";
+
 window.onresize = function () {
     $('#bot-table').dataTable().fnDraw();
 };
