@@ -4,6 +4,7 @@
 |--------|---|-----------|
 |Mauro Silva|mauro.silva@cert.pt|CERT.PT|
 |Tomás Lima|tomas.lima@cert.pt|CERT.PT|
+|Aaron Kaplan|kaplan@cert.at|CERT.AT|
 
 ### Start contributing
 
