@@ -28,8 +28,16 @@ $('#log-table').dataTable({
         ]
     });
 
+window.onresize = function () {
+    redraw();
+};
 
 function redraw() {
+    redraw_logs();
+    redraw_queues();
+}
+
+function redraw_logs() {
     $('#log-table').dataTable().fnClearTable();
     
     for (index in bot_logs) {
@@ -40,8 +48,11 @@ function redraw() {
         $('#log-table').dataTable().fnAddData(log_row);
     }
     
+    $('#log-table').dataTable().fnAdjustColumnSizing();
     $('#log-table').dataTable().fnDraw();
-    
+}
+
+function redraw_queues() {
     var bot_id = document.getElementById('monitor-target').innerHTML;
     
     var source_queue_element = document.getElementById('source-queue');
@@ -73,8 +84,6 @@ function redraw() {
 
         }
     }
-    
-    $('#log-table').dataTable().fnAdjustColumnSizing();
 }
 
 function load_bot_log() {
@@ -88,7 +97,7 @@ function load_bot_log() {
     $.getJSON(MANAGEMENT_SCRIPT + '?scope=log&id=' + bot_id + '&lines=' + number_of_lines + '&level=' + level)
         .done(function (data) {
             bot_logs = data;
-            redraw();
+            redraw_logs();
             $('#logs-panel-title').removeClass('waiting');
         })
         .fail(function () {
@@ -106,7 +115,7 @@ function load_bot_queues() {
     $.getJSON(MANAGEMENT_SCRIPT + '?scope=queues')
         .done(function (data) {
             bot_queues = data;
-            redraw();
+            redraw_queues();
             $('#queues-panel-title').removeClass('waiting');
         })
         .fail(function () {
