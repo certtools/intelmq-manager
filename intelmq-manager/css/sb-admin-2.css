@@ -8,14 +8,8 @@ body {
     background-color: #f8f8f8;
 }
 
-#wrapper {
-    width: 100%;
-    height: 100%;
-    overflow-y: hidden;
-    overflow-x: hidden;
-}
-
 #page-wrapper {
+    margin: 0px;
     padding: 0px;
     min-height: 568px;
     background-color: #fff;
@@ -353,26 +347,31 @@ table.dataTable thead .sorting:after {
     color: #df8a13;
 }
 
-.container .jumbotron {
-    margin-top:30px;
-    margin-bottom:30px;
+.jumbotron {
+    margin-bottom: 15px;
+    margin-top: 15px;
+    margin-left: auto;
+    margin-right: auto;
     padding: 0px;
     text-align: center;
+    height: 100%;
+    max-width: 90%;
 }
 
-.container .jumbotron .page-header-text {
+.jumbotron .page-header-text {
     background-color: #000000;
     background-size: contain;
-    height: 300px;
     max-width: 100%;
 }
 
-.container .jumbotron .page-header-text span {    
+.jumbotron .page-header-text span {    
     color: #ffffff;
     text-align: center;
-    font-size: 60px;
     height: 100%;
-    line-height: 300px;
+}
+
+.jumbotron-row {
+    margin-top: 15px;
 }
 
 .center-row {
