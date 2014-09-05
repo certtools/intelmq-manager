@@ -9,6 +9,7 @@ var LEVEL_CLASS = {
 
 var RELOAD_QUEUES_EVERY = 1; /* 2 seconds */
 var RELOAD_LOGS_EVERY = 30; /* 30 seconds */
+var LOAD_X_LOG_LINES = 30;
 
 var bot_logs = {};
 var bot_queues = {};
@@ -94,7 +95,7 @@ function redraw_queues() {
 function load_bot_log() {
     $('#logs-panel-title').addClass('waiting');
     
-    var number_of_lines = 100;
+    var number_of_lines = LOAD_X_LOG_LINES;
     
     var bot_id = document.getElementById('monitor-target').innerHTML;
     var level = document.getElementById('log-level-indicator').value;
