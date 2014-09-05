@@ -7,13 +7,18 @@ var LEVEL_CLASS = {
     'CRITICAL': 'danger'
 }
 
-var RELOAD_EVERY = 2; /* 10 seconds */
+var RELOAD_QUEUES_EVERY = 1; /* 2 seconds */
+var RELOAD_LOGS_EVERY = 30; /* 30 seconds */
 
 var bot_logs = {};
 var bot_queues = {};
-var reload_data = setInterval(function () {
+var reload_queues = setInterval(function () {
     load_bot_queues();
-}, RELOAD_EVERY * 1000);
+}, RELOAD_QUEUES_EVERY * 1000);
+
+var reload_logs = setInterval(function () {
+    load_bot_logs();
+}, RELOAD_LOGS_EVERY * 1000);
 
 
 $('#log-table').dataTable({
@@ -103,8 +108,6 @@ function load_bot_log() {
         .fail(function () {
             alert('Error loading bot logs');
         });
-        
-    load_bot_queues();
 }
 
 function load_bot_queues() {
@@ -126,6 +129,7 @@ function load_bot_queues() {
 function select_bot(bot_id) {    
     document.getElementById('monitor-target').innerHTML = bot_id;
     load_bot_log();
+    load_bot_queues();
 }
 
 $.getJSON(MANAGEMENT_SCRIPT + '?scope=botnet&action=status')
