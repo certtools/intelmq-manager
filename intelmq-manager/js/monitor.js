@@ -23,9 +23,9 @@ var reload_logs = setInterval(function () {
 
 
 $('#log-table').dataTable({
-        scrollY: window.innerHeight * 0.5,
-        pageLength: 10,
-        order: [0, 'asc'],
+        lengthMenu: [[5, 10, 25, -1], [5, 10, 25, "All"]],
+        pageLength: 5,
+        order: [0, 'desc'],
         columns: [
             { "data": "date" },
             { "data": "bot_id" },

@@ -8,8 +8,8 @@ var BOT_CLASS = {
 var bot_status = {};
 
 $('#bot-table').dataTable({
-        scrollY: window.innerHeight * 0.5,
-        pageLength: 10,
+        lengthMenu: [[5, 10, 25, -1], [5, 10, 25, "All"]],
+        pageLength: 5,
         columns: [
             { "data": "bot_id" },
             { "data": "bot_status" },
@@ -18,6 +18,7 @@ $('#bot-table').dataTable({
     });
 
 window.onresize = function () {
+    $('#log-table').dataTable().fnAdjustColumnSizing();
     $('#bot-table').dataTable().fnDraw();
 };
 
@@ -60,6 +61,7 @@ function update_bot_status() {
         '<button type="submit" class="btn btn-default" onclick="start_botnet()"><span class="glyphicon glyphicon-play"></span></button>' + 
         '<button type="submit" class="btn btn-default" onclick="stop_botnet()"><span class="glyphicon glyphicon-stop"></span></button>';
     
+    $('#log-table').dataTable().fnAdjustColumnSizing();
     $('#bot-table').dataTable().fnDraw();
 }
 
