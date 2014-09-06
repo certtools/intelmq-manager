@@ -452,7 +452,7 @@ table.dataTable thead .sorting:after {
 
 #graph-manipulation-saveDiv {
     position: absolute;
-    right: 5%;
+    right: 20px;
     height: 30px;
     z-index: 20;
 }
@@ -472,6 +472,31 @@ table.dataTable thead .sorting:after {
 
 @media(min-width:768px) {
     #graph-manipulationLabel-save {
+        display: block;
+    }
+}
+
+#graph-manipulation-clearDiv {
+    position: absolute;
+    right: 180px;
+    height: 30px;
+    z-index: 20;
+}
+
+#graph-manipulate-clearState {
+    background-image: url("../images/trashicon-20.png");
+    padding-left: 15px;
+    padding-right: 15px;
+    position: relative;
+    z-index:20;
+}
+
+#graph-manipulationLabel-clear {
+    display: none;
+}
+
+@media(min-width:768px) {
+    #graph-manipulationLabel-clear {
         display: block;
     }
 }
@@ -542,4 +567,8 @@ div.graph-manipulationUI.notification{
 
 .row {
     margin: 0px;
+}
+
+.navbar-config {
+    margin-right: 16px;
 }

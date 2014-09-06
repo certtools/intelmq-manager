@@ -108,12 +108,7 @@ function load_bots(config) {
     
     $('#side-menu').metisMenu({'restart': true});
     
-    if (window.location.hash == '#load') {
-        load_file(RUNTIME_FILE, load_runtime);
-    } else {
-        draw();
-        resize();
-    }
+    load_file(RUNTIME_FILE, load_runtime);
 }
 
 function load_runtime(config) {
@@ -346,10 +341,15 @@ function clearPopUp() {
 function draw() {
     load_html_elements();
     
-    var data = {
-        nodes: convert_nodes(nodes),
-        edges: convert_edges(edges)
+    var data = {};
+    
+    if (window.location.hash == '#load') {
+        data = {
+            nodes: convert_nodes(nodes),
+            edges: convert_edges(edges)
+        };
     }
+
     var options = {
         physics: {
             barnesHut: {
