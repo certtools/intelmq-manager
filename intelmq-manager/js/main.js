@@ -9,7 +9,11 @@ var span = null;
 var table = null;
 
 $(window).on('hashchange', function() {
-  location.reload();
+    location.reload();
+});
+
+$(window).on('unload', function() {
+    return "If you have not saved your work you'll loose the changes you have made. Do you want to continue?";
 });
 
 function resize() {
@@ -47,7 +51,8 @@ function load_file(url, callback) {
         })
         .fail(function (jqxhr, textStatus, error) {
             var err = textStatus + ", " + error;
-            alert('Failed to obtain JSON: ' + err);
+            alert('Failed to obtain JSON: ' + url + ' with error: ' + err);
+            callback({});
         });
 }
 
@@ -108,12 +113,7 @@ function load_bots(config) {
     
     $('#side-menu').metisMenu({'restart': true});
     
-    if (window.location.hash == '#load') {
-        load_file(RUNTIME_FILE, load_runtime);
-    } else {
-        draw();
-        resize();
-    }
+    load_file(RUNTIME_FILE, load_runtime);
 }
 
 function load_runtime(config) {
@@ -294,7 +294,14 @@ function saveData(data,callback) {
     for(var i = 0; i < inputs.length; i++) {
         if(inputs[i].id.indexOf('node-') == 0) {
             var key = inputs[i].id.replace('node-', '');
-            node[key] = inputs[i].value;
+            var value = null;
+            
+            try {
+                value = JSON.parse(inputs[i].value);
+            } catch (err) {
+                value = inputs[i].value;
+            }
+            node[key] = value;
         }
     }
     
@@ -346,10 +353,15 @@ function clearPopUp() {
 function draw() {
     load_html_elements();
     
-    var data = {
-        nodes: convert_nodes(nodes),
-        edges: convert_edges(edges)
+    var data = {};
+    
+    if (window.location.hash == '#load') {
+        data = {
+            nodes: convert_nodes(nodes),
+            edges: convert_edges(edges)
+        };
     }
+
     var options = {
         physics: {
             barnesHut: {
@@ -362,6 +374,7 @@ function draw() {
         },
         tooltip: {
             fontFace: 'arial',
+            delay: 1000
         },
         nodes: {
             fontFace: 'arial'

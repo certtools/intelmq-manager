@@ -24,10 +24,12 @@ function read_startup_conf(config, nodes) {
     for (id in config) {
         var bot = config[id];
         
-        nodes[id]['group'] = bot['group'];
-        nodes[id]['name'] = bot['name'];
-        nodes[id]['module'] = bot['module'];
-        nodes[id]['description'] = bot['description'];
+        if (id in nodes) {
+            nodes[id]['group'] = bot['group'];
+            nodes[id]['name'] = bot['name'];
+            nodes[id]['module'] = bot['module'];
+            nodes[id]['description'] = bot['description'];
+        }
     }
     
     return nodes;

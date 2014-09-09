@@ -21,6 +21,14 @@ var GROUP_COLORS = {
     'Output': '#FFFF00'    
 }
 
+var LEVEL_CLASS = {
+    'DEBUG': 'success',
+    'INFO': 'info',
+    'WARNING': 'warning',
+    'ERROR': 'danger',
+    'CRITICAL': 'danger'
+}
+
 var STARTUP_KEYS = ['group', 'name', 'module', 'description'];
 
 var BOT_ID_REGEX = /^[0-9a-zA-Z-]+$/;
@@ -34,3 +42,7 @@ var BOTS_FILE = LOAD_CONFIG_SCRIPT + "?file=bots";
 var RUNTIME_FILE = LOAD_CONFIG_SCRIPT + "?file=runtime";
 var STARTUP_FILE = LOAD_CONFIG_SCRIPT + "?file=startup";
 var PIPELINE_FILE = LOAD_CONFIG_SCRIPT + "?file=pipeline";
+
+var RELOAD_QUEUES_EVERY = 1; /* 2 seconds */
+var RELOAD_LOGS_EVERY = 30; /* 30 seconds */
+var LOAD_X_LOG_LINES = 30;

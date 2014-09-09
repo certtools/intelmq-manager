@@ -1,38 +1,21 @@
 
-var LEVEL_CLASS = {
-    'DEBUG': 'success',
-    'INFO': 'info',
-    'WARNING': 'warning',
-    'ERROR': 'danger',
-    'CRITICAL': 'danger'
-}
-
-var RELOAD_QUEUES_EVERY = 1; /* 2 seconds */
-var RELOAD_LOGS_EVERY = 30; /* 30 seconds */
-var LOAD_X_LOG_LINES = 30;
-
 var bot_logs = {};
 var bot_queues = {};
-var reload_queues = setInterval(function () {
-    load_bot_queues();
-}, RELOAD_QUEUES_EVERY * 1000);
-
-var reload_logs = setInterval(function () {
-    load_bot_logs();
-}, RELOAD_LOGS_EVERY * 1000);
+var reload_queues = null;
+var reload_logs = null;
 
 
 $('#log-table').dataTable({
-        lengthMenu: [[5, 10, 25, -1], [5, 10, 25, "All"]],
-        pageLength: 5,
-        order: [0, 'desc'],
-        columns: [
-            { "data": "date" },
-            { "data": "bot_id" },
-            { "data": "log_level" },
-            { "data": "message" }
-        ]
-    });
+    lengthMenu: [[5, 10, 25, -1], [5, 10, 25, "All"]],
+    pageLength: 5,
+    order: [0, 'desc'],
+    columns: [
+        { "data": "date" },
+        { "data": "bot_id" },
+        { "data": "log_level" },
+        { "data": "message" }
+    ]
+});
 
 window.onresize = function () {
     redraw();
@@ -131,6 +114,23 @@ function select_bot(bot_id) {
     document.getElementById('monitor-target').innerHTML = bot_id;
     load_bot_log();
     load_bot_queues();
+    
+    if(reload_queues != null) {
+        clearInterval(reload_queues);
+    }
+    
+    if(reload_logs != null) {
+        clearInterval(reload_logs);
+    }
+    
+    reload_queues = setInterval(function () {
+        load_bot_queues();
+    }, RELOAD_QUEUES_EVERY * 1000);
+
+
+    reload_logs = setInterval(function () {
+        load_bot_logs();
+    }, RELOAD_LOGS_EVERY * 1000);
 }
 
 $.getJSON(MANAGEMENT_SCRIPT + '?scope=botnet&action=status')

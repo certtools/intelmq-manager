@@ -15732,6 +15732,21 @@ var graphMixinLoaders = {
            save_data_on_files(); 
         });
       }
+      
+    if (this.clearDiv === undefined) {
+        this.clearDiv = document.createElement('div');
+        this.clearDiv.className = 'graph-manipulation-clearDiv';
+        this.clearDiv.id = 'graph-manipulation-clearDiv';
+        this.clearDiv.style.display = 'block';
+        this.containerElement.insertBefore(this.clearDiv, this.frame);
+        this.clearDiv.innerHTML = "" +
+          "<div class='graph-manipulationUI clear-state' id='graph-manipulate-clearState'>" +
+            "<span class='graph-manipulationLabel' id='graph-manipulationLabel-clear'>"+this.constants.labels['clearState'] +"</span></div>";
+            
+        $("#graph-manipulation-clearDiv").children().on('click', function (event) {
+           window.location.assign('#new');
+        });
+      }
       /* End of edit for IntelMQCP */
 
       // load the manipulation functions
@@ -15963,7 +15978,8 @@ function Graph (container, data, options) {
       editBoundError:"No edit function has been bound to this button.",
       deleteError:"The function for delete does not support two arguments (data, callback).",
       deleteClusterError:"Clusters cannot be deleted.",
-      saveState:"Save Configuration" /* Changed for IntelMQCP */
+      saveState:"Save Configuration", /* Changed for IntelMQCP */
+      clearState:"Clear Configuration" /* Changed for IntelMQCP */
     },
     tooltip: {
       delay: 300,
