@@ -9,7 +9,7 @@ var bot_status = {};
 
 $('#bot-table').dataTable({
         lengthMenu: [[5, 10, 25, -1], [5, 10, 25, "All"]],
-        pageLength: 5,
+        pageLength: -1,
         columns: [
             { "data": "bot_id" },
             { "data": "bot_status" },
