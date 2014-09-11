@@ -59,3 +59,43 @@ fastcgi.server += ( ".php" =>
 
 ### basic authentication
 
+
+## Apache
+
+Start by installing Apache and PHP
+
+```
+sudo apt-get install apache2
+
+sudo apt-get install php5
+
+sudo apt-get install libapache2-mod-php5
+```
+
+After Apache and PHP are installed get the latest version of IntelMQ Manager and copy it's contents to your chosen directory. Configure Apache accordingly and make sure to change php/config.php to put the correct command and the correct paths for configuration files.
+
+### Basic Authentication
+
+If you want to enable basic authentication on IntelMQ Manager edit the httpd.conf and insert 
+
+```
+    AuthType basic 
+    AuthName <realm name>
+
+    AuthBasicProvider file
+    AuthUserFile <password file path>
+```
+
+Where <realm name> is the string that identifies the realm that should be used and <password file path> is the path to the file created with the htpasswd command.
+
+To create a new file do:
+
+```
+    htpasswd -c <password file path> <username>
+```
+
+To edit an existing one do:
+
+```
+    htpasswd <password file path> <username>
+```
