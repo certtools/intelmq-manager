@@ -72,7 +72,13 @@ sudo apt-get install php5
 sudo apt-get install libapache2-mod-php5
 ```
 
-After Apache and PHP are installed get the latest version of IntelMQ Manager and copy it's contents to your chosen directory. Configure Apache accordingly and make sure to change php/config.php to put the correct command and the correct paths for configuration files.
+After Apache and PHP are installed get the latest version of IntelMQ Manager and copy it's contents to your chosen directory. Configure Apache accordingly and make sure to change php/config.php to put the correct command and the correct paths for configuration files. Also, don't forget to give read/write access to the following folders:
+
+```
+/var/log/intelmq/
+/var/run/intelmq/
+/var/lib/intelmq/
+```
 
 ### Basic Authentication
 
