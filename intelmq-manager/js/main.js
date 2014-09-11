@@ -25,6 +25,7 @@ function resize() {
     
     if (graph != null && graph != undefined) {
         graph.redraw();
+        graph.zoomExtent();
     }
     
     load_html_elements();
@@ -467,6 +468,10 @@ function draw() {
     };
     
     graph = new vis.Graph(graph_container, data, options);
+
+    setTimeout(function () {
+        graph.zoomExtent();
+    }, 2000);
 }
 
 /*
