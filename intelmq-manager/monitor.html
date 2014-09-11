@@ -88,6 +88,7 @@
         <!-- Page Content -->
         <div id="page-wrapper-with-sidebar">
             <div class="row">
+                <div class="col-md-12"><h3>Monitoring: <span id="monitor-target">All</span></h3></div>
                 <div id="graph-container" class="col-md-12">
                     <div class="col-md-12">
                         <div class="panel panel-default" id="queues-panel">
@@ -95,7 +96,7 @@
                                 <h4 id="queues-panel-title">Queues<h4>
                             </div>
                             <div class="panel-body">
-                                <div class="col-md-6">
+                                <div id="source-queue-table-div" class="col-md-6">
                                     <table class="table">
                                         <thead>
                                             <tr><th>Source Queue</th><th>Count</th></tr>
@@ -104,10 +105,10 @@
                                         </tbody>
                                     </table>
                                 </div>
-                                <div class="col-md-6">
+                                <div id="destination-queues-table-div" class="col-md-6">
                                     <table class="table">
                                         <thead>
-                                            <tr><th>Destination Queue</th><th>Count</th></tr>
+                                            <tr><th id="destination-queue-header">Destination Queue</th><th>Count</th></tr>
                                         </thead>
                                         <tbody id="destination-queues">
                                         </tbody>
@@ -122,7 +123,6 @@
                                 <h4 id="logs-panel-title">Logs<h4>
                             </div>
                             <div class="panel-body">
-                                <div class="panel-div">Monitoring: <span id="monitor-target">None</span></div>
                                 <div class="panel-div">Log Level: <select id="log-level-indicator" onchange="load_bot_log()">
                                     <option value="ALL">All</option>
                                     <option value="DEBUG">Debug</option>

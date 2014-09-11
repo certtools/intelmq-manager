@@ -1,4 +1,6 @@
 
+var ALL_BOTS = 'All Bots';
+
 var bot_logs = {};
 var bot_queues = {};
 var reload_queues = null;
@@ -50,7 +52,30 @@ function redraw_queues() {
     source_queue_element.innerHTML = '';
     destination_queues_element.innerHTML = '';
     
-    var bot_info = bot_queues[bot_id];
+    var bot_info = {};
+    if (bot_id == ALL_BOTS) {
+        bot_info['source_queues'] = {};
+        bot_info['destination_queues'] = {};
+        
+        for (index in bot_queues) {
+            var source_queue = bot_queues[index]['source_queue'];
+            var destination_queues = bot_queues[index]['destination_queues'];
+            
+            if (source_queue) {
+                bot_info['destination_queues'][source_queue[0]] = source_queue;
+            }
+            
+            if (destination_queues) {
+                for (index in destination_queues) {
+                    bot_info['destination_queues'][destination_queues[index][0]] = destination_queues[index];
+                }
+            }
+        }
+    } else {
+        var bot_info = bot_queues[bot_id];
+    }
+
+    
     
     if (bot_info) {
         if (bot_info['source_queue']) {
@@ -62,14 +87,21 @@ function redraw_queues() {
             cell1.innerHTML = bot_info['source_queue'][1]
         }
         
+        var dst_queues = [];
         for (index in bot_info['destination_queues']) {
+            dst_queues.push(bot_info['destination_queues'][index]);
+        }
+        
+        dst_queues.sort();
+        
+        for (index in dst_queues) {
             var destination_queue = destination_queues_element.insertRow();
             
             var cell0 = destination_queue.insertCell(0);
-            cell0.innerHTML = bot_info['destination_queues'][index][0];
+            cell0.innerHTML = dst_queues[index][0];
             
             var cell1 = destination_queue.insertCell(1);
-            cell1.innerHTML = bot_info['destination_queues'][index][1];
+            cell1.innerHTML = dst_queues[index][1];
 
         }
     }
@@ -111,10 +143,6 @@ function load_bot_queues() {
 }
 
 function select_bot(bot_id) {    
-    document.getElementById('monitor-target').innerHTML = bot_id;
-    load_bot_log();
-    load_bot_queues();
-    
     if(reload_queues != null) {
         clearInterval(reload_queues);
     }
@@ -123,27 +151,52 @@ function select_bot(bot_id) {
         clearInterval(reload_logs);
     }
     
+    document.getElementById('monitor-target').innerHTML = bot_id;
+    load_bot_queues();
+    
     reload_queues = setInterval(function () {
         load_bot_queues();
     }, RELOAD_QUEUES_EVERY * 1000);
 
-
-    reload_logs = setInterval(function () {
-        load_bot_logs();
-    }, RELOAD_LOGS_EVERY * 1000);
+    if(bot_id != ALL_BOTS) {
+        $("#logs-panel").css('display', 'block');
+        $("#source-queue-table-div").css('display', 'block');
+        $("#destination-queues-table-div").removeClass('col-md-12');
+        $("#destination-queues-table-div").addClass('col-md-6');
+        $("#destination-queue-header").html("Destination Queue");
+        
+        load_bot_log();
+        reload_logs = setInterval(function () {
+            load_bot_log();
+        }, RELOAD_LOGS_EVERY * 1000);
+    } else {
+        $("#logs-panel").css('display', 'none');
+        $("#source-queue-table-div").css('display', 'none');
+        $("#destination-queues-table-div").removeClass('col-md-6');
+        $("#destination-queues-table-div").addClass('col-md-12');
+        $("#destination-queue-header").html("Queue");
+    }
 }
 
 $.getJSON(MANAGEMENT_SCRIPT + '?scope=botnet&action=status')
     .done(function (data) {
         var sidemenu = document.getElementById('side-menu');
         
+        var li_element = document.createElement('li');
+        var link_element = document.createElement('a');        
+        link_element.innerHTML = ALL_BOTS;
+        link_element.setAttribute('onclick', 'select_bot("' + ALL_BOTS + '")');
+            
+        li_element.appendChild(link_element);
+        sidemenu.appendChild(li_element);        
+        
         var bots_ids = Object.keys(data);
         bots_ids.sort();
         
         for (index in bots_ids) {
             var bot_id = bots_ids[index];
-            var li_element = document.createElement('li');
-            var link_element = document.createElement('a');
+            li_element = document.createElement('li');
+            link_element = document.createElement('a');
             
             link_element.innerHTML = bot_id;
             link_element.setAttribute('onclick', 'select_bot("' + bot_id + '")');
@@ -156,4 +209,4 @@ $.getJSON(MANAGEMENT_SCRIPT + '?scope=botnet&action=status')
         alert('Error loading botnet status');
     });
     
-    // TODO: 
+select_bot(ALL_BOTS);

@@ -44,5 +44,5 @@ var STARTUP_FILE = LOAD_CONFIG_SCRIPT + "?file=startup";
 var PIPELINE_FILE = LOAD_CONFIG_SCRIPT + "?file=pipeline";
 
 var RELOAD_QUEUES_EVERY = 1; /* 2 seconds */
-var RELOAD_LOGS_EVERY = 30; /* 30 seconds */
+var RELOAD_LOGS_EVERY = 300; /* 300 seconds */
 var LOAD_X_LOG_LINES = 30;

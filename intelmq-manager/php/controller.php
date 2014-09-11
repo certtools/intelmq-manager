@@ -2,15 +2,26 @@
     
     require 'config.php';
     
-    $scope = $_GET['scope'];
-    $id = $_GET['id'];
+    $scope = '';
+    $id = '';
+    
+    if (array_key_exists('scope', $_GET)) {
+        $scope = $_GET['scope'];
+    }
+    
+    if (array_key_exists('id', $_GET)) {
+        $id = $_GET['id'];
+    }
     
     $id_regex = '/[0-9a-zA-Z]+/';
     $lines_regex = '/[0-9]+/';
     
     $arguments = '';
     
-    if ($_GET['action'] == 'start' || $_GET['action'] == 'stop' || $_GET['action'] == 'restart' || $_GET['action'] == 'status') {
+    if (array_key_exists('action', $_GET) && ($_GET['action'] == 'start' || 
+                                               $_GET['action'] == 'stop' || 
+                                               $_GET['action'] == 'restart' || 
+                                               $_GET['action'] == 'status')) {
         $action = $_GET['action'];
     } else {
         $action = "";
@@ -39,7 +50,10 @@
         
         $lines = $_GET['lines'];
         
-        if ($_GET['level'] == 'DEBUG' || $_GET['level'] == 'INFO' || $_GET['level'] == 'ERROR' || $_GET['level'] == 'CRITICAL') {
+        if ($_GET['level'] == 'DEBUG' || 
+            $_GET['level'] == 'INFO' || 
+            $_GET['level'] == 'ERROR' || 
+            $_GET['level'] == 'CRITICAL') {
             $level = $_GET['level'];
         } else {
             $level = 'DEBUG';
@@ -53,6 +67,8 @@
     }
     
     $command = sprintf($CONTROLLER, $arguments);
+    
+    error_log($command);
     
     set_time_limit(10);
     

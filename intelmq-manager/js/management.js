@@ -61,21 +61,28 @@ function update_bot_status() {
         '<button type="submit" class="btn btn-default" onclick="start_botnet()"><span class="glyphicon glyphicon-play"></span></button>' + 
         '<button type="submit" class="btn btn-default" onclick="stop_botnet()"><span class="glyphicon glyphicon-stop"></span></button>';
     
+    $('#botnet-status-panel-title').removeClass('waiting');
+    
     $('#log-table').dataTable().fnAdjustColumnSizing();
     $('#bot-table').dataTable().fnDraw();
+    
 }
 
-$.getJSON(MANAGEMENT_SCRIPT + '?scope=botnet&action=status')
-    .done(function (data) {
-        bot_status = data;
-        update_bot_status();
-    })
-    .fail(function () {
-        alert('Error loading botnet status');
-    });
+function get_botnet_status() {
+    $('#botnet-status-panel-title').addClass('waiting');
+    $.getJSON(MANAGEMENT_SCRIPT + '?scope=botnet&action=status')
+        .done(function (data) {
+            bot_status = data;
+            update_bot_status();
+        })
+        .fail(function () {
+            alert('Error loading botnet status');
+        });
+}
     
     
 function start_bot(bot_id) {
+    $('#botnet-status-panel-title').addClass('waiting');
     $.getJSON(MANAGEMENT_SCRIPT + '?scope=bot&action=start&id=' + bot_id)
         .done(function (status) {
             bot_status[bot_id] = status;
@@ -87,6 +94,7 @@ function start_bot(bot_id) {
 }
 
 function stop_bot(bot_id) {
+    $('#botnet-status-panel-title').addClass('waiting');
     $.getJSON(MANAGEMENT_SCRIPT + '?scope=bot&action=stop&id=' + bot_id)
         .done(function (status) {
             bot_status[bot_id] = status;
@@ -98,6 +106,7 @@ function stop_bot(bot_id) {
 }
 
 function start_botnet() {
+    $('#botnet-status-panel-title').addClass('waiting');
     $.getJSON(MANAGEMENT_SCRIPT + '?scope=botnet&action=start')
         .done(function (status) {
             bot_status = status;
@@ -109,6 +118,7 @@ function start_botnet() {
 }
 
 function stop_botnet() {
+    $('#botnet-status-panel-title').addClass('waiting');
     $.getJSON(MANAGEMENT_SCRIPT + '?scope=botnet&action=stop')
         .done(function (status) {
             bot_status = status;
@@ -118,3 +128,5 @@ function stop_botnet() {
             alert('Error stopping botnet');
         });    
 }
+
+get_botnet_status();
