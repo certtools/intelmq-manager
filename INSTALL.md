@@ -1,5 +1,7 @@
 This document assumes you install on a Debian or Ubuntu system.
 
+# Installing intelmq-manager on a webserver
+
 ## Apache
 
 Start by installing Apache and PHP
@@ -63,9 +65,6 @@ To edit an existing one do:
 ```
     htpasswd <password file path> <username>
 ```
-
-
-# Installing intelmq-controller on a webserver
 
 ## lighttpd
 
