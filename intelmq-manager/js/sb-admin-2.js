@@ -14,8 +14,6 @@ function resize_handler() {
     var body = document.getElementsByTagName('body')[0];
     body.style.height = window_height + "px";
     body.style.width = window_width + "px";
-    body.style.overflowX = "hidden";
-    body.style.overflowY = "hidden";
 
     var container = document.getElementById('page-wrapper-with-sidebar') || document.getElementById('page-wrapper');
     container.style.height = (window_height - container.offsetTop) + "px";

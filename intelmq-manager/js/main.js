@@ -18,12 +18,6 @@ $(window).on('unload', function() {
 
 function resize() {
     // Resize body
-    var body = document.getElementsByTagName('body')[0];
-    body.style.height = window.innerHeight + "px";
-    body.style.overflowX = "hidden";
-    body.style.overflowY = "hidden";
-    
-    
     var graph_container = document.getElementById('graph-container');
     graph_container.style.height = (window.innerHeight - graph_container.offsetTop) + "px";
     graph_container.style.overflowX = "auto";

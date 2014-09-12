@@ -6,6 +6,13 @@
 
 body {
     background-color: #f8f8f8;
+    overflow: auto;
+}
+
+@media(min-width:768px) {
+    body {
+        overflow: hidden;
+    }
 }
 
 #page-wrapper {
@@ -395,7 +402,7 @@ table.dataTable thead .sorting:after {
     display:none;
     position:absolute;
     top:25%;
-    left:25%;
+    left:5%;
     margin: auto;
     z-index:299;
     background-color: #f9f9f9;
@@ -403,8 +410,15 @@ table.dataTable thead .sorting:after {
     border-width:3px;
     border-color: #5394ed;
     padding:10px;
-    width:50%;
+    width:90%;
     text-align: center;
+}
+
+@media(min-width:768px) {
+    #graph-popUp {
+        left: 25%;
+        width: 50%;
+    }
 }
 
 #graph-popUp-fields {
@@ -478,7 +492,7 @@ table.dataTable thead .sorting:after {
 
 #graph-manipulation-clearDiv {
     position: absolute;
-    right: 180px;
+    right: 60px;
     height: 30px;
     z-index: 20;
 }
@@ -498,6 +512,10 @@ table.dataTable thead .sorting:after {
 @media(min-width:768px) {
     #graph-manipulationLabel-clear {
         display: block;
+    }
+
+    #graph-manipulation-clearDiv {
+        right: 180px;
     }
 }
 
