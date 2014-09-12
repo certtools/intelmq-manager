@@ -42,6 +42,9 @@ function resize_handler() {
     if (height > topOffset) {
         $("#page-wrapper").css("min-height", (height) + "px");
     }
+
+    $('#side-menu').css('max-height', height + 'px');
+    $('#side-menu').css('overflow', 'auto');
 }
 
 $(window).bind("load resize", resize_handler);
