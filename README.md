@@ -32,3 +32,7 @@ Also, by default IntelMQ Manager launchs the bots using the apache account, whic
 
 In order to centralize the scripting efforts all the work is done by the 'intelmqctl' script and the web manager only calls the script with the appropriate parameters. For that reason the apache user will have to be able to execute the 'intelmqctl' script.
 
+
+## Licence
+
+This software is licensed under GNU Affero General Public License version 3
