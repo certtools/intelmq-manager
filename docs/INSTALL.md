@@ -6,9 +6,9 @@ It also assumes you have already downloaded and installed IntelMQ. For the Manag
 
 # Installing intelmq-manager on a webserver
 
-## Apache
+## Apache httpd
 
-Start by installing Apache and PHP
+Start by installing Apache httpd and PHP
 
 ```
 apt-get install apache2 php5 libapache2-mod-php5
