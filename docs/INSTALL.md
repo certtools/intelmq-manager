@@ -1,3 +1,5 @@
+# Requirements
+
 This document assumes you install on a Debian or Ubuntu system. 
 
 It also assumes you have already downloaded and installed IntelMQ. For the Management and Monitor to work you need to have the Manager in the same machine as IntelMQ. If you want to work only with the Configuration part of the Manager you can do it, but you are going to have to create a /etc/intelmq folder and copy the BOTS file from IntelMQ to it.
@@ -9,22 +11,15 @@ It also assumes you have already downloaded and installed IntelMQ. For the Manag
 Start by installing Apache and PHP
 
 ```
-sudo apt-get install apache2
-
-sudo apt-get install php5
-
-sudo apt-get install libapache2-mod-php5
+apt-get install apache2 php5 libapache2-mod-php5
 ```
 
 After Apache and PHP are installed get the latest version of IntelMQ Manager and copy it's contents to your chosen directory. Example:
 
 ```
-sudo apt-get install git
-
+apt-get install git
 git clone https://<your-github-account>@github.com/certtools/intelmq-manager.git
-
 cd intelmq-manager/intelmq-manager
-
 cp -r * /var/www/html/
 ```
 
