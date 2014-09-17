@@ -4,6 +4,10 @@ IntelMQ Manager is a graphical interface to manage configurations for IntelMQ fr
 
 ![Main Interface](docs/screenshots/index.png?raw=true "Entry Point")
 
+## How to Install
+
+See [INSTALL](https://github.com/certtools/intelmq-manager/blob/master/docs/INSTALL.md).
+
 ### Pipeline
 This interface lets you visually configure the whole IntelMQ pipeline and the parameters of every single bot.
 You will be able to see the pipeline in a graph-like visualization like this:
