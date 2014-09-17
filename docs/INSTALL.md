@@ -4,9 +4,7 @@ This document assumes you install on a Debian or Ubuntu system.
 
 It also assumes you have already downloaded and installed IntelMQ. For the Management and Monitor to work you need to have the Manager in the same machine as IntelMQ. If you want to work only with the Configuration part of the Manager you can do it, but you are going to have to create a /etc/intelmq folder and copy the BOTS file from IntelMQ to it.
 
-# Installing intelmq-manager on a webserver
-
-## Apache httpd
+# Install
 
 Start by installing Apache httpd and PHP
 
