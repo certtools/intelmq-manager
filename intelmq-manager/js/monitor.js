@@ -7,7 +7,7 @@ var reload_logs = null;
 
 $('#log-table').dataTable({
     lengthMenu: [[5, 10, 25, -1], [5, 10, 25, "All"]],
-    pageLength: -1,
+    pageLength: 10,
     order: [0, 'desc'],
     columns: [
         { "data": "date" },
