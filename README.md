@@ -2,8 +2,6 @@
 
 IntelMQ Manager is a graphical interface to manage configurations for IntelMQ framework.
 
-![Main Interface](docs/screenshots/index.png?raw=true "Entry Point")
-
 ## How to Install
 
 See [INSTALL](https://github.com/certtools/intelmq-manager/blob/master/docs/INSTALL.md).
