@@ -47,7 +47,7 @@ If you want to enable basic authentication on IntelMQ Manager edit the httpd.con
     AuthUserFile <password file path>
 ```
 
-Where <realm name> is the string that identifies the realm that should be used and <password file path> is the path to the file created with the htpasswd command.
+Where &lt;realm name&gt; is the string that identifies the realm that should be used and &lt;password file path&gt; is the path to the file created with the htpasswd command.
 
 To create a new file do:
 
