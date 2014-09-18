@@ -54,13 +54,9 @@
     
     $command = sprintf($CONTROLLER, $arguments);
     
-    error_log('Before command executes. ' . $command);
-    
     set_time_limit(10);
     
     $return = shell_exec($command);
-    
-    error_log('After command executes. ' . $command);
     
     echo $return;
     
