@@ -9,33 +9,33 @@ It also assumes you have already downloaded and installed IntelMQ. For the Manag
 Start by installing Apache httpd and PHP
 
 ```
-apt-get install apache2 php5 libapache2-mod-php5
+    apt-get install apache2 php5 libapache2-mod-php5
 ```
 
 After Apache and PHP are installed get the latest version of IntelMQ Manager and copy it's contents to your chosen directory. Example:
 
 ```
-apt-get install git
-git clone https://<your-github-account>@github.com/certtools/intelmq-manager.git
-cd intelmq-manager/intelmq-manager
-cp -r * /var/www/html/
+    apt-get install git
+    git clone https://<your-github-account>@github.com/certtools/intelmq-manager.git
+    cd intelmq-manager/intelmq-manager
+    cp -r * /var/www/html/
 ```
 
 Configure Apache accordingly and make sure to change php/config.php to put the correct command and the correct paths for configuration files. If intelmqctl is installed at /usr/local/bin/intelmqctl you change php/config.php like this:
 
 ```
-$CONTROLLER = "/usr/local/bin/intelmqctl %s";
+    $CONTROLLER = "/usr/local/bin/intelmqctl %s";
 ```
 
 Also, don't forget to give read/write access to the following folders:
 
 ```
-/var/log/intelmq/
-/var/run/intelmq/
-/var/lib/intelmq/
+    /var/log/intelmq/
+    /var/run/intelmq/
+    /var/lib/intelmq/
 ```
 
-### Basic Authentication
+## Basic Authentication
 
 If you want to enable basic authentication on IntelMQ Manager edit the httpd.conf and insert 
 
@@ -62,7 +62,7 @@ To edit an existing one do:
 ```
 
 
-### Reminder
+## Reminder
 
 When using IntelMQ Manager do not forget that in order for it to change the configuration files it needs read and write access to the files in the /etc/intelmq folder (or equivalent configuration folder in your setup).
 
