@@ -35,7 +35,7 @@ Also, don't forget to give read/write access to the following folders:
     /var/lib/intelmq/
 ```
 
-## Basic Authentication
+### Basic Authentication
 
 If you want to enable basic authentication on IntelMQ Manager edit the httpd.conf and insert 
 
@@ -62,7 +62,7 @@ To edit an existing one do:
 ```
 
 
-## Reminder
+### Reminder
 
 When using IntelMQ Manager do not forget that in order for it to change the configuration files it needs read and write access to the files in the /etc/intelmq folder (or equivalent configuration folder in your setup).
 
