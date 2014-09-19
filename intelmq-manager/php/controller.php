@@ -68,8 +68,6 @@
     
     $command = sprintf($CONTROLLER, $arguments);
     
-    error_log($command);
-    
     set_time_limit(10);
     
     $return = shell_exec($command);
