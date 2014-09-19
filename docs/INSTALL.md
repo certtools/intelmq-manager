@@ -2,7 +2,7 @@
 
 This document assumes you install on a Debian or Ubuntu system. 
 
-It also assumes you have already downloaded and installed IntelMQ. For the Management and Monitor to work you need to have the Manager in the same machine as IntelMQ. If you want to work only with the Configuration part of the Manager you can do it, but you are going to have to create a /etc/intelmq folder and copy the BOTS file from IntelMQ to it.
+It also assumes you have already downloaded and installed IntelMQ, if you want to know how to install it you can read https://github.com/certtools/intelmq/blob/master/docs/UserGuide.md . For the Management and Monitor to work you need to have the Manager in the same machine as IntelMQ. If you want to work only with the Configuration part of the Manager you can do it, but you are going to have to create a /etc/intelmq folder and copy the BOTS file from IntelMQ to it.
 
 # Install
 
@@ -27,13 +27,12 @@ Configure Apache accordingly and make sure to change php/config.php to put the c
     $CONTROLLER = "/usr/local/bin/intelmqctl %s";
 ```
 
-Also, don't forget to give read/write access to the following folders:
+Add the apache user to the intelmq group.
 
 ```
-    /var/log/intelmq/
-    /var/run/intelmq/
-    /var/lib/intelmq/
+    usermod -a -G intelmq www-data
 ```
+
 
 ### Basic Authentication
 
