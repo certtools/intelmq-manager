@@ -11,7 +11,8 @@ The following instructions assumes:
 ### Install Dependencies
 
 ```
-apt-get install apache2 php5 libapache2-mod-php5 git
+apt-get install git
+apt-get install apache2 php5 libapache2-mod-php5
 ```
 
 ### Install
