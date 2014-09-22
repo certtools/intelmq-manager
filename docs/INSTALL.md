@@ -33,6 +33,24 @@ Add the apache user to the intelmq group.
     usermod -a -G intelmq www-data
 ```
 
+If you want to run your bots under the intelmq user you have to do the following:
+
+```
+    visudo
+```
+
+Add the following line:
+```
+    www-data ALL=(intelmq) NOPASSWD: /usr/local/bin/intelmqctl
+```
+
+Then edit the php/config.php and put the following as the $CONTROLLER value:
+```
+    $CONTROLLER = "sudo -u intelmq /usr/local/bin/intelmqctl %s";
+```
+
+/usr/local/bin/intelmqctl
+
 
 ### Basic Authentication
 

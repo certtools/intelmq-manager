@@ -11,7 +11,7 @@
     //$CONTROLLER = "scl enable python27 'intelmqctl %s'";
     
     /* Uncomment this if you used the Debian-based installation guide */
-    $CONTROLLER = "intelmqctl %s";
+    $CONTROLLER = "sudo -u intelmq /usr/local/bin/intelmqctl %s";
     
     $BOT_CONFIGS_REJECT_REGEX = '/[^[:print:]\n\r\t]/';
     $BOT_ID_REJECT_REGEX = '/[^A-Za-z0-9.-]/';
