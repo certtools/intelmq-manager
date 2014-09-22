@@ -1,49 +1,43 @@
 # Requirements
 
-This document assumes you install on a Debian or Ubuntu system. 
+The following instructions assumes:
+* Operatin System: Debian or Ubuntu system
+* [IntelMQ](https://github.com/certtools/intelmq) is already installed
+* [IntelMQ](https://github.com/certtools/intelmq) and IntelMQ Manager will be installed on same machine
 
-It also assumes you have already downloaded and installed IntelMQ, if you want to know how to install it you can read https://github.com/certtools/intelmq/blob/master/docs/UserGuide.md . For the Management and Monitor to work you need to have the Manager in the same machine as IntelMQ. If you want to work only with the Configuration part of the Manager you can do it, but you are going to have to create a /etc/intelmq folder and copy the BOTS file from IntelMQ to it.
 
-# Install
+# Installation
 
-Start by installing Apache httpd and PHP
-
-```
-    apt-get install apache2 php5 libapache2-mod-php5
-```
-
-After Apache and PHP are installed get the latest version of IntelMQ Manager and copy it's contents to your chosen directory. Example:
+### Install Dependencies
 
 ```
-    apt-get install git
-    git clone https://<your-github-account>@github.com/certtools/intelmq-manager.git
-    cd intelmq-manager/intelmq-manager
-    cp -r * /var/www/html/
+apt-get install apache2 php5 libapache2-mod-php5 git
 ```
 
-Configure Apache accordingly and make sure to change php/config.php to put the correct command and the correct paths for configuration files. If intelmqctl is installed at /usr/local/bin/intelmqctl you change php/config.php like this:
+### Install
 
 ```
-    $CONTROLLER = "/usr/local/bin/intelmqctl %s";
+git clone https://<your-github-account>@github.com/certtools/intelmq-manager.git /tmp/intelmq-manager
+cp -R /tmp/intelmq-manager/intelmq-manager/* /var/www/
 ```
 
-Add the apache user to the intelmq group.
+### Configure
+
+Add the Apache user to the intelmq group.
 
 ```
-    usermod -a -G intelmq www-data
+usermod -a -G intelmq www-data
 ```
 
-If you want to run your bots under the intelmq user edit the /etc/sudoers file and add the following line:
+Give Apache user permissions to execute commands as intelmq user. Edit the /etc/sudoers file and add the following line:
 ```
-    www-data ALL=(intelmq) NOPASSWD: /usr/local/bin/intelmqctl
-```
-
-Then edit the php/config.php and put the following as the $CONTROLLER value:
-```
-    $CONTROLLER = "sudo -u intelmq /usr/local/bin/intelmqctl %s";
+www-data ALL=(intelmq) NOPASSWD: /usr/local/bin/intelmqctl
 ```
 
-/usr/local/bin/intelmqctl
+Edit '/var/www/php/config.php' and put the following as the $CONTROLLER value:
+```
+$CONTROLLER = "sudo -u intelmq /usr/local/bin/intelmqctl %s";
+```
 
 
 ### Basic Authentication
@@ -71,8 +65,3 @@ To edit an existing one do:
 ```
     htpasswd <password file path> <username>
 ```
-
-
-### Reminder
-
-When using IntelMQ Manager do not forget that in order for it to change the configuration files it needs read and write access to the files in the /etc/intelmq folder (or equivalent configuration folder in your setup).
