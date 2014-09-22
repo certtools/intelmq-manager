@@ -1,6 +1,6 @@
 # Requirements
 
-The following instructions assumes:
+The following instructions assume:
 * Operatin System: Debian or Ubuntu system
 * [IntelMQ](https://github.com/certtools/intelmq) is already installed
 * [IntelMQ](https://github.com/certtools/intelmq) and [IntelMQ Manager](https://github.com/certtools/intelmq-manager) will be installed on same machine
