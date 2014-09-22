@@ -33,13 +33,7 @@ Add the apache user to the intelmq group.
     usermod -a -G intelmq www-data
 ```
 
-If you want to run your bots under the intelmq user you have to do the following:
-
-```
-    visudo
-```
-
-Add the following line:
+If you want to run your bots under the intelmq user edit the /etc/sudoers file and add the following line:
 ```
     www-data ALL=(intelmq) NOPASSWD: /usr/local/bin/intelmqctl
 ```
