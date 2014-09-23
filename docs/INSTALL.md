@@ -42,7 +42,7 @@ $CONTROLLER = "sudo -u intelmq /usr/local/bin/intelmqctl %s";
 ```
 
 
-### Basic Authentication
+### Basic Authentication (optional)
 
 If you want to enable basic authentication on IntelMQ Manager edit the httpd.conf and insert 
 
