@@ -15,7 +15,8 @@ $('#log-table').dataTable({
         { "data": "date" },
         { "data": "bot_id" },
         { "data": "log_level" },
-        { "data": "message" }
+        { "data": "message" },
+        { "data": "actions" }
     ]
 });
 
@@ -32,9 +33,24 @@ function redraw_logs() {
     $('#log-table').dataTable().fnClearTable();
     
     for (index in bot_logs) {
-        var log_row = bot_logs[index];
+        var log_row = $.extend(true, {}, bot_logs[index]);
+        
+        if (log_row['extended_message']) {
+            buttons_cell = '' +
+                '<button type="submit" class="btn btn-default btn-xs" data-toggle="modal" data-target="#extended-message-modal" onclick="show_extended_message(\'' + index + '\')"><span class="glyphicon glyphicon-plus"></span></button>';
+            log_row['actions'] = buttons_cell;
+        } else if (log_row['message'].length > MESSAGE_LENGTH) {
+            log_row['message'] = log_row['message'].slice(0, MESSAGE_LENGTH) + '<strong>...</strong>';
+            buttons_cell = '' +
+                '<button type="submit" class="btn btn-default btn-xs" data-toggle="modal" data-target="#extended-message-modal" onclick="show_extended_message(\'' + index + '\')"><span class="glyphicon glyphicon-plus"></span></button>';
+            log_row['actions'] = buttons_cell;            
+        } else {
+            log_row['actions'] = '';
+        }
+        
         
         log_row['DT_RowClass'] = LEVEL_CLASS[log_row['log_level']];
+        
         
         $('#log-table').dataTable().fnAddData(log_row);
     }
@@ -176,6 +192,19 @@ function select_bot(bot_id) {
         $("#destination-queues-table-div").addClass('col-md-12');
         $("#destination-queue-header").html("Queue");
     }
+}
+
+function show_extended_message(index) {
+    var modal_body = document.getElementById('modal-body');
+    
+    var message = bot_logs[index]['message'];
+    
+    if (bot_logs[index]['extended_message']) {
+        message += '<br>\n' + 
+                    bot_logs[index]['extended_message'].replace(/\n/g, '<br>\n').replace(/ /g, '&nbsp;');
+    }
+                           
+    modal_body.innerHTML = message;
 }
 
 $.getJSON(MANAGEMENT_SCRIPT + '?scope=botnet&action=status')

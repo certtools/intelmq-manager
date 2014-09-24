@@ -46,3 +46,5 @@ var PIPELINE_FILE = LOAD_CONFIG_SCRIPT + "?file=pipeline";
 var RELOAD_QUEUES_EVERY = 1; /* 2 seconds */
 var RELOAD_LOGS_EVERY = 300; /* 300 seconds */
 var LOAD_X_LOG_LINES = 30;
+
+var MESSAGE_LENGTH = 200;
