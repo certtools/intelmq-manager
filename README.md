@@ -14,7 +14,7 @@ See [INSTALL](https://github.com/certtools/intelmq-manager/blob/master/docs/INST
 This interface lets you visually configure the whole IntelMQ pipeline and the parameters of every single bot.
 You will be able to see the pipeline in a graph-like visualisation similar to the following screenshot (click to enlarge):
 
-![Main Interface](docs/screenshots/configuration_load.png?raw=true "Main Interface")
+![Main Interface](docs/screenshots/configuration.png?raw=true "Main Interface")
 
 #### Bots Configuration
 When you add a node or edit one you'll be presented with a form with the available parameters for a bot. There you can easily change the parameters as show in the screenshot:
