@@ -44,19 +44,7 @@ $CONTROLLER = "sudo -u intelmq /usr/local/bin/intelmqctl %s";
 
 ### Basic Authentication (optional)
 
-If you want to enable basic authentication on IntelMQ Manager edit the httpd.conf and insert 
-
-```
-AuthType basic 
-AuthName <realm name>
-
-AuthBasicProvider file
-AuthUserFile <password file path>
-```
-
-Where &lt;realm name&gt; is the string that identifies the realm that should be used and &lt;password file path&gt; is the path to the file created with the htpasswd command.
-
-To create a new file do:
+If you want to enable file-based basic authentication, first create the authentication file by doing: 
 
 ```
 htpasswd -c <password file path> <username>
@@ -67,3 +55,17 @@ To edit an existing one do:
 ```
 htpasswd <password file path> <username>
 ```
+
+on IntelMQ Manager edit the httpd.conf and insert 
+
+```
+AuthType basic 
+AuthName "IntelmMQ Manager"
+
+AuthBasicProvider file
+AuthUserFile <password file path>
+```
+
+After this is done you'll have to put the user/pass combination you have created with htpasswd to access the web pages of IntelMQ Manager. To use other authentication methods visit: http://httpd.apache.org/docs/2.2/howto/auth.html
+
+
