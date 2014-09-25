@@ -23,6 +23,19 @@ When you add a node or edit one you'll be presented with a form with the availab
 
 After editing the bots' configuration and pipeline, simply click "Save Configuration" to automatically write the changes to the correct files.  The configurations are now ready to be deployed.
 
+#### Botnet Management
+When you save a configuration you can go to the 'Management' section to see what bots are running and start/stop the entire botnet, or a single bot.
+
+![Botnet Management](docs/screenshots/management.png?raw=true "Botnet Management")
+
+#### Botnet Monitoring
+You can also monitor the logs of individual bots or see the status of the queues for the entire system or for single bots.
+
+In this next example we can see the number of queued messages for all the queues in the system.
+![Botnet Queues Monitor](docs/screenshots/monitor.png?raw=true "Botnet Monitor")
+
+The following example we can see the status information of a single bot. Namely, the number of queued messages in the queues that are related to that bot and also the last 20 log lines of that single bot.
+![Bot Monitor](docs/screenshots/monitor2.png?raw=true "Bot Monitor")
 
 ## Licence
 
