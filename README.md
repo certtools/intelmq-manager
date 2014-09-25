@@ -19,7 +19,7 @@ You will be able to see the pipeline in a graph-like visualisation similar to th
 #### Bots Configuration
 When you add a node or edit one you'll be presented with a form with the available parameters for a bot. There you can easily change the parameters as show in the screenshot:
 
-![Parameter editing](docs/screenshots/edit_node.png?raw=true "Parameter editing")
+![Parameter editing](docs/screenshots/configuration2.png?raw=true "Parameter editing")
 
 After editing the bots' configuration and pipeline, simply click "Save Configuration" to automatically write the changes to the correct files.  The configurations are now ready to be deployed.
 
