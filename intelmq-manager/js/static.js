@@ -48,3 +48,15 @@ var RELOAD_LOGS_EVERY = 300; /* 300 seconds */
 var LOAD_X_LOG_LINES = 30;
 
 var MESSAGE_LENGTH = 200;
+
+var page_is_exiting = false;
+
+$(window).on('unload', function() {
+    page_is_exiting = true;
+});
+
+function show_error(string) {
+    if(!page_is_exiting) {
+        alert(string);
+    }
+}

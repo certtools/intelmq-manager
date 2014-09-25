@@ -137,8 +137,8 @@ function load_bot_log() {
             redraw_logs();
             $('#logs-panel-title').removeClass('waiting');
         })
-        .fail(function () {
-            alert('Error loading bot logs');
+        .fail(function (err1, err2, errMessage) {
+            show_error('Error loading bot logs: ' + errMessage);
         });
 }
 
@@ -153,8 +153,8 @@ function load_bot_queues() {
             redraw_queues();
             $('#queues-panel-title').removeClass('waiting');
         })
-        .fail(function () {
-            alert('Error loading bot queues information');
+        .fail(function (err1, err2, errMessage) {
+            show_error('Error loading bot queues information: ' + errMessage);
         });    
 }
 
@@ -234,8 +234,8 @@ $.getJSON(MANAGEMENT_SCRIPT + '?scope=botnet&action=status')
             sidemenu.appendChild(li_element);
         }
     })
-    .fail(function () {
-        alert('Error loading botnet status');
+    .fail(function (err1, err2, errMessage) {
+        show_error('Error loading botnet status: ' + errMessage);
     });
     
 select_bot(ALL_BOTS);

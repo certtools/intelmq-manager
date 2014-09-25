@@ -46,7 +46,7 @@ function load_file(url, callback) {
         })
         .fail(function (jqxhr, textStatus, error) {
             var err = textStatus + ", " + error;
-            alert('Failed to obtain JSON: ' + url + ' with error: ' + err);
+            show_error('Failed to obtain JSON: ' + url + ' with error: ' + err);
             callback({});
         });
 }
@@ -136,7 +136,7 @@ function save_data_on_files() {
     }
     
     var alert_error = function (file, jqxhr, textStatus, error) {
-        alert('There was an error saving ' + file + ':\nStatus: ' + textStatus + '\nError: ' + error);
+        show_error('There was an error saving ' + file + ':\nStatus: ' + textStatus + '\nError: ' + error);
     }
 
     $.post('./php/save.php?file=runtime', generate_runtime_conf(nodes))
@@ -279,7 +279,7 @@ function saveData(data,callback) {
     //data.level = GROUP_LEVELS[data.group];
     
     if (!BOT_ID_REGEX.test(data.id)) {
-        alert("Bot ID's can only be composed of numbers, letters and hiphens");
+        show_error("Bot ID's can only be composed of numbers, letters and hiphens");
         return;
     }
     
@@ -418,13 +418,13 @@ function draw() {
         },
         onConnect: function(data,callback) {
             if (data.from == data.to) {
-                alert('This action would cause an infinite loop');
+                show_error('This action would cause an infinite loop');
                 return;
             }
             
             for (index in edges) {
                 if (edges[index].from == data.from && edges[index].to == data.to) {
-                    alert('There is already a link between those bots');
+                    show_error('There is already a link between those bots');
                     return;
                 }
             }
@@ -440,9 +440,9 @@ function draw() {
             
             if (!available_neighbor) {
                 if (neighbors.length == 0) {
-                    alert("Node type " + nodes[data.from].group + " can't connect to other nodes");
+                    show_error("Node type " + nodes[data.from].group + " can't connect to other nodes");
                 } else {
-                    alert('Node type ' + nodes[data.from].group + ' can only connect to nodes of types: ' + neighbors.join());
+                    show_error('Node type ' + nodes[data.from].group + ' can only connect to nodes of types: ' + neighbors.join());
                 }
                 return;
             }

@@ -75,8 +75,8 @@ function get_botnet_status() {
             bot_status = data;
             update_bot_status();
         })
-        .fail(function () {
-            alert('Error loading botnet status');
+        .fail(function (err1, err2, errMessage) {
+            show_error('Error loading botnet status: ' + errMessage);
         });
 }
     
@@ -88,8 +88,8 @@ function start_bot(bot_id) {
             bot_status[bot_id] = status;
             update_bot_status();
         })
-        .fail(function () {
-            alert('Error starting bot');
+        .fail(function (err1, err2, errMessage) {
+            show_error('Error starting bot: ' + errMessage);
         });
 }
 
@@ -100,8 +100,8 @@ function stop_bot(bot_id) {
             bot_status[bot_id] = status;
             update_bot_status();
         })
-        .fail(function () {
-            alert('Error stopping bot');
+        .fail(function (err1, err2, errMessage) {
+            show_error('Error stopping bot: ' + errMessage);
         });
 }
 
@@ -112,8 +112,8 @@ function start_botnet() {
             bot_status = status;
             update_bot_status();
         })
-        .fail(function () {
-            alert('Error starting botnet');
+        .fail(function (err1, err2, err3) {
+            show_error('Error starting botnet: ' + errMessage);
         });
 }
 
@@ -124,8 +124,8 @@ function stop_botnet() {
             bot_status = status;
             update_bot_status();
         })
-        .fail(function () {
-            alert('Error stopping botnet');
+        .fail(function (err1, err2, err3) {
+            show_error('Error stopping botnet: ' + errMessage);
         });    
 }
 
