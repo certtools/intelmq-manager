@@ -12,6 +12,7 @@ $('#log-table').dataTable({
     pageLength: 10,
     order: [0, 'desc'],
     columns: [
+        { "data": "line_number" },
         { "data": "date" },
         { "data": "bot_id" },
         { "data": "log_level" },
