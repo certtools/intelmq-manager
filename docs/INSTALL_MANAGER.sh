@@ -4,8 +4,7 @@ fi
 
 echo "Installing dependencies"
 apt-get update
-apt-get install git
-apt-get install apache2 php5 libapache2-mod-php5
+apt-get install git apache2 php5 libapache2-mod-php5 apache2-utils
 
 echo "Downloading and copying IntelMQ Manager"
 git clone https://$1@github.com/certtools/intelmq-manager.git /tmp/intelmq-manager
