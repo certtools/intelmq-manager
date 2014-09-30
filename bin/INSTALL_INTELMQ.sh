@@ -1,5 +1,6 @@
-if [[ $# -ne 1 ]]; then
-echo "Usage: $0 <github_account>"
+if [ "$#" -ne 1 ]; then
+    echo "Usage: $0 <github_account>"
+    exit
 fi
 
 echo "Installing dependencies"
