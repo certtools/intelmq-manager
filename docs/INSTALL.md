@@ -8,7 +8,7 @@ The following instructions assume:
 
 # Installation
 
-To quickly install a default IntelMQ + Manager with no password just run:
+To quickly install a default IntelMQ + Manager with no password just run the following as root:
 ```
 ./bin/INSTALL_INTELMQ.sh
 ./bin/INSTALL_MANAGER.sh
