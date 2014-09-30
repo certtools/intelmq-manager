@@ -1,4 +1,5 @@
 echo "Installing dependencies"
+apt-get update
 apt-get install python-pip git
 apt-get install build-essential python-dev
 apt-get install redis-server
