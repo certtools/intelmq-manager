@@ -6,13 +6,16 @@ The following instructions assume:
 * [IntelMQ](https://github.com/certtools/intelmq) and [IntelMQ Manager](https://github.com/certtools/intelmq-manager) will be installed on same machine
 
 
-# Installation
+# Quick Installation
 
 To quickly install a default IntelMQ + Manager with no password just run the following as root:
 ```
-./bin/INSTALL_INTELMQ.sh
-./bin/INSTALL_MANAGER.sh
+git clone https://<your-github-account>@github.com/certtools/intelmq-manager.git /tmp/intelmq-manager
+/tmp/intelmq-manager/bin/INSTALL_INTELMQ.sh
+/tmp/intelmq-manager/bin/INSTALL_MANAGER.sh
 ```
+
+# Installation
 
 ### Install Dependencies
 
