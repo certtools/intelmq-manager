@@ -50,6 +50,11 @@ Edit '/var/www/php/config.php' and put the following as the $CONTROLLER value:
 $CONTROLLER = "sudo -u intelmq /usr/local/bin/intelmqctl %s";
 ```
 
+Restart apache:
+```
+/etc/init.d/apache2 restart
+```
+
 
 ### Basic Authentication (optional)
 
