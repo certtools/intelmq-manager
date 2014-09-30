@@ -1,3 +1,7 @@
+if [ "$#" -ne 1 ]; then
+echo "Usage: $0 <github_account>"
+fi
+
 echo "Installing dependencies"
 apt-get update
 apt-get install python-pip git
