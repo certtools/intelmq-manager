@@ -13,6 +13,7 @@ chown -R www-data.www-data /var/www/
 
 echo "Adding www-data to intelmq group"
 usermod -a -G intelmq www-data
+echo "www-data ALL=(intelmq) NOPASSWD: /usr/local/bin/intelmqctl" >>/etc/sudoers
 
 echo "Creating IntelMQ Manager admin account"
 htpasswd -c /etc/apache2/password_file admin
