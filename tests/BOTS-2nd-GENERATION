@@ -1,0 +1,552 @@
+{
+    "Collector": {
+        "Arbor": {
+            "module": "intelmq.bots.collectors.url.collector",
+            "description": "Arbor Collector is the bot responsible to get the report from source of information.",
+            "parameters": {
+                "url": {
+                    "value": "http://atlas-public.ec2.arbor.net/public/ssh_attackers",
+                    "description": "URL where the report is located"
+                },
+                "processing_interval": {
+                    "value": "3600",
+                    "description": "Interval (seconds) between each processing iteration. Usually it is the amount of time the bot sleeps before fetching another message from the queue"
+                }
+            }
+        },
+        "BruteForceBlocker": {
+            "module": "intelmq.bots.collectors.url.collector",
+            "description": "BruteForceBlocker Collector is the bot responsible to get the report from source of information.",
+            "parameters": {
+                "url": {
+                    "value": "http://danger.rulez.sk/projects/bruteforceblocker/blist.php",
+                    "description": "URL where the report is located"
+                },
+                "processing_interval": {
+                    "value": "3600",
+                    "description": "Interval (seconds) between each processing iteration. Usually it is the amount of time the bot sleeps before fetching another message from the queue"
+                }
+            }
+        },
+        "VXVault": {
+            "module": "intelmq.bots.collectors.url.collector",
+            "description": "VXVault Collector is the bot responsible to get the report from source of information.",
+            "parameters": {
+                "url": {
+                    "value": "http://vxvault.siri-urz.net/URL_List.php",
+                    "description": "URL where the report is located"
+                },
+                "processing_interval": {
+                    "value": "3600",
+                    "description": "Interval (seconds) between each processing iteration. Usually it is the amount of time the bot sleeps before fetching another message from the queue"
+                }
+            }
+        },
+        "Malware Domain List": {
+            "module": "intelmq.bots.collectors.url.collector",
+            "description": "Malware Domain List Collector is the bot responsible to get the report from source of information.",
+            "parameters": {
+                "url": {
+                    "value": "http://www.malwaredomainlist.com/updatescsv.php",
+                    "description": "URL where the report is located"
+                },
+                "processing_interval": {
+                    "value": "3600",
+                    "description": "Interval (seconds) between each processing iteration. Usually it is the amount of time the bot sleeps before fetching another message from the queue"
+                }
+            }
+        },
+        "Dragon Research Group SSH": {
+            "module": "intelmq.bots.collectors.url.collector",
+            "description": "Dragon Research Group SSH Collector is the bot responsible to get the report from source of information.",
+            "parameters": {
+                "url": {
+                    "value": "http://dragonresearchgroup.org/insight/sshpwauth.txt",
+                    "description": "URL where the report is located"
+                },
+                "processing_interval": {
+                    "value": "3600",
+                    "description": "Interval (seconds) between each processing iteration. Usually it is the amount of time the bot sleeps before fetching another message from the queue"
+                }
+            }
+        },
+        "Dragon Research Group VNC": {
+            "module": "intelmq.bots.collectors.url.collector",
+            "description": "Dragon Research Group VNC Collector is the bot responsible to get the report from source of information.",
+            "parameters": {
+                "url": {
+                    "value": "https://dragonresearchgroup.org/insight/vncprobe.txt",
+                    "description": "URL where the report is located"
+                },
+                "processing_interval": {
+                    "value": "3600",
+                    "description": "Interval (seconds) between each processing iteration. Usually it is the amount of time the bot sleeps before fetching another message from the queue"
+                }
+            }
+        },
+        "PhishTank": {
+            "module": "intelmq.bots.collectors.url.collector",
+            "description": "PhishTank Collector is the bot responsible to get the report from source of information.",
+            "parameters": {
+                "url": {
+                    "value": "http://data.phishtank.com/data/< API KEY >/online-valid.csv",
+                    "description": "URL where the report is located (Need API)"
+                },
+                "processing_interval": {
+                    "value": "28800",
+                    "description": "Interval (seconds) between each processing iteration. Usually it is the amount of time the bot sleeps before fetching another message from the queue"
+                }
+            }
+        },
+        "MalwarePatrol Dans Guardian": {
+            "module": "intelmq.bots.collectors.url.collector",
+            "description": "MalwarePatrol Dans Guardian Collector is the bot responsible to get the report from source of information.",
+            "parameters": {
+                "url": {
+                    "value": "https://lists.malwarepatrol.net/cgi/getfile?receipt=< API KEY >&product=8&list=dansguardian",
+                    "description": "URL where the report is located (Need API)"
+                },
+                "processing_interval": {
+                    "value": "180000",
+                    "description": "Interval (seconds) between each processing iteration. Usually it is the amount of time the bot sleeps before fetching another message from the queue"
+                }
+            }
+        },
+        "OpenBL": {
+            "module": "intelmq.bots.collectors.url.collector",
+            "description": "OpenBL Collector is the bot responsible to get the report from source of information.",
+            "parameters": {
+                "url": {
+                    "value": "http://www.openbl.org/lists/date_all.txt",
+                    "description": "URL where the report is located"
+                },
+                "processing_interval": {
+                    "value": "43200",
+                    "description": "Interval (seconds) between each processing iteration. Usually it is the amount of time the bot sleeps before fetching another message from the queue"
+                }
+            }
+        },
+        "ShadowServer Drone Report": {
+            "module": "intelmq.bots.collectors.mail.mail-attach",
+            "description": "ShadowServer Drone Collector is the bot responsible to get the report from source of information.",
+            "parameters": {
+                "processing_interval": {
+                    "value": "3600",
+                    "description": "Interval (seconds) between each processing iteration. Usually it is the amount of time the bot sleeps before fetching another message from the queue"
+                },
+                "mail_host": {
+                    "value": "<host>",
+                    "description": "Mail server host"
+                },
+                "mail_user": {
+                    "value": "<user>",
+                    "description": "Mail user account"
+                },
+                "mail_password": {
+                    "value": "<password>",
+                    "description": "Mail password account"
+                },
+                "mail_ssl": {
+                    "value": true,
+                    "description": "Mail server use SSL (true or false)"
+                },
+                "folder": {
+                    "value": "Inbox.shadowserver",
+                    "description": "Mail folder where mails are stored"
+                },
+                "subject_regex": {
+                    "value": "Shadowserver [^ ]+ Drone Report",
+                    "description": "d"
+                },
+                "attach_regex": {
+                    "value": "csv.zip",
+                    "description": "d"
+                },
+                "attach_unzip": {
+                    "value": true,
+                    "description": "d"
+                }
+            }
+        },
+        "ShadowServer Chargen Report": {
+            "module": "intelmq.bots.collectors.mail.mail-url",
+            "description": "ShadowServer Chargen Collector is the bot responsible to get the report from source of information.",
+            "parameters": {
+                "processing_interval": {
+                    "value": "3600",
+                    "description": "Interval (seconds) between each processing iteration. Usually it is the amount of time the bot sleeps before fetching another message from the queue"
+                },
+                "mail_host": {
+                    "value": "<host>",
+                    "description": "d"
+                },
+                "mail_user": {
+                    "value": "<user>",
+                    "description": "d"
+                },
+                "mail_password": {
+                    "value": "<password>",
+                    "description": "d"
+                },
+                "mail_ssl": {
+                    "value": true,
+                    "description": "d"
+                },
+                "folder": {
+                    "value": "Inbox.shadowserver",
+                    "description": "d"
+                },
+                "subject_regex": {
+                    "value": "Shadowserver [^ ]+ Chargen Report",
+                    "description": "d"
+                },
+                "url_regex": {
+                    "value": "http://dl.shadowserver.org/[^ ]+",
+                    "description": "d"
+                }
+            }
+        },
+        "CERT-EU Malicious URLs": {
+            "module": "intelmq.bots.collectors.mail.mail-attach",
+            "description": "CERT-EU Malicious URLs Collector is the bot responsible to get the report from source of information.",
+            "parameters": {
+                "processing_interval": {
+                    "value": "3600",
+                    "description": "Interval (seconds) between each processing iteration. Usually it is the amount of time the bot sleeps before fetching another message from the queue"
+                },
+                "mail_host": {
+                    "value": "<host>",
+                    "description": "d"
+                },
+                "mail_user": {
+                    "value": "<user>",
+                    "description": "d"
+                },
+                "mail_password": {
+                    "value": "<password>",
+                    "description": "d"
+                },
+                "mail_ssl": {
+                    "value": true,
+                    "description": "d"
+                },
+                "folder": {
+                    "value": "Inbox.cert-eu",
+                    "description": "d"
+                },
+                "subject_regex": {
+                    "value": "Malicious URLs",
+                    "description": "d"
+                },
+                "attach_regex": {
+                    "value": "report.csv$",
+                    "description": "d"
+                },
+                "attach_unzip": {
+                    "value": false,
+                    "description": "d"
+                }
+            }
+        }
+    },
+    "Parser": {
+        "Arbor": {
+            "module": "intelmq.bots.parsers.arbor.parser",
+            "description": "Arbor Parser is the bot responsible to parse the report and sanitize the information.",
+            "parameters": {
+                "processing_interval": {
+                    "value": "3600",
+                    "description": "Interval (seconds) between each processing iteration. Usually it is the amount of time the bot sleeps before fetching another message from the queue"
+                },
+            }
+        },
+        "BruteForceBlocker": {
+            "module": "intelmq.bots.parsers.bruteforceblocker.parser",
+            "description": "BruteForceBlocker Parser is the bot responsible to parse the report and sanitize the information.",
+            "parameters": {
+                "processing_interval": {
+                    "value": "0",
+                    "description": "Interval (seconds) between each processing iteration. Usually it is the amount of time the bot sleeps before fetching another message from the queue"
+                }
+            }
+        },
+        "VXVault": {
+            "module": "intelmq.bots.parsers.vxvault.vxvault",
+            "description": "VXVault Parser is the bot responsible to parse the report and sanitize the information.",
+            "parameters": {
+                "processing_interval": {
+                    "value": "0",
+                    "description": "Interval (seconds) between each processing iteration. Usually it is the amount of time the bot sleeps before fetching another message from the queue"
+                }
+            }
+        },
+        "Malware Domain List": {
+            "module": "intelmq.bots.parsers.malwaredomainlist.malwaredomainlist",
+            "description": "Malware Domain List Parser is the bot responsible to parse the report and sanitize the information.",
+            "parameters": {
+                "processing_interval": {
+                    "value": "0",
+                    "description": "Interval (seconds) between each processing iteration. Usually it is the amount of time the bot sleeps before fetching another message from the queue"
+                }
+            }
+        },
+        "Dragon Research Group SSH": {
+            "module": "intelmq.bots.parsers.dragonresearchgroup.parser-ssh",
+            "description": "Dragon Research Group SSH Parser is the bot responsible to parse the report and sanitize the information.",
+            "parameters": {
+                "processing_interval": {
+                    "value": "0",
+                    "description": "Interval (seconds) between each processing iteration. Usually it is the amount of time the bot sleeps before fetching another message from the queue"
+                }
+            }
+        },
+        "Dragon Research Group VNC": {
+            "module": "intelmq.bots.parsers.dragonresearchgroup.parser-vnc",
+            "description": "Dragon Research Group VNC Parser is the bot responsible to parse the report and sanitize the information.",
+            "parameters": {
+                "processing_interval": {
+                    "value": "0",
+                    "description": "Interval (seconds) between each processing iteration. Usually it is the amount of time the bot sleeps before fetching another message from the queue"
+                }
+            }
+        },
+        "PhishTank": {
+            "module": "intelmq.bots.parsers.phishtank.parser",
+            "description": "PhishTank Parser is the bot responsible to parse the report and sanitize the information.",
+            "parameters": {
+                "processing_interval": {
+                    "value": "0",
+                    "description": "Interval (seconds) between each processing iteration. Usually it is the amount of time the bot sleeps before fetching another message from the queue"
+                }
+            }
+        },
+        "MalwarePatrol Dans Guardian": {
+            "module": "intelmq.bots.parsers.malwarepatrol.parser-dansguardian",
+            "description": "MalwarePatrol Dans Guardian Parser is the bot responsible to parse the report and sanitize the information.",
+            "parameters": {
+                "processing_interval": {
+                    "value": "0",
+                    "description": "Interval (seconds) between each processing iteration. Usually it is the amount of time the bot sleeps before fetching another message from the queue"
+                }
+            }
+        },
+        "OpenBL": {
+            "module": "intelmq.bots.parsers.openbl.parser",
+            "description": "OpenBL Parser is the bot responsible to parse the report and sanitize the information.",
+            "parameters": {
+                "processing_interval": {
+                    "value": "0",
+                    "description": "Interval (seconds) between each processing iteration. Usually it is the amount of time the bot sleeps before fetching another message from the queue"
+                }
+            }
+        },
+        "ShadowServer Drone": {
+            "module": "intelmq.bots.parsers.shadowserver.drone-parser",
+            "description": "ShadowServer Drone Parser is the bot responsible to parse the report and sanitize the information.",
+            "parameters": {
+                "processing_interval": {
+                    "value": "0",
+                    "description": "Interval (seconds) between each processing iteration. Usually it is the amount of time the bot sleeps before fetching another message from the queue"
+                }
+            }
+        },
+        "ShadowServer Chargen": {
+            "module": "intelmq.bots.parsers.shadowserver.chargen-parser",
+            "description": "ShadowServer Chargen Parser is the bot responsible to parse the report and sanitize the information.",
+            "parameters": {
+                "processing_interval": {
+                    "value": "0",
+                    "description": "Interval (seconds) between each processing iteration. Usually it is the amount of time the bot sleeps before fetching another message from the queue"
+                }
+            }
+        },
+        "CERT-EU Malicious URLs": {
+            "module": "intelmq.bots.parsers.certeu.malicious-urls-parser",
+            "description": "CERT-EU Malicious URLs Parser is the bot responsible to parse the report and sanitize the information.",
+            "parameters": {
+                "processing_interval": {
+                    "value": "0",
+                    "description": "Interval (seconds) between each processing iteration. Usually it is the amount of time the bot sleeps before fetching another message from the queue"
+                }
+            }
+        }
+    },
+    "Expert": {
+        "Cymru": {
+            "module": "intelmq.bots.experts.cymru.cymru",
+            "description": "Cymry (IP to ASN) is the bot responsible to add network information to the events (BGP, ASN, AS Name, Country, etc..).",
+            "parameters": {
+                "processing_interval": {
+                    "value": "0",
+                    "description": "Interval (seconds) between each processing iteration. Usually it is the amount of time the bot sleeps before fetching another message from the queue"
+                },
+                "redis_cache_host": {
+                    "value": "127.0.0.1",
+                    "description": "descrp"
+                },
+                "redis_cache_port": {
+                    "value": "6379",
+                    "description": "descrp"
+                },
+                "redis_cache_db": {
+                    "value": "5",
+                    "description": "descrp"
+                },
+                "redis_cache_ttl": {
+                    "value": "0",
+                    "description": "86400"
+                }
+            }
+        },
+        "GeoIP": {
+            "module": "intelmq.bots.experts.geoip.geoip",
+            "description": "GeoIP (MaxMind) is the bot responsible to add geolocation information to the events (Country, City, Longitude, Latitude, etc..)",
+            "parameters": {
+                "processing_interval": {
+                    "value": "0",
+                    "description": "Interval (seconds) between each processing iteration. Usually it is the amount of time the bot sleeps before fetching another message from the queue"
+                },
+                "database": {
+                    "value": "/var/lib/intelmq/geoip/GeoLite2-City.mmdb",
+                    "description": "descrp"
+                }
+            }
+        },
+        "Deduplicator": {
+            "module": "intelmq.bots.experts.deduplicator.deduplicator",
+            "description": "Deduplicator is the bot responsible to detect and remove deduplicated events.",
+            "parameters": {
+                "processing_interval": {
+                    "value": "0",
+                    "description": "Interval (seconds) between each processing iteration. Usually it is the amount of time the bot sleeps before fetching another message from the queue"
+                },
+                "redis_cache_host": {
+                    "value": "127.0.0.1",
+                    "description": "descrp"
+                },
+                "redis_cache_port": {
+                    "value": "6379",
+                    "description": "descrp"
+                },
+                "redis_cache_db": {
+                    "value": "6",
+                    "description": "descrp"
+                },
+                "redis_cache_ttl": {
+                    "value": "0",
+                    "description": "86400"
+                }
+            }
+        },
+        "Sanitizer": {
+            "module": "intelmq.bots.experts.sanitizer.sanitizer",
+            "description": "Sanitizer is the bot responsible to sanitize all events.",
+            "parameters": {
+                "processing_interval": {
+                    "value": "0",
+                    "description": "Interval (seconds) between each processing iteration. Usually it is the amount of time the bot sleeps before fetching another message from the queue"
+                }
+            }
+        },
+        "Taxonomy": {
+            "module": "intelmq.bots.experts.taxonomy.taxonomy",
+            "description": "Taxonomy is the bot responsible to apply the eCSIRT Taxonomy to all events.",
+            "parameters": {
+                "processing_interval": {
+                    "value": "0",
+                    "description": "Interval (seconds) between each processing iteration. Usually it is the amount of time the bot sleeps before fetching another message from the queue"
+                }
+            }
+        }
+    },
+    "Output": {
+        "File": {
+            "module": "intelmq.bots.outputs.file.file",
+            "description": "File is the bot responsible to send events to a file.",
+            "parameters": {
+                "processing_interval": {
+                    "value": "0",
+                    "description": "Interval (seconds) between each processing iteration. Usually it is the amount of time the bot sleeps before fetching another message from the queue"
+                },
+                "file": {
+                    "value": "/var/lib/intelmq/archive/events.txt",
+                    "description": "descrp"
+                }
+            }
+        },
+        "LogCollector": {
+            "module": "intelmq.bots.outputs.logcollector.logcollector",
+            "description": "LogCollector is the bot responsible to send events to a logcollector (Splunk, ElasticSearch, etc..).",
+            "parameters": {
+                "processing_interval": {
+                    "value": "0",
+                    "description": "Interval (seconds) between each processing iteration. Usually it is the amount of time the bot sleeps before fetching another message from the queue"
+                },
+                "ip": {
+                    "value": "<ip>",
+                    "description": "descrp"
+                },
+                "port": {
+                    "value": "<port>",
+                    "description": "descrp"
+                }
+            }
+        },
+        "MongoDB": {
+            "module": "intelmq.bots.outputs.mongodb.mongodb",
+            "description": "MongoDB is the bot responsible to send events to a MongoDB database.",
+            "parameters": {
+                "processing_interval": {
+                    "value": "0",
+                    "description": "Interval (seconds) between each processing iteration. Usually it is the amount of time the bot sleeps before fetching another message from the queue"
+                },
+                "host": {
+                    "value": "<host>",
+                    "description": "descrp"
+                },
+                "port": {
+                    "value": "<port>",
+                    "description": "descrp"
+                },
+                "database": {
+                    "value": "<database>",
+                    "description": "descrp"
+                },
+                "collection": {
+                    "value": "<collection>",
+                    "description": "descrp"
+                }
+            }
+        },
+        "PostgreSQL": {
+            "module": "intelmq.bots.outputs.postgresql.postgresql",
+            "description": "PostgreSQL is the bot responsible to send events to a PostgreSQL Database.",
+            "parameters": {
+                "processing_interval": {
+                    "value": "0",
+                    "description": "Interval (seconds) between each processing iteration. Usually it is the amount of time the bot sleeps before fetching another message from the queue"
+                },
+                "host": {
+                    "value": "<host>",
+                    "description": "PostgreSQL Host (e.g. logcollector.cert.pt)"
+                },
+                "port": {
+                    "value": "<port>",
+                    "description": "PostgreSQL TCP Port (e.g. 5432)"
+                },
+                "database": {
+                    "value": "intelmq-events",
+                    "description": "PostgreSQL Database Name"
+                },
+                "user": {
+                    "value": "intelmq",
+                    "description": "User PostgreSQL Database"
+                },
+                "password": {
+                    "value": "<password>",
+                    "description": "Password for the PostgreSQL database"
+                }
+            }
+        }
+    }
+}
