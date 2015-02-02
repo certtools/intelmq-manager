@@ -107,8 +107,13 @@ function load_bots(config) {
     }
     
     $('#side-menu').metisMenu({'restart': true});
-    
-    load_file(RUNTIME_FILE, load_runtime);
+
+    if (window.location.hash != '#new') {
+        load_file(RUNTIME_FILE, load_runtime);
+    } else {
+        draw();
+        resize();
+    }
 }
 
 function load_runtime(config) {
