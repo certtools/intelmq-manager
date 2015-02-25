@@ -363,20 +363,11 @@ function draw() {
     }
 
     var options = {
-        hierarchicalLayout: {
-            nodeSpacing: 1000,
-            levelSeparation: 500,
-            direction: "RL",
-        },
         physics: {
             barnesHut: {
                 enabled: false
             }, 
             repulsion: {
-                nodeDistance: 200,
-                springLength: 200
-            },
-            hierarchicalRepulsion: {
                 nodeDistance: 200,
                 springLength: 200
             }
