@@ -10,6 +10,7 @@ The following instructions assume:
 
 To quickly install a default IntelMQ + Manager with no password just run the following as root:
 ```
+sudo su -
 git clone https://<your-github-account>@github.com/certtools/intelmq-manager.git /tmp/intelmq-manager
 /tmp/intelmq-manager/bin/INSTALL_INTELMQ.sh
 /tmp/intelmq-manager/bin/INSTALL_MANAGER.sh
