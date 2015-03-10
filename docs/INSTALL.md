@@ -50,6 +50,11 @@ Edit '/var/www/php/config.php' and put the following as the $CONTROLLER value:
 $CONTROLLER = "sudo -u intelmq /usr/local/bin/intelmqctl %s";
 ```
 
+Edit '/etc/apache2/sites-available/000-default.conf' and change the DocumentRoot to
+```
+ DocumentRoot /var/www/
+```
+
 Restart apache:
 ```
 /etc/init.d/apache2 restart
