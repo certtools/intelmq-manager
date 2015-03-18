@@ -6,23 +6,12 @@ The following instructions assume:
 * [IntelMQ](https://github.com/certtools/intelmq) and [IntelMQ Manager](https://github.com/certtools/intelmq-manager) will be installed on same machine
 
 
-# Quick Installation
-
-To quickly install a default IntelMQ + Manager with no password just run the following as root:
-```
-sudo su -
-git clone https://<your-github-account>@github.com/certtools/intelmq-manager.git /tmp/intelmq-manager
-/tmp/intelmq-manager/bin/INSTALL_INTELMQ.sh
-/tmp/intelmq-manager/bin/INSTALL_MANAGER.sh
-```
-
 # Installation
 
 ### Install Dependencies
 
 ```
-apt-get install git
-apt-get install apache2 php5 libapache2-mod-php5
+apt-get install git apache2 php5 libapache2-mod-php5
 ```
 
 ### Install
