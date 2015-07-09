@@ -39,9 +39,12 @@ var LOAD_CONFIG_SCRIPT = ROOT + "php/load_configs.php";
 var MANAGEMENT_SCRIPT = ROOT + "php/controller.php"
 
 var BOTS_FILE = LOAD_CONFIG_SCRIPT + "?file=bots";
+var DEFAULTS_FILE = LOAD_CONFIG_SCRIPT + "?file=defaults";
+var HARMONIZATION_FILE = LOAD_CONFIG_SCRIPT + "?file=harmonization";
+var PIPELINE_FILE = LOAD_CONFIG_SCRIPT + "?file=pipeline";
 var RUNTIME_FILE = LOAD_CONFIG_SCRIPT + "?file=runtime";
 var STARTUP_FILE = LOAD_CONFIG_SCRIPT + "?file=startup";
-var PIPELINE_FILE = LOAD_CONFIG_SCRIPT + "?file=pipeline";
+var SYSTEM_FILE = LOAD_CONFIG_SCRIPT + "?file=system";
 
 var RELOAD_QUEUES_EVERY = 1; /* 2 seconds */
 var RELOAD_LOGS_EVERY = 300; /* 300 seconds */

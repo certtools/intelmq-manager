@@ -109,11 +109,17 @@ function load_bots(config) {
     $('#side-menu').metisMenu({'restart': true});
 
     if (window.location.hash != '#new') {
-        load_file(RUNTIME_FILE, load_runtime);
+        load_file(DEFAULTS_FILE, load_defaults);
     } else {
         draw();
         resize();
     }
+}
+
+function load_defaults(config) {
+    defaults = read_defaults_conf(config);
+        
+    load_file(RUNTIME_FILE, load_runtime);
 }
 
 function load_runtime(config) {
@@ -123,13 +129,15 @@ function load_runtime(config) {
 }
 
 function load_startup(config) {
-    nodes = read_startup_conf(config, nodes);   
+    nodes = read_startup_conf(config, nodes);
+    nodes = remove_defaults(nodes, defaults);
     
     load_file(PIPELINE_FILE, load_pipeline);
 }
 
 function load_pipeline(config) {
     edges = read_pipeline_conf(config, nodes);
+    nodes = add_defaults_to_nodes(nodes, defaults);
         
     draw();
     resize();
@@ -139,6 +147,8 @@ function save_data_on_files() {
     if(!confirm("By clicking 'OK' you are replacing the configuration in your files by the one represented by the graph on this page. Do you agree?")) {
         return;
     }
+
+    nodes = remove_defaults(nodes, defaults);
     
     var alert_error = function (file, jqxhr, textStatus, error) {
         show_error('There was an error saving ' + file + ':\nStatus: ' + textStatus + '\nError: ' + error);
@@ -158,6 +168,8 @@ function save_data_on_files() {
         .fail(function (jqxhr, textStatus, error) {
             alert_error('pipeline', jqxhr, textStatus, error);
         });
+
+    nodes = add_defaults_to_nodes(nodes, defaults);
 }
 
 function convert_edges(edges) {
