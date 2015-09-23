@@ -17,7 +17,7 @@ apt-get install git apache2 php5 libapache2-mod-php5
 ### Install
 
 ```
-git clone https://<your-github-account>@github.com/certtools/intelmq-manager.git /tmp/intelmq-manager
+git clone https://github.com/certtools/intelmq-manager.git /tmp/intelmq-manager
 cp -R /tmp/intelmq-manager/intelmq-manager/* /var/www/
 chown -R www-data.www-data /var/www/html/
 ```
