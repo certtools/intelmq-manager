@@ -222,7 +222,7 @@ function fill_bot(id, group, name) {
         element.setAttribute('type', 'text');
         element.setAttribute('id', 'node-id');
         
-        name = bot['name'].replace(/\ /g,'-')
+        name = bot['name'].replace(/\ /g,'-').replace(/[^A-Za-z0-9-]/g,'')
         group = bot['group'].replace(/\ /g,'-')
         default_id = name + "-" + group
         
