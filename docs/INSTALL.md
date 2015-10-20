@@ -19,7 +19,7 @@ The following instructions assume the following requirements:
 
 * IntelMQ is already installed
 * IntelMQ and IntelMQ Manager will be installed on same machine
-* **Operating System:** Ubuntu 14.04 LTS or Debian 8 or CentOS 7
+* Operating System: Ubuntu 14.04 LTS or Debian 8 or CentOS 7
 
 <a name="installation"></a>
 # Installation
@@ -35,12 +35,9 @@ apt-get install git apache2 php5 libapache2-mod-php5
 ```
 
 <a name="dependencies-centos"></a>
-### CentOS 7
+### CentOS 7 (TBD)
 
-```bash
-FIXME
-yum install git httpd #php5 libapache2-mod-php5
-```
+**TBD**
 
 
 <a name="install"></a>
@@ -76,9 +73,9 @@ Restart apache:
 ```
 
 <a name="install-centos"></a>
-### CentOS 7
+### CentOS 7 (TBD)
 
-TODO TODO TODO
+**TBD**
 
 <a name="tempfix"></a>
 ## Temporary Fix for Python 3.4
@@ -115,23 +112,4 @@ AuthUserFile <password file path>
 ```
 
 After this is done you'll have to put the user/pass combination you have created with htpasswd to access the web pages of IntelMQ Manager. To use other authentication methods visit: http://httpd.apache.org/docs/2.2/howto/auth.html
-
-
-
-
-<a name="install-python27"></a>
-#### Python 2.7
-
-```bash
-sudo su -
-
-git clone https://github.com/certtools/intelmq.git /tmp/intelmq
-cd /tmp/intelmq
-
-pip2 install -r REQUIREMENTS2
-python2.7 setup.py install
-
-useradd -d /opt/intelmq -U -s /bin/bash intelmq
-echo 'export PATH="$PATH:$HOME/bin"' > /opt/intelmq/.profile
-chmod -R 0770 /opt/intelmq
 chown -R intelmq.intelmq /opt/intelmq
