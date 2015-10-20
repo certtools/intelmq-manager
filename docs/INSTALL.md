@@ -1,34 +1,62 @@
+**Table of Contents**
+
+1. [Requirements](#requirements)
+2. [Installation](#installation)
+    1. [Install Dependencies](#install-dependencies)
+        1. [Ubuntu 14.04 / Debian 8](#dependencies-ubuntudebian)
+        2. [CentOS 7](#dependencies-centos)
+    2. [Install](#install)
+        1. [Ubuntu 14.04 / Debian 8](#install-ubuntudebian)
+        2. [Centos 7](#install-centos)
+    3. [Temporary Fix for Python 3.4](#tempfix)
+3. [Configuration](#configuration)
+    1. [Basic Authentication (optional)](#basic-auth)
+
+<a name="requirements"></a>
 # Requirements
 
-The following instructions assume:
-* Debian or Ubuntu Operatin System
-* [IntelMQ](https://github.com/certtools/intelmq) is already installed
-* [IntelMQ](https://github.com/certtools/intelmq) and [IntelMQ Manager](https://github.com/certtools/intelmq-manager) will be installed on same machine
+The following instructions assume the following requirements:
 
+* IntelMQ is already installed
+* IntelMQ and IntelMQ Manager will be installed on same machine
+* **Operating System:** Ubuntu 14.04 LTS or Debian 8 or CentOS 7
 
+<a name="installation"></a>
 # Installation
 
-### Install Dependencies
+<a name="install-dependencies"></a>
+## Install Dependencies
 
-```
-sudo apt-get install git apache2 php5 libapache2-mod-php5
+<a name="dependencies-ubuntudebian"></a>
+### Ubuntu 14.04 / Debian 8
+
+```bash
+apt-get install git apache2 php5 libapache2-mod-php5
 ```
 
-### Install
+<a name="dependencies-centos"></a>
+### CentOS 7
 
+```bash
+FIXME
+yum install git httpd #php5 libapache2-mod-php5
 ```
+
+
+<a name="install"></a>
+## Install
+
+<a name="install-ubuntudebian"></a>
+### Ubuntu 14.04 / Debian 8
+
+```bash
 sudo su -
 
 git clone https://github.com/certtools/intelmq-manager.git /tmp/intelmq-manager
-cp -R /tmp/intelmq-manager/intelmq-manager/* /var/www/
-chown -R www-data.www-data /var/www/
-```
+cp -R /tmp/intelmq-manager/intelmq-manager/* /var/www/html/
+chown -R www-data.www-data /var/www/html/
 
-### Configure
-
-Add the Apache user to the intelmq group.
-
-```
+# add the apache user to the intelmq group.
 usermod -a -G intelmq www-data
 ```
 
@@ -42,18 +70,27 @@ Edit '/var/www/php/config.php' and put the following as the $CONTROLLER value:
 $CONTROLLER = "sudo -u intelmq /opt/intelmq/bin/intelmqctl %s";
 ```
 
-Edit '/etc/apache2/sites-available/000-default.conf' and change the DocumentRoot to
-```
- DocumentRoot /var/www/
-```
-
 Restart apache:
 ```
 /etc/init.d/apache2 restart
 ```
 
+<a name="install-centos"></a>
+### CentOS 7
 
-### Basic Authentication (optional)
+TODO TODO TODO
+
+<a name="tempfix"></a>
+## Temporary Fix for Python 3.4
+```
+sed -i 's|#!/usr/bin/env python|#!/usr/bin/env python3.4|g' /opt/intelmq/bin/intelmqctl
+```
+
+<a name="configuration"></a>
+# Configuration
+
+<a name="basic-auth"></a>
+## Basic Authentication (optional)
 
 If you want to enable file-based basic authentication, first create the authentication file by doing: 
 
@@ -80,3 +117,21 @@ AuthUserFile <password file path>
 After this is done you'll have to put the user/pass combination you have created with htpasswd to access the web pages of IntelMQ Manager. To use other authentication methods visit: http://httpd.apache.org/docs/2.2/howto/auth.html
 
 
+
+
+<a name="install-python27"></a>
+#### Python 2.7
+
+```bash
+sudo su -
+
+git clone https://github.com/certtools/intelmq.git /tmp/intelmq
+cd /tmp/intelmq
+
+pip2 install -r REQUIREMENTS2
+python2.7 setup.py install
+
+useradd -d /opt/intelmq -U -s /bin/bash intelmq
+echo 'export PATH="$PATH:$HOME/bin"' > /opt/intelmq/.profile
+chmod -R 0770 /opt/intelmq
+chown -R intelmq.intelmq /opt/intelmq
