@@ -81,6 +81,7 @@ Restart apache:
 ## Temporary Fix for Python 3.4
 ```
 sed -i 's|#!/usr/bin/env python|#!/usr/bin/env python3.4|g' /opt/intelmq/bin/intelmqctl
+sed -i "s|('INTELMQ_PYTHON', 'python')|('INTELMQ_PYTHON', 'python3.4')|g" /opt/intelmq/bin/intelmqctl
 ```
 
 <a name="configuration"></a>
