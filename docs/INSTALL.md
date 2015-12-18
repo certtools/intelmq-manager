@@ -62,7 +62,7 @@ Give Apache user permissions to execute commands as intelmq user. Edit the /etc/
 www-data ALL=(intelmq) NOPASSWD: /opt/intelmq/bin/intelmqctl
 ```
 
-Edit '/var/www/php/config.php' and put the following as the $CONTROLLER value:
+Edit '/var/www/html/php/config.php' and put the following as the $CONTROLLER value:
 ```
 $CONTROLLER = "sudo -u intelmq /opt/intelmq/bin/intelmqctl %s";
 ```
