@@ -32,6 +32,12 @@ function redraw() {
 function redraw_logs() {
     $('#log-table').dataTable().fnClearTable();
     
+    if  (bot_logs == {}) {
+        $('#log-table').dataTable().fnAdjustColumnSizing();
+        $('#log-table').dataTable().fnDraw();
+        return;
+    }
+    
     for (index in bot_logs) {
         var log_row = $.extend(true, {}, bot_logs[index]);
         
@@ -138,7 +144,9 @@ function load_bot_log() {
             $('#logs-panel-title').removeClass('waiting');
         })
         .fail(function (err1, err2, errMessage) {
-            show_error('Error loading bot logs: ' + errMessage);
+            bot_logs = {};
+            redraw_logs();
+            $('#logs-panel-title').removeClass('waiting');
         });
 }
 
