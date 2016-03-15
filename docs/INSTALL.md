@@ -59,12 +59,12 @@ usermod -a -G intelmq www-data
 
 Give Apache user permissions to execute commands as intelmq user. Edit the /etc/sudoers file and add the following line:
 ```
-www-data ALL=(intelmq) NOPASSWD: /opt/intelmq/bin/intelmqctl
+www-data ALL=(intelmq) NOPASSWD: /usr/local/bin/intelmqctl
 ```
 
 Edit '/var/www/html/php/config.php' and put the following as the $CONTROLLER value:
 ```
-$CONTROLLER = "sudo -u intelmq /opt/intelmq/bin/intelmqctl %s";
+$CONTROLLER = "sudo -u intelmq /usr/local/bin/intelmqctl %s";
 ```
 
 Restart apache:
@@ -80,8 +80,8 @@ Restart apache:
 <a name="tempfix"></a>
 ## Temporary Fix for Python 3.4
 ```
-sed -i 's|#!/usr/bin/env python|#!/usr/bin/env python3.4|g' /opt/intelmq/bin/intelmqctl
-sed -i "s|('INTELMQ_PYTHON', 'python')|('INTELMQ_PYTHON', 'python3.4')|g" /opt/intelmq/bin/intelmqctl
+sed -i 's|#!/usr/bin/env python|#!/usr/bin/env python3.4|g' /usr/local/bin/intelmqctl
+sed -i "s|('INTELMQ_PYTHON', 'python')|('INTELMQ_PYTHON', 'python3.4')|g" /usr/local/bin/intelmqctl
 ```
 
 <a name="configuration"></a>
@@ -90,7 +90,7 @@ sed -i "s|('INTELMQ_PYTHON', 'python')|('INTELMQ_PYTHON', 'python3.4')|g" /opt/i
 <a name="basic-auth"></a>
 ## Basic Authentication (optional)
 
-If you want to enable file-based basic authentication, first create the authentication file by doing: 
+If you want to enable file-based basic authentication, first create the authentication file by doing:
 
 ```
 htpasswd -c <password file path> <username>
@@ -102,10 +102,10 @@ To edit an existing one do:
 htpasswd <password file path> <username>
 ```
 
-on IntelMQ Manager edit the httpd.conf and insert 
+on IntelMQ Manager edit the httpd.conf and insert
 
 ```
-AuthType basic 
+AuthType basic
 AuthName "IntelmMQ Manager"
 
 AuthBasicProvider file

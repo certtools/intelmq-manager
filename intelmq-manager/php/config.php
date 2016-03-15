@@ -10,7 +10,7 @@
         'system' 	=> '/opt/intelmq/etc/system.conf'
     );
 
-    $CONTROLLER = "sudo -u intelmq /opt/intelmq/bin/intelmqctl %s";
+    $CONTROLLER = "sudo -u intelmq /usr/local/bin/intelmqctl %s";
 
     $BOT_CONFIGS_REJECT_REGEX = '/[^[:print:]\n\r\t]/';
     $BOT_ID_REJECT_REGEX = '/[^A-Za-z0-9.-]/';
