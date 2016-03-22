@@ -1,3 +1,9 @@
+intelmq-manager (20160322.1.beta1) unstable; urgency=low
+
+  * Included sudoers config.  First complete beta version.
+
+ -- Sascha Wilde <wilde@intevation.de>  Tue, 22 Mar 2016 18:18:13 +0100
+
 intelmq-manager (20160322.1.alpha1) UNRELEASED; urgency=medium
 
   * Initial release. (2auto/issue20)

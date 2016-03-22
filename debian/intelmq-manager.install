@@ -1,2 +1,3 @@
 intelmq-manager/* var/www/html/
 CONTRIBUTORS.md  LICENSE  NOTICE  README.md usr/share/doc/intelmq-manager/
+debian/01_intelmq-manager /etc/sudoers.d/
