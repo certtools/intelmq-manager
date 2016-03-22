@@ -1,0 +1,10 @@
+Source: intelmq-manager
+Maintainer: Sascha Wilde <wilde@intevation.de>
+Section: net
+Priority: optional
+Build-Depends: debhelper (>= 9)
+
+Package: intelmq-manager
+Architecture: all
+Depends: apache2, libapache2-mod-php5, sudo
+Description: Web Management Interface for IntelMQ.

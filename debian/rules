@@ -1,0 +1,7 @@
+#!/usr/bin/make -f
+%:
+	dh $@
+
+override_dh_fixperms:
+	dh_fixperms
+	chown -R www-data:www-data debian/intelmq-manager/var/www/html/
