@@ -1,10 +1,10 @@
-intelmq-manager (20160322.1.beta2) unstable; urgency=low
+intelmq-manager (20160322.1.beta2) UNRELEASED; urgency=low
 
   * Add www-data user to intelmq group.
 
  -- Sascha Wilde <wilde@intevation.de>  Wed, 23 Mar 2016 10:14:00 +0100
 
-intelmq-manager (20160322.1.beta1) unstable; urgency=low
+intelmq-manager (20160322.1.beta1) UNRELEASED; urgency=low
 
   * Included sudoers config.  First complete beta version.
 
