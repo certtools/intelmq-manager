@@ -1,3 +1,9 @@
+intelmq-manager (20160322.1~beta3) unstable; urgency=low
+
+  * Set INTELMQ_PYTHON via sudo on call to intelmqctl.
+
+ -- Sascha Wilde <wilde@intevation.de>  Wed, 23 Mar 2016 15:07:29 +0100
+
 intelmq-manager (20160322.1~beta2) UNRELEASED; urgency=low
 
   * Add www-data user to intelmq group.
