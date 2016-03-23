@@ -1,4 +1,6 @@
 #!/bin/sh
 set -e
 
-deluser www-data intelmq
+if [ "$1" = "remove" ] ; then
+  deluser www-data intelmq
+fi

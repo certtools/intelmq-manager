@@ -1,4 +1,6 @@
 #!/bin/sh
 set -e
 
-adduser www-data intelmq
+if [ "$1" = "configure" ] ; then
+  adduser www-data intelmq
+fi
