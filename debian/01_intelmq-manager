@@ -1,1 +1,1 @@
-www-data ALL=(intelmq) NOPASSWD: /opt/intelmq/bin/intelmqctl
+www-data ALL=(intelmq) NOPASSWD: /usr/local/bin/intelmqctl
