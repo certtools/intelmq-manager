@@ -1,4 +1,4 @@
-intelmq-manager (20160322.1~beta3) unstable; urgency=low
+intelmq-manager (20160322.1~beta3) experimental; urgency=low
 
   * Set INTELMQ_PYTHON via sudo on call to intelmqctl.
 

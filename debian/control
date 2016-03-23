@@ -6,5 +6,5 @@ Build-Depends: debhelper (>= 9)
 
 Package: intelmq-manager
 Architecture: all
-Depends: apache2, libapache2-mod-php5, sudo, adduser
+Depends: ${misc:Depends}, apache2, libapache2-mod-php5, sudo, adduser
 Description: Web Management Interface for IntelMQ.

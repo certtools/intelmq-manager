@@ -4,3 +4,5 @@ set -e
 if [ "$1" = "configure" ] ; then
   adduser www-data intelmq
 fi
+
+#DEBHELPER#

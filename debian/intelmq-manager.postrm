@@ -4,3 +4,5 @@ set -e
 if [ "$1" = "remove" ] ; then
   deluser www-data intelmq
 fi
+
+#DEBHELPER#
