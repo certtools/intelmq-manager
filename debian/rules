@@ -1,0 +1,11 @@
+#!/usr/bin/make -f
+%:
+	dh $@
+
+override_dh_fixperms:
+	dh_fixperms
+	chown -R www-data:www-data debian/intelmq-manager/var/www/html/
+
+override_dh_install:
+	dh_install
+	sed -i 's@/usr/local/bin/@/usr/bin/@' debian/intelmq-manager/var/www/html/php/config.php
