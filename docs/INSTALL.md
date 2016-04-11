@@ -8,7 +8,6 @@
     2. [Install](#install)
         1. [Ubuntu 14.04 / Debian 8](#install-ubuntudebian)
         2. [Centos 7](#install-centos)
-    3. [Temporary Fix for Python 3.4](#tempfix)
 3. [Configuration](#configuration)
     1. [Basic Authentication (optional)](#basic-auth)
 
@@ -61,6 +60,10 @@ Give Apache user permissions to execute commands as intelmq user. Edit the /etc/
 ```
 www-data ALL=(intelmq) NOPASSWD: /usr/local/bin/intelmqctl
 ```
+Or if you are using nginx:
+```
+nginx ALL=(intelmq) NOPASSWD: /usr/local/bin/intelmqctl
+```
 
 Edit '/var/www/html/php/config.php' and put the following as the $CONTROLLER value:
 ```
@@ -76,13 +79,6 @@ Restart apache:
 ### CentOS 7 (TBD)
 
 **TBD**
-
-<a name="tempfix"></a>
-## Temporary Fix for Python 3.4
-```
-sed -i 's|#!/usr/bin/env python|#!/usr/bin/env python3.4|g' /usr/local/bin/intelmqctl
-sed -i "s|('INTELMQ_PYTHON', 'python')|('INTELMQ_PYTHON', 'python3.4')|g" /usr/local/bin/intelmqctl
-```
 
 <a name="configuration"></a>
 # Configuration
