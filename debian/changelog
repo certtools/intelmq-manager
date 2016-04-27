@@ -1,3 +1,10 @@
+intelmq-manager (20160427.1~beta1) experimental; urgency=low
+
+  * Merged upstream.
+  * Removed stuff to set INTELMQ_PYTHON as it's no longer needed.
+
+ -- Sascha Wilde <wilde@intevation.de>  Wed, 27 Apr 2016 16:54:33 +0200
+
 intelmq-manager (20160322.1~beta4) experimental; urgency=low
 
   * Depend on intelmq package and adjust path of intelmqctl.
