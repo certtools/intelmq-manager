@@ -1,0 +1,9 @@
+#!/bin/sh
+set -e
+
+if [ "$1" = "remove" ] ; then
+  a2dissite intelmq
+  service apache2 reload
+fi
+
+#DEBHELPER#

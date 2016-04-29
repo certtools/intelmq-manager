@@ -1,3 +1,9 @@
+intelmq-manager (20160427.1~beta2) experimental; urgency=low
+
+  * Moved html away from /var/www/html, added apache site config.
+
+ -- Sascha Wilde <wilde@intevation.de>  Fri, 29 Apr 2016 15:57:35 +0200
+
 intelmq-manager (20160427.1~beta1) experimental; urgency=low
 
   * Merged upstream.
