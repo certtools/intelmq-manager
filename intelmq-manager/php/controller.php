@@ -28,7 +28,7 @@
     }
     
     if ($scope == 'botnet') {
-        $arguments = '--botnet ' . $action . ' --type json';
+        $arguments = $action . ' --type json';
     } else if ($scope == 'bot') {
         if (!array_key_exists('id', $_GET)) {
             die("Missing 'id' argument on request.");
@@ -36,7 +36,7 @@
             $id = '';
         }
         
-        $arguments = '--bot ' . $action . ' --id ' . escapeshellcmd($id) . ' --type json';
+        $arguments = $action . ' ' . escapeshellcmd($id) . ' --type json';
     } else if ($scope == 'log') {
         if (!array_key_exists('lines', $_GET)) {
             die("Missing 'lines' argument on request." || !preg_match($lines_regex, $_GET['lines']));
@@ -59,9 +59,9 @@
             $level = 'DEBUG';
         }
         
-        $arguments = '--log ' . escapeshellcmd($level) . ':' . escapeshellcmd((int)($lines)) . ' ' . ' --id ' . escapeshellcmd($id) . ' --type json';
+        $arguments = 'log ' . escapeshellcmd($id) . ' ' . escapeshellcmd($level) . ':' . escapeshellcmd((int)($lines)) . ' --type json';
     } else if ($scope == 'queues') {
-        $arguments = '--list queues --type json';
+        $arguments = 'list queues --type json';
     } else {
         die('Invalid scope');
     }
