@@ -220,9 +220,10 @@ $.getJSON(MANAGEMENT_SCRIPT + '?scope=botnet&action=status')
         var sidemenu = document.getElementById('side-menu');
         
         var li_element = document.createElement('li');
-        var link_element = document.createElement('a');        
+        var link_element = document.createElement('a');
         link_element.innerHTML = ALL_BOTS;
-        link_element.setAttribute('onclick', 'select_bot("' + ALL_BOTS + '")');
+        link_element.setAttribute('href', '#');
+        link_element.setAttribute('onclick', 'select_bot("' + ALL_BOTS + '"); return false');
             
         li_element.appendChild(link_element);
         sidemenu.appendChild(li_element);        
@@ -236,7 +237,8 @@ $.getJSON(MANAGEMENT_SCRIPT + '?scope=botnet&action=status')
             link_element = document.createElement('a');
             
             link_element.innerHTML = bot_id;
-            link_element.setAttribute('onclick', 'select_bot("' + bot_id + '")');
+            link_element.setAttribute('href', '#');
+            link_element.setAttribute('onclick', 'select_bot("' + bot_id + '"); return false');
             
             li_element.appendChild(link_element);
             sidemenu.appendChild(li_element);
