@@ -1,4 +1,4 @@
-intelmq-manager/* var/www/html/
-CONTRIBUTORS.md  LICENSE  NOTICE  README.md usr/share/doc/intelmq-manager/
-debian/01_intelmq-manager /etc/sudoers.d/
-debian/intelmq.env /etc/
+intelmq-manager/* usr/share/intelmq-manager/html/
+CONTRIBUTORS.md NOTICE README.md usr/share/doc/intelmq-manager/
+debian/01_intelmq-manager etc/sudoers.d/
+debian/intelmq.conf etc/apache2/sites-available/

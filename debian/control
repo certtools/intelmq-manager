@@ -3,8 +3,14 @@ Maintainer: Sascha Wilde <wilde@intevation.de>
 Section: net
 Priority: optional
 Build-Depends: debhelper (>= 9)
+Standards-Version: 3.9.6
 
 Package: intelmq-manager
 Architecture: all
 Depends: ${misc:Depends}, apache2, libapache2-mod-php5, sudo, adduser, intelmq
-Description: Web Management Interface for IntelMQ.
+Description: Graphical interface to manage configurations for the IntelMQ framework.
+ A IntelMQ configuration is a set of config files which describe which
+ bots and processing steps should be run in which order. It is similar
+ to describing the dataflow in dataflow oriented languages. IntelMQ
+ Manager is therefore an intuitive tool to allow non-programmers to
+ specify the data flow in IntelMQ.

@@ -1,3 +1,1 @@
-Defaults env_keep += INTELMQ_PYTHON
-Defaults env_file = /etc/intelmq.env
 www-data ALL=(intelmq) NOPASSWD: /usr/bin/intelmqctl

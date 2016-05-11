@@ -3,6 +3,8 @@ set -e
 
 if [ "$1" = "configure" ] ; then
   adduser www-data intelmq
+  a2ensite intelmq
+  service apache2 reload
 fi
 
 #DEBHELPER#
