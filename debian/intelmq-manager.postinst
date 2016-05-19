@@ -4,7 +4,7 @@ set -e
 if [ "$1" = "configure" ] ; then
   adduser www-data intelmq
   a2ensite intelmq
-  invoke-rc.d apache2 reload
+  invoke-rc.d apache2 restart
 fi
 
 #DEBHELPER#

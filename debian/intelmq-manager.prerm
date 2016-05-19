@@ -3,7 +3,7 @@ set -e
 
 if [ "$1" = "remove" ] ; then
   a2dissite intelmq
-  invoke-rc.d apache2 reload
+  invoke-rc.d apache2 restart
 fi
 
 #DEBHELPER#
