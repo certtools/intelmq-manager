@@ -2,9 +2,9 @@
 set -e
 
 if [ "$1" = "configure" ] ; then
-  adduser www-data intelmq
-  a2ensite intelmq
-  invoke-rc.d apache2 restart
+    adduser www-data intelmq
+    . /usr/share/apache2/apache2-maintscript-helper
+    apache2_invoke ensite intelmq
 fi
 
 #DEBHELPER#

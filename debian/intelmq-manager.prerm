@@ -2,8 +2,8 @@
 set -e
 
 if [ "$1" = "remove" ] ; then
-  a2dissite intelmq
-  invoke-rc.d apache2 restart
+    . /usr/share/apache2/apache2-maintscript-helper
+    apache2_invoke ensite intelmq
 fi
 
 #DEBHELPER#
