@@ -1,10 +1,29 @@
 #!/bin/sh
 set -e
 
+htpw=/etc/intelmq-manager.htusers
+
 if [ "$1" = "configure" ] ; then
+    . /usr/share/debconf/confmodule
+
     adduser www-data intelmq
     . /usr/share/apache2/apache2-maintscript-helper
     apache2_invoke ensite intelmq
+
+    db_get intelmq-manager/password
+    passwd="$RET"
+    db_get intelmq-manager/user
+    user="$RET"
+    
+    if [ -n "$passwd" ]; then
+	touch "$htpw"
+	htpasswd -i "$htpw" "$user" <<EOF
+$passwd
+EOF
+        db_set intelmq-manager/password ""
+        db_set intelmq-manager/password-repeat ""
+    fi
+    db_stop
 fi
 
 #DEBHELPER#
