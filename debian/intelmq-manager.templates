@@ -1,6 +1,6 @@
 Template: intelmq-manager/user
 Type: string
-Description: IntelMQ web administration user:
+_Description: IntelMQ web administration user:
  Please provide the user name to be created for use of the IntelMQ Manager.
  .
  This is the username you will use to log in to the IntelMQ web interface
@@ -9,13 +9,13 @@ Description: IntelMQ web administration user:
 
 Template: intelmq-manager/password
 Type: password
-Description: IntelMQ web administration password:
+_Description: IntelMQ web administration password:
  Please provide the password to be set for the user.
 
 Template: intelmq-manager/password-repeat
 Type: password
-Description: Password confirmation:
+_Description: Password confirmation:
 
 Template: intelmq-manager/password-mismatch
 Type: note
-Description: The passwords do not match
+_Description: The passwords do not match

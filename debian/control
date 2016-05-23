@@ -2,7 +2,7 @@ Source: intelmq-manager
 Maintainer: Sascha Wilde <wilde@intevation.de>
 Section: net
 Priority: optional
-Build-Depends: debhelper (>= 9)
+Build-Depends: debhelper (>= 9), po-debconf
 Standards-Version: 3.9.6
 
 Package: intelmq-manager
