@@ -109,4 +109,3 @@ AuthUserFile <password file path>
 ```
 
 After this is done you'll have to put the user/pass combination you have created with htpasswd to access the web pages of IntelMQ Manager. To use other authentication methods visit: http://httpd.apache.org/docs/2.2/howto/auth.html
-chown -R intelmq.intelmq /opt/intelmq
