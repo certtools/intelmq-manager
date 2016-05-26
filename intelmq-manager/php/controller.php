@@ -59,7 +59,7 @@
             $level = 'DEBUG';
         }
         
-        $arguments = 'log ' . escapeshellcmd($id) . ' ' . escapeshellcmd($level) . ':' . escapeshellcmd((int)($lines)) . ' --type json';
+        $arguments = 'log ' . escapeshellcmd($id) . ' ' . escapeshellcmd((int)($lines)) . ' ' . escapeshellcmd($level) . ' --type json';
     } else if ($scope == 'queues') {
         $arguments = 'list queues --type json';
     } else {
