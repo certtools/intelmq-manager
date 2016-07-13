@@ -80,11 +80,19 @@ Restart apache:
 
 **TBD**
 
+<a name="security-considerations"></a>
 # Security considerations
 
-**Never ever run intelmq-manager on a public webserver without SSL and proper authentication**.
+**Never ever run intelmq-manager on a public webserver without SSL and proper authentication**. 
+
 The way the current version is written, anyone can send a POST request and change intelmq's configuration files via sending a HTTP POST request to ``save.php``. Intelmq-manager will reject non JSON data but nevertheless, we don't want anyone to be able to reconfigure an intelmq installation.
+
 Therefore you will need authentication and SSL.
+
+In addition, intelmq currently stores plaintext passwords in its configuration files. These can be read via intelmq-manager.
+
+**Never ever allow unencrypted, unauthenticated access to intelmq-manager**.
+
 
 <a name="configuration"></a>
 # Configuration
