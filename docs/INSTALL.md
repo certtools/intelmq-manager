@@ -8,7 +8,8 @@
     2. [Install](#install)
         1. [Ubuntu 14.04 / Debian 8](#install-ubuntudebian)
         2. [Centos 7](#install-centos)
-3. [Configuration](#configuration)
+3. [Security considerations][#security-considerations)
+4. [Configuration](#configuration)
     1. [Basic Authentication (optional)](#basic-auth)
 
 <a name="requirements"></a>
