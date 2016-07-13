@@ -59,8 +59,10 @@ git clone https://github.com/certtools/intelmq-manager.git /tmp/intelmq-manager
 cp -R /tmp/intelmq-manager/intelmq-manager/* /var/www/html/
 chown -R www-data.www-data /var/www/html/
 
-# add the apache user to the intelmq group.
+# add the apache user to the intelmq group and give permissions to write configuration files
 usermod -a -G intelmq www-data
+chgrp www-data /opt/intelmq/etc/*.conf
+chmod g+w /opt/intelmq/etc/*.conf
 ```
 
 Give Apache user permissions to execute commands as intelmq user. Edit the /etc/sudoers file and add the following line:
