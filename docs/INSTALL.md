@@ -34,6 +34,12 @@ The following instructions assume the following requirements:
 apt-get install git apache2 php5 libapache2-mod-php5
 ```
 
+## Ubuntu 16.04
+
+```bash
+apt-get install git apache2 php libapache2-mod-php7.0
+```
+
 <a name="dependencies-centos"></a>
 ### CentOS 7 (TBD)
 
