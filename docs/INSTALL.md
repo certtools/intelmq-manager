@@ -80,11 +80,17 @@ Restart apache:
 
 **TBD**
 
+# Security considerations
+
+**Never ever run intelmq-manager on a public webserver without SSL and proper authentication**.
+The way the current version is written, anyone can send a POST request and change intelmq's configuration files via sending a HTTP POST request to ``save.php``. Intelmq-manager will reject non JSON data but nevertheless, we don't want anyone to be able to reconfigure an intelmq installation.
+Therefore you will need authentication and SSL.
+
 <a name="configuration"></a>
 # Configuration
 
 <a name="basic-auth"></a>
-## Basic Authentication (optional)
+## Basic Authentication 
 
 If you want to enable file-based basic authentication, first create the authentication file by doing:
 
