@@ -371,7 +371,7 @@ table.dataTable thead .sorting:after {
     max-width: 100%;
 }
 
-.jumbotron .page-header-text span {    
+.jumbotron .page-header-text span {
     color: #ffffff;
     text-align: center;
     height: 100%;
@@ -461,7 +461,7 @@ table.dataTable thead .sorting:after {
 }
 
 .without-bot {
-    
+
 }
 
 #graph-manipulation-saveDiv {
