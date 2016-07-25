@@ -52,6 +52,7 @@
         
         if ($_GET['level'] == 'DEBUG' || 
             $_GET['level'] == 'INFO' || 
+            $_GET['level'] == 'WARNING' ||
             $_GET['level'] == 'ERROR' || 
             $_GET['level'] == 'CRITICAL') {
             $level = $_GET['level'];
