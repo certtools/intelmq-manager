@@ -125,13 +125,6 @@ function load_defaults(config) {
 function load_runtime(config) {
     nodes = read_runtime_conf(config);
         
-    load_file(STARTUP_FILE, load_startup);
-}
-
-function load_startup(config) {
-    nodes = read_startup_conf(config, nodes);
-    nodes = remove_defaults(nodes, defaults);
-    
     load_file(PIPELINE_FILE, load_pipeline);
 }
 
@@ -157,11 +150,6 @@ function save_data_on_files() {
     $.post('./php/save.php?file=runtime', generate_runtime_conf(nodes))
         .fail(function (jqxhr, textStatus, error) {
             alert_error('runtime', jqxhr, textStatus, error);
-        });
-        
-    $.post('./php/save.php?file=startup', generate_startup_conf(nodes))
-        .fail(function (jqxhr, textStatus, error) {
-            alert_error('startup', jqxhr, textStatus, error);
         });
         
     $.post('./php/save.php?file=pipeline', generate_pipeline_conf(edges))
@@ -239,13 +227,6 @@ function fill_bot(id, group, name) {
     }
     
     for (key in bot) {
-        var startup = false;
-        for (index in STARTUP_KEYS) {
-            if (key == STARTUP_KEYS[index]) {
-                startup = true;
-            }
-        }
-        
         element = document.getElementById("node-" + key)
         
         if (!element) {
@@ -259,10 +240,6 @@ function fill_bot(id, group, name) {
             cell1.innerHTML = key;
             element = document.createElement("input");
             element.setAttribute('type', 'text');
-            
-            if (startup) {
-                element.setAttribute('disabled', 'true');
-            }
             
             element.setAttribute('id', 'node-' + key);
             cell2.appendChild(element);

@@ -6,7 +6,6 @@
         'harmonization' => '/opt/intelmq/etc/harmonization.conf',
         'pipeline' 	=> '/opt/intelmq/etc/pipeline.conf',
         'runtime' 	=> '/opt/intelmq/etc/runtime.conf',
-        'startup' 	=> '/opt/intelmq/etc/startup.conf',
         'system' 	=> '/opt/intelmq/etc/system.conf'
     );
 

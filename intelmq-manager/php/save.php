@@ -20,6 +20,8 @@
         die('Config has invalid characters');
     }
 
-    file_put_contents($filename, $post_contents);
+    if ($post_contents != file_get_contents($filename)) {
+        file_put_contents($filename, $post_contents);
+    }
 
 ?>
