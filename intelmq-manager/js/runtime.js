@@ -1,46 +1,33 @@
 function generate_runtime_conf(nodes) {
     var conf_string = '';
-    var new_nodes = {};
     var save_keys = {};
-    
+
     for (id in nodes) {
-        var bot=nodes[id];
         save_keys[id] = {};
-        
+
         for (index in STARTUP_KEYS) {
-            save_keys[id][STARTUP_KEYS[index]] = bot[STARTUP_KEYS[index]];
-            delete bot[STARTUP_KEYS[index]];
+            save_keys[id][STARTUP_KEYS[index]] = nodes[id][STARTUP_KEYS[index]];
+            delete nodes[id][STARTUP_KEYS[index]];
         }
-        
-        save_keys[id]['id'] = bot['id'];
-        delete bot['id'];
-        
-        new_nodes[id] = bot;
+        save_keys[id]['parameters'] = nodes[id];
+        delete save_keys[id]['parameters']['id']
     }
-    
-    conf_string = JSON.stringify(new_nodes, undefined, 4);
-    
-    for (id in nodes) {
-        var bot=nodes[id];
-        for (index in STARTUP_KEYS) {
-            bot[STARTUP_KEYS[index]] = save_keys[id][STARTUP_KEYS[index]];
-        }
-        
-        bot['id'] = save_keys[id]['id'];
-    }
-    
-    return conf_string;
+
+    return JSON.stringify(save_keys, undefined, 4);
 }
 
 function read_runtime_conf(config) {
     var nodes = {};
-    
     for (id in config) {
         var bot = config[id];
-        
-        bot['id'] = id;
-        nodes[id] = bot;
+        nodes[id] = bot['parameters'];
+
+        nodes[id]['id'] = id;
+        nodes[id]['group'] = bot['group'];
+        nodes[id]['name'] = bot['name'];
+        nodes[id]['module'] = bot['module'];
+        nodes[id]['description'] = bot['description'];
     }
-    
+
     return nodes;
 }
