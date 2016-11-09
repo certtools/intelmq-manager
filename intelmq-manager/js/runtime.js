@@ -4,12 +4,15 @@ function generate_runtime_conf(nodes) {
 
     for (id in nodes) {
         save_keys[id] = {};
+        save_keys[id]['parameters'] = {};
 
-        for (index in STARTUP_KEYS) {
-            save_keys[id][STARTUP_KEYS[index]] = nodes[id][STARTUP_KEYS[index]];
-            delete nodes[id][STARTUP_KEYS[index]];
+        for (index in nodes[id]) {
+            if (STARTUP_KEYS.indexOf(index) == -1) {
+                save_keys[id]['parameters'][index] = nodes[id][index];
+            } else {
+                save_keys[id][index] = nodes[id][index];
+            }
         }
-        save_keys[id]['parameters'] = nodes[id];
         delete save_keys[id]['parameters']['id']
     }
 
