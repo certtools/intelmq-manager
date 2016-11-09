@@ -1,3 +1,4 @@
+var defaults = {};
 var nodes = {};
 var edges = {};
 var bots = {};
