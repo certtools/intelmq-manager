@@ -67,26 +67,34 @@ function redraw_logs() {
 
 function redraw_queues() {
     var bot_id = document.getElementById('monitor-target').innerHTML;
-    
+
     var source_queue_element = document.getElementById('source-queue');
+    var internal_queue_element = document.getElementById('internal-queue');
     var destination_queues_element = document.getElementById('destination-queues');
-    
+
     source_queue_element.innerHTML = '';
+    internal_queue_element.innerHTML = '';
     destination_queues_element.innerHTML = '';
-    
+
     var bot_info = {};
     if (bot_id == ALL_BOTS) {
         bot_info['source_queues'] = {};
         bot_info['destination_queues'] = {};
-        
+
         for (index in bot_queues) {
             var source_queue = bot_queues[index]['source_queue'];
             var destination_queues = bot_queues[index]['destination_queues'];
-            
+            var internal_queue = bot_queues[index]['internal_queue'];
+
             if (source_queue) {
                 bot_info['destination_queues'][source_queue[0]] = source_queue;
             }
-            
+
+            if (internal_queue !== undefined) {
+              var queue_name = index + '-internal-queue';
+              bot_info['destination_queues'][queue_name] = [queue_name, internal_queue];
+            }
+
             if (destination_queues) {
                 for (index in destination_queues) {
                     bot_info['destination_queues'][destination_queues[index][0]] = destination_queues[index];
@@ -97,31 +105,40 @@ function redraw_queues() {
         var bot_info = bot_queues[bot_id];
     }
 
-    
-    
+
+
     if (bot_info) {
         if (bot_info['source_queue']) {
             var source_queue = source_queue_element.insertRow();
             var cell0 = source_queue.insertCell(0);
             cell0.innerHTML = bot_info['source_queue'][0]
-            
+
             var cell1 = source_queue.insertCell(1);
             cell1.innerHTML = bot_info['source_queue'][1]
         }
-        
+
+        if (bot_info['internal_queue'] !== undefined) {
+          var internal_queue = internal_queue_element.insertRow();
+          var cell0 = internal_queue.insertCell(0);
+          cell0.innerHTML = 'internal-queue'
+
+          var cell1 = internal_queue.insertCell(1);
+          cell1.innerHTML = bot_info['internal_queue']
+        }
+
         var dst_queues = [];
         for (index in bot_info['destination_queues']) {
             dst_queues.push(bot_info['destination_queues'][index]);
         }
-        
+
         dst_queues.sort();
-        
+
         for (index in dst_queues) {
             var destination_queue = destination_queues_element.insertRow();
-            
+
             var cell0 = destination_queue.insertCell(0);
             cell0.innerHTML = dst_queues[index][0];
-            
+
             var cell1 = destination_queue.insertCell(1);
             cell1.innerHTML = dst_queues[index][1];
 
@@ -185,10 +202,11 @@ function select_bot(bot_id) {
     if(bot_id != ALL_BOTS) {
         $("#logs-panel").css('display', 'block');
         $("#source-queue-table-div").css('display', 'block');
+        $("#internal-queue-table-div").css('display', 'block');
         $("#destination-queues-table-div").removeClass('col-md-12');
-        $("#destination-queues-table-div").addClass('col-md-6');
+        $("#destination-queues-table-div").addClass('col-md-4');
         $("#destination-queue-header").html("Destination Queue");
-        
+
         load_bot_log();
         reload_logs = setInterval(function () {
             load_bot_log();
@@ -196,7 +214,8 @@ function select_bot(bot_id) {
     } else {
         $("#logs-panel").css('display', 'none');
         $("#source-queue-table-div").css('display', 'none');
-        $("#destination-queues-table-div").removeClass('col-md-6');
+        $("#internal-queue-table-div").css('display', 'none');
+        $("#destination-queues-table-div").removeClass('col-md-4');
         $("#destination-queues-table-div").addClass('col-md-12');
         $("#destination-queue-header").html("Queue");
     }
