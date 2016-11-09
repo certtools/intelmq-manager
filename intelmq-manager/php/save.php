@@ -21,7 +21,11 @@
     }
 
     if ($post_contents != file_get_contents($filename)) {
-        file_put_contents($filename, $post_contents);
+        if(file_put_contents($filename, $post_contents) != strlen($post_contents)) {
+            die('Could not write file.');
+        }
+    } else {
+        die('same content');
     }
 
 ?>
