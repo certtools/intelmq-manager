@@ -1,13 +1,13 @@
 var CORE_FIELDS = 5;
 
 var ACCEPTED_NEIGHBORS = {
-    'Collector': ['Parser'],
+    'Collector': ['Parser', 'Output'],
     'Parser': ['Expert', 'Output'],
     'Expert': ['Expert', 'Output'],
     'Output': []
 }
 
-var GROUP_LEVELS = {   
+var GROUP_LEVELS = {
     'Collector': 0,
     'Parser': 1,
     'Expert': 2,
@@ -18,7 +18,7 @@ var GROUP_COLORS = {
     'Collector': '#FF0000',
     'Parser': '#00FF00',
     'Expert': '#0000FF',
-    'Output': '#FFFF00'    
+    'Output': '#FFFF00'
 }
 
 var LEVEL_CLASS = {
