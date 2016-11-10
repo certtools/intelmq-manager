@@ -574,6 +574,14 @@ div.graph-manipulationUI.notification{
     margin-top: 15px;
 }
 
+#queues-panel .width-80 {
+  width: 80%;
+}
+
+#queues-panel .width-20 {
+  width: 20%;
+}
+
 .waiting {
     background-image: url('../images/waiting.gif');
     background-repeat:  no-repeat;
