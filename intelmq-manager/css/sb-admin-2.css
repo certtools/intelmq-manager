@@ -390,6 +390,11 @@ table.dataTable thead .sorting:after {
     margin: auto;
 }
 
+.header-img img {
+    height: 100px;
+    padding: 5px;
+}
+
 .thumbnail img {
     width: 128px;
     height: 128px;
