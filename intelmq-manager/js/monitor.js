@@ -91,7 +91,7 @@ function redraw_queues() {
             }
 
             if (internal_queue !== undefined) {
-              var queue_name = index + '-internal-queue';
+              var queue_name = index + '-queue-internal';
               bot_info['destination_queues'][queue_name] = [queue_name, internal_queue];
             }
 
