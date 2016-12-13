@@ -1,3 +1,5 @@
+**Please note that the IntelMQ Manager is currently not fully compatible with current IntelMQ! Please see the open issues for more details.**
+
 ![IntelMQ](http://s28.postimg.org/r2av18a3x/Logo_Intel_MQ.png)
 
 **IntelMQ Manager** is a graphical interface to manage configurations for the [IntelMQ](https://github.com/certtools/intelmq) framework.
