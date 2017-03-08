@@ -97,7 +97,8 @@ function load_bots(config) {
                 'name': bot_name,
                 'group': bot_group,
                 'module': bot['module'],
-                'description': bot['description']
+                'description': bot['description'],
+                'enabled': true,
             }
             
             for (parameter in bot['parameters']) {
