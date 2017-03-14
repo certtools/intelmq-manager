@@ -76,7 +76,7 @@ nginx ALL=(intelmq) NOPASSWD: /usr/local/bin/intelmqctl
 
 Edit '/var/www/html/php/config.php' and put the following as the $CONTROLLER value:
 ```
-$CONTROLLER = "sudo -u intelmq /usr/local/bin/intelmqctl %s";
+$CONTROLLER = "sudo -u intelmq /usr/local/bin/intelmqctl --type json %s";
 ```
 
 Restart apache:
