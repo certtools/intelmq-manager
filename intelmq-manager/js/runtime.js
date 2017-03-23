@@ -10,7 +10,11 @@ function generate_runtime_conf(nodes) {
             if (STARTUP_KEYS.indexOf(index) == -1) {
                 save_keys[id]['parameters'][index] = nodes[id][index];
             } else {
-                save_keys[id][index] = nodes[id][index];
+                if (index == 'enabled' && nodes[id][index] == true) {
+                    delete nodes[id][index];
+                } else {
+                    save_keys[id][index] = nodes[id][index];
+                }
             }
         }
         delete save_keys[id]['parameters']['id']
@@ -30,6 +34,11 @@ function read_runtime_conf(config) {
         nodes[id]['name'] = bot['name'];
         nodes[id]['module'] = bot['module'];
         nodes[id]['description'] = bot['description'];
+        if('enabled' in [id]) {
+            nodes[id]['enabled'] = bot['enabled'];
+        } else {
+            nodes[id]['enabled'] = true;
+        }
     }
 
     return nodes;

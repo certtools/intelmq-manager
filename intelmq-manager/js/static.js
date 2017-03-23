@@ -29,7 +29,7 @@ var LEVEL_CLASS = {
     'CRITICAL': 'danger'
 }
 
-var STARTUP_KEYS = ['group', 'name', 'module', 'description'];
+var STARTUP_KEYS = ['group', 'name', 'module', 'description', 'enabled'];
 
 var BOT_ID_REGEX = /^[0-9a-zA-Z.-]+$/;
 
