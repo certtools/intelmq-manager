@@ -62,3 +62,7 @@ function show_error(string) {
         alert(string);
     }
 }
+
+function sortObjectByPropertyName(obj) {
+    return Object.keys(obj).sort().reduce((c, d) => (c[d] = obj[d], c), {});
+}
