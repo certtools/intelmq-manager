@@ -34,7 +34,7 @@ function read_runtime_conf(config) {
         nodes[id]['name'] = bot['name'];
         nodes[id]['module'] = bot['module'];
         nodes[id]['description'] = bot['description'];
-        if('enabled' in [id]) {
+        if('enabled' in bot) {
             nodes[id]['enabled'] = bot['enabled'];
         } else {
             nodes[id]['enabled'] = true;
