@@ -34,8 +34,8 @@ function generate_pipeline_conf(edges) {
         
         if (edge['destination-queues'].length == 0) {
             edge['destination-queues'] = undefined;
-        }
-        edge['destination-queues'] = sortObjectByPropertyName(edge['destination-queues'])
+        } else {
+            edge['destination-queues'].sort()
         edge = sortObjectByPropertyName(edge)
     }
 
