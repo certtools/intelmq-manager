@@ -2,8 +2,9 @@ Source: intelmq-manager
 Maintainer: Sascha Wilde <wilde@intevation.de>
 Section: net
 Priority: optional
-Build-Depends: debhelper (>= 9), po-debconf
+Build-Depends: debhelper (>= 9), po-debconf, quilt
 Standards-Version: 3.9.6
+Homepage: https://github.com/certtools/intelmq-manager/
 
 Package: intelmq-manager
 Architecture: all
