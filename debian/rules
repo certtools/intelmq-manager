@@ -6,5 +6,5 @@ override_dh_fixperms:
 	dh_fixperms
 
 override_dh_install:
+	sed -i -f debian/sedfile intelmq-manager/php/config.php docs/INSTALL.md
 	dh_install
-	sed -i 's@/usr/local/bin/@/usr/bin/@' debian/intelmq-manager/usr/share/intelmq-manager/html/php/config.php
