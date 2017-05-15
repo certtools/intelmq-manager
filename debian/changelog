@@ -7,6 +7,12 @@ intelmq-manager (0.2) experimental; urgency=low
 
  -- Sebastian Wagner <wagner@cert.at>  Thu, 20 Apr 2017 17:12:00 +0200
 
+intelmq-manager (20170323.2) unstable; urgency=medium
+
+  * Fixed dependencies for xenial.
+
+ -- Sascha Wilde <wilde@intevation.de>  Mon, 15 May 2017 13:06:58 +0200
+
 intelmq-manager (20160427.1~beta2) experimental; urgency=low
 
   * Moved html away from /var/www/html, added apache site config.
