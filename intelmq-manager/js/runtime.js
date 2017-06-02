@@ -17,9 +17,11 @@ function generate_runtime_conf(nodes) {
                 }
             }
         }
+        save_keys[id]['parameters'] = sortObjectByPropertyName(save_keys[id]['parameters'])
+        save_keys[id] = sortObjectByPropertyName(save_keys[id])
         delete save_keys[id]['parameters']['id']
     }
-
+    save_keys = sortObjectByPropertyName(save_keys)
     return JSON.stringify(save_keys, undefined, 4);
 }
 
