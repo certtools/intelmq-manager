@@ -34,12 +34,13 @@ function generate_pipeline_conf(edges) {
         
         if (edge['destination-queues'].length == 0) {
             edge['destination-queues'] = undefined;
-        }
+        } else {
+            edge['destination-queues'].sort()
+        edge = sortObjectByPropertyName(edge)
     }
-    
-    conf_string = JSON.stringify(new_edges, undefined, 4);
-    
-    return conf_string;
+
+    new_edges = sortObjectByPropertyName(new_edges)
+    return JSON.stringify(new_edges, undefined, 4);
 }
 
 function read_pipeline_conf(config, nodes) {
