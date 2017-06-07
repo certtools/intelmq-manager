@@ -1,34 +1,42 @@
 **Table of Contents**
 
 1. [Requirements](#requirements)
-2. [Installation](#installation)
-    1. [Install Dependencies](#install-dependencies)
-        1. [Ubuntu 14.04 / Debian 8](#dependencies-ubuntudebian)
-        2. [CentOS 7](#dependencies-centos)
-    2. [Install](#install)
-        1. [Ubuntu 14.04 / Debian 8](#install-ubuntudebian)
-        2. [Centos 7](#install-centos)
-3. [Security considerations](#security-considerations)
-4. [Configuration](#configuration)
-    1. [Basic Authentication (optional)](#basic-auth)
+2. [Install Dependencies](#install-dependencies)
+   * [Ubuntu 14.04 / Debian 8](#ubuntu-1404--debian-8)
+   * [Ubuntu 16.04](#ubuntu-1604)
+   * [CentOS 7](#centos-7)
+   * [openSUSE Leap 42.2](#opensuse-leap-422)
+3. [Installation](#installation)
+   * [Native packages](#native-packages)
+   * [Manually](#manually)
+     * [Notes on CentOS](#notes-on-centos)
+4. [Security considerations](#security-considerations)
+5. [Configuration](#configuration)
+   * [Basic Authentication](#basic-authentication)
+     * [Packages](#packages)
+     * [Manually](#manually-1)
 
-<a name="requirements"></a>
+Please report any errors you encounter at https://github.com/certtools/intelmq/issues
+
 # Requirements
 
 The following instructions assume the following requirements:
 
 * IntelMQ is already installed
 * IntelMQ and IntelMQ Manager will be installed on same machine
-* Operating System: Ubuntu 14.04 LTS or Debian 8 or CentOS 7
+* a supported operating system
 
-<a name="installation"></a>
-# Installation
+Supported and recommended operating systems are:
+* CentOS 7
+* Debian 8
+* OpenSUSE Leap 42.2
+* Ubuntu: 14.04 and 16.04 LTS
 
-<a name="install-dependencies"></a>
-## Install Dependencies
+# Install Dependencies
 
-<a name="dependencies-ubuntudebian"></a>
-### Ubuntu 14.04 / Debian 8
+If you are using native packages, you can simply skip this section as all dependencies are installed automatically.
+
+## Ubuntu 14.04 / Debian 8
 
 ```bash
 apt-get install git apache2 php5 libapache2-mod-php5
@@ -40,56 +48,67 @@ apt-get install git apache2 php5 libapache2-mod-php5
 apt-get install git apache2 php libapache2-mod-php7.0
 ```
 
-<a name="dependencies-centos"></a>
-### CentOS 7 (TBD)
-
-**TBD**
-
-
-<a name="install"></a>
-## Install
-
-<a name="install-ubuntudebian"></a>
-### Ubuntu 14.04 / Debian 8
+## CentOS 7
 
 ```bash
-sudo su -
+yum install epel-release
+yum install git httpd httpd-tools php
+```
 
+## openSUSE Leap 42.2
+
+```bash
+yum install git apache2 apache2-utils apache2-mod_php7
+```
+
+# Installation
+
+## Native packages
+
+Get the install instructions for your operating system here:
+https://software.opensuse.org/download.html?project=home%3Asebix%3Aintelmq&package=intelmq-manager
+
+Currently, these operating systems are supported by the packages:
+* CentOS 7, install `epel-release` first
+* Debian 8
+* Fedora 25
+* openSUSE Leap 42.2
+* openSUSE Tumbleweed
+* Ubuntu 16.04
+
+## Manually
+
+Clone the repository and copy the files in the subfolder `intelmq-manager` to the webserver directory (can also be `/srv/www/htdocs/` depending on the used system):
+```bash
 git clone https://github.com/certtools/intelmq-manager.git /tmp/intelmq-manager
 cp -R /tmp/intelmq-manager/intelmq-manager/* /var/www/html/
 chown -R www-data.www-data /var/www/html/
+```
 
-# add the apache user to the intelmq group and give permissions to write configuration files
+Add the webserver user (www-data, wwwrun, apache or nginx) to the intelmq group and give write permissions for the configuration files:
+```bash
 usermod -a -G intelmq www-data
 chgrp www-data /opt/intelmq/etc/*.conf
 chmod g+w /opt/intelmq/etc/*.conf
 ```
 
-Give Apache user permissions to execute commands as intelmq user. Edit the /etc/sudoers file and add the following line:
-```
+Give webserver user (www-data, wwwrun, apache or nginx) permissions to execute intelmqctl as intelmq user. Edit the `/etc/sudoers` file and add the adapted following line:
+```javascript
 www-data ALL=(intelmq) NOPASSWD: /usr/local/bin/intelmqctl
 ```
-Or if you are using nginx:
-```
-nginx ALL=(intelmq) NOPASSWD: /usr/local/bin/intelmqctl
-```
 
-Edit '/var/www/html/php/config.php' and put the following as the $CONTROLLER value:
-```
+Edit '/var/www/html/php/config.php' and check if the $CONTROLLER value is correct:
+```php
 $CONTROLLER = "sudo -u intelmq /usr/local/bin/intelmqctl --type json %s";
 ```
 
-Restart apache:
-```
-/etc/init.d/apache2 restart
-```
+### Notes on CentOS
 
-<a name="install-centos"></a>
-### CentOS 7 (TBD)
+The manager does currently not work with selinux enabled, you need to deactivate it.
+Also, stopping bots does currently not work, see also https://github.com/certtools/intelmq-manager/issues/103
 
-**TBD**
+If you can help to fix these issues, please join us!
 
-<a name="security-considerations"></a>
 # Security considerations
 
 **Never ever run intelmq-manager on a public webserver without SSL and proper authentication**. 
@@ -102,28 +121,38 @@ In addition, intelmq currently stores plaintext passwords in its configuration f
 
 **Never ever allow unencrypted, unauthenticated access to intelmq-manager**.
 
-
-<a name="configuration"></a>
 # Configuration
 
-<a name="basic-auth"></a>
 ## Basic Authentication 
 
-If you want to enable file-based basic authentication, first create the authentication file by doing:
+### Packages
 
+In DEB-based distributions you will be asked for the password during installation.
+
+In RPM-based distributions, the file will be placed under `/etc/intelmq-manager.htusers` automatically. To set a user-password combination do:
+```bash
+htpasswd /etc/intelmq-manager.htusers intelmqadmin
 ```
+
+In both cases the webserver is already configured to use this file for authentication.
+
+### Manually
+
+To create the authentication file:
+
+```bash
 htpasswd -c <password file path> <username>
 ```
 
 To edit an existing one do:
 
-```
+```bash
 htpasswd <password file path> <username>
 ```
 
 on IntelMQ Manager edit the httpd.conf and insert
 
-```
+```javascript
 AuthType basic
 AuthName "IntelmMQ Manager"
 
