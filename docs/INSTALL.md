@@ -158,6 +158,7 @@ AuthName "IntelmMQ Manager"
 
 AuthBasicProvider file
 AuthUserFile <password file path>
+Require valid-user
 ```
 
-After this is done you'll have to put the user/pass combination you have created with htpasswd to access the web pages of IntelMQ Manager. To use other authentication methods visit: http://httpd.apache.org/docs/2.2/howto/auth.html
+After this is done you'll have to put the user/pass combination you have created with htpasswd to access the web pages of IntelMQ Manager. To use other authentication methods visit: http://httpd.apache.org/docs/2.4/howto/auth.html
