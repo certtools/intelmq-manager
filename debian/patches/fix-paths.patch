@@ -1,0 +1,30 @@
+Description: Fix paths for LSB
+Author: Sebastian Wagner <wagner@cert.at>
+Last-Update: 2016-07-20
+---
+This patch header follows DEP-3: http://dep.debian.net/deps/dep3/
+--- a/intelmq-manager/php/config.php	2017-06-07 13:06:54.215185776 +0200
++++ b/intelmq-manager/php/config2.php	2017-06-07 13:06:50.351194626 +0200
+@@ -1,15 +1,15 @@
+ <?php
+ 
+     $FILES = array(
+-        'bots' 		=> '/opt/intelmq/etc/BOTS',
+-        'defaults' 	=> '/opt/intelmq/etc/defaults.conf',
+-        'harmonization' => '/opt/intelmq/etc/harmonization.conf',
+-        'pipeline' 	=> '/opt/intelmq/etc/pipeline.conf',
+-        'runtime' 	=> '/opt/intelmq/etc/runtime.conf',
+-        'system' 	=> '/opt/intelmq/etc/system.conf'
++        'bots' 		=> '/etc/intelmq/BOTS',
++        'defaults' 	=> '/etc/intelmq/defaults.conf',
++        'harmonization' => '/etc/intelmq/harmonization.conf',
++        'pipeline' 	=> '/etc/intelmq/pipeline.conf',
++        'runtime' 	=> '/etc/intelmq/runtime.conf',
++        'system' 	=> '/etc/intelmq/system.conf'
+     );
+ 
+-    $CONTROLLER = "sudo -u intelmq /usr/local/bin/intelmqctl --type json %s";
++    $CONTROLLER = "sudo -u intelmq /usr/bin/intelmqctl --type json %s";
+ 
+     $BOT_CONFIGS_REJECT_REGEX = '/[^[:print:]\n\r\t]/';
+     $BOT_ID_REJECT_REGEX = '/[^A-Za-z0-9.-]/';

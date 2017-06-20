@@ -1,0 +1,5 @@
+language: php
+install:
+  - sudo apt-get install dpkg-dev debhelper quilt fakeroot
+script:
+  - dpkg-buildpackage -b -us -uc
