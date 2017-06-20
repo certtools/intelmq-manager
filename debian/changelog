@@ -1,3 +1,9 @@
+intelmq-manager (0.2.1~20170620) experimental; urgency=medium
+
+  * Fix syntax error in pipeline.js preventing loading of configuration page
+
+ -- Sebastian Wagner <wagner@cert.at>  Wed, 20 Jun 2017 15:10:00 +0200
+
 intelmq-manager (0.2~20170607) experimental; urgency=low
 
   * Release version 0.2
