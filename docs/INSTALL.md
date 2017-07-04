@@ -9,7 +9,7 @@
 3. [Installation](#installation)
    * [Native packages](#native-packages)
    * [Manually](#manually)
-     * [Notes on CentOS](#notes-on-centos)
+     * [Notes on CentOS / RHEL](#notes-on-centos--rhel)
 4. [Security considerations](#security-considerations)
 5. [Configuration](#configuration)
    * [Basic Authentication](#basic-authentication)
@@ -27,10 +27,14 @@ The following instructions assume the following requirements:
 * a supported operating system
 
 Supported and recommended operating systems are:
-* CentOS 7
 * Debian 8
 * OpenSUSE Leap 42.2
 * Ubuntu: 14.04 and 16.04 LTS
+
+Partly supported are:
+* RHEL 7
+* CentOS 7
+See [Notes on CentOS / RHEL](#notes-on-centos--rhel)
 
 # Install Dependencies
 
@@ -102,7 +106,7 @@ Edit '/var/www/html/php/config.php' and check if the $CONTROLLER value is correc
 $CONTROLLER = "sudo -u intelmq /usr/local/bin/intelmqctl --type json %s";
 ```
 
-### Notes on CentOS
+### Notes on CentOS / RHEL
 
 The manager does currently not work with selinux enabled, you need to deactivate it.
 Also, stopping bots does currently not work, see also https://github.com/certtools/intelmq-manager/issues/103
