@@ -9,6 +9,7 @@ A IntelMQ configuration is a set of config files which describe which bots and p
 ## How to Install
 
 See [INSTALL](https://github.com/certtools/intelmq-manager/blob/master/docs/INSTALL.md).
+Read the security considerations in this document carefully.
 
 ## Screenshots
 
