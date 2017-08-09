@@ -13,8 +13,8 @@
         $id = $_GET['id'];
     }
 
-    $id_regex = '/[0-9a-zA-Z]+/';
-    $lines_regex = '/[0-9]+/';
+    $id_regex = '/^[0-9a-zA-Z-]$+/';
+    $lines_regex = '/^[0-9]+$/';
 
     $arguments = '';
 
