@@ -141,7 +141,6 @@ function redraw_queues() {
 
             var cell1 = destination_queue.insertCell(1);
             cell1.innerHTML = dst_queues[index][1];
-
         }
     }
 }
