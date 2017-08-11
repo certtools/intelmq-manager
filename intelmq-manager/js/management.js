@@ -41,8 +41,10 @@ function update_bot_status() {
         }
         
         buttons_cell = '' +
-            '<button type="submit" class="btn btn-default" onclick="start_bot(\'' + bot_id + '\')"><span class="glyphicon glyphicon-play"></span></button>' + 
-            '<button type="submit" class="btn btn-default" onclick="stop_bot(\'' + bot_id + '\')"><span class="glyphicon glyphicon-stop"></span></button>';
+            '<button type="submit" class="btn btn-default" title="Start" onclick="start_bot(\'' + bot_id + '\')"><span class="glyphicon glyphicon-play"></span></button>' + 
+            '<button type="submit" class="btn btn-default" title="Stop" onclick="stop_bot(\'' + bot_id + '\')"><span class="glyphicon glyphicon-stop"></span></button>' +
+            '<button type="submit" class="btn btn-default" title="Reload" onclick="reload_bot(\'' + bot_id + '\')"><span class="glyphicon glyphicon-refresh"></span></button>' +
+            '<button type="submit" class="btn btn-default" title="Restart" onclick="restart_bot(\'' + bot_id + '\')"><span class="glyphicon glyphicon-step-forward"></span></button>';
 
         bot_row = {
             'bot_id': bot_id,
@@ -58,8 +60,11 @@ function update_bot_status() {
     botnet_status_element.innerHTML = botnet_status;
     
     botnet_buttons_element.innerHTML = '' +
-        '<button type="submit" class="btn btn-default" onclick="start_botnet()"><span class="glyphicon glyphicon-play"></span></button>' + 
-        '<button type="submit" class="btn btn-default" onclick="stop_botnet()"><span class="glyphicon glyphicon-stop"></span></button>';
+        '<button type="submit" class="btn btn-default" title="Start" onclick="start_botnet()"><span class="glyphicon glyphicon-play"></span></button>' + 
+        '<button type="submit" class="btn btn-default" title="Stop" onclick="stop_botnet()"><span class="glyphicon glyphicon-stop"></span></button>' + 
+        '<button type="submit" class="btn btn-default" title="Reload" onclick="reload_bot()"><span class="glyphicon glyphicon-refresh"></span></button>' +
+        '<button type="submit" class="btn btn-default" title="Restart" onclick="restart_bot()"><span class="glyphicon glyphicon-step-forward"></span></button>';
+
     
     $('#botnet-status-panel-title').removeClass('waiting');
     
@@ -102,6 +107,30 @@ function stop_bot(bot_id) {
         })
         .fail(function (err1, err2, errMessage) {
             show_error('Error stopping bot: ' + errMessage);
+        });
+}
+
+function reload_bot(bot_id) {
+    $('#botnet-status-panel-title').addClass('waiting');
+    $.getJSON(MANAGEMENT_SCRIPT + '?scope=bot&action=reload&id=' + bot_id)
+        .done(function (status) {
+            bot_status[bot_id] = status;
+            update_bot_status();
+        })
+        .fail(function (err1, err2, errMessage) {
+            show_error('Error reloading bot: ' + errMessage);
+        });
+}
+
+function restart_bot(bot_id) {
+    $('#botnet-status-panel-title').addClass('waiting');
+    $.getJSON(MANAGEMENT_SCRIPT + '?scope=bot&action=restart&id=' + bot_id)
+        .done(function (status) {
+            bot_status[bot_id] = status;
+            update_bot_status();
+        })
+        .fail(function (err1, err2, errMessage) {
+            show_error('Error restarting bot: ' + errMessage);
         });
 }
 
