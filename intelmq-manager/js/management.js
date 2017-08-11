@@ -43,8 +43,8 @@ function update_bot_status() {
         buttons_cell = '' +
             '<button type="submit" class="btn btn-default" title="Start" onclick="start_bot(\'' + bot_id + '\')"><span class="glyphicon glyphicon-play"></span></button>' + 
             '<button type="submit" class="btn btn-default" title="Stop" onclick="stop_bot(\'' + bot_id + '\')"><span class="glyphicon glyphicon-stop"></span></button>' +
-            '<button type="submit" class="btn btn-default" title="Reload" onclick="reload_bot(\'' + bot_id + '\')"><span class="glyphicon glyphicon-refresh"></span></button>' +
-            '<button type="submit" class="btn btn-default" title="Restart" onclick="restart_bot(\'' + bot_id + '\')"><span class="glyphicon glyphicon-step-forward"></span></button>';
+            '<button type="submit" class="btn btn-default" title="Reload" onclick="reload_bot(\'' + bot_id + '\')"><span class="glyphicon glyphicon-repeat"></span></button>' +
+            '<button type="submit" class="btn btn-default" title="Restart" onclick="restart_bot(\'' + bot_id + '\')"><span class="glyphicon glyphicon-refresh"></span></button>';
 
         bot_row = {
             'bot_id': bot_id,
@@ -62,8 +62,8 @@ function update_bot_status() {
     botnet_buttons_element.innerHTML = '' +
         '<button type="submit" class="btn btn-default" title="Start" onclick="start_botnet()"><span class="glyphicon glyphicon-play"></span></button>' + 
         '<button type="submit" class="btn btn-default" title="Stop" onclick="stop_botnet()"><span class="glyphicon glyphicon-stop"></span></button>' + 
-        '<button type="submit" class="btn btn-default" title="Reload" onclick="reload_bot()"><span class="glyphicon glyphicon-refresh"></span></button>' +
-        '<button type="submit" class="btn btn-default" title="Restart" onclick="restart_bot()"><span class="glyphicon glyphicon-step-forward"></span></button>';
+        '<button type="submit" class="btn btn-default" title="Reload" onclick="reload_bot()"><span class="glyphicon glyphicon-repeat"></span></button>' +
+        '<button type="submit" class="btn btn-default" title="Restart" onclick="restart_bot()"><span class="glyphicon glyphicon-refresh"></span></button>';
 
     
     $('#botnet-status-panel-title').removeClass('waiting');
