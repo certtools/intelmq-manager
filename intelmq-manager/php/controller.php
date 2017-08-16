@@ -63,6 +63,8 @@
         $arguments = 'log ' . escapeshellcmd($id) . ' ' . escapeshellcmd((int)($lines)) . ' ' . escapeshellcmd($level);
     } else if ($scope == 'queues') {
         $arguments = 'list queues';
+    } else if ($scope == 'check') {
+        $arguments = 'check';
     } else {
         die('Invalid scope');
     }
