@@ -11,6 +11,7 @@ $('#log-table').dataTable({
     lengthMenu: [[5, 10, 25, -1], [5, 10, 25, "All"]],
     pageLength: 10,
     order: [0, 'desc'],
+    autoWidth: false,
     columns: [
         { "data": "date" },
         { "data": "bot_id" },
@@ -23,6 +24,29 @@ $('#log-table').dataTable({
 window.onresize = function () {
     redraw();
 };
+
+$(document).ready(function () {
+    var bot_id = getUrlParameter('bot_id');
+    if (typeof(bot_id) !== 'undefined') {
+        window.history.replaceState(null, null, 'monitor.html');
+        select_bot(bot_id);
+    }
+})
+
+function getUrlParameter(sParam) {
+    var sPageURL = decodeURIComponent(window.location.search.substring(1)),
+        sURLVariables = sPageURL.split('&'),
+        sParameterName,
+        i;
+
+    for (i = 0; i < sURLVariables.length; i++) {
+        sParameterName = sURLVariables[i].split('=');
+
+        if (sParameterName[0] === sParam) {
+            return sParameterName[1] === undefined ? true : sParameterName[1];
+        }
+    }
+}
 
 function redraw() {
     redraw_logs();
@@ -85,26 +109,22 @@ function redraw_queues() {
             var source_queue = bot_queues[index]['source_queue'];
             var destination_queues = bot_queues[index]['destination_queues'];
             var internal_queue = bot_queues[index]['internal_queue'];
+            var parentName = index;
 
             if (source_queue) {
                 bot_info['destination_queues'][source_queue[0]] = source_queue;
+                bot_info['destination_queues'][source_queue[0]]['parent'] = parentName;
             }
 
             if (internal_queue !== undefined) {
               var queue_name = index + '-queue-internal';
               bot_info['destination_queues'][queue_name] = [queue_name, internal_queue];
-            }
-
-            if (destination_queues) {
-                for (index in destination_queues) {
-                    bot_info['destination_queues'][destination_queues[index][0]] = destination_queues[index];
-                }
+              bot_info['destination_queues'][queue_name]['parent'] = parentName;
             }
         }
     } else {
         var bot_info = bot_queues[bot_id];
     }
-
 
 
     if (bot_info) {
@@ -138,6 +158,11 @@ function redraw_queues() {
 
             var cell0 = destination_queue.insertCell(0);
             cell0.innerHTML = dst_queues[index][0];
+            cell0.addEventListener("click", function (event) {
+                var selectedBot = dst_queues[$(event.target).closest('tr').index()]["parent"];
+                console.log(selectedBot);
+                window.location.href = "monitor.html?bot_id=" + selectedBot;
+            });
 
             var cell1 = destination_queue.insertCell(1);
             cell1.innerHTML = dst_queues[index][1];
