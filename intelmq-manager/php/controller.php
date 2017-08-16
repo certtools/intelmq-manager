@@ -63,10 +63,8 @@
         $arguments = 'log ' . escapeshellcmd($id) . ' ' . escapeshellcmd((int)($lines)) . ' ' . escapeshellcmd($level);
     } else if ($scope == 'queues') {
         $arguments = 'list queues';
-<<<<<<< HEAD
     } else if ($scope == 'check') {
         $arguments = 'check';
-=======
     } else if ($scope == 'clear') {
         if (!array_key_exists('id', $_GET)) {
             die("Missing 'id' argument on request.");
@@ -74,7 +72,6 @@
             $id = '';
         }
         $arguments = 'clear ' . escapeshellcmd($id);
->>>>>>> 9d63418... ENH: php/controlle: clearing queues
     } else {
         die('Invalid scope');
     }
