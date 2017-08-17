@@ -63,6 +63,8 @@
         $arguments = 'log ' . escapeshellcmd($id) . ' ' . escapeshellcmd((int)($lines)) . ' ' . escapeshellcmd($level);
     } else if ($scope == 'queues') {
         $arguments = 'list queues';
+    } else if ($scope == 'version') {
+        $arguments = '--version';
     } else {
         die('Invalid scope');
     }
@@ -73,6 +75,13 @@
 
     $return = shell_exec($command);
 
-    echo $return;
+    if ($scope != 'version') {
+        echo $return;
+    } else {
+        echo json_encode(array(
+            "intelmq" => rtrim($return),
+            "intelmq-manager" => $VERSION,
+        ));
+    }
 
 ?>
