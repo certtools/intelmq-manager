@@ -560,6 +560,70 @@ div.vis-network div.vis-close {
   user-select: none;
 }
 
+/*  Edited for INTELMQ */
+div.vis-network div.vis-save {
+  position:absolute;
+  right: 5px;
+  top: 40px;
+  white-space: nowrap;
+  padding-bottom: 10px;
+  padding-left: 10px;
+  padding-top: 10px;
+
+  cursor: pointer;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+div.vis-network div.vis-save:hover {
+  box-shadow: 1px 1px 8px rgba(0, 0, 0, 0.20);
+}
+
+div.vis-network div.vis-save-icon {
+  background-image: url("../../images/saveicon-20.png");
+  background-repeat: no-repeat;
+  padding-left: 30px;
+  padding-right: 15px;
+  position: relative;
+  z-index:20;
+}
+
+div.vis-network div.vis-clear {
+  position:absolute;
+  right: 180px;
+  top: 40px;
+  white-space: nowrap;
+  padding-bottom: 10px;
+  padding-left: 10px;
+  padding-top: 10px;
+
+  cursor: pointer;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+div.vis-network div.vis-clear:hover {
+  box-shadow: 1px 1px 8px rgba(0, 0, 0, 0.20);
+}
+
+div.vis-network div.vis-clear-icon {
+  background-image: url("../../images/trashicon-20.png");
+  background-repeat: no-repeat;
+  padding-left: 30px;
+  padding-right: 15px;
+  position: relative;
+  z-index:20;
+}
+/*  Edited for INTELMQ */
+
 div.vis-network div.vis-close:hover {
   opacity: 0.6;
 }

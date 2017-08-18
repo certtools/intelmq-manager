@@ -401,7 +401,7 @@ table.dataTable thead .sorting:after {
     padding: 15px;
 }
 
-#graph-popUp {
+#network-popUp {
     display:none;
     position:absolute;
     top:25%;
@@ -418,43 +418,43 @@ table.dataTable thead .sorting:after {
 }
 
 @media(min-width:768px) {
-    #graph-popUp {
+    #network-popUp {
         left: 25%;
         width: 50%;
     }
 }
 
-#graph-popUp-fields {
+#network-popUp-fields {
     width: 100%;
 }
 
-#graph-popUp-fields input {
+#network-popUp-fields input {
     width: 100%;
 }
 
-#graph-popUp-fields td {
+#network-popUp-fields td {
     text-align: right;
 }
 
-#graph-popUp-title {
+#network-popUp-title {
     width: 100%;
     font-size:28px;
 }
 
-#graph-row {
+#network-row {
     display: none;
     height: 90%;
 }
 
-#graph-row.col-xs-10 {
+#network-row.col-xs-10 {
     height: 100%;
 }
 
-#graph-row.col-xs-2 {
+#network-row.col-xs-2 {
     height: 100%;
 }
 
-#graph-tab {
+#network-tab {
     height: 100%;
 }
 
@@ -465,110 +465,6 @@ table.dataTable thead .sorting:after {
 
 .without-bot {
 
-}
-
-#graph-manipulation-saveDiv {
-    position: absolute;
-    right: 20px;
-    height: 30px;
-    z-index: 20;
-}
-
-#graph-manipulate-saveState {
-    background-image: url("../images/saveicon-20.png");
-    background-repeat: no-repeat;
-    padding-left: 15px;
-    padding-right: 15px;
-    position: relative;
-    z-index:20;
-}
-
-#graph-manipulationLabel-save {
-    display: none;
-}
-
-@media(min-width:768px) {
-    #graph-manipulationLabel-save {
-        display: block;
-    }
-}
-
-#graph-manipulation-clearDiv {
-    position: absolute;
-    right: 60px;
-    height: 30px;
-    z-index: 20;
-}
-
-#graph-manipulate-clearState {
-    background-image: url("../images/trashicon-20.png");
-    padding-left: 15px;
-    padding-right: 15px;
-    position: relative;
-    z-index:20;
-}
-
-#graph-manipulationLabel-clear {
-    display: none;
-}
-
-@media(min-width:768px) {
-    #graph-manipulationLabel-clear {
-        display: block;
-    }
-
-    #graph-manipulation-clearDiv {
-        right: 180px;
-    }
-}
-
-div.graph-manipulationUI {
-    font-family: arial;
-    font-size: 12px;
-    background-position: center center;
-    background-repeat:no-repeat;
-    height:24px;
-    margin: 3px 0px 0px 0px;
-    vertical-align:middle;
-    cursor: pointer;
-    padding: 0px 8px 0px 8px;
-    -webkit-touch-callout: none;
-    -webkit-user-select: none;
-    -khtml-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
-    user-select: none;
-}
-
-@media(min-width:768px) {
-    div.graph-manipulationUI {
-        -moz-border-radius: 15px;
-        border-radius: 15px;
-        background-position: left 10px center;
-    }
-}
-
-div.graph-manipulationUI:hover {
-    box-shadow: 1px 1px 8px rgba(0, 0, 0, 0.20);
-}
-
-div.graph-manipulationUI:active {
-    box-shadow: 1px 1px 8px rgba(0, 0, 0, 0.50);
-}
-
-div.graph-manipulationUI.none:hover {
-    box-shadow: 1px 1px 8px rgba(0, 0, 0, 0.0);
-    cursor: default;
-}
-div.graph-manipulationUI.none:active {
-    box-shadow: 1px 1px 8px rgba(0, 0, 0, 0.0);
-}
-div.graph-manipulationUI.none {
-    padding: 0px 0px 0px 0px;
-}
-div.graph-manipulationUI.notification{
-    margin: 2px;
-    font-weight: bold;
 }
 
 #logs-panel {

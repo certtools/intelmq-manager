@@ -35093,7 +35093,9 @@ return /******/ (function(modules) { // webpackBootstrap
     editEdgeDescription: 'Click on the control points and drag them to a node to connect to it.',
     createEdgeError: 'Cannot link edges to a cluster.',
     deleteClusterError: 'Clusters cannot be deleted.',
-    editClusterError: 'Clusters cannot be edited.'
+    editClusterError: 'Clusters cannot be edited.',
+    saveState:"Save Configuration", /* Changed for IntelMQCP */
+    clearState:"Clear Configuration" /* Changed for IntelMQCP */
   };
   exports['en_EN'] = exports['en'];
   exports['en_US'] = exports['en'];
@@ -51346,6 +51348,40 @@ return /******/ (function(modules) { // webpackBootstrap
           this.closeDiv.style.display = this.manipulationDiv.style.display;
           this.canvas.frame.appendChild(this.closeDiv);
         }
+
+        /* Edited for INTELMQCP */
+        if (this.saveDiv === undefined) {
+          this.saveDiv = document.createElement('div');
+          this.saveDiv.className = 'vis-save';
+          this.saveDiv.id = 'vis-save';
+          this.saveDiv.style.display = 'block';
+          this.canvas.frame.appendChild(this.saveDiv);
+          
+          this.saveDiv.innerHTML = "" +
+            "<div class='vis-save-icon'>" +
+            "<span class='vis-save-label'>"+this.options.locales['en']['saveState'] +"</span></div>";
+          
+          $("#vis-save").children().on('click', function (event) {
+            save_data_on_files(); 
+          });
+        }
+
+        if (this.clearDiv === undefined) {
+          this.clearDiv = document.createElement('div');
+          this.clearDiv.className = 'vis-clear';
+          this.clearDiv.id = 'vis-clear';
+          this.clearDiv.style.display = 'block';
+          this.canvas.frame.appendChild(this.clearDiv);
+          
+          this.clearDiv.innerHTML = "" +
+          "<div class='vis-clear-icon'>" +
+          "<span class='vis-clear-label'>"+this.options.locales['en']['clearState'] +"</span></div>";
+          
+          $("#vis-clear").children().on('click', function (event) {
+            window.location.assign('#new');
+          });
+        }
+        /* End of edit for IntelMQCP */
       }
 
       /**
