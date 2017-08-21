@@ -50952,6 +50952,11 @@ return /******/ (function(modules) { // webpackBootstrap
         // restore the state of any bound functions or events, remove control nodes, restore physics
         this._clean();
 
+        // INTELMQ
+        if(network !== null) {
+          enableTooltip();
+        }
+
         // reset global variables
         this.manipulationDOM = {};
 
@@ -51111,6 +51116,9 @@ return /******/ (function(modules) { // webpackBootstrap
         if (this.editMode !== true) {
           this.enableEditMode();
         }
+
+        //INTELMQ
+        disableTooltip();
 
         // restore the state of any bound functions or events, remove control nodes, restore physics
         this._clean();

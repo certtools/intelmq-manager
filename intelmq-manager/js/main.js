@@ -368,10 +368,6 @@ function draw() {
             tooltipDelay: 1000,
             navigationButtons: true
         },
-        // tooltip: {
-        //     fontFace: 'arial',
-        //     delay: 1000
-        // },
         nodes: {
             font: {
                 size: 14, // px
@@ -395,8 +391,6 @@ function draw() {
             smooth: {
                 enabled: true,
                 type: 'continuous'
-                // type: 'discrete'
-                // type: 'horizontal'
             }
         },
         groups: {
@@ -493,12 +487,27 @@ function draw() {
     };
 
     network = new vis.Network(network_container, data, options);
-
-
-    network.on('dragStart', function (params) {
-        console.log('hello');
-    });
 }
+
+// functions called in vis.js
+function disableTooltip() {
+    var options = {
+        interaction: {
+            tooltipDelay: 999999
+        }
+    }
+    network.setOptions(options);
+}
+
+function enableTooltip() {
+    var options = {
+        interaction: {
+            tooltipDelay: 1000
+        }
+    }
+    network.setOptions(options);
+}
+// INTELMQ
 
 /*
  * Application entry point
