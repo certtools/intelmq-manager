@@ -128,6 +128,7 @@ function load_bots(config) {
     } else {
         draw();
         resize();
+        enableSaveButtonBlinking();
     }
 }
 
@@ -201,6 +202,7 @@ function save_data_on_files() {
         });
 
     nodes = add_defaults_to_nodes(nodes, defaults);
+    disableSaveButtonBlinking();
 }
 
 function convert_edges(edges) {
@@ -312,6 +314,7 @@ function saveDefaults_tmp(data, callback) {
         }
     }
 
+    enableSaveButtonBlinking();
     clearPopUp(data, callback);
 }
 
@@ -364,6 +367,7 @@ function saveData(data,callback) {
 
     nodes[data.id] = node;
 
+    enableSaveButtonBlinking();
     clearPopUp(data, callback);
 }
 
@@ -406,9 +410,17 @@ function clearPopUp(data, callback) {
     }
 
     popup.setAttribute('class', "without-bot");
-    if(callback !== undefined) {
+    if((callback !== undefined) && (data['label'] != 'new')) {
         callback(data);
     }
+}
+
+function enableSaveButtonBlinking() {
+    document.getElementById('vis-save').setAttribute('class', 'vis-save-blinking');
+}
+
+function disableSaveButtonBlinking() {
+    document.getElementById('vis-save').setAttribute('class', 'vis-save');
 }
 
 function draw() {
@@ -511,6 +523,7 @@ function draw() {
                 for (index in data.nodes) {
                     delete nodes[data.nodes[index]];
                 }
+                enableSaveButtonBlinking();
             },
             addEdge: function(data,callback) {
                 if (data.from == data.to) {
@@ -549,6 +562,12 @@ function draw() {
                 }
 
                 edges[data.id]={'from': data.from, 'to': data.to};
+                enableSaveButtonBlinking();
+            },
+            deleteEdge: function(data, callback) {
+                delete edges[data["edges"][0]];
+                callback(data);
+                enableSaveButtonBlinking();
             }
         },
         layout: {

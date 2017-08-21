@@ -29,5 +29,4 @@
     } else {
         die('same content');
     }
-
 ?>
