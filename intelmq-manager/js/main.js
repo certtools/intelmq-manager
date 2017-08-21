@@ -301,8 +301,7 @@ function saveData(data,callback) {
 
     nodes[data.id] = node;
 
-    clearPopUp();
-    callback(data);
+    clearPopUp(data, callback);
 }
 
 function create_form(title, data, callback){
@@ -311,14 +310,14 @@ function create_form(title, data, callback){
     var saveButton = document.getElementById('network-popUp-save');
     var cancelButton = document.getElementById('network-popUp-cancel');
     saveButton.onclick = saveData.bind(this,data,callback);
-    cancelButton.onclick = clearPopUp.bind();
+    cancelButton.onclick = clearPopUp.bind(this, data, callback);
 
     table.innerHTML="<p>Please select one of the bots on the left</p>";
     popup.style.display = 'block';
     popup.setAttribute('class', "without-bot");
 }
 
-function clearPopUp() {
+function clearPopUp(data, callback) {
     var saveButton = document.getElementById('network-popUp-save');
     var cancelButton = document.getElementById('network-popUp-cancel');
     saveButton.onclick = null;
@@ -338,6 +337,7 @@ function clearPopUp() {
     }
 
     popup.setAttribute('class', "without-bot");
+    callback(data);
 }
 
 function draw() {
