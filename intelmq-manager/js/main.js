@@ -163,15 +163,27 @@ function fill_editDefault(data) {
 
 function handleDragStart(event) {
     network.addNodeMode();
-    var elementID = event.srcElement.id.split('@');
+    var elementID = event.currentTarget.id.split('@');
 
     draggedElement = {
         bot_name: elementID[0],
         bot_group: elementID[1]
     };
+
+    // necessary for firefox
+    event.dataTransfer.setData('text/plain', null);
 }
 
 function handleDrop(event) {
+
+    // --- necessary for firefox
+    if (event.preventDefault) {
+        event.preventDefault();
+    }
+    if (event.stopPropagation) {
+        event.stopPropagation();
+    }
+    // ---
 
     var domPointer = network.interactionHandler.getPointer({ x: event.clientX, y: event.clientY });
     var canvasPointer = network.manipulation.canvas.DOMtoCanvas(domPointer);
