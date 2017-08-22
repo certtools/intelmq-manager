@@ -8,6 +8,7 @@ var network_container = null;
 var popup = null;
 var span = null;
 var table = null;
+var options = null;
 
 $(window).on('hashchange', function() {
     location.reload();
@@ -340,6 +341,19 @@ function clearPopUp() {
     popup.setAttribute('class', "without-bot");
 }
 
+function redrawNetwork() {
+    options.layout.randomSeed = Math.round(Math.random() * 1000000);
+
+    var data = {
+        nodes: convert_nodes(nodes),
+        edges: convert_edges(edges)
+    };
+
+    network.destroy();
+    network = null;
+    network = new vis.Network(network_container, data, options);
+}
+
 function draw() {
     load_html_elements();
 
@@ -352,7 +366,7 @@ function draw() {
         };
     }
 
-    var options = {
+    options = {
         physics: {
             hierarchicalRepulsion: {
                 nodeDistance: 200,
@@ -491,20 +505,12 @@ function draw() {
 
 // functions called in vis.js
 function disableTooltip() {
-    var options = {
-        interaction: {
-            tooltipDelay: 999999
-        }
-    }
+    options.interaction.tooltipDelay = 999999;
     network.setOptions(options);
 }
 
 function enableTooltip() {
-    var options = {
-        interaction: {
-            tooltipDelay: 1000
-        }
-    }
+    options.interaction.tooltipDelay = 1000;
     network.setOptions(options);
 }
 // INTELMQ
