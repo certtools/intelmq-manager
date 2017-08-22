@@ -21,6 +21,7 @@
     if (array_key_exists('action', $_GET) && ($_GET['action'] == 'start' ||
                                                $_GET['action'] == 'stop' ||
                                                $_GET['action'] == 'restart' ||
+                                               $_GET['action'] == 'reload' ||
                                                $_GET['action'] == 'status')) {
         $action = $_GET['action'];
     } else {

@@ -13,6 +13,9 @@ CHANGELOG
 * fix #96
 * save buttons starts blinking after changes (#41)
 
+### Management
+* Reload and restart have been added as actions on bots and the whole botnet
+
 0.2.1
 -----
 * Fix syntax error in pipeline.js preventing loading of configuration page
