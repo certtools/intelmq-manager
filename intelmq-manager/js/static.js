@@ -15,10 +15,10 @@ var GROUP_LEVELS = {
 }
 
 var GROUP_COLORS = {
-    'Collector': '#FF0000',
-    'Parser': '#00FF00',
-    'Expert': '#0000FF',
-    'Output': '#FFFF00'
+    'Collector': '#ff6666',
+    'Parser': '#66ff66',
+    'Expert': '#66a3ff',
+    'Output': '#ffff66'
 }
 
 var LEVEL_CLASS = {

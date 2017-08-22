@@ -1,7 +1,6 @@
 function generate_defaults_conf(defaults) {
-    var conf_string = '';
-    
-    return conf_string;
+    defaults = sortObjectByPropertyName(defaults);
+    return JSON.stringify(defaults, undefined, 4);
 }
 
 function read_defaults_conf(config) {
