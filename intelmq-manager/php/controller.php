@@ -21,6 +21,7 @@
     if (array_key_exists('action', $_GET) && ($_GET['action'] == 'start' ||
                                                $_GET['action'] == 'stop' ||
                                                $_GET['action'] == 'restart' ||
+                                               $_GET['action'] == 'reload' ||
                                                $_GET['action'] == 'status')) {
         $action = $_GET['action'];
     } else {
@@ -63,6 +64,15 @@
         $arguments = 'log ' . escapeshellcmd($id) . ' ' . escapeshellcmd((int)($lines)) . ' ' . escapeshellcmd($level);
     } else if ($scope == 'queues') {
         $arguments = 'list queues';
+    } else if ($scope == 'check') {
+        $arguments = 'check';
+    } else if ($scope == 'clear') {
+        if (!array_key_exists('id', $_GET)) {
+            die("Missing 'id' argument on request.");
+        } else if (!preg_match($id_regex, $id)) {
+            $id = '';
+        }
+        $arguments = 'clear ' . escapeshellcmd($id);
     } else {
         die('Invalid scope');
     }
@@ -72,7 +82,10 @@
     set_time_limit(10);
 
     $return = shell_exec($command);
-
-    echo $return;
+    if ($return == NULL) {
+        echo '"error"';
+    } else {
+        echo $return;
+    }
 
 ?>

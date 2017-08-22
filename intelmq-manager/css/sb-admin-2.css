@@ -133,6 +133,13 @@ body {
     padding-left: 52px;
 }
 
+#customListItem{
+    border-bottom: none;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    text-align: center;
+}
+
 @media(min-width:768px) {
     .sidebar {
         z-index: 1;
