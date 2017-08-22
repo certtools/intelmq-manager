@@ -11,6 +11,7 @@ CHANGELOG
 * interface for defaults.conf (#45)
 * drag&drop
 * fix #96
+* save buttons starts blinking after changes (#41)
 
 0.2.1
 -----
