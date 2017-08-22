@@ -8,6 +8,7 @@ var network_container = null;
 var popup = null;
 var span = null;
 var table = null;
+var draggedElement = null;
 
 $(window).on('hashchange', function() {
     location.reload();
@@ -34,6 +35,8 @@ function resize() {
 function load_html_elements() {
     // Load popup, span and table
     network_container = document.getElementById('network-container');
+    network_container.setAttribute('ondrop', 'handleDrop(event)');
+    network_container.setAttribute('ondragover', 'allowDrop(event)');
     popup = document.getElementById("network-popUp");
     span = document.getElementById('network-popUp-title');
     table = document.getElementById("network-popUp-fields");
@@ -85,6 +88,9 @@ function load_bots(config) {
 
             var bot_submenu = document.createElement('li');
             bot_submenu.appendChild(bot_title);
+            bot_submenu.setAttribute('draggable', 'true');
+            bot_submenu.addEventListener('dragstart', handleDragStart, false);
+            bot_submenu.id = bot_name + '@' + bot_group;
 
             bots_submenu.appendChild(bot_submenu);
 
@@ -153,6 +159,39 @@ function fill_editDefault(data) {
     }
     // to enable scroll bar
     popup.setAttribute('class', "with-bot");
+}
+
+function handleDragStart(event) {
+    network.addNodeMode();
+    var elementID = event.srcElement.id.split('@');
+
+    draggedElement = {
+        bot_name: elementID[0],
+        bot_group: elementID[1]
+    };
+}
+
+function handleDrop(event) {
+
+    var domPointer = network.interactionHandler.getPointer({ x: event.clientX, y: event.clientY });
+    var canvasPointer = network.manipulation.canvas.DOMtoCanvas(domPointer);
+
+    var clickData = {
+        pointer: {
+            canvas: {
+                x: canvasPointer.x,
+                y: canvasPointer.y
+            }
+        }
+    };
+
+    network.manipulation.temporaryEventFunctions[0].boundFunction(clickData);
+
+    fill_bot(undefined,draggedElement.bot_group,draggedElement.bot_name);
+}
+
+function allowDrop(event) {
+    event.preventDefault();
 }
 
 function load_defaults(config) {
@@ -342,6 +381,14 @@ function saveData(data,callback) {
     if (!BOT_ID_REGEX.test(data.id)) {
         show_error("Bot ID's can only be composed of numbers, letters and hiphens");
         return;
+    }
+
+    // check if already existing
+    for (key in nodes) {
+        if (key === data.id) {
+            show_error('item with id ' + data.id + ' already exists');
+            return;
+        }
     }
 
     node = {};
