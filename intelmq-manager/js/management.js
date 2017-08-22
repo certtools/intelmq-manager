@@ -56,6 +56,12 @@ function update_bot_status() {
             'actions': buttons_cell,
             'DT_RowClass': BOT_CLASS_DEFINITION[bot_status[bot_id]]
         };
+		
+		$('#bot-table-body tr').click(function (event) {
+			if($(event.target).closest('td').index() == 0) {
+				window.location.href = "monitor.html?bot_id=" + event.target.innerText;
+			}
+		});
 
         $('#bot-table').dataTable().fnAddData(bot_row);
     }
