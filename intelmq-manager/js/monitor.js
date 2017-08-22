@@ -11,6 +11,7 @@ $('#log-table').dataTable({
     lengthMenu: [[5, 10, 25, -1], [5, 10, 25, "All"]],
     pageLength: 10,
     order: [0, 'desc'],
+    autoWidth: false,
     columns: [
         { "data": "date" },
         { "data": "bot_id" },
@@ -126,7 +127,6 @@ function redraw_queues() {
     }
 
 
-
     if (bot_info) {
         if (bot_info['source_queue']) {
             var source_queue = source_queue_element.insertRow();
@@ -164,6 +164,10 @@ function redraw_queues() {
 
             var cell0 = destination_queue.insertCell(0);
             cell0.innerHTML = dst_queues[index][0];
+            cell0.addEventListener("click", function (event) {
+                var selectedBot = dst_queues[$(event.target).closest('tr').index()]["parent"];
+                window.location.href = "monitor.html?bot_id=" + selectedBot;
+            });
 
             var cell1 = destination_queue.insertCell(1);
             cell1.innerHTML = dst_queues[index][1];
