@@ -6,6 +6,7 @@ CHANGELOG
 * Partly support for CentOS/RHEL 7
 * Note on security considerations in Readme to avoid misunderstandings
 * Update vis.js to current version
+* monitor: clearing queues is possible in general and specific view for all queues
 
 ### Configuration
 * interface for defaults.conf (#45)
