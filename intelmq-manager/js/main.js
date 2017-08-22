@@ -240,6 +240,12 @@ function fill_bot(id, group, name) {
     var bot = {};
     table.innerHTML = '';
 
+    var oldIdInput = document.getElementById('old-id-from-node');
+
+    if (oldIdInput !== null) {
+        oldIdInput.id = id;
+    }
+
     if (id === undefined) {
         bot = bots[group][name];
 
@@ -255,9 +261,9 @@ function fill_bot(id, group, name) {
         element.setAttribute('type', 'text');
         element.setAttribute('id', 'node-id');
 
-        name = bot['name'].replace(/\ /g,'-').replace(/[^A-Za-z0-9-]/g,'')
-        group = bot['group'].replace(/\ /g,'-')
-        default_id = name + "-" + group
+        name = bot['name'].replace(/\ /g,'-').replace(/[^A-Za-z0-9-]/g,'');
+        group = bot['group'].replace(/\ /g,'-');
+        default_id = name + "-" + group;
 
         element.setAttribute('value', default_id.toLowerCase());
         cell2.appendChild(element);
@@ -290,7 +296,11 @@ function fill_bot(id, group, name) {
             cell2.appendChild(element);
         }
 
-        element.setAttribute('value', bot[key]);
+        if(bot[key] !== null) {
+            element.setAttribute('value', bot[key]);
+        } else {
+            element.setAttribute('value', '');
+        }
     }
 
     popup.setAttribute('class', "with-bot");
