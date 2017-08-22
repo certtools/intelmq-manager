@@ -5,6 +5,12 @@ CHANGELOG
 ------------------
 * Partly support for CentOS/RHEL 7
 * Note on security considerations in Readme to avoid misunderstandings
+* Update vis.js to current version
+
+### Configuration
+* interface for defaults.conf (#45)
+* drag&drop
+* fix #96
 
 0.2.1
 -----
