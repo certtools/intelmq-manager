@@ -7,8 +7,8 @@ var network = null;
 var network_container = null;
 var popup = null;
 var span = null;
-var table = null;
 
+var table = null;
 $(window).on('hashchange', function() {
     location.reload();
 });
@@ -296,11 +296,7 @@ function fill_bot(id, group, name) {
             cell2.appendChild(element);
         }
 
-        if(bot[key] !== null) {
-            element.setAttribute('value', bot[key]);
-        } else {
-            element.setAttribute('value', '');
-        }
+        element.setAttribute('value', bot[key]);
     }
 
     popup.setAttribute('class', "with-bot");
