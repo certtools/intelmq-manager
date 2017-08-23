@@ -9,6 +9,8 @@ var popup = null;
 var span = null;
 var table = null;
 var options = null;
+var positions = null;
+var isTooltipEnabled = true;
 
 $(window).on('hashchange', function() {
     location.reload();
@@ -507,10 +509,12 @@ function draw() {
 function disableTooltip() {
     options.interaction.tooltipDelay = 999999;
     network.setOptions(options);
+    isTooltipEnabled = false;
 }
 
 function enableTooltip() {
     options.interaction.tooltipDelay = 1000;
+    isTooltipEnabled = true;
     network.setOptions(options);
 }
 // INTELMQ

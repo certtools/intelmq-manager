@@ -50954,7 +50954,7 @@ return /******/ (function(modules) { // webpackBootstrap
         this._clean();
 
         // INTELMQ
-        if(network !== null) {
+        if((network !== null) && (isTooltipEnabled == false)) {
           enableTooltip();
         }
 
