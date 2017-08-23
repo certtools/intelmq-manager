@@ -250,7 +250,7 @@ function convert_nodes(nodes, includePositions) {
                 new_node.y = positions[index].y;
             } catch(err) {
                 console.error('positions in file are ignored:', err);
-                show_error('file positions.conf invalid - for more information see console');
+                show_error('Saved positions are not valid or not complete. The configuration has possibly been modified outside of the IntelMQ-Manager.');
                 includePositions = false;
             }
         }
