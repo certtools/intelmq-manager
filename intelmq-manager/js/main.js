@@ -249,24 +249,10 @@ function fill_bot(id, group, name) {
     if (id === undefined) {
         bot = bots[group][name];
 
-        var new_row = table.insertRow(-1);
-        var cell1 = new_row.insertCell(0);
-        var cell2 = new_row.insertCell(1);
-
-        cell1.setAttribute('class', 'node-key');
-        cell2.setAttribute('class', 'node-value');
-
-        cell1.innerHTML = 'id';
-        var element = document.createElement("input");
-        element.setAttribute('type', 'text');
-        element.setAttribute('id', 'node-id');
-
         name = bot['name'].replace(/\ /g,'-').replace(/[^A-Za-z0-9-]/g,'');
         group = bot['group'].replace(/\ /g,'-');
         default_id = name + "-" + group;
-
-        element.setAttribute('value', default_id.toLowerCase());
-        cell2.appendChild(element);
+        bot['id'] = default_id;
     }
     else {
         bot = nodes[id];
@@ -276,6 +262,8 @@ function fill_bot(id, group, name) {
         element.setAttribute('value', id);
         popup.appendChild(element);
     }
+
+    var formGroup_ID = bot['id'];
 
     for (key in bot) {
         element = document.getElementById("node-" + key)
