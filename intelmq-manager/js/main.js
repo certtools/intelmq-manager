@@ -180,7 +180,7 @@ function save_data_on_files() {
         return;
     }
 
-    nodes = remove_defaults(nodes, defaults);
+    nodes = remove_defaults(nodes);
 
     var alert_error = function (file, jqxhr, textStatus, error) {
         show_error('There was an error saving ' + file + ':\nStatus: ' + textStatus + '\nError: ' + error);
@@ -264,6 +264,13 @@ function fill_bot(id, group, name) {
     }
 
     var formGroup_ID = bot['id'];
+    var formGroup_GEN = {};
+
+    for(key in bot) {
+        if(STARTUP_KEYS.includes(key)) {
+            formGroup_GEN[key] = bot[key];
+        }
+    }
 
     for (key in bot) {
         element = document.getElementById("node-" + key)
