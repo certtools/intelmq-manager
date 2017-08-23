@@ -136,6 +136,12 @@ function load_pipeline(config) {
     edges = read_pipeline_conf(config, nodes);
     nodes = add_defaults_to_nodes(nodes, defaults);
 
+    load_file(POSITIONS_FILE, load_positions);
+}
+
+function load_positions(config) {
+
+    positions = config;
     draw();
     resize();
 }
@@ -160,6 +166,14 @@ function save_data_on_files() {
         .fail(function (jqxhr, textStatus, error) {
             alert_error('pipeline', jqxhr, textStatus, error);
         });
+
+    var position = JSON.stringify(network.getSeed(), undefined, 4);
+
+    $.post('./php/save.php?file=positions', position)
+        .fail(function (jqxhr, textStatus, error) {
+            alert_error('positions', jqxhr, textStatus, error);
+        });
+
 
     nodes = add_defaults_to_nodes(nodes, defaults);
 }
@@ -498,7 +512,7 @@ function draw() {
         },
         layout: {
             hierarchical: false,
-            randomSeed: undefined
+            randomSeed: positions
         }
     };
 
