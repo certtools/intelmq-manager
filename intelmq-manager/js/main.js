@@ -178,8 +178,8 @@ function load_pipeline(config) {
 }
 
 function load_positions(config) {
+    positions = read_positions_conf(config);
 
-    positions = config;
     draw();
     resize();
 }
@@ -205,12 +205,11 @@ function save_data_on_files() {
             alert_error('pipeline', jqxhr, textStatus, error);
         });
 
-    var position = JSON.stringify(network.getSeed(), undefined, 4);
-
-    $.post('./php/save.php?file=positions', position)
+    $.post('./php/save.php?file=positions', generate_positions_conf())
         .fail(function (jqxhr, textStatus, error) {
             alert_error('positions', jqxhr, textStatus, error);
         });
+
     $.post('./php/save.php?file=defaults', generate_defaults_conf(defaults))
         .fail(function (jqxhr, textStatus, error) {
             alert_error('defaults', jqxhr, textStatus, error);
@@ -235,7 +234,7 @@ function convert_edges(edges) {
     return new_edges;
 }
 
-function convert_nodes(nodes) {
+function convert_nodes(nodes, includePositions) {
     var new_nodes = [];
 
     for (index in nodes) {
@@ -244,6 +243,17 @@ function convert_nodes(nodes) {
         new_node.label = nodes[index]['id'];
         new_node.group = nodes[index]['group'];
         new_node.title = JSON.stringify(nodes[index], undefined, 2).replace(/\n/g, '\n<br>').replace(/ /g, "&nbsp;");
+
+        if(includePositions === true){
+            try {
+                new_node.x = positions[index].x;
+                new_node.y = positions[index].y;
+            } catch(err) {
+                console.error('positions in file are ignored:', err);
+                show_error('file positions.conf invalid - for more information see console');
+                includePositions = false;
+            }
+        }
 
         new_nodes.push(new_node);
     }
@@ -442,7 +452,7 @@ function redrawNetwork() {
     options.layout.randomSeed = Math.round(Math.random() * 1000000);
 
     var data = {
-        nodes: convert_nodes(nodes),
+        nodes: convert_nodes(nodes, false),
         edges: convert_edges(edges)
     };
 
@@ -459,7 +469,7 @@ function draw() {
 
     if (window.location.hash == '#load') {
         data = {
-            nodes: convert_nodes(nodes),
+            nodes: convert_nodes(nodes, true),
             edges: convert_edges(edges)
         };
     }
@@ -601,7 +611,7 @@ function draw() {
         },
         layout: {
             hierarchical: false,
-            randomSeed: positions
+            randomSeed: undefined
         }
     };
 
