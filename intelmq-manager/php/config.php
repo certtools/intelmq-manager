@@ -7,7 +7,7 @@
         'pipeline' 	=> '/opt/intelmq/etc/pipeline.conf',
         'runtime' 	=> '/opt/intelmq/etc/runtime.conf',
         'system' 	=> '/opt/intelmq/etc/system.conf',
-        'positions' => '/opt/intelmq/etc/manager/positions.conf'
+        'positions' => '/opt/intelmq/etc/manager/positions.conf',
     );
 
     $CONTROLLER = "sudo -u intelmq /usr/local/bin/intelmqctl --type json %s";

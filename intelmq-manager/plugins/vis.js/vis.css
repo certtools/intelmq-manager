@@ -593,6 +593,7 @@ div.vis-network div.vis-redraw-icon {
 }
 
 div.vis-network div.vis-save {
+  border-radius: 10px;
   position:absolute;
   right: -10px;
   top: 35px;
@@ -610,7 +611,34 @@ div.vis-network div.vis-save {
   user-select: none;
 }
 
+div.vis-network div.vis-save-blinking {
+  border-radius: 10px;
+  position:absolute;
+  right: -10px;
+  top: 35px;
+  white-space: nowrap;
+  padding-bottom: 5px;
+  padding-left: 5px;
+  padding-top: 5px;
+
+  cursor: pointer;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+
+  -webkit-animation: blinking 1500ms infinite;
+  -moz-animation: blinking 1500ms infinite;
+  -o-animation: blinking 1500ms infinite;
+  animation: blinking 1500ms infinite;
+}
+
 div.vis-network div.vis-save:hover {
+  box-shadow: 1px 1px 8px rgba(0, 0, 0, 0.20);
+}
+div.vis-network div.vis-save-blinking:hover {
   box-shadow: 1px 1px 8px rgba(0, 0, 0, 0.20);
 }
 
@@ -624,6 +652,7 @@ div.vis-network div.vis-save-icon {
 }
 
 div.vis-network div.vis-clear {
+  border-radius: 10px;
   position:absolute;
   right: 160px;
   top: 35px;
@@ -653,6 +682,31 @@ div.vis-network div.vis-clear-icon {
   position: relative;
   z-index:20;
 }
+
+@-webkit-keyframes blinking {
+  0% { background-color: #ffffff;}
+  50% { background-color: #ffff00;}
+  100% { background-color: #ffffff;}
+}
+
+@-moz-keyframes blinking {
+  0% { background-color: #ffffff;}
+  50% { background-color: #ffff00;}
+  100% { background-color: #ffffff;}
+}
+
+@-o-keyframes blinking {
+  0% { background-color: #ffffff;}
+  50% { background-color: #ffff00;}
+  100% { background-color: #ffffff;}
+}
+
+@keyframes blinking {
+  0% { background-color: #ffffff;}
+  50% { background-color: #ffff00;}
+  100% { background-color: #ffffff;}
+}
+
 /*  Edited for INTELMQ */
 
 div.vis-network div.vis-close:hover {

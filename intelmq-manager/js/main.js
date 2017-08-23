@@ -112,12 +112,50 @@ function load_bots(config) {
 
     $('#side-menu').metisMenu({'restart': true});
 
+    btnEditDefault = document.createElement('button');
+    btnEditDefault.setAttribute('class', 'btn btn-warning');
+    btnEditDefault.innerHTML = 'Edit Defaults';
+    btnEditDefault.style.textAlign = 'center';
+    btnEditDefault.onclick = function () {
+        create_form('Edit Defaults', 'editDefaults', undefined);
+        fill_editDefault(defaults);
+    };
+    buttonContainer = document.createElement('li');
+    buttonContainer.appendChild(btnEditDefault);
+    buttonContainer.setAttribute('id', 'customListItem');
+
+    available_bots.appendChild(buttonContainer);
+
     if (window.location.hash != '#new') {
         load_file(DEFAULTS_FILE, load_defaults);
     } else {
         draw();
         resize();
+        enableSaveButtonBlinking();
     }
+}
+
+function fill_editDefault(data) {
+    table.innerHTML = '';
+
+    for(key in data) {
+        // insert on last position
+        var new_row = table.insertRow(-1);
+        var cell1 = new_row.insertCell(0);
+        var cell2 = new_row.insertCell(1);
+
+        cell1.innerHTML = key;
+
+        var element = document.createElement("input");
+        element.setAttribute('type', 'text');
+        cell2.appendChild(element);
+
+        element.setAttribute('id', 'default-' + key);
+        element.setAttribute('value', data[key]);
+
+    }
+    // to enable scroll bar
+    popup.setAttribute('class', "with-bot");
 }
 
 function load_defaults(config) {
@@ -173,9 +211,13 @@ function save_data_on_files() {
         .fail(function (jqxhr, textStatus, error) {
             alert_error('positions', jqxhr, textStatus, error);
         });
-
+    $.post('./php/save.php?file=defaults', generate_defaults_conf(defaults))
+        .fail(function (jqxhr, textStatus, error) {
+            alert_error('defaults', jqxhr, textStatus, error);
+        });
 
     nodes = add_defaults_to_nodes(nodes, defaults);
+    disableSaveButtonBlinking();
 }
 
 function convert_edges(edges) {
@@ -269,6 +311,28 @@ function fill_bot(id, group, name) {
     popup.setAttribute('class', "with-bot");
 }
 
+function saveDefaults_tmp(data, callback) {
+    defaults = {};
+
+    var inputs = document.getElementsByTagName("input");
+    for(var i = 0; i < inputs.length; i++) {
+        if(inputs[i].id.indexOf('default-') == 0) {
+            var key = inputs[i].id.replace('default-', '');
+            var value = null;
+
+            try {
+                value = JSON.parse(inputs[i].value);
+            } catch (err) {
+                value = inputs[i].value;
+            }
+            defaults[key] = value;
+        }
+    }
+
+    enableSaveButtonBlinking();
+    clearPopUp(data, callback);
+}
+
 function saveData(data,callback) {
     var idInput = document.getElementById('node-id');
     var groupInput = document.getElementById('node-group');
@@ -318,27 +382,33 @@ function saveData(data,callback) {
 
     nodes[data.id] = node;
 
-    clearPopUp();
-    callback(data);
+    enableSaveButtonBlinking();
+    clearPopUp(data, callback);
 }
 
 function create_form(title, data, callback){
     span.innerHTML = title;
 
-    var saveButton = document.getElementById('network-popUp-save');
+    var okButton = document.getElementById('network-popUp-ok');
     var cancelButton = document.getElementById('network-popUp-cancel');
-    saveButton.onclick = saveData.bind(this,data,callback);
-    cancelButton.onclick = clearPopUp.bind();
+
+    if(data === 'editDefaults') {
+        okButton.onclick = saveDefaults_tmp.bind(this,data,callback);
+    } else {
+        okButton.onclick = saveData.bind(this,data,callback);
+    }
+
+    cancelButton.onclick = clearPopUp.bind(this, data, callback);
 
     table.innerHTML="<p>Please select one of the bots on the left</p>";
     popup.style.display = 'block';
     popup.setAttribute('class', "without-bot");
 }
 
-function clearPopUp() {
-    var saveButton = document.getElementById('network-popUp-save');
+function clearPopUp(data, callback) {
+    var okButton = document.getElementById('network-popUp-ok');
     var cancelButton = document.getElementById('network-popUp-cancel');
-    saveButton.onclick = null;
+    okButton.onclick = null;
     cancelButton.onclick = null;
 
     popup.style.display = 'none';
@@ -355,6 +425,17 @@ function clearPopUp() {
     }
 
     popup.setAttribute('class', "without-bot");
+    if((callback !== undefined) && (data['label'] != 'new')) {
+        callback(data);
+    }
+}
+
+function enableSaveButtonBlinking() {
+    document.getElementById('vis-save').setAttribute('class', 'vis-save-blinking');
+}
+
+function disableSaveButtonBlinking() {
+    document.getElementById('vis-save').setAttribute('class', 'vis-save');
 }
 
 function redrawNetwork() {
@@ -462,28 +543,29 @@ function draw() {
             },
             deleteNode: function(data,callback) {
                 callback(data);
-    
+
                 for (index in data.edges) {
                     delete edges[data.edges[index]];
                 }
-    
+
                 for (index in data.nodes) {
                     delete nodes[data.nodes[index]];
                 }
+                enableSaveButtonBlinking();
             },
             addEdge: function(data,callback) {
                 if (data.from == data.to) {
                     show_error('This action would cause an infinite loop');
                     return;
                 }
-    
+
                 for (index in edges) {
                     if (edges[index].from == data.from && edges[index].to == data.to) {
                         show_error('There is already a link between those bots');
                         return;
                     }
                 }
-    
+
                 var neighbors = ACCEPTED_NEIGHBORS[nodes[data.from].group];
                 var available_neighbor = false;
                 for (index in neighbors) {
@@ -492,7 +574,7 @@ function draw() {
                         available_neighbor = true;
                     }
                 }
-    
+
                 if (!available_neighbor) {
                     if (neighbors.length == 0) {
                         show_error("Node type " + nodes[data.from].group + " can't connect to other nodes");
@@ -501,13 +583,19 @@ function draw() {
                     }
                     return;
                 }
-    
-    
+
+
                 if (edges[data.id] === undefined) {
                     edges[data.id] = {};
                 }
-    
+
                 edges[data.id]={'from': data.from, 'to': data.to};
+                enableSaveButtonBlinking();
+            },
+            deleteEdge: function(data, callback) {
+                delete edges[data["edges"][0]];
+                callback(data);
+                enableSaveButtonBlinking();
             }
         },
         layout: {
