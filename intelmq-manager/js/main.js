@@ -449,6 +449,7 @@ function redrawNetwork() {
     network.destroy();
     network = null;
     network = new vis.Network(network_container, data, options);
+    enableSaveButtonBlinking();
 }
 
 function draw() {
