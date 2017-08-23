@@ -22,7 +22,9 @@
                                                $_GET['action'] == 'stop' ||
                                                $_GET['action'] == 'restart' ||
                                                $_GET['action'] == 'reload' ||
-                                               $_GET['action'] == 'status')) {
+                                               $_GET['action'] == 'status' ||
+                                               $_GET['action'] == 'enable' ||
+                                               $_GET['action'] == 'disable')) {
         $action = $_GET['action'];
     } else {
         $action = "";
@@ -82,7 +84,7 @@
     set_time_limit(10);
 
     $return = shell_exec($command);
-    if ($return == NULL) {
+    if ($return === NULL) {
         echo '"error"';
     } else {
         echo $return;
