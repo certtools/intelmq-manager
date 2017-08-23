@@ -50956,6 +50956,7 @@ return /******/ (function(modules) { // webpackBootstrap
         // INTELMQ
         if((network !== null) && (isTooltipEnabled == false)) {
           enableTooltip();
+          return;
         }
 
         // reset global variables
