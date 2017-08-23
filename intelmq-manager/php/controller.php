@@ -82,6 +82,8 @@
     set_time_limit(10);
 
     $return = shell_exec($command);
+
+    header('Content-Type: application/json');
     if ($return == NULL) {
         echo '"error"';
     } else {
