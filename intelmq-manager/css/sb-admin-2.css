@@ -415,7 +415,7 @@ table.dataTable thead .sorting:after {
     left:5%;
     margin: auto;
     z-index:299;
-    background-color: #f9f9f9;
+    background-color: #FFFFFF;
     border-style:solid;
     border-width:3px;
     border-color: #5394ed;
@@ -432,6 +432,7 @@ table.dataTable thead .sorting:after {
 }
 
 #network-popUp-fields {
+    background: #FFFFFF;
     width: 100%;
 }
 
@@ -440,12 +441,18 @@ table.dataTable thead .sorting:after {
 }
 
 #network-popUp-fields td {
-    text-align: right;
+    text-align: left;
+}
+
+#border{
+    text-align: center !important;
+    font-weight: bold;
 }
 
 #network-popUp-title {
     width: 100%;
     font-size:28px;
+    display: inherit;
 }
 
 #network-row {

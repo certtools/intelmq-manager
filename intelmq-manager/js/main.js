@@ -10,7 +10,18 @@ var span = null;
 var table = null;
 
 var bot_before_altering = null;
-var EDIT_DEFAULT_BUTTON_ID = 'editDefaultButton';
+var EDIT_DEFAULT_BUTTON_ID = 'editDefaults';
+var BORDER_TYPE_CLASSES = {
+    'DEFAULT': 'info',
+    'GENERIC': 'success',
+    'RUNTIME': 'warning',
+}
+var BORDER_TYPES = {
+    'DEFAULT': 'default',
+    'GENERIC': 'generic',
+    'RUNTIME': 'runtime',
+}
+
 
 $(window).on('hashchange', function() {
     location.reload();
@@ -119,7 +130,7 @@ function load_bots(config) {
     btnEditDefault.style.textAlign = 'center';
     btnEditDefault.id = EDIT_DEFAULT_BUTTON_ID;
     btnEditDefault.onclick = function () {
-        create_form('Edit Defaults', 'editDefaults', undefined);
+        create_form('Edit Defaults', EDIT_DEFAULT_BUTTON_ID, undefined);
         fill_editDefault(defaults);
     };
     buttonContainer = document.createElement('li');
@@ -261,26 +272,45 @@ function fill_bot(id, group, name) {
     bot_before_altering = bot;
 
     insertKeyValue('id', bot['id'], 'id');
-    insertBorder('generic');
+    insertBorder(BORDER_TYPES.GENERIC);
     for(key in bot) {
         if(STARTUP_KEYS.includes(key)) {
-            insertKeyValue(key,bot[key], 'generic');
+            insertKeyValue(key,bot[key], BORDER_TYPES.GENERIC);
         }
     }
-    insertBorder('runtime');
+    insertBorder(BORDER_TYPES.RUNTIME);
     for (key in bot.parameters) {
-        insertKeyValue(key, bot.parameters[key], 'runtime');
+        insertKeyValue(key, bot.parameters[key], BORDER_TYPES.RUNTIME);
     }
-    insertBorder('default');
+    insertBorder(BORDER_TYPES.DEFAULT);
     for (key in bot.defaults) {
-        insertKeyValue(key, bot.defaults[key], 'default');
+        insertKeyValue(key, bot.defaults[key], BORDER_TYPES.DEFAULT);
     }
 
     popup.setAttribute('class', "with-bot");
 }
 
-function insertBorder(name) {
-    insertKeyValue('+++++++++++++++', name, 'border');
+function insertBorder(border_type) {
+    var new_row = table.insertRow(-1);
+    var sectionCell1 = new_row.insertCell(0);
+    var sectionCell2 = new_row.insertCell(1);
+
+    sectionCell1.setAttribute('id', 'border');
+    sectionCell2.setAttribute('id', 'border');
+    sectionCell1.innerHTML = border_type;
+    sectionCell2.innerHTML = border_type;
+
+    switch(border_type) {
+        case BORDER_TYPES.GENERIC:
+            new_row.setAttribute('class', BORDER_TYPE_CLASSES.GENERIC);
+            break;
+        case BORDER_TYPES.RUNTIME:
+            new_row.setAttribute('class', BORDER_TYPE_CLASSES.RUNTIME);
+            break;
+        case BORDER_TYPES.DEFAULT:
+            new_row.setAttribute('class', BORDER_TYPE_CLASSES.DEFAULT);
+            break;
+    }
 }
 
 function insertKeyValue(key, value, section) {
@@ -313,6 +343,8 @@ function saveFormData() {
         var keyCell =  table.rows[i].cells[0];
         var valueCell = table.rows[i].cells[1];
         var valueInput = valueCell.getElementsByTagName('input')[0];
+
+        if (valueInput === undefined) return;
 
         var key = keyCell.innerText;
         var value = null;
@@ -418,7 +450,7 @@ function create_form(title, data, callback){
     var okButton = document.getElementById('network-popUp-ok');
     var cancelButton = document.getElementById('network-popUp-cancel');
 
-    if(data === 'editDefaults') {
+    if(data === EDIT_DEFAULT_BUTTON_ID) {
         okButton.onclick = saveDefaults_tmp.bind(this,data,callback);
     } else {
         okButton.onclick = saveData.bind(this,data,callback);
