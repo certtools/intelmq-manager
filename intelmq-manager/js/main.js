@@ -262,11 +262,6 @@ function fill_bot(id, group, name) {
     }
     else {
         bot = nodes[id];
-        var element = document.createElement("input");
-        element.setAttribute('type', 'hidden');
-        element.setAttribute('id', 'old-id-from-node');
-        element.setAttribute('value', id);
-        popup.appendChild(element);
     }
 
     bot_before_altering = bot;
