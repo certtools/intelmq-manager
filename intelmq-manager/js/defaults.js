@@ -4,6 +4,15 @@ function generate_defaults_conf(defaults) {
 }
 
 function read_defaults_conf(config) {
+
+    for (key in config) {
+        try {
+            config[key] = JSON.parse(config[key]);
+        } catch (err) {
+            config[key] = config[key];
+        }
+    }
+
     return config
 }
 
