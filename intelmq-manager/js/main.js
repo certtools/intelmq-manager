@@ -98,11 +98,12 @@ function load_bots(config) {
                 'module': bot['module'],
                 'description': bot['description'],
                 'enabled': true,
+                'parameters': bot['parameters'],
             }
 
             for (parameter in bot['parameters']) {
                 var value = bot['parameters'][parameter];
-                bots[bot_group][bot_name][parameter] = value;
+                bots[bot_group][bot_name]['parameters'][parameter] = value;
             }
         }
     }
@@ -136,20 +137,7 @@ function fill_editDefault(data) {
     table.innerHTML = '';
 
     for(key in data) {
-        // insert on last position
-        var new_row = table.insertRow(-1);
-        var cell1 = new_row.insertCell(0);
-        var cell2 = new_row.insertCell(1);
-
-        cell1.innerHTML = key;
-
-        var element = document.createElement("input");
-        element.setAttribute('type', 'text');
-        cell2.appendChild(element);
-
-        element.setAttribute('id', 'default-' + key);
-        element.setAttribute('value', data[key]);
-
+        insertKeyValue(key, data[key], 'defaultConfig');
     }
     // to enable scroll bar
     popup.setAttribute('class', "with-bot");
@@ -253,6 +241,15 @@ function fill_bot(id, group, name) {
         group = bot['group'].replace(/\ /g,'-');
         default_id = name + "-" + group;
         bot['id'] = default_id;
+        bot['defaults'] = {};
+
+        for (key in defaults) {
+            if (key in bot.parameters) {
+                continue;
+            } else {
+                bot['defaults'][key] = defaults[key];
+            }
+        }
     }
     else {
         bot = nodes[id];
@@ -263,110 +260,122 @@ function fill_bot(id, group, name) {
         popup.appendChild(element);
     }
 
-    var formGroup_ID = bot['id'];
-    var formGroup_GEN = {};
-
+    insertKeyValue('id', bot['id'], 'id');
+    insertBorder('generic');
     for(key in bot) {
         if(STARTUP_KEYS.includes(key)) {
-            formGroup_GEN[key] = bot[key];
+            insertKeyValue(key,bot[key], 'generic');
         }
     }
-
-    for (key in bot) {
-        element = document.getElementById("node-" + key)
-
-        if (!element) {
-            new_row = table.insertRow(-1);
-            cell1 = new_row.insertCell(0);
-            cell2 = new_row.insertCell(1);
-
-            cell1.setAttribute('class', 'node-key');
-            cell2.setAttribute('class', 'node-value');
-
-            cell1.innerHTML = key;
-            element = document.createElement("input");
-            element.setAttribute('type', 'text');
-
-            element.setAttribute('id', 'node-' + key);
-            cell2.appendChild(element);
-        }
-
-        element.setAttribute('value', bot[key]);
+    insertBorder('runtime');
+    for (key in bot.parameters) {
+        insertKeyValue(key, bot.parameters[key], 'runtime');
+    }
+    insertBorder('default');
+    for (key in bot.defaults) {
+        insertKeyValue(key, bot.defaults[key], 'default');
     }
 
     popup.setAttribute('class', "with-bot");
 }
 
+function insertBorder(name) {
+    insertKeyValue('+++++++++++++++', name, 'border');
+}
+
+function insertKeyValue(key, value, section) {
+
+    var new_row = table.insertRow(-1);
+    var keyCell = new_row.insertCell(0);
+    var valueCell = new_row.insertCell(1);
+    var valueInput = document.createElement("input");
+
+    keyCell.setAttribute('class', 'node-key');
+    keyCell.setAttribute('id', section)
+    valueCell.setAttribute('class', 'node-value');
+    valueInput.setAttribute('type', 'text');
+
+    valueCell.appendChild(valueInput);
+
+    keyCell.innerHTML = key;
+    valueInput.setAttribute('value', value);
+}
+
 function saveDefaults_tmp(data, callback) {
     defaults = {};
-
-    var inputs = document.getElementsByTagName("input");
-    for(var i = 0; i < inputs.length; i++) {
-        if(inputs[i].id.indexOf('default-') == 0) {
-            var key = inputs[i].id.replace('default-', '');
-            var value = null;
-
-            try {
-                value = JSON.parse(inputs[i].value);
-            } catch (err) {
-                value = inputs[i].value;
-            }
-            defaults[key] = value;
-        }
-    }
-
+    saveFormData();
     enableSaveButtonBlinking();
     clearPopUp(data, callback);
 }
 
+function saveFormData() {
+    for (var i = 0; i < table.rows.length; i++) {
+        var keyCell =  table.rows[i].cells[0];
+        var valueCell = table.rows[i].cells[1];
+        var valueInput = valueCell.getElementsByTagName('input')[0];
+
+        try {
+            valueInput = JSON.parse(valueInput);
+        } catch (err) {
+            console.log('value of the key "' + keyCell.innerText + '" could not be parsed to json');
+            console.log(err);
+        }
+
+        switch (keyCell.id) {
+            case 'id':
+                node[keyCell.innerText] = valueInput.value;
+                break;
+            case 'generic':
+                node[keyCell.innerText] = valueInput.value;
+                break;
+            case 'runtime':
+                node['parameters'][keyCell.innerText] = valueInput.value;
+                break;
+            case 'border':
+                break;
+            case 'defaultConfig':
+                defaults[keyCell.innerText] = valueInput.value;
+                break;
+            default:
+                node['defaults'][keyCell.innerText] = valueInput.value;
+        }
+    }
+}
+
 function saveData(data,callback) {
-    var idInput = document.getElementById('node-id');
-    var groupInput = document.getElementById('node-group');
     var oldIdInput = document.getElementById('old-id-from-node');
 
-    if (idInput == undefined && groupInput == undefined) {
+    node = {};
+    node['parameters'] = {};
+    node['defaults'] = {};
+
+    saveFormData();
+
+    if (node.id == '' && node.group == '') {
+        show_error('fields id and group must not be empty!');
         return;
     }
 
     if (oldIdInput != undefined) {
-        if (idInput.value != oldIdInput.value) {
+        if (node.id != oldIdInput.value) {
             if(!confirm("When you edit an ID what you are doing in fact is to create a clone of the current bot. You will have to delete the old one manually. Proceed with the operation?")) {
                 return;
             }
         }
     }
 
-    data.id = idInput.value;
-    data.group = groupInput.value;
-    //data.level = GROUP_LEVELS[data.group];
-
     if (!BOT_ID_REGEX.test(data.id)) {
         show_error("Bot ID's can only be composed of numbers, letters and hiphens");
         return;
     }
 
-    node = {};
-
-    var inputs = document.getElementsByTagName("input");
-    for(var i = 0; i < inputs.length; i++) {
-        if(inputs[i].id.indexOf('node-') == 0) {
-            var key = inputs[i].id.replace('node-', '');
-            var value = null;
-
-            try {
-                value = JSON.parse(inputs[i].value);
-            } catch (err) {
-                value = inputs[i].value;
-            }
-            node[key] = value;
-        }
-    }
-
-    data.label = node['id'];
-
+    data.id = node.id;
+    data.label = node.id
+    data.group = node.group;
+    data.level = GROUP_LEVELS[data.group];
     data.title = JSON.stringify(node, undefined, 2).replace(/\n/g, '\n<br>').replace(/ /g, "&nbsp;");
 
-    nodes[data.id] = node;
+    nodes[node.id] = node;
 
     enableSaveButtonBlinking();
     clearPopUp(data, callback);

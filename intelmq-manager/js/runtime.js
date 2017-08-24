@@ -5,7 +5,9 @@ function generate_runtime_conf(nodes) {
     sortObjectByPropertyName(tmp_nodes);
     for (id in tmp_nodes) {
         delete tmp_nodes[id].id;
-        sortObjectByPropertyName(tmp_nodes[id].parameters);
+        if('parameters' in tmp_nodes[id]) {
+            sortObjectByPropertyName(tmp_nodes[id].parameters);
+        }
         sortObjectByPropertyName(tmp_nodes[id]);
     }
 

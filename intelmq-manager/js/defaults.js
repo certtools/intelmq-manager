@@ -25,9 +25,9 @@ function add_defaults_to_nodes(nodes, defaultConfig) {
         for (key in defaultConfig) {
             if (key in node.parameters) {
                 continue;
+            } else {
+                node.defaults[key] = defaultConfig[key];
             }
-
-            node.defaults[key] = defaultConfig[key];
         }
     }
 
