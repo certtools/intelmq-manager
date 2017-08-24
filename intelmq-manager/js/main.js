@@ -7,8 +7,10 @@ var network = null;
 var network_container = null;
 var popup = null;
 var span = null;
-
 var table = null;
+
+var bot_before_altering = null;
+
 $(window).on('hashchange', function() {
     location.reload();
 });
@@ -228,12 +230,6 @@ function fill_bot(id, group, name) {
     var bot = {};
     table.innerHTML = '';
 
-    var oldIdInput = document.getElementById('old-id-from-node');
-
-    if (oldIdInput !== null) {
-        oldIdInput.id = id;
-    }
-
     if (id === undefined) {
         bot = bots[group][name];
 
@@ -259,6 +255,8 @@ function fill_bot(id, group, name) {
         element.setAttribute('value', id);
         popup.appendChild(element);
     }
+
+    bot_before_altering = bot;
 
     insertKeyValue('id', bot['id'], 'id');
     insertBorder('generic');
@@ -314,59 +312,80 @@ function saveFormData() {
         var valueCell = table.rows[i].cells[1];
         var valueInput = valueCell.getElementsByTagName('input')[0];
 
+        var key = keyCell.innerText;
+        var value = null;
+
         try {
-            valueInput = JSON.parse(valueInput);
+            value = JSON.parse(valueInput.value);
         } catch (err) {
-            console.log('value of the key "' + keyCell.innerText + '" could not be parsed to json');
-            console.log(err);
+            value = valueInput.value;
         }
 
         switch (keyCell.id) {
             case 'id':
-                node[keyCell.innerText] = valueInput.value;
+                node[key] = value;
                 break;
             case 'generic':
-                node[keyCell.innerText] = valueInput.value;
+                node[key] = value;
                 break;
             case 'runtime':
-                node['parameters'][keyCell.innerText] = valueInput.value;
+                node['parameters'][key] = value;
                 break;
             case 'border':
                 break;
             case 'defaultConfig':
-                defaults[keyCell.innerText] = valueInput.value;
+                defaults[key] = value;
                 break;
             default:
-                node['defaults'][keyCell.innerText] = valueInput.value;
+                node['defaults'][key] = value;
         }
     }
 }
 
 function saveData(data,callback) {
-    var oldIdInput = document.getElementById('old-id-from-node');
-
     node = {};
     node['parameters'] = {};
     node['defaults'] = {};
 
     saveFormData();
 
+    // check inputs beeing valid
     if (node.id == '' && node.group == '') {
         show_error('fields id and group must not be empty!');
         return;
     }
 
-    if (oldIdInput != undefined) {
-        if (node.id != oldIdInput.value) {
-            if(!confirm("When you edit an ID what you are doing in fact is to create a clone of the current bot. You will have to delete the old one manually. Proceed with the operation?")) {
-                return;
-            }
+    if (node.id != bot_before_altering.id) {
+        if(!confirm("When you edit an ID what you are doing in fact is to create a clone of the current bot. You will have to delete the old one manually. Proceed with the operation?")) {
+            return;
         }
     }
 
-    if (!BOT_ID_REGEX.test(data.id)) {
+    if (!BOT_ID_REGEX.test(node.id)) {
         show_error("Bot ID's can only be composed of numbers, letters and hiphens");
         return;
+    }
+
+
+    // switch paremters and defaults
+    for (key in node) {
+        if (key === 'parameters') {
+            for (parameterKey in node.parameters) {
+                if (node.parameters[parameterKey] !== bot_before_altering.parameters[parameterKey]) {
+                    if (parameterKey in defaults) {
+                        if (node.parameters[parameterKey] === defaults[parameterKey]) {
+                            swapToDefaults(node, parameterKey);
+                        }
+                    }
+                }
+            }
+        } else if (key === 'defaults') {
+            for (defaultsKey in node.defaults) {
+                if (node.defaults[defaultsKey] !== defaults[defaultsKey]) {
+                    swapToParameters(node, defaultsKey);
+                }
+            }
+        }
     }
 
     data.id = node.id;
@@ -379,6 +398,16 @@ function saveData(data,callback) {
 
     enableSaveButtonBlinking();
     clearPopUp(data, callback);
+}
+
+function swapToParameters(node, key) {
+    node.parameters[key] = node.defaults[key];
+    delete node.defaults[key];
+}
+
+function swapToDefaults(node, key) {
+    node.defaults[key] = node.parameters[key];
+    delete node.parameters[key];
 }
 
 function create_form(title, data, callback){
