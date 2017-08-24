@@ -50953,6 +50953,7 @@ return /******/ (function(modules) { // webpackBootstrap
         this._clean();
 
         // INTELMQ
+        enableEditDefaultButton();
         if(network !== null) {
           enableTooltip();
         }
@@ -51042,6 +51043,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
         // restore the state of any bound functions or events, remove control nodes, restore physics
         this._clean();
+        disableEditDefaultButton(); // INTELMQ
 
         this.inMode = 'addNode';
         if (this.guiEnabled === true) {
@@ -51074,6 +51076,8 @@ return /******/ (function(modules) { // webpackBootstrap
 
         // restore the state of any bound functions or events, remove control nodes, restore physics
         this._clean();
+        disableEditDefaultButton(); // INTELMQ
+
         var node = this.selectionHandler._getSelectedNode();
         if (node !== undefined) {
           this.inMode = 'editNode';
@@ -51122,6 +51126,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
         // restore the state of any bound functions or events, remove control nodes, restore physics
         this._clean();
+        disableEditDefaultButton(); // INTELMQ
 
         this.inMode = 'addEdge';
         if (this.guiEnabled === true) {

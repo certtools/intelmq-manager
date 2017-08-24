@@ -10,6 +10,7 @@ var span = null;
 var table = null;
 
 var bot_before_altering = null;
+var EDIT_DEFAULT_BUTTON_ID = 'editDefaultButton';
 
 $(window).on('hashchange', function() {
     location.reload();
@@ -116,6 +117,7 @@ function load_bots(config) {
     btnEditDefault.setAttribute('class', 'btn btn-warning');
     btnEditDefault.innerHTML = 'Edit Defaults';
     btnEditDefault.style.textAlign = 'center';
+    btnEditDefault.id = EDIT_DEFAULT_BUTTON_ID;
     btnEditDefault.onclick = function () {
         create_form('Edit Defaults', 'editDefaults', undefined);
         fill_editDefault(defaults);
@@ -635,6 +637,14 @@ function enableTooltip() {
         }
     }
     network.setOptions(options);
+}
+
+function disableEditDefaultButton() {
+    $('#' + EDIT_DEFAULT_BUTTON_ID).prop('disabled', true);
+}
+
+function enableEditDefaultButton() {
+    $('#' + EDIT_DEFAULT_BUTTON_ID).prop('disabled', false);
 }
 // INTELMQ
 
