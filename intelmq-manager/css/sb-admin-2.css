@@ -444,6 +444,10 @@ table.dataTable thead .sorting:after {
     text-align: left;
 }
 
+form {
+    display: inline-block;
+}
+
 #border{
     text-align: center !important;
     font-weight: bold;
