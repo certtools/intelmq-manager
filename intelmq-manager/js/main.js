@@ -344,7 +344,7 @@ function saveFormData() {
         var valueCell = table.rows[i].cells[1];
         var valueInput = valueCell.getElementsByTagName('input')[0];
 
-        if (valueInput === undefined) return;
+        if (valueInput === undefined) continue;
 
         var key = keyCell.innerText;
         var value = null;
