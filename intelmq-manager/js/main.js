@@ -152,7 +152,7 @@ function fill_editDefault(data) {
     table.innerHTML = '';
 
     for(key in data) {
-        insertKeyValue(key, data[key], 'defaultConfig');
+        insertKeyValue(key, data[key], 'defaultConfig', false);
     }
     // to enable scroll bar
     popup.setAttribute('class', "with-bot");
@@ -266,20 +266,20 @@ function fill_bot(id, group, name) {
 
     bot_before_altering = bot;
 
-    insertKeyValue('id', bot['id'], 'id');
+    insertKeyValue('id', bot['id'], 'id', false);
     insertBorder(BORDER_TYPES.GENERIC);
     for(key in bot) {
         if(STARTUP_KEYS.includes(key)) {
-            insertKeyValue(key,bot[key], BORDER_TYPES.GENERIC);
+            insertKeyValue(key,bot[key], BORDER_TYPES.GENERIC, false);
         }
     }
     insertBorder(BORDER_TYPES.RUNTIME);
     for (key in bot.parameters) {
-        insertKeyValue(key, bot.parameters[key], BORDER_TYPES.RUNTIME);
+        insertKeyValue(key, bot.parameters[key], BORDER_TYPES.RUNTIME, true);
     }
     insertBorder(BORDER_TYPES.DEFAULT);
     for (key in bot.defaults) {
-        insertKeyValue(key, bot.defaults[key], BORDER_TYPES.DEFAULT);
+        insertKeyValue(key, bot.defaults[key], BORDER_TYPES.DEFAULT, false);
     }
 
     popup.setAttribute('class', "with-bot");
@@ -289,6 +289,7 @@ function insertBorder(border_type) {
     var new_row = table.insertRow(-1);
     var sectionCell1 = new_row.insertCell(0);
     var sectionCell2 = new_row.insertCell(1);
+    var xButtonCell = new_row.insertCell(2);
 
     sectionCell1.setAttribute('id', 'border');
     sectionCell2.setAttribute('id', 'border');
@@ -308,22 +309,40 @@ function insertBorder(border_type) {
     }
 }
 
-function insertKeyValue(key, value, section) {
+function insertKeyValue(key, value, section, allowXButtons) {
 
     var new_row = table.insertRow(-1);
     var keyCell = new_row.insertCell(0);
     var valueCell = new_row.insertCell(1);
+    var xButtonCell = new_row.insertCell(2);
     var valueInput = document.createElement("input");
 
     keyCell.setAttribute('class', 'node-key');
     keyCell.setAttribute('id', section)
     valueCell.setAttribute('class', 'node-value');
     valueInput.setAttribute('type', 'text');
+    valueInput.setAttribute('id', key);
+
+    if ((allowXButtons === true) && (key in defaults)) {
+        var xButtonCell = new_row.insertCell(2);
+        var xButton = document.createElement('button');
+        var xButtonSpan = document.createElement('span');
+        xButtonSpan.setAttribute('class', 'glyphicon glyphicon-remove-circle');
+        xButton.setAttribute('class', 'btn btn-danger');
+        xButton.setAttribute('title', 'reset to default');
+        xButton.setAttribute('onclick', 'resetToDefault(\'' + key + '\')');
+        xButton.appendChild(xButtonSpan);
+        xButtonCell.appendChild(xButton);
+    }
 
     valueCell.appendChild(valueInput);
 
     keyCell.innerHTML = key;
     valueInput.setAttribute('value', value);
+}
+
+function resetToDefault(input_id) {
+    $('#'+input_id)[0].value = defaults[input_id];
 }
 
 function saveDefaults_tmp(data, callback) {
