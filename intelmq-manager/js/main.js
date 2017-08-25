@@ -20,6 +20,7 @@ var BORDER_TYPES = {
     'DEFAULT': 'default',
     'GENERIC': 'generic',
     'RUNTIME': 'runtime',
+    'OTHERS' : 'default',
 }
 
 
@@ -289,7 +290,7 @@ function insertBorder(border_type) {
     var new_row = table.insertRow(-1);
     var sectionCell1 = new_row.insertCell(0);
     var sectionCell2 = new_row.insertCell(1);
-    var xButtonCell = new_row.insertCell(2);
+    var addButtonCell = new_row.insertCell(2);
 
     sectionCell1.setAttribute('id', 'border');
     sectionCell2.setAttribute('id', 'border');
@@ -302,10 +303,21 @@ function insertBorder(border_type) {
             break;
         case BORDER_TYPES.RUNTIME:
             new_row.setAttribute('class', BORDER_TYPE_CLASSES.RUNTIME);
+            var addButton = document.createElement('button');
+            var addButtonSpan = document.createElement('span');
+            addButtonSpan.setAttribute('class', 'glyphicon glyphicon-plus-sign');
+            addButton.setAttribute('class', 'btn btn-warning');
+            addButton.setAttribute('title', 'add new key');
+            addButton.setAttribute('onclick', 'addNewKey(\'' + border_type + '\')');
+            addButton.appendChild(addButtonSpan);
+            addButtonCell.appendChild(addButton);
+            new_row.setAttribute('id', border_type);
             break;
         case BORDER_TYPES.DEFAULT:
             new_row.setAttribute('class', BORDER_TYPE_CLASSES.DEFAULT);
             break;
+        default:
+            new_row.setAttribute('class', BORDER_TYPE_CLASSES.OTHERS);
     }
 }
 
@@ -341,7 +353,15 @@ function insertKeyValue(key, value, section, allowXButtons) {
 }
 
 function resetToDefault(input_id) {
-    $('#'+input_id)[0].value = defaults[input_id];
+    $('#' + input_id)[0].value = defaults[input_id];
+}
+
+function addNewKey(row_id) {
+    var current_index = $('#' + row_id).index();
+    var new_row =  table.insertRow(current_index + 1);
+    var keyCell = new_row.insertCell(0);
+    var valueCell = new_row.insertCell(1);
+    var xButtonCell = new_row.insertCell(2);
 }
 
 function saveDefaults_tmp(data, callback) {
