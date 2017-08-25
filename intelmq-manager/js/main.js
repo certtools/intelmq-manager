@@ -324,7 +324,6 @@ function insertKeyValue(key, value, section, allowXButtons) {
     valueInput.setAttribute('id', key);
 
     if ((allowXButtons === true) && (key in defaults)) {
-        var xButtonCell = new_row.insertCell(2);
         var xButton = document.createElement('button');
         var xButtonSpan = document.createElement('span');
         xButtonSpan.setAttribute('class', 'glyphicon glyphicon-remove-circle');
