@@ -685,7 +685,7 @@ div.vis-network div.vis-close:hover {
 div.vis-network div.vis-manipulation div.vis-button,
 div.vis-network div.vis-edit-mode div.vis-button {
   float:left;
-  font-family: verdana;
+  font-family: Arial;
   font-size: 12px;
   -moz-border-radius: 15px;
   border-radius: 15px;
