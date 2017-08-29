@@ -8,6 +8,7 @@ var network_container = null;
 var popup = null;
 var span = null;
 var table = null;
+var modal = null;
 
 var bot_before_altering = null;
 var EDIT_DEFAULT_BUTTON_ID = 'editDefaults';
@@ -52,6 +53,7 @@ function load_html_elements() {
     popup = document.getElementById("network-popUp");
     span = document.getElementById('network-popUp-title');
     table = document.getElementById("network-popUp-fields");
+    modal = document.getElementById('addNewKeyModal');
 }
 
 function load_file(url, callback) {
@@ -308,7 +310,7 @@ function insertBorder(border_type) {
             addButtonSpan.setAttribute('class', 'glyphicon glyphicon-plus-sign');
             addButton.setAttribute('class', 'btn btn-warning');
             addButton.setAttribute('title', 'add new key');
-            addButton.setAttribute('onclick', 'addNewKey(\'' + border_type + '\')');
+            addButton.setAttribute('onclick', 'showModal()');
             addButton.appendChild(addButtonSpan);
             addButtonCell.appendChild(addButton);
             new_row.setAttribute('id', border_type);
@@ -321,9 +323,16 @@ function insertBorder(border_type) {
     }
 }
 
-function insertKeyValue(key, value, section, allowXButtons) {
+function insertKeyValue(key, value, section, allowXButtons, insertAt) {
 
-    var new_row = table.insertRow(-1);
+    var new_row = null;
+
+    if (insertAt === undefined) {
+        new_row = table.insertRow(-1);
+    } else {
+        new_row = table.insertRow(insertAt);
+    }
+
     var keyCell = new_row.insertCell(0);
     var valueCell = new_row.insertCell(1);
     var xButtonCell = new_row.insertCell(2);
@@ -335,13 +344,21 @@ function insertKeyValue(key, value, section, allowXButtons) {
     valueInput.setAttribute('type', 'text');
     valueInput.setAttribute('id', key);
 
-    if ((allowXButtons === true) && (key in defaults)) {
+    if (allowXButtons === true) {
         var xButton = document.createElement('button');
         var xButtonSpan = document.createElement('span');
-        xButtonSpan.setAttribute('class', 'glyphicon glyphicon-remove-circle');
-        xButton.setAttribute('class', 'btn btn-danger');
-        xButton.setAttribute('title', 'reset to default');
-        xButton.setAttribute('onclick', 'resetToDefault(\'' + key + '\')');
+        if (key in defaults) {
+            xButtonSpan.setAttribute('class', 'glyphicon glyphicon-refresh');
+            xButton.setAttribute('class', 'btn btn-default');
+            xButton.setAttribute('title', 'reset to default');
+            xButton.setAttribute('onclick', 'resetToDefault(\'' + key + '\')');
+        } else {
+            xButtonSpan.setAttribute('class', 'glyphicon glyphicon-remove-circle');
+            xButton.setAttribute('class', 'btn btn-danger');
+            xButton.setAttribute('title', 'delete parameter');
+            xButton.setAttribute('onclick', 'deleteParameter(\'' + key + '\')');
+        }
+
         xButton.appendChild(xButtonSpan);
         xButtonCell.appendChild(xButton);
     }
@@ -356,12 +373,40 @@ function resetToDefault(input_id) {
     $('#' + input_id)[0].value = defaults[input_id];
 }
 
-function addNewKey(row_id) {
-    var current_index = $('#' + row_id).index();
-    var new_row =  table.insertRow(current_index + 1);
-    var keyCell = new_row.insertCell(0);
-    var valueCell = new_row.insertCell(1);
-    var xButtonCell = new_row.insertCell(2);
+function deleteParameter(input_id) {
+    var current_index = $('#'+input_id).closest('tr').index();
+    table.deleteRow(current_index);
+}
+
+function addNewKey() {
+    var current_index = $('#' + BORDER_TYPES.RUNTIME).index();
+    var newKeyInput = document.getElementById('newKeyInput');
+    var newValueInput = document.getElementById('newValueInput');
+
+    if (!BOT_ID_REGEX.test(newKeyInput.value)) {
+        show_error("Bot ID's can only be composed of numbers, letters and hiphens");
+        $('#newKeyInput').focus();
+    } else {
+        hideModal();
+        insertKeyValue(newKeyInput.value, newValueInput.value, BORDER_TYPES.RUNTIME, true, current_index + 1);
+        newKeyInput.value = '';
+        newValueInput.value = '';
+    }
+}
+
+function showModal() {
+    modal.style.display = "block";
+    $('#newKeyInput').focus();
+}
+
+function hideModal() {
+    modal.style.display = "none";
+}
+
+window.onclick = function(event) {
+    if (event.target == modal) {
+        modal.style.display = "none";
+    }
 }
 
 function saveDefaults_tmp(data, callback) {
