@@ -401,6 +401,11 @@ table.dataTable thead .sorting:after {
     padding: 15px;
 }
 
+#bot-table td:first-child:hover {
+    font-weight: bold;
+    cursor: pointer;
+}
+
 #graph-popUp {
     display:none;
     position:absolute;
