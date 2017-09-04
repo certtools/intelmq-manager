@@ -20,6 +20,9 @@ CHANGELOG
 ### Monitor
 * clearing queues is possible in general and specific view for all queues (#54)
 
+### Backend
+* Fix regex checks on bot ids and log line number in controller, they have not been effective
+
 0.2.1
 -----
 * Fix syntax error in pipeline.js preventing loading of configuration page
