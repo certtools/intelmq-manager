@@ -13,7 +13,7 @@
         $id = $_GET['id'];
     }
 
-    $id_regex = '/^[0-9a-zA-Z-]$+/';
+    $id_regex = '/^[0-9a-zA-Z-]+$/';
     $lines_regex = '/^[0-9]+$/';
 
     $arguments = '';
@@ -34,7 +34,7 @@
         if (!array_key_exists('id', $_GET)) {
             die("Missing 'id' argument on request.");
         } else if (!preg_match($id_regex, $id)) {
-            $id = '';
+            die('Invalid id');
         }
 
         $arguments = $action . ' ' . escapeshellcmd($id);
@@ -46,7 +46,7 @@
         } else if (!array_key_exists('id', $_GET)) {
             die("Missing 'id' argument on request.");
         } else if (!preg_match($id_regex, $id)) {
-            $id = '';
+            die('Invalid id');
         }
 
         $lines = $_GET['lines'];
@@ -85,7 +85,7 @@
 
     $return = shell_exec($command);
 
-    if ($return == NULL) {
+    if ($return === NULL) {
         echo '"error"';
     } else {
         if ($scope != 'version') {
