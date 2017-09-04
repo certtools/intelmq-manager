@@ -9,6 +9,9 @@ var popup = null;
 var span = null;
 var table = null;
 var draggedElement = null;
+var options = null;
+var positions = null;
+var isTooltipEnabled = true;
 
 $(window).on('hashchange', function() {
     location.reload();
@@ -222,6 +225,12 @@ function load_pipeline(config) {
     edges = read_pipeline_conf(config, nodes);
     nodes = add_defaults_to_nodes(nodes, defaults);
 
+    load_file(POSITIONS_FILE, load_positions);
+}
+
+function load_positions(config) {
+    positions = read_positions_conf(config);
+
     draw();
     resize();
 }
@@ -245,6 +254,11 @@ function save_data_on_files() {
     $.post('./php/save.php?file=pipeline', generate_pipeline_conf(edges))
         .fail(function (jqxhr, textStatus, error) {
             alert_error('pipeline', jqxhr, textStatus, error);
+        });
+
+    $.post('./php/save.php?file=positions', generate_positions_conf())
+        .fail(function (jqxhr, textStatus, error) {
+            alert_error('positions', jqxhr, textStatus, error);
         });
 
     $.post('./php/save.php?file=defaults', generate_defaults_conf(defaults))
@@ -271,7 +285,7 @@ function convert_edges(edges) {
     return new_edges;
 }
 
-function convert_nodes(nodes) {
+function convert_nodes(nodes, includePositions) {
     var new_nodes = [];
 
     for (index in nodes) {
@@ -280,6 +294,17 @@ function convert_nodes(nodes) {
         new_node.label = nodes[index]['id'];
         new_node.group = nodes[index]['group'];
         new_node.title = JSON.stringify(nodes[index], undefined, 2).replace(/\n/g, '\n<br>').replace(/ /g, "&nbsp;");
+
+        if(includePositions === true){
+            try {
+                new_node.x = positions[index].x;
+                new_node.y = positions[index].y;
+            } catch(err) {
+                console.error('positions in file are ignored:', err);
+                show_error('Saved positions are not valid or not complete. The configuration has possibly been modified outside of the IntelMQ-Manager.');
+                includePositions = false;
+            }
+        }
 
         new_nodes.push(new_node);
     }
@@ -482,6 +507,20 @@ function disableSaveButtonBlinking() {
     document.getElementById('vis-save').setAttribute('class', 'vis-save');
 }
 
+function redrawNetwork() {
+    options.layout.randomSeed = Math.round(Math.random() * 1000000);
+
+    var data = {
+        nodes: convert_nodes(nodes, false),
+        edges: convert_edges(edges)
+    };
+
+    network.destroy();
+    network = null;
+    network = new vis.Network(network_container, data, options);
+    enableSaveButtonBlinking();
+}
+
 function draw() {
     load_html_elements();
 
@@ -489,12 +528,12 @@ function draw() {
 
     if (window.location.hash == '#load') {
         data = {
-            nodes: convert_nodes(nodes),
+            nodes: convert_nodes(nodes, true),
             edges: convert_edges(edges)
         };
     }
 
-    var options = {
+    options = {
         physics: {
             hierarchicalRepulsion: {
                 nodeDistance: 200,
@@ -640,20 +679,14 @@ function draw() {
 
 // functions called in vis.js
 function disableTooltip() {
-    var options = {
-        interaction: {
-            tooltipDelay: 999999
-        }
-    }
+    options.interaction.tooltipDelay = 999999;
     network.setOptions(options);
+    isTooltipEnabled = false;
 }
 
 function enableTooltip() {
-    var options = {
-        interaction: {
-            tooltipDelay: 1000
-        }
-    }
+    options.interaction.tooltipDelay = 1000;
+    isTooltipEnabled = true;
     network.setOptions(options);
 }
 // INTELMQ

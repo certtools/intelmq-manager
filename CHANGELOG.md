@@ -13,6 +13,9 @@ CHANGELOG
 * drag&drop (#105, #41)
 * fix #96
 * save buttons starts blinking after changes (#41)
+* Allow redrawing of botnet on demand
+* Save/load position of bots in/from /opt/intelmq/etc/manager/positions.conf
+  File needs to be writeable
 
 ### Management
 * Reload and restart have been added as actions on bots and the whole botnet (#114)
