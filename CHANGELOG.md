@@ -5,6 +5,7 @@ CHANGELOG
 ------------------
 * Partly support for CentOS/RHEL 7 (#55, #103)
 * Note on security considerations in Readme to avoid misunderstandings
+* Show versions of intelmq and intelmq manager on about page
 * Update vis.js to current version
 
 ### Configuration

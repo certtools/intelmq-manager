@@ -64,6 +64,8 @@
         $arguments = 'log ' . escapeshellcmd($id) . ' ' . escapeshellcmd((int)($lines)) . ' ' . escapeshellcmd($level);
     } else if ($scope == 'queues') {
         $arguments = 'list queues';
+    } else if ($scope == 'version') {
+        $arguments = '--version';
     } else if ($scope == 'check') {
         $arguments = 'check';
     } else if ($scope == 'clear') {
@@ -82,10 +84,18 @@
     set_time_limit(10);
 
     $return = shell_exec($command);
+
     if ($return == NULL) {
         echo '"error"';
     } else {
-        echo $return;
+        if ($scope != 'version') {
+            echo $return;
+        } else {
+            echo json_encode(array(
+                "intelmq" => rtrim($return),
+                "intelmq-manager" => $VERSION,
+            ));
+        }
     }
 
 ?>
