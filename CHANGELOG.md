@@ -4,8 +4,11 @@ CHANGELOG
 0.2.2 (unreleased)
 ------------------
 * Partly support for CentOS/RHEL 7 (#55, #103)
-* Note on security considerations in Readme to avoid misunderstandings
 * Update vis.js to current version
+
+### Documentation
+* Note on header Content-Security-Policy
+* Note on security considerations in Readme to avoid misunderstandings
 
 ### Configuration
 * interface for defaults.conf (#45)
