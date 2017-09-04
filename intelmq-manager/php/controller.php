@@ -13,14 +13,15 @@
         $id = $_GET['id'];
     }
 
-    $id_regex = '/[0-9a-zA-Z]+/';
-    $lines_regex = '/[0-9]+/';
+    $id_regex = '/^[0-9a-zA-Z-]+$/';
+    $lines_regex = '/^[0-9]+$/';
 
     $arguments = '';
 
     if (array_key_exists('action', $_GET) && ($_GET['action'] == 'start' ||
                                                $_GET['action'] == 'stop' ||
                                                $_GET['action'] == 'restart' ||
+                                               $_GET['action'] == 'reload' ||
                                                $_GET['action'] == 'status')) {
         $action = $_GET['action'];
     } else {
@@ -33,7 +34,7 @@
         if (!array_key_exists('id', $_GET)) {
             die("Missing 'id' argument on request.");
         } else if (!preg_match($id_regex, $id)) {
-            $id = '';
+            die('Invalid id');
         }
 
         $arguments = $action . ' ' . escapeshellcmd($id);
@@ -45,7 +46,7 @@
         } else if (!array_key_exists('id', $_GET)) {
             die("Missing 'id' argument on request.");
         } else if (!preg_match($id_regex, $id)) {
-            $id = '';
+            die('Invalid id');
         }
 
         $lines = $_GET['lines'];
@@ -63,6 +64,17 @@
         $arguments = 'log ' . escapeshellcmd($id) . ' ' . escapeshellcmd((int)($lines)) . ' ' . escapeshellcmd($level);
     } else if ($scope == 'queues') {
         $arguments = 'list queues';
+    } else if ($scope == 'version') {
+        $arguments = '--version';
+    } else if ($scope == 'check') {
+        $arguments = 'check';
+    } else if ($scope == 'clear') {
+        if (!array_key_exists('id', $_GET)) {
+            die("Missing 'id' argument on request.");
+        } else if (!preg_match($id_regex, $id)) {
+            $id = '';
+        }
+        $arguments = 'clear ' . escapeshellcmd($id);
     } else {
         die('Invalid scope');
     }
@@ -73,6 +85,17 @@
 
     $return = shell_exec($command);
 
-    echo $return;
+    if ($return === NULL) {
+        echo '"error"';
+    } else {
+        if ($scope != 'version') {
+            echo $return;
+        } else {
+            echo json_encode(array(
+                "intelmq" => rtrim($return),
+                "intelmq-manager" => $VERSION,
+            ));
+        }
+    }
 
 ?>

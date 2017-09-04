@@ -10,7 +10,7 @@
 
     $decoded_config = json_decode($post_contents);
 
-    if($_GET['file'] != 'defaults') {
+    if($_GET['file'] != 'defaults' && $_GET['file'] != 'positions') {
         foreach ($decoded_config as $key => $value) {
             if(preg_match($BOT_ID_REJECT_REGEX, $key) && (strcmp($key, "__default__") !== 0)) {
                 die('Invalid bot ID');

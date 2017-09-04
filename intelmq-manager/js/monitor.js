@@ -11,6 +11,7 @@ $('#log-table').dataTable({
     lengthMenu: [[5, 10, 25, -1], [5, 10, 25, "All"]],
     pageLength: 10,
     order: [0, 'desc'],
+    autoWidth: false,
     columns: [
         { "data": "date" },
         { "data": "bot_id" },
@@ -23,6 +24,29 @@ $('#log-table').dataTable({
 window.onresize = function () {
     redraw();
 };
+
+$(document).ready(function () {
+    var bot_id = getUrlParameter('bot_id');
+    if (typeof(bot_id) !== 'undefined') {
+        window.history.replaceState(null, null, 'monitor.html');
+        select_bot(bot_id);
+    }
+})
+
+function getUrlParameter(sParam) {
+    var sPageURL = decodeURIComponent(window.location.search.substring(1)),
+        sURLVariables = sPageURL.split('&'),
+        sParameterName,
+        i;
+
+    for (i = 0; i < sURLVariables.length; i++) {
+        sParameterName = sURLVariables[i].split('=');
+
+        if (sParameterName[0] === sParam) {
+            return sParameterName[1] === undefined ? true : sParameterName[1];
+        }
+    }
+}
 
 function redraw() {
     redraw_logs();
@@ -85,20 +109,17 @@ function redraw_queues() {
             var source_queue = bot_queues[index]['source_queue'];
             var destination_queues = bot_queues[index]['destination_queues'];
             var internal_queue = bot_queues[index]['internal_queue'];
+            var parentName = index;
 
             if (source_queue) {
                 bot_info['destination_queues'][source_queue[0]] = source_queue;
+                bot_info['destination_queues'][source_queue[0]]['parent'] = parentName;
             }
 
             if (internal_queue !== undefined) {
               var queue_name = index + '-queue-internal';
               bot_info['destination_queues'][queue_name] = [queue_name, internal_queue];
-            }
-
-            if (destination_queues) {
-                for (index in destination_queues) {
-                    bot_info['destination_queues'][destination_queues[index][0]] = destination_queues[index];
-                }
+              bot_info['destination_queues'][queue_name]['parent'] = parentName;
             }
         }
     } else {
@@ -106,24 +127,29 @@ function redraw_queues() {
     }
 
 
-
     if (bot_info) {
         if (bot_info['source_queue']) {
             var source_queue = source_queue_element.insertRow();
             var cell0 = source_queue.insertCell(0);
-            cell0.innerHTML = bot_info['source_queue'][0]
+            cell0.innerHTML = bot_info['source_queue'][0];
 
             var cell1 = source_queue.insertCell(1);
-            cell1.innerHTML = bot_info['source_queue'][1]
+            cell1.innerHTML = bot_info['source_queue'][1];
+
+            buttons_cell = source_queue.insertCell(2);
+            buttons_cell.appendChild(generateClearQueueButton(bot_info['source_queue'][0]));
         }
 
         if (bot_info['internal_queue'] !== undefined) {
           var internal_queue = internal_queue_element.insertRow();
           var cell0 = internal_queue.insertCell(0);
-          cell0.innerHTML = 'internal-queue'
+          cell0.innerHTML = 'internal-queue';
 
           var cell1 = internal_queue.insertCell(1);
-          cell1.innerHTML = bot_info['internal_queue']
+          cell1.innerHTML = bot_info['internal_queue'];
+
+          buttons_cell = internal_queue.insertCell(2);
+          buttons_cell.appendChild(generateClearQueueButton(bot_id + '-queue-internal'));
         }
 
         var dst_queues = [];
@@ -138,11 +164,48 @@ function redraw_queues() {
 
             var cell0 = destination_queue.insertCell(0);
             cell0.innerHTML = dst_queues[index][0];
+            cell0.addEventListener("click", function (event) {
+                var selectedBot = dst_queues[$(event.target).closest('tr').index()]["parent"];
+                window.location.href = "monitor.html?bot_id=" + selectedBot;
+            });
 
             var cell1 = destination_queue.insertCell(1);
             cell1.innerHTML = dst_queues[index][1];
+
+            buttons_cell = destination_queue.insertCell(2);
+            buttons_cell.appendChild(generateClearQueueButton(dst_queues[index][0]));
         }
     }
+}
+
+function generateClearQueueButton(queue_id) {
+    var spanHolder = document.createElement('span');
+    spanHolder.className = 'fa fa-trash-o';
+
+    var clearQueueButton = document.createElement('button');
+    clearQueueButton.queue = queue_id;
+    clearQueueButton.type = 'submit';
+    clearQueueButton.class = 'btn btn-default';
+    clearQueueButton.title = 'Clear';
+    clearQueueButton.appendChild(spanHolder);
+    clearQueueButton.addEventListener("click", function (event) {
+        clearQueue(this.queue);
+    });
+
+    return clearQueueButton;
+}
+
+function clearQueue(queue_id) {
+    console.log(queue_id);
+    $.getJSON(MANAGEMENT_SCRIPT + '?scope=clear&id=' + queue_id)
+        .done(function (data) {
+            redraw_queues();
+            console.log(data);
+            $('#queues-panel-title').removeClass('waiting');
+        })
+        .fail(function (err1, err2, errMessage) {
+            show_error('Error clearing queue ' + queue_id + ' : ' + errMessage);
+        });
 }
 
 function load_bot_log() {
@@ -202,6 +265,7 @@ function select_bot(bot_id) {
         $("#logs-panel").css('display', 'block');
         $("#source-queue-table-div").css('display', 'block');
         $("#internal-queue-table-div").css('display', 'block');
+        $("#destination-queues-table").removeClass('highlightHovering');
         $("#destination-queues-table-div").removeClass('col-md-12');
         $("#destination-queues-table-div").addClass('col-md-4');
         $("#destination-queue-header").html("Destination Queue");
@@ -214,6 +278,7 @@ function select_bot(bot_id) {
         $("#logs-panel").css('display', 'none');
         $("#source-queue-table-div").css('display', 'none');
         $("#internal-queue-table-div").css('display', 'none');
+        $("#destination-queues-table").addClass('highlightHovering');
         $("#destination-queues-table-div").removeClass('col-md-4');
         $("#destination-queues-table-div").addClass('col-md-12');
         $("#destination-queue-header").html("Queue");

@@ -262,6 +262,11 @@ table.dataTable thead .sorting:after {
     color: rgba(50,50,50,.5);
 }
 
+.highlightHovering td:first-child:hover {
+    font-weight: bold;
+    cursor: pointer;
+}
+
 .btn-circle {
     width: 30px;
     height: 30px;
@@ -438,6 +443,11 @@ table.dataTable thead .sorting:after {
     width: 100%;
     font-size:28px;
     display: inherit;
+}
+
+#bot-table td:first-child:hover {
+    font-weight: bold;
+    cursor: pointer;
 }
 
 #network-popUp {
