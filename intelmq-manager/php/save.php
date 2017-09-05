@@ -4,6 +4,11 @@
 
     if (array_key_exists($_GET['file'], $FILES)) {
         $filename = $FILES[$_GET['file']];
+    } else {
+        die("Invalid file.");
+    }
+    if ($_GET['file'] == "bots") {
+        die("You are not allowed to write the bots file.");
     }
 
     $post_contents = file_get_contents("php://input");
