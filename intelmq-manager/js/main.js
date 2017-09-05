@@ -9,6 +9,7 @@ var popup = null;
 var span = null;
 var table = null;
 var modal = null;
+var disabledKeys = ['group', 'name', 'module'];
 
 var bot_before_altering = null;
 var EDIT_DEFAULT_BUTTON_ID = 'editDefaults';
@@ -21,7 +22,7 @@ var BORDER_TYPES = {
     'DEFAULT': 'default',
     'GENERIC': 'generic',
     'RUNTIME': 'runtime',
-    'OTHERS' : 'default',
+    'OTHERS': 'default',
 }
 
 var draggedElement = null;
@@ -29,11 +30,11 @@ var options = null;
 var positions = null;
 var isTooltipEnabled = true;
 
-$(window).on('hashchange', function() {
+$(window).on('hashchange', function () {
     location.reload();
 });
 
-$(window).on('unload', function() {
+$(window).on('unload', function () {
     return "If you have not saved your work you'll loose the changes you have made. Do you want to continue?";
 });
 
@@ -78,7 +79,7 @@ function load_bots(config) {
     var available_bots = document.getElementById("side-menu")
     //available_bots.innerHTML = '';
 
-    for(bot_group in config) {
+    for (bot_group in config) {
         var group = config[bot_group];
 
         group_title = document.createElement('a');
@@ -134,7 +135,7 @@ function load_bots(config) {
         }
     }
 
-    $('#side-menu').metisMenu({'restart': true});
+    $('#side-menu').metisMenu({ 'restart': true });
 
     btnEditDefault = document.createElement('button');
     btnEditDefault.setAttribute('class', 'btn btn-warning');
@@ -163,7 +164,7 @@ function load_bots(config) {
 function fill_editDefault(data) {
     table.innerHTML = '';
 
-    for(key in data) {
+    for (key in data) {
         insertKeyValue(key, data[key], 'defaultConfig', false);
     }
     // to enable scroll bar
@@ -208,7 +209,7 @@ function handleDrop(event) {
 
     network.manipulation.temporaryEventFunctions[0].boundFunction(clickData);
 
-    fill_bot(undefined,draggedElement.bot_group,draggedElement.bot_name);
+    fill_bot(undefined, draggedElement.bot_group, draggedElement.bot_name);
 }
 
 function allowDrop(event) {
@@ -242,7 +243,7 @@ function load_positions(config) {
 }
 
 function save_data_on_files() {
-    if(!confirm("By clicking 'OK' you are replacing the configuration in your files by the one represented by the network on this page. Do you agree?")) {
+    if (!confirm("By clicking 'OK' you are replacing the configuration in your files by the one represented by the network on this page. Do you agree?")) {
         return;
     }
 
@@ -301,11 +302,11 @@ function convert_nodes(nodes, includePositions) {
         new_node.group = nodes[index]['group'];
         new_node.title = JSON.stringify(nodes[index], undefined, 2).replace(/\n/g, '\n<br>').replace(/ /g, "&nbsp;");
 
-        if(includePositions === true){
+        if (includePositions === true) {
             try {
                 new_node.x = positions[index].x;
                 new_node.y = positions[index].y;
-            } catch(err) {
+            } catch (err) {
                 console.error('positions in file are ignored:', err);
                 show_error('Saved positions are not valid or not complete. The configuration has possibly been modified outside of the IntelMQ-Manager.');
                 includePositions = false;
@@ -325,8 +326,8 @@ function fill_bot(id, group, name) {
     if (id === undefined) {
         bot = bots[group][name];
 
-        name = bot['name'].replace(/\ /g,'-').replace(/[^A-Za-z0-9-]/g,'');
-        group = bot['group'].replace(/\ /g,'-');
+        name = bot['name'].replace(/\ /g, '-').replace(/[^A-Za-z0-9-]/g, '');
+        group = bot['group'].replace(/\ /g, '-');
         default_id = name + "-" + group;
         bot['id'] = default_id;
         bot['defaults'] = {};
@@ -347,9 +348,9 @@ function fill_bot(id, group, name) {
 
     insertKeyValue('id', bot['id'], 'id', false);
     insertBorder(BORDER_TYPES.GENERIC);
-    for(key in bot) {
-        if(STARTUP_KEYS.includes(key)) {
-            insertKeyValue(key,bot[key], BORDER_TYPES.GENERIC, false);
+    for (key in bot) {
+        if (STARTUP_KEYS.includes(key)) {
+            insertKeyValue(key, bot[key], BORDER_TYPES.GENERIC, false);
         }
     }
     insertBorder(BORDER_TYPES.RUNTIME);
@@ -375,7 +376,7 @@ function insertBorder(border_type) {
     sectionCell1.innerHTML = border_type;
     sectionCell2.innerHTML = border_type;
 
-    switch(border_type) {
+    switch (border_type) {
         case BORDER_TYPES.GENERIC:
             new_row.setAttribute('class', BORDER_TYPE_CLASSES.GENERIC);
             break;
@@ -420,6 +421,10 @@ function insertKeyValue(key, value, section, allowXButtons, insertAt) {
     valueInput.setAttribute('type', 'text');
     valueInput.setAttribute('id', key);
 
+    if (disabledKeys.includes(key) === true) {
+        valueInput.setAttribute('disabled', "true");
+    }
+
     if (allowXButtons === true) {
         var xButton = document.createElement('button');
         var xButtonSpan = document.createElement('span');
@@ -450,7 +455,7 @@ function resetToDefault(input_id) {
 }
 
 function deleteParameter(input_id) {
-    var current_index = $('#'+input_id).closest('tr').index();
+    var current_index = $('#' + input_id).closest('tr').index();
     table.deleteRow(current_index);
 }
 
@@ -479,7 +484,7 @@ function hideModal() {
     modal.style.display = "none";
 }
 
-window.onclick = function(event) {
+window.onclick = function (event) {
     if (event.target == modal) {
         modal.style.display = "none";
     }
@@ -494,7 +499,7 @@ function saveDefaults_tmp(data, callback) {
 
 function saveFormData() {
     for (var i = 0; i < table.rows.length; i++) {
-        var keyCell =  table.rows[i].cells[0];
+        var keyCell = table.rows[i].cells[0];
         var valueCell = table.rows[i].cells[1];
         var valueInput = valueCell.getElementsByTagName('input')[0];
 
@@ -530,7 +535,7 @@ function saveFormData() {
     }
 }
 
-function saveData(data,callback) {
+function saveData(data, callback) {
     node = {};
     node['parameters'] = {};
     node['defaults'] = {};
@@ -544,7 +549,7 @@ function saveData(data,callback) {
     }
 
     if (node.id != bot_before_altering.id) {
-        if(!confirm("When you edit an ID what you are doing in fact is to create a clone of the current bot. You will have to delete the old one manually. Proceed with the operation?")) {
+        if (!confirm("When you edit an ID what you are doing in fact is to create a clone of the current bot. You will have to delete the old one manually. Proceed with the operation?")) {
             return;
         }
     }
@@ -598,21 +603,21 @@ function swapToDefaults(node, key) {
     delete node.parameters[key];
 }
 
-function create_form(title, data, callback){
+function create_form(title, data, callback) {
     span.innerHTML = title;
 
     var okButton = document.getElementById('network-popUp-ok');
     var cancelButton = document.getElementById('network-popUp-cancel');
 
-    if(data === EDIT_DEFAULT_BUTTON_ID) {
-        okButton.onclick = saveDefaults_tmp.bind(this,data,callback);
+    if (data === EDIT_DEFAULT_BUTTON_ID) {
+        okButton.onclick = saveDefaults_tmp.bind(this, data, callback);
     } else {
-        okButton.onclick = saveData.bind(this,data,callback);
+        okButton.onclick = saveData.bind(this, data, callback);
     }
 
     cancelButton.onclick = clearPopUp.bind(this, data, callback);
 
-    table.innerHTML="<p>Please select one of the bots on the left</p>";
+    table.innerHTML = "<p>Please select one of the bots on the left</p>";
     popup.style.display = 'block';
     popup.setAttribute('class', "without-bot");
 }
@@ -626,7 +631,7 @@ function clearPopUp(data, callback) {
     popup.style.display = 'none';
     span.innerHTML = "";
 
-    for (i = table.rows.length-1; i >= 0; i--) {
+    for (i = table.rows.length - 1; i >= 0; i--) {
         var position = table.rows[i].rowIndex;
 
         if (position >= CORE_FIELDS) {
@@ -637,7 +642,7 @@ function clearPopUp(data, callback) {
     }
 
     popup.setAttribute('class', "without-bot");
-    if((callback !== undefined) && (data['label'] != 'new')) {
+    if ((callback !== undefined) && (data['label'] != 'new')) {
         callback(data);
     }
 }
@@ -702,8 +707,8 @@ function draw() {
         edges: {
             length: 200,
             arrows: {
-                to:     {enabled: true, scaleFactor:1, type:'arrow'}
-              },
+                to: { enabled: true, scaleFactor: 1, type: 'arrow' }
+            },
             physics: true,
             font: {
                 size: 14, // px
@@ -747,14 +752,14 @@ function draw() {
             deleteNode: true,
             deleteEdge: true,
 
-            addNode: function(data,callback) {
+            addNode: function (data, callback) {
                 create_form("Add Node", data, callback);
             },
-            editNode: function(data,callback) {
+            editNode: function (data, callback) {
                 create_form("Edit Node", data, callback);
                 fill_bot(data.id, undefined, undefined);
             },
-            deleteNode: function(data,callback) {
+            deleteNode: function (data, callback) {
                 callback(data);
 
                 for (index in data.edges) {
@@ -766,7 +771,7 @@ function draw() {
                 }
                 enableSaveButtonBlinking();
             },
-            addEdge: function(data,callback) {
+            addEdge: function (data, callback) {
                 if (data.from == data.to) {
                     show_error('This action would cause an infinite loop');
                     return;
@@ -802,10 +807,10 @@ function draw() {
                     edges[data.id] = {};
                 }
 
-                edges[data.id]={'from': data.from, 'to': data.to};
+                edges[data.id] = { 'from': data.from, 'to': data.to };
                 enableSaveButtonBlinking();
             },
-            deleteEdge: function(data, callback) {
+            deleteEdge: function (data, callback) {
                 delete edges[data["edges"][0]];
                 callback(data);
                 enableSaveButtonBlinking();
