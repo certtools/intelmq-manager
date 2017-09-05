@@ -14,6 +14,9 @@
     $post_contents = file_get_contents("php://input");
 
     $decoded_config = json_decode($post_contents);
+    if (gettype($decoded_config) != 'array') {
+        die('File must consist of an array.');
+    }
 
     if($_GET['file'] != 'defaults' && $_GET['file'] != 'positions') {
         foreach ($decoded_config as $key => $value) {
