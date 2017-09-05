@@ -9,6 +9,7 @@ var popup = null;
 var span = null;
 var table = null;
 var modal = null;
+var disabledKeys = ['group', 'name', 'module'];
 
 var bot_before_altering = null;
 var EDIT_DEFAULT_BUTTON_ID = 'editDefaults';
@@ -419,6 +420,10 @@ function insertKeyValue(key, value, section, allowXButtons, insertAt) {
     valueCell.setAttribute('class', 'node-value');
     valueInput.setAttribute('type', 'text');
     valueInput.setAttribute('id', key);
+
+    if (disabledKeys.includes(key) === true) {
+        valueInput.setAttribute('disabled', "true");
+    }
 
     if (allowXButtons === true) {
         var xButton = document.createElement('button');
