@@ -105,7 +105,7 @@
 
         <div id="network-popUp" class="without-bot">
             <span id="network-popUp-title">node</span> <br>
-            <table id="network-popUp-fields" style="margin:auto;">
+            <table id="network-popUp-fields" class="table table-striped" style="margin:auto;">
                 <tr>
                     <td>id</td><td><input id="node-id" value="new value"></td>
                 </tr>
@@ -122,8 +122,45 @@
                     <td>description</td><td><input id="node-description" value=""></td>
                 </tr>
             </table>
-            <input type="button" value="ok" id="network-popUp-ok">
-            <input type="button" value="cancel" id="network-popUp-cancel">
+            <div>
+                <form>
+                        <input type="button" class="btn-danger btn-block" value="cancel" id="network-popUp-cancel">
+                </form>
+                <form>
+                    <input type="button" class="btn-success btn-block" value="ok" id="network-popUp-ok">
+                </form>
+            </div>
+            <div id="addNewKeyModal" class="addNewKeyModal">
+                <div class="addNewKeyModal-content">
+                    <div>
+                        <h4>
+                            Add Key
+                        </h4>
+                    </div>
+                    <div>
+                        <form>
+                            <div class="form-group">
+                                <label  class="col-sm-2 control-label">Key</label>
+                                <div class="col-sm-10">
+                                    <input type="text" class="form-control" id="newKeyInput" required/>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">Value</label>
+                                <div class="col-sm-10">
+                                    <input type="text" class="form-control" id="newValueInput" required/>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                    <form>
+                            <input type="button" class="btn-danger btn-block" value="cancel" id="addNewKeyModal-cancel" onclick="hideModal()">
+                    </form>
+                    <form>
+                        <input type="button" class="btn-success btn-block" value="ok" id="addNewKeyModal-ok" onclick="addNewKey()">
+                    </form>
+                </div>
+            </div>
         </div>
     </div>
 

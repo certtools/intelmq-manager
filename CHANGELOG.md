@@ -20,6 +20,8 @@ CHANGELOG
 * Allow redrawing of botnet on demand
 * Save/load position of bots in/from /opt/intelmq/etc/manager/positions.conf
   File needs to be writeable
+* parameters from defaults are shown for new bots (#107)
+* parameters are grouped by type: generic, runtime, defaults
 
 ### Management
 * Reload and restart have been added as actions on bots and the whole botnet (#114)
