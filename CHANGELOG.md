@@ -4,6 +4,8 @@ CHANGELOG
 0.2.2 (unreleased)
 ------------------
 * Partly support for CentOS/RHEL 7 (#55, #103)
+* Note on security considerations in Readme to avoid misunderstandings
+* Show versions of intelmq and intelmq manager on about page
 * Update vis.js to current version
 
 ### Documentation
@@ -15,6 +17,9 @@ CHANGELOG
 * drag&drop (#105, #41)
 * fix #96
 * save buttons starts blinking after changes (#41)
+* Allow redrawing of botnet on demand
+* Save/load position of bots in/from /opt/intelmq/etc/manager/positions.conf
+  File needs to be writeable
 
 ### Management
 * Reload and restart have been added as actions on bots and the whole botnet (#114)
@@ -22,6 +27,9 @@ CHANGELOG
 
 ### Monitor
 * clearing queues is possible in general and specific view for all queues (#54)
+
+### Backend
+* Fix regex checks on bot ids and log line number in controller, they have not been effective
 
 0.2.1
 -----

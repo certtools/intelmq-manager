@@ -92,8 +92,10 @@ chown -R www-data.www-data /var/www/html/
 Add the webserver user (www-data, wwwrun, apache or nginx) to the intelmq group and give write permissions for the configuration files:
 ```bash
 usermod -a -G intelmq www-data
-chgrp www-data /opt/intelmq/etc/*.conf
-chmod g+w /opt/intelmq/etc/*.conf
+mkdir /opt/intelmq/etc/manager/
+touch /opt/intelmq/etc/manager/positions.conf
+chgrp www-data /opt/intelmq/etc/*.conf /opt/intelmq/etc/manager/positions.conf
+chmod g+w /opt/intelmq/etc/*.conf /opt/intelmq/etc/manager/positions.conf
 ```
 
 Give webserver user (www-data, wwwrun, apache or nginx) permissions to execute intelmqctl as intelmq user. Edit the `/etc/sudoers` file and add the adapted following line:

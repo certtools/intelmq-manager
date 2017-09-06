@@ -265,6 +265,7 @@ function select_bot(bot_id) {
         $("#logs-panel").css('display', 'block');
         $("#source-queue-table-div").css('display', 'block');
         $("#internal-queue-table-div").css('display', 'block');
+        $("#destination-queues-table").removeClass('highlightHovering');
         $("#destination-queues-table-div").removeClass('col-md-12');
         $("#destination-queues-table-div").addClass('col-md-4');
         $("#destination-queue-header").html("Destination Queue");
@@ -277,6 +278,7 @@ function select_bot(bot_id) {
         $("#logs-panel").css('display', 'none');
         $("#source-queue-table-div").css('display', 'none');
         $("#internal-queue-table-div").css('display', 'none');
+        $("#destination-queues-table").addClass('highlightHovering');
         $("#destination-queues-table-div").removeClass('col-md-4');
         $("#destination-queues-table-div").addClass('col-md-12');
         $("#destination-queue-header").html("Queue");

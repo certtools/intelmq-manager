@@ -13,8 +13,8 @@
         $id = $_GET['id'];
     }
 
-    $id_regex = '/[0-9a-zA-Z]+/';
-    $lines_regex = '/[0-9]+/';
+    $id_regex = '/^[0-9a-zA-Z-]+$/';
+    $lines_regex = '/^[0-9]+$/';
 
     $arguments = '';
 
@@ -34,7 +34,7 @@
         if (!array_key_exists('id', $_GET)) {
             die("Missing 'id' argument on request.");
         } else if (!preg_match($id_regex, $id)) {
-            $id = '';
+            die('Invalid id');
         }
 
         $arguments = $action . ' ' . escapeshellcmd($id);
@@ -46,7 +46,7 @@
         } else if (!array_key_exists('id', $_GET)) {
             die("Missing 'id' argument on request.");
         } else if (!preg_match($id_regex, $id)) {
-            $id = '';
+            die('Invalid id');
         }
 
         $lines = $_GET['lines'];
@@ -64,6 +64,8 @@
         $arguments = 'log ' . escapeshellcmd($id) . ' ' . escapeshellcmd((int)($lines)) . ' ' . escapeshellcmd($level);
     } else if ($scope == 'queues') {
         $arguments = 'list queues';
+    } else if ($scope == 'version') {
+        $arguments = '--version';
     } else if ($scope == 'check') {
         $arguments = 'check';
     } else if ($scope == 'clear') {
@@ -84,10 +86,17 @@
     $return = shell_exec($command);
 
     header('Content-Type: application/json');
-    if ($return == NULL) {
+    if ($return === NULL) {
         echo '"error"';
     } else {
-        echo $return;
+        if ($scope != 'version') {
+            echo $return;
+        } else {
+            echo json_encode(array(
+                "intelmq" => rtrim($return),
+                "intelmq-manager" => $VERSION,
+            ));
+        }
     }
 
 ?>
