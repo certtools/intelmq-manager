@@ -44,4 +44,9 @@ The following example we can see the status information of a single bot. Namely,
 
 ## Licence
 
-This software is licensed under [GNU Affero General Public License version 3](https://github.com/certtools/intelmq-manager/blob/master/LICENSE)
+This software (IntelMQ and its components) is licensed under these licenses:
+ * Apache License 2.0
+ * GNU Affero Public License version v3.0
+ * MIT License
+
+See [LICENSES](LICENSES) for all license texts and [debian/copyright](debian/copyright) for a list of components and it's licenses.
