@@ -146,10 +146,10 @@ function load_bots(config) {
     btnEditDefault.innerHTML = 'Edit Defaults';
     btnEditDefault.style.textAlign = 'center';
     btnEditDefault.id = EDIT_DEFAULT_BUTTON_ID;
-    btnEditDefault.onclick = function () {
+    btnEditDefault.addEventListener('click', function () {
         create_form('Edit Defaults', EDIT_DEFAULT_BUTTON_ID, undefined);
         fill_editDefault(defaults);
-    };
+    });
     buttonContainer = document.createElement('li');
     buttonContainer.appendChild(btnEditDefault);
     buttonContainer.setAttribute('id', 'customListItem');
@@ -391,7 +391,7 @@ function insertBorder(border_type) {
             addButtonSpan.setAttribute('class', 'glyphicon glyphicon-plus-sign');
             addButton.setAttribute('class', 'btn btn-warning');
             addButton.setAttribute('title', 'add new key');
-            addButton.setAttribute('onclick', 'showModal()');
+            addButton.addEventListener('click', showModal);
             addButton.appendChild(addButtonSpan);
             addButtonCell.appendChild(addButton);
             new_row.setAttribute('id', border_type);
@@ -429,6 +429,10 @@ function insertKeyValue(key, value, section, allowXButtons, insertAt) {
         valueInput.setAttribute('disabled', "true");
     }
 
+    parameter_func = function(action_function, argument){
+        action_function(argument);
+    }
+
     if (allowXButtons === true) {
         var xButton = document.createElement('button');
         var xButtonSpan = document.createElement('span');
@@ -436,12 +440,14 @@ function insertKeyValue(key, value, section, allowXButtons, insertAt) {
             xButtonSpan.setAttribute('class', 'glyphicon glyphicon-refresh');
             xButton.setAttribute('class', 'btn btn-default');
             xButton.setAttribute('title', 'reset to default');
-            xButton.setAttribute('onclick', 'resetToDefault(\'' + key + '\')');
+            xButton.addEventListener('click', function(resetToDefault, key) {
+                return function(){parameter_func(resetToDefault, key)}}(resetToDefault, key))
         } else {
             xButtonSpan.setAttribute('class', 'glyphicon glyphicon-remove-circle');
             xButton.setAttribute('class', 'btn btn-danger');
             xButton.setAttribute('title', 'delete parameter');
-            xButton.setAttribute('onclick', 'deleteParameter(\'' + key + '\')');
+            xButton.addEventListener('click', function(deleteParameter, key) {
+                return function(){parameter_func(deleteParameter, key)}}(deleteParameter, key))
         }
 
         xButton.appendChild(xButtonSpan);
@@ -861,3 +867,7 @@ load_file(BOTS_FILE, load_bots);
 // Dynamically adapt to fit screen
 window.onresize = resize;
 
+document.addEventListener('DOMContentLoaded', function () {
+    document.getElementById('addNewKeyModal-cancel').addEventListener('click', hideModal);
+    document.getElementById('addNewKeyModal-ok').addEventListener('click', addNewKey);
+})
