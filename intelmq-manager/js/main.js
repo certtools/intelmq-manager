@@ -8,16 +8,33 @@ var network_container = null;
 var popup = null;
 var span = null;
 var table = null;
+var modal = null;
+var disabledKeys = ['group', 'name', 'module'];
+
+var bot_before_altering = null;
+var EDIT_DEFAULT_BUTTON_ID = 'editDefaults';
+var BORDER_TYPE_CLASSES = {
+    'DEFAULT': 'info',
+    'GENERIC': 'success',
+    'RUNTIME': 'warning',
+}
+var BORDER_TYPES = {
+    'DEFAULT': 'default',
+    'GENERIC': 'generic',
+    'RUNTIME': 'runtime',
+    'OTHERS': 'default',
+}
+
 var draggedElement = null;
 var options = null;
 var positions = null;
 var isTooltipEnabled = true;
 
-$(window).on('hashchange', function() {
+$(window).on('hashchange', function () {
     location.reload();
 });
 
-$(window).on('unload', function() {
+$(window).on('unload', function () {
     return "If you have not saved your work you'll loose the changes you have made. Do you want to continue?";
 });
 
@@ -43,6 +60,7 @@ function load_html_elements() {
     popup = document.getElementById("network-popUp");
     span = document.getElementById('network-popUp-title');
     table = document.getElementById("network-popUp-fields");
+    modal = document.getElementById('addNewKeyModal');
 }
 
 function load_file(url, callback) {
@@ -61,7 +79,7 @@ function load_bots(config) {
     var available_bots = document.getElementById("side-menu")
     //available_bots.innerHTML = '';
 
-    for(bot_group in config) {
+    for (bot_group in config) {
         var group = config[bot_group];
 
         group_title = document.createElement('a');
@@ -107,23 +125,25 @@ function load_bots(config) {
                 'module': bot['module'],
                 'description': bot['description'],
                 'enabled': true,
+                'parameters': bot['parameters'],
             }
 
             for (parameter in bot['parameters']) {
                 var value = bot['parameters'][parameter];
-                bots[bot_group][bot_name][parameter] = value;
+                bots[bot_group][bot_name]['parameters'][parameter] = value;
             }
         }
     }
 
-    $('#side-menu').metisMenu({'restart': true});
+    $('#side-menu').metisMenu({ 'restart': true });
 
     btnEditDefault = document.createElement('button');
     btnEditDefault.setAttribute('class', 'btn btn-warning');
     btnEditDefault.innerHTML = 'Edit Defaults';
     btnEditDefault.style.textAlign = 'center';
+    btnEditDefault.id = EDIT_DEFAULT_BUTTON_ID;
     btnEditDefault.onclick = function () {
-        create_form('Edit Defaults', 'editDefaults', undefined);
+        create_form('Edit Defaults', EDIT_DEFAULT_BUTTON_ID, undefined);
         fill_editDefault(defaults);
     };
     buttonContainer = document.createElement('li');
@@ -144,21 +164,8 @@ function load_bots(config) {
 function fill_editDefault(data) {
     table.innerHTML = '';
 
-    for(key in data) {
-        // insert on last position
-        var new_row = table.insertRow(-1);
-        var cell1 = new_row.insertCell(0);
-        var cell2 = new_row.insertCell(1);
-
-        cell1.innerHTML = key;
-
-        var element = document.createElement("input");
-        element.setAttribute('type', 'text');
-        cell2.appendChild(element);
-
-        element.setAttribute('id', 'default-' + key);
-        element.setAttribute('value', data[key]);
-
+    for (key in data) {
+        insertKeyValue(key, data[key], 'defaultConfig', false);
     }
     // to enable scroll bar
     popup.setAttribute('class', "with-bot");
@@ -202,7 +209,7 @@ function handleDrop(event) {
 
     network.manipulation.temporaryEventFunctions[0].boundFunction(clickData);
 
-    fill_bot(undefined,draggedElement.bot_group,draggedElement.bot_name);
+    fill_bot(undefined, draggedElement.bot_group, draggedElement.bot_name);
 }
 
 function allowDrop(event) {
@@ -236,11 +243,11 @@ function load_positions(config) {
 }
 
 function save_data_on_files() {
-    if(!confirm("By clicking 'OK' you are replacing the configuration in your files by the one represented by the network on this page. Do you agree?")) {
+    if (!confirm("By clicking 'OK' you are replacing the configuration in your files by the one represented by the network on this page. Do you agree?")) {
         return;
     }
 
-    nodes = remove_defaults(nodes, defaults);
+    nodes = remove_defaults(nodes);
 
     var alert_error = function (file, jqxhr, textStatus, error) {
         show_error('There was an error saving ' + file + ':\nStatus: ' + textStatus + '\nError: ' + error);
@@ -295,11 +302,11 @@ function convert_nodes(nodes, includePositions) {
         new_node.group = nodes[index]['group'];
         new_node.title = JSON.stringify(nodes[index], undefined, 2).replace(/\n/g, '\n<br>').replace(/ /g, "&nbsp;");
 
-        if(includePositions === true){
+        if (includePositions === true) {
             try {
                 new_node.x = positions[index].x;
                 new_node.y = positions[index].y;
-            } catch(err) {
+            } catch (err) {
                 console.error('positions in file are ignored:', err);
                 show_error('Saved positions are not valid or not complete. The configuration has possibly been modified outside of the IntelMQ-Manager.');
                 includePositions = false;
@@ -319,157 +326,298 @@ function fill_bot(id, group, name) {
     if (id === undefined) {
         bot = bots[group][name];
 
-        var new_row = table.insertRow(-1);
-        var cell1 = new_row.insertCell(0);
-        var cell2 = new_row.insertCell(1);
+        name = bot['name'].replace(/\ /g, '-').replace(/[^A-Za-z0-9-]/g, '');
+        group = bot['group'].replace(/\ /g, '-');
+        default_id = name + "-" + group;
+        bot['id'] = default_id;
+        bot['defaults'] = {};
 
-        cell1.setAttribute('class', 'node-key');
-        cell2.setAttribute('class', 'node-value');
-
-        cell1.innerHTML = 'id';
-        var element = document.createElement("input");
-        element.setAttribute('type', 'text');
-        element.setAttribute('id', 'node-id');
-
-        name = bot['name'].replace(/\ /g,'-').replace(/[^A-Za-z0-9-]/g,'')
-        group = bot['group'].replace(/\ /g,'-')
-        default_id = name + "-" + group
-
-        element.setAttribute('value', default_id.toLowerCase());
-        cell2.appendChild(element);
+        for (key in defaults) {
+            if (key in bot.parameters) {
+                continue;
+            } else {
+                bot['defaults'][key] = defaults[key];
+            }
+        }
     }
     else {
         bot = nodes[id];
-        var element = document.createElement("input");
-        element.setAttribute('type', 'hidden');
-        element.setAttribute('id', 'old-id-from-node');
-        element.setAttribute('value', id);
-        popup.appendChild(element);
     }
 
+    bot_before_altering = bot;
+
+    insertKeyValue('id', bot['id'], 'id', false);
+    insertBorder(BORDER_TYPES.GENERIC);
     for (key in bot) {
-        element = document.getElementById("node-" + key)
-
-        if (!element) {
-            new_row = table.insertRow(-1);
-            cell1 = new_row.insertCell(0);
-            cell2 = new_row.insertCell(1);
-
-            cell1.setAttribute('class', 'node-key');
-            cell2.setAttribute('class', 'node-value');
-
-            cell1.innerHTML = key;
-            element = document.createElement("input");
-            element.setAttribute('type', 'text');
-
-            element.setAttribute('id', 'node-' + key);
-            cell2.appendChild(element);
+        if (STARTUP_KEYS.includes(key)) {
+            insertKeyValue(key, bot[key], BORDER_TYPES.GENERIC, false);
         }
-
-        element.setAttribute('value', bot[key]);
+    }
+    insertBorder(BORDER_TYPES.RUNTIME);
+    for (key in bot.parameters) {
+        insertKeyValue(key, bot.parameters[key], BORDER_TYPES.RUNTIME, true);
+    }
+    insertBorder(BORDER_TYPES.DEFAULT);
+    for (key in bot.defaults) {
+        insertKeyValue(key, bot.defaults[key], BORDER_TYPES.DEFAULT, false);
     }
 
     popup.setAttribute('class', "with-bot");
 }
 
-function saveDefaults_tmp(data, callback) {
-    defaults = {};
+function insertBorder(border_type) {
+    var new_row = table.insertRow(-1);
+    var sectionCell1 = new_row.insertCell(0);
+    var sectionCell2 = new_row.insertCell(1);
+    var addButtonCell = new_row.insertCell(2);
 
-    var inputs = document.getElementsByTagName("input");
-    for(var i = 0; i < inputs.length; i++) {
-        if(inputs[i].id.indexOf('default-') == 0) {
-            var key = inputs[i].id.replace('default-', '');
-            var value = null;
+    sectionCell1.setAttribute('id', 'border');
+    sectionCell2.setAttribute('id', 'border');
+    sectionCell1.innerHTML = border_type;
+    sectionCell2.innerHTML = border_type;
 
-            try {
-                value = JSON.parse(inputs[i].value);
-            } catch (err) {
-                value = inputs[i].value;
-            }
-            defaults[key] = value;
-        }
+    switch (border_type) {
+        case BORDER_TYPES.GENERIC:
+            new_row.setAttribute('class', BORDER_TYPE_CLASSES.GENERIC);
+            break;
+        case BORDER_TYPES.RUNTIME:
+            new_row.setAttribute('class', BORDER_TYPE_CLASSES.RUNTIME);
+            var addButton = document.createElement('button');
+            var addButtonSpan = document.createElement('span');
+            addButtonSpan.setAttribute('class', 'glyphicon glyphicon-plus-sign');
+            addButton.setAttribute('class', 'btn btn-warning');
+            addButton.setAttribute('title', 'add new key');
+            addButton.setAttribute('onclick', 'showModal()');
+            addButton.appendChild(addButtonSpan);
+            addButtonCell.appendChild(addButton);
+            new_row.setAttribute('id', border_type);
+            break;
+        case BORDER_TYPES.DEFAULT:
+            new_row.setAttribute('class', BORDER_TYPE_CLASSES.DEFAULT);
+            break;
+        default:
+            new_row.setAttribute('class', BORDER_TYPE_CLASSES.OTHERS);
+    }
+}
+
+function insertKeyValue(key, value, section, allowXButtons, insertAt) {
+
+    var new_row = null;
+
+    if (insertAt === undefined) {
+        new_row = table.insertRow(-1);
+    } else {
+        new_row = table.insertRow(insertAt);
     }
 
+    var keyCell = new_row.insertCell(0);
+    var valueCell = new_row.insertCell(1);
+    var xButtonCell = new_row.insertCell(2);
+    var valueInput = document.createElement("input");
+
+    keyCell.setAttribute('class', 'node-key');
+    keyCell.setAttribute('id', section)
+    valueCell.setAttribute('class', 'node-value');
+    valueInput.setAttribute('type', 'text');
+    valueInput.setAttribute('id', key);
+
+    if (disabledKeys.includes(key) === true) {
+        valueInput.setAttribute('disabled', "true");
+    }
+
+    if (allowXButtons === true) {
+        var xButton = document.createElement('button');
+        var xButtonSpan = document.createElement('span');
+        if (key in defaults) {
+            xButtonSpan.setAttribute('class', 'glyphicon glyphicon-refresh');
+            xButton.setAttribute('class', 'btn btn-default');
+            xButton.setAttribute('title', 'reset to default');
+            xButton.setAttribute('onclick', 'resetToDefault(\'' + key + '\')');
+        } else {
+            xButtonSpan.setAttribute('class', 'glyphicon glyphicon-remove-circle');
+            xButton.setAttribute('class', 'btn btn-danger');
+            xButton.setAttribute('title', 'delete parameter');
+            xButton.setAttribute('onclick', 'deleteParameter(\'' + key + '\')');
+        }
+
+        xButton.appendChild(xButtonSpan);
+        xButtonCell.appendChild(xButton);
+    }
+
+    valueCell.appendChild(valueInput);
+
+    keyCell.innerHTML = key;
+    valueInput.setAttribute('value', value);
+}
+
+function resetToDefault(input_id) {
+    $('#' + input_id)[0].value = defaults[input_id];
+}
+
+function deleteParameter(input_id) {
+    var current_index = $('#' + input_id).closest('tr').index();
+    table.deleteRow(current_index);
+}
+
+function addNewKey() {
+    var current_index = $('#' + BORDER_TYPES.RUNTIME).index();
+    var newKeyInput = document.getElementById('newKeyInput');
+    var newValueInput = document.getElementById('newValueInput');
+
+    if (!BOT_ID_REGEX.test(newKeyInput.value)) {
+        show_error("Bot ID's can only be composed of numbers, letters and hiphens");
+        $('#newKeyInput').focus();
+    } else {
+        hideModal();
+        insertKeyValue(newKeyInput.value, newValueInput.value, BORDER_TYPES.RUNTIME, true, current_index + 1);
+        newKeyInput.value = '';
+        newValueInput.value = '';
+    }
+}
+
+function showModal() {
+    modal.style.display = "block";
+    $('#newKeyInput').focus();
+}
+
+function hideModal() {
+    modal.style.display = "none";
+}
+
+window.onclick = function (event) {
+    if (event.target == modal) {
+        modal.style.display = "none";
+    }
+}
+
+function saveDefaults_tmp(data, callback) {
+    defaults = {};
+    saveFormData();
     enableSaveButtonBlinking();
     clearPopUp(data, callback);
 }
 
-function saveData(data,callback) {
-    var idInput = document.getElementById('node-id');
-    var groupInput = document.getElementById('node-group');
-    var oldIdInput = document.getElementById('old-id-from-node');
+function saveFormData() {
+    for (var i = 0; i < table.rows.length; i++) {
+        var keyCell = table.rows[i].cells[0];
+        var valueCell = table.rows[i].cells[1];
+        var valueInput = valueCell.getElementsByTagName('input')[0];
 
-    if (idInput == undefined && groupInput == undefined) {
-        return;
-    }
+        if (valueInput === undefined) continue;
 
-    if (oldIdInput != undefined) {
-        if (idInput.value != oldIdInput.value) {
-            if(!confirm("When you edit an ID what you are doing in fact is to create a clone of the current bot. You will have to delete the old one manually. Proceed with the operation?")) {
-                return;
-            }
+        var key = keyCell.innerText;
+        var value = null;
+
+        try {
+            value = JSON.parse(valueInput.value);
+        } catch (err) {
+            value = valueInput.value;
+        }
+
+        switch (keyCell.id) {
+            case 'id':
+                node[key] = value;
+                break;
+            case 'generic':
+                node[key] = value;
+                break;
+            case 'runtime':
+                node['parameters'][key] = value;
+                break;
+            case 'border':
+                break;
+            case 'defaultConfig':
+                defaults[key] = value;
+                break;
+            default:
+                node['defaults'][key] = value;
         }
     }
+}
 
-    data.id = idInput.value;
-    data.group = groupInput.value;
-    //data.level = GROUP_LEVELS[data.group];
+function saveData(data, callback) {
+    node = {};
+    node['parameters'] = {};
+    node['defaults'] = {};
 
-    if (!BOT_ID_REGEX.test(data.id)) {
-        show_error("Bot ID's can only be composed of numbers, letters and hiphens");
+    saveFormData();
+
+    // check inputs beeing valid
+    if (node.id == '' && node.group == '') {
+        show_error('fields id and group must not be empty!');
         return;
     }
 
-    // check if already existing
-    for (key in nodes) {
-        if (key === data.id) {
-            show_error('item with id ' + data.id + ' already exists');
+    if (node.id != bot_before_altering.id) {
+        if (!confirm("When you edit an ID what you are doing in fact is to create a clone of the current bot. You will have to delete the old one manually. Proceed with the operation?")) {
             return;
         }
     }
 
-    node = {};
+    if (!BOT_ID_REGEX.test(node.id)) {
+        show_error("Bot ID's can only be composed of numbers, letters and hiphens");
+        return;
+    }
 
-    var inputs = document.getElementsByTagName("input");
-    for(var i = 0; i < inputs.length; i++) {
-        if(inputs[i].id.indexOf('node-') == 0) {
-            var key = inputs[i].id.replace('node-', '');
-            var value = null;
 
-            try {
-                value = JSON.parse(inputs[i].value);
-            } catch (err) {
-                value = inputs[i].value;
+    // switch paremters and defaults
+    for (key in node) {
+        if (key === 'parameters') {
+            for (parameterKey in node.parameters) {
+                if (node.parameters[parameterKey] !== bot_before_altering.parameters[parameterKey]) {
+                    if (parameterKey in defaults) {
+                        if (node.parameters[parameterKey] === defaults[parameterKey]) {
+                            swapToDefaults(node, parameterKey);
+                        }
+                    }
+                }
             }
-            node[key] = value;
+        } else if (key === 'defaults') {
+            for (defaultsKey in node.defaults) {
+                if (node.defaults[defaultsKey] !== defaults[defaultsKey]) {
+                    swapToParameters(node, defaultsKey);
+                }
+            }
         }
     }
 
-    data.label = node['id'];
-
+    data.id = node.id;
+    data.label = node.id
+    data.group = node.group;
+    data.level = GROUP_LEVELS[data.group];
     data.title = JSON.stringify(node, undefined, 2).replace(/\n/g, '\n<br>').replace(/ /g, "&nbsp;");
 
-    nodes[data.id] = node;
+    nodes[node.id] = node;
 
     enableSaveButtonBlinking();
     clearPopUp(data, callback);
 }
 
-function create_form(title, data, callback){
+function swapToParameters(node, key) {
+    node.parameters[key] = node.defaults[key];
+    delete node.defaults[key];
+}
+
+function swapToDefaults(node, key) {
+    node.defaults[key] = node.parameters[key];
+    delete node.parameters[key];
+}
+
+function create_form(title, data, callback) {
     span.innerHTML = title;
 
     var okButton = document.getElementById('network-popUp-ok');
     var cancelButton = document.getElementById('network-popUp-cancel');
 
-    if(data === 'editDefaults') {
-        okButton.onclick = saveDefaults_tmp.bind(this,data,callback);
+    if (data === EDIT_DEFAULT_BUTTON_ID) {
+        okButton.onclick = saveDefaults_tmp.bind(this, data, callback);
     } else {
-        okButton.onclick = saveData.bind(this,data,callback);
+        okButton.onclick = saveData.bind(this, data, callback);
     }
 
     cancelButton.onclick = clearPopUp.bind(this, data, callback);
 
-    table.innerHTML="<p>Please select one of the bots on the left</p>";
+    table.innerHTML = "<p>Please select one of the bots on the left</p>";
     popup.style.display = 'block';
     popup.setAttribute('class', "without-bot");
 }
@@ -483,7 +631,7 @@ function clearPopUp(data, callback) {
     popup.style.display = 'none';
     span.innerHTML = "";
 
-    for (i = table.rows.length-1; i >= 0; i--) {
+    for (i = table.rows.length - 1; i >= 0; i--) {
         var position = table.rows[i].rowIndex;
 
         if (position >= CORE_FIELDS) {
@@ -494,7 +642,7 @@ function clearPopUp(data, callback) {
     }
 
     popup.setAttribute('class', "without-bot");
-    if((callback !== undefined) && (data['label'] != 'new')) {
+    if ((callback !== undefined) && (data['label'] != 'new')) {
         callback(data);
     }
 }
@@ -559,8 +707,8 @@ function draw() {
         edges: {
             length: 200,
             arrows: {
-                to:     {enabled: true, scaleFactor:1, type:'arrow'}
-              },
+                to: { enabled: true, scaleFactor: 1, type: 'arrow' }
+            },
             physics: true,
             font: {
                 size: 14, // px
@@ -604,14 +752,14 @@ function draw() {
             deleteNode: true,
             deleteEdge: true,
 
-            addNode: function(data,callback) {
+            addNode: function (data, callback) {
                 create_form("Add Node", data, callback);
             },
-            editNode: function(data,callback) {
+            editNode: function (data, callback) {
                 create_form("Edit Node", data, callback);
                 fill_bot(data.id, undefined, undefined);
             },
-            deleteNode: function(data,callback) {
+            deleteNode: function (data, callback) {
                 callback(data);
 
                 for (index in data.edges) {
@@ -623,7 +771,7 @@ function draw() {
                 }
                 enableSaveButtonBlinking();
             },
-            addEdge: function(data,callback) {
+            addEdge: function (data, callback) {
                 if (data.from == data.to) {
                     show_error('This action would cause an infinite loop');
                     return;
@@ -659,10 +807,10 @@ function draw() {
                     edges[data.id] = {};
                 }
 
-                edges[data.id]={'from': data.from, 'to': data.to};
+                edges[data.id] = { 'from': data.from, 'to': data.to };
                 enableSaveButtonBlinking();
             },
-            deleteEdge: function(data, callback) {
+            deleteEdge: function (data, callback) {
                 delete edges[data["edges"][0]];
                 callback(data);
                 enableSaveButtonBlinking();
@@ -688,6 +836,14 @@ function enableTooltip() {
     options.interaction.tooltipDelay = 1000;
     isTooltipEnabled = true;
     network.setOptions(options);
+}
+
+function disableEditDefaultButton() {
+    $('#' + EDIT_DEFAULT_BUTTON_ID).prop('disabled', true);
+}
+
+function enableEditDefaultButton() {
+    $('#' + EDIT_DEFAULT_BUTTON_ID).prop('disabled', false);
 }
 // INTELMQ
 

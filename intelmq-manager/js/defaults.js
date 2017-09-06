@@ -4,33 +4,39 @@ function generate_defaults_conf(defaults) {
 }
 
 function read_defaults_conf(config) {
+
+    for (key in config) {
+        try {
+            config[key] = JSON.parse(config[key]);
+        } catch (err) {
+            config[key] = config[key];
+        }
+    }
+
     return config
 }
 
-function remove_defaults(nodes, defaults) {
+function remove_defaults(nodes) {
     for (id in nodes) {
-        var node=nodes[id];
-        
-        for (key in defaults) {
-            if (key in node && node[key] == defaults[key]) {
-                delete node[key];
-            }
-        }
+        delete nodes[id].defaults;
     }
 
     return nodes;
 }
 
-function add_defaults_to_nodes(nodes, defaults) {
+function add_defaults_to_nodes(nodes, defaultConfig) {
+    var defaults = 'defaults';
     for (id in nodes) {
         var node=nodes[id];
+        node.id = id;
+        node.defaults = {};
 
-        for (key in defaults) {
-            if (key in node) {
+        for (key in defaultConfig) {
+            if (key in node.parameters) {
                 continue;
+            } else {
+                node.defaults[key] = defaultConfig[key];
             }
-
-            node[key] = defaults[key];
         }
     }
 
