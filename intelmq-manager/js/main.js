@@ -38,8 +38,8 @@ function resize() {
 function load_html_elements() {
     // Load popup, span and table
     network_container = document.getElementById('network-container');
-    network_container.setAttribute('ondrop', 'handleDrop(event)');
-    network_container.setAttribute('ondragover', 'allowDrop(event)');
+    network_container.addEventListener('drop', function(event) {handleDrop(event)});
+    network_container.addEventListener('dragover', function(event) {allowDrop(event)});
     popup = document.getElementById("network-popUp");
     span = document.getElementById('network-popUp-title');
     table = document.getElementById("network-popUp-fields");
@@ -78,6 +78,9 @@ function load_bots(config) {
         group_menu.style.borderBottomColor = GROUP_COLORS[bot_group];
 
         available_bots.appendChild(group_menu);
+        fill_bot_func = function(bot_group, bot_name){
+            fill_bot(undefined, bot_group, bot_name);
+        }
 
         for (bot_name in group) {
             var bot = group[bot_name];
@@ -86,7 +89,8 @@ function load_bots(config) {
             bot_title.setAttribute('data-toggle', 'tooltip');
             bot_title.setAttribute('data-placement', 'right');
             bot_title.setAttribute('title', bot['description']);
-            bot_title.setAttribute('onclick', 'fill_bot(undefined, "' + bot_group + '", "' + bot_name + '")');
+            bot_title.addEventListener('click', function(bot_group, bot_name) {
+                return function(){fill_bot_func(bot_group, bot_name)}}(bot_group, bot_name))
             bot_title.innerHTML = bot_name;
 
             var bot_submenu = document.createElement('li');
