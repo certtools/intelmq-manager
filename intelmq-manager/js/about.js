@@ -7,6 +7,11 @@ function get_versions() {
         .done(function (data) {
             intelmq_version_element.innerHTML = data['intelmq'];
             intelmq_manager_version_element.innerHTML = data['intelmq-manager'];
+        })
+        .fail(function (jqxhr, textStatus, error) {
+            var err = textStatus + ", " + error;
+            console.error( "Request Failed: " + err );
+            alert('error getting version');
         });
     
 }
