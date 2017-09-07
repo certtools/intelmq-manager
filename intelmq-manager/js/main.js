@@ -125,6 +125,7 @@ function load_bots(config) {
                 'description': bot['description'],
                 'enabled': true,
                 'parameters': bot['parameters'],
+                'documentation': bot['documentation'],
             }
 
             for (parameter in bot['parameters']) {
@@ -162,6 +163,7 @@ function load_bots(config) {
 
 function fill_editDefault(data) {
     table.innerHTML = '';
+    disableDocumentationButton(true);
 
     for(key in data) {
         insertKeyValue(key, data[key], 'defaultConfig', false);
@@ -239,6 +241,14 @@ function load_positions(config) {
 
     draw();
     resize();
+}
+
+function openDocumentation() {
+    if ($('#documentationButton')[0].value !== '') {
+        window.open($('#documentationButton')[0].value);
+    } else {
+        alert('no documentation available');
+    }
 }
 
 function save_data_on_files() {
@@ -345,6 +355,8 @@ function fill_bot(id, group, name) {
 
     bot_before_altering = bot;
 
+    fillDocumentationButton(bot);
+
     insertKeyValue('id', bot['id'], 'id', false);
     insertBorder(BORDER_TYPES.GENERIC);
     for(key in bot) {
@@ -362,6 +374,34 @@ function fill_bot(id, group, name) {
     }
 
     popup.setAttribute('class', "with-bot");
+}
+
+function fillDocumentationButton(bot) {
+    if (bot.documentation !== undefined) {
+        disableDocumentationButton(false, bot.documentation)
+    } else if (bot.group in bots) {
+        if (bot.name in bots[bot.group]) {
+            if (bots[bot.group][bot.name].documentation !== undefined) {
+                disableDocumentationButton(false, bots[bot.group][bot.name].documentation);
+            } else {
+                disableDocumentationButton(true);
+            }
+        } else {
+            disableDocumentationButton(true);
+        }
+    } else {
+        disableDocumentationButton(true);
+    }
+}
+
+function disableDocumentationButton(isDisabled, urlValue) {
+    $('#documentationButton')[0].disabled = isDisabled;
+
+    if (urlValue !== undefined) {
+        $('#documentationButton')[0].value = urlValue;
+    } else {
+        $('#documentationButton')[0].value = '';
+    }
 }
 
 function insertBorder(border_type) {
@@ -528,6 +568,10 @@ function saveFormData() {
                 node['defaults'][key] = value;
         }
     }
+
+    if ($('#documentationButton')[0].value !== '') {
+        node.documentation = $('#documentationButton')[0].value;
+    }
 }
 
 function saveData(data,callback) {
@@ -611,6 +655,7 @@ function create_form(title, data, callback){
     }
 
     cancelButton.onclick = clearPopUp.bind(this, data, callback);
+    disableDocumentationButton(true);
 
     table.innerHTML="<p>Please select one of the bots on the left</p>";
     popup.style.display = 'block';
@@ -622,6 +667,7 @@ function clearPopUp(data, callback) {
     var cancelButton = document.getElementById('network-popUp-cancel');
     okButton.onclick = null;
     cancelButton.onclick = null;
+    disableDocumentationButton(true);
 
     popup.style.display = 'none';
     span.innerHTML = "";
