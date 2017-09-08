@@ -254,27 +254,48 @@ function save_data_on_files() {
     }
 
     $.post('./php/save.php?file=runtime', generate_runtime_conf(nodes))
+        .done(function (data) {
+            saveSucceeded(data);
+        })
         .fail(function (jqxhr, textStatus, error) {
             alert_error('runtime', jqxhr, textStatus, error);
         });
 
     $.post('./php/save.php?file=pipeline', generate_pipeline_conf(edges))
+        .done(function (data) {
+            saveSucceeded(data);
+        })
         .fail(function (jqxhr, textStatus, error) {
             alert_error('pipeline', jqxhr, textStatus, error);
         });
 
     $.post('./php/save.php?file=positions', generate_positions_conf())
+        .done(function (data) {
+            saveSucceeded(data);
+        })
         .fail(function (jqxhr, textStatus, error) {
             alert_error('positions', jqxhr, textStatus, error);
         });
 
     $.post('./php/save.php?file=defaults', generate_defaults_conf(defaults))
+        .done(function (data) {
+            saveSucceeded(data);
+        })
         .fail(function (jqxhr, textStatus, error) {
             alert_error('defaults', jqxhr, textStatus, error);
         });
 
     nodes = add_defaults_to_nodes(nodes, defaults);
     disableSaveButtonBlinking();
+}
+
+function saveSucceeded(response) {
+    if (response === 'success') {
+        return true;
+    } else {
+        alert(response);
+        return false;
+    }
 }
 
 function convert_edges(edges) {
