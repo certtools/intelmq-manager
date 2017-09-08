@@ -511,6 +511,16 @@ window.onclick = function (event) {
     }
 }
 
+$(document).keydown(function(event) {
+    if (event.keyCode == 27) {
+        if ($('#addNewKeyModal').is(':visible')) {
+            hideModal();
+        } else if ($('#network-popUp').is(':visible')) {
+            $('#network-popUp-cancel').click();
+        }
+    }
+});
+
 function saveDefaults_tmp(data, callback) {
     defaults = {};
     saveFormData();

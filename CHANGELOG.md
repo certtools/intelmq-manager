@@ -21,6 +21,7 @@ CHANGELOG
 * parameters from defaults are shown for new bots (#107)
 * parameters are grouped by type: generic, runtime, defaults
 * better feedback on errors with backend (#69, #99)
+* pressing ESC in forms equals to pressing the cancel button
 
 ### Management
 * Reload and restart have been added as actions on bots and the whole botnet (#114)
