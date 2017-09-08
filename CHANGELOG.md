@@ -22,6 +22,7 @@ CHANGELOG
 * parameters are grouped by type: generic, runtime, defaults
 * better feedback on errors with backend (#69, #99)
 * pressing ESC in forms equals to pressing the cancel button
+* Edit node window is now much bigger
 
 ### Management
 * Reload and restart have been added as actions on bots and the whole botnet (#114)

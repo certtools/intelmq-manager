@@ -453,7 +453,7 @@ table.dataTable thead .sorting:after {
 #network-popUp {
     display:none;
     position:absolute;
-    top:25%;
+    top:15%;
     left:5%;
     margin: auto;
     z-index:299;
@@ -520,7 +520,7 @@ form {
 }
 
 .with-bot {
-    max-height: 50%;
+    max-height: 75%;
     overflow-y: auto;
 }
 
