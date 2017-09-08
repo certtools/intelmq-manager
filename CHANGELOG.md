@@ -18,6 +18,7 @@ CHANGELOG
   File needs to be writeable
 * parameters from defaults are shown for new bots (#107)
 * parameters are grouped by type: generic, runtime, defaults
+* pressing ESC in forms equals to pressing the cancel button
 
 ### Management
 * Reload and restart have been added as actions on bots and the whole botnet (#114)
