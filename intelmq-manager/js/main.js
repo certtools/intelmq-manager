@@ -244,19 +244,26 @@ function load_positions(config) {
 }
 
 function saveConfiguration() {
-    stopNodesAndSaveConfig();
+    if (!$.isEmptyObject(deletedNodes)) {
+        stopNodesAndSaveData();
+    } else {
+        save_data_on_files();
+    }
 }
 
-function stopNodesAndSaveConfig() {
+function stopNodesAndSaveData() {
     for (bot_id in deletedNodes) {
-        $.getJSON(MANAGEMENT_SCRIPT + '?scope=bot&action=stop&id=' + bot_id)
-        .done(function (status) {
-            successfullyDeleted(bot_id);
-        })
-        .fail(function (err1, err2, errMessage) {
-            show_error('Error stopping bot: ' + errMessage);
-        });
+        stop_bot($.getJSON(MANAGEMENT_SCRIPT + '?scope=bot&action=stop&id=' + bot_id), bot_id);
     }
+}
+
+function stop_bot(deferred, bot_id) {
+    deferred.done(function (status) {
+        successfullyDeleted(bot_id);
+    });
+    deferred.fail(function (err1, err2, errMessage) {
+        show_error('Error stopping bot: ' + errMessage);
+    });
 }
 
 function successfullyDeleted(bot_id) {
@@ -271,6 +278,7 @@ function successfullyDeleted(bot_id) {
     }
 
     if(done) {
+        deletedNodes={};
         save_data_on_files();
     }
 }
@@ -281,7 +289,6 @@ function save_data_on_files() {
     }
 
     nodes = remove_defaults(nodes);
-
 
     var alert_error = function (file, jqxhr, textStatus, error) {
         show_error('There was an error saving ' + file + ':\nStatus: ' + textStatus + '\nError: ' + error);
