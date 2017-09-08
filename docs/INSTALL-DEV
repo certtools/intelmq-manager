@@ -1,7 +1,7 @@
 
 ## lighttpd
 
-First make sure that you have the latest version of  intelmq-control-platform.
+First make sure that you have the latest version of intelmq-manager.
 Then install lighttpd:
 
 ```

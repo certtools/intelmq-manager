@@ -10,6 +10,6 @@
 
 ### Start contributing
 
-* [Find bugs](https://github.com/certtools/intelmq-control-platform/issues)
-* [Send requests](https://github.com/certtools/intelmq-control-platform/issues)
-* [Write documentation](https://github.com/certtools/intelmq-control-platform/tree/master/docs)
+* [Find bugs](https://github.com/certtools/intelmq-manager/issues)
+* [Send requests](https://github.com/certtools/intelmq-manager/issues)
+* [Write documentation](https://github.com/certtools/intelmq-manager/tree/master/docs)
