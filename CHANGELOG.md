@@ -23,6 +23,7 @@ CHANGELOG
 * better feedback on errors with backend (#69, #99)
 * pressing ESC in forms equals to pressing the cancel button
 * Edit node window is now much bigger
+* pressing enter in 'add key' window equals to pressing ok button
 
 ### Management
 * Reload and restart have been added as actions on bots and the whole botnet (#114)

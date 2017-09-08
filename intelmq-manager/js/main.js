@@ -521,6 +521,20 @@ $(document).keydown(function(event) {
     }
 });
 
+$('#newKeyInput').keyup(function (event) {
+    // 'enter' key
+    if (event.keyCode == 13){
+        $('#addNewKeyModal-ok').click();
+    }
+});
+
+$('#newValueInput').keyup(function (event) {
+    // 'enter' key
+    if (event.keyCode == 13){
+        $('#addNewKeyModal-ok').click();
+    }
+});
+
 function saveDefaults_tmp(data, callback) {
     defaults = {};
     saveFormData();
