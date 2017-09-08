@@ -51377,7 +51377,7 @@ return /******/ (function(modules) { // webpackBootstrap
             "<span class='vis-save-label'>"+this.options.locales['en']['saveState'] +"</span></div>";
 
           $("#vis-save").children().on('click', function (event) {
-            save_data_on_files(); 
+            saveConfiguration();
           });
         }
 

@@ -243,6 +243,38 @@ function load_positions(config) {
     resize();
 }
 
+function saveConfiguration() {
+    stopNodesAndSaveConfig();
+}
+
+function stopNodesAndSaveConfig() {
+    for (bot_id in deletedNodes) {
+        $.getJSON(MANAGEMENT_SCRIPT + '?scope=bot&action=stop&id=' + bot_id)
+        .done(function (status) {
+            successfullyDeleted(bot_id);
+        })
+        .fail(function (err1, err2, errMessage) {
+            show_error('Error stopping bot: ' + errMessage);
+        });
+    }
+}
+
+function successfullyDeleted(bot_id) {
+    deletedNodes[bot_id] = true;
+
+    var done = true;
+    for (index in deletedNodes) {
+        if (deletedNodes[index] !== true) {
+            done = false;
+            break;
+        }
+    }
+
+    if(done) {
+        save_data_on_files();
+    }
+}
+
 function save_data_on_files() {
     if (!confirm("By clicking 'OK' you are replacing the configuration in your files by the one represented by the network on this page. Do you agree?")) {
         return;
@@ -250,7 +282,6 @@ function save_data_on_files() {
 
     nodes = remove_defaults(nodes);
 
-    stopDeletedNodes();
 
     var alert_error = function (file, jqxhr, textStatus, error) {
         show_error('There was an error saving ' + file + ':\nStatus: ' + textStatus + '\nError: ' + error);
@@ -278,13 +309,6 @@ function save_data_on_files() {
 
     nodes = add_defaults_to_nodes(nodes, defaults);
     disableSaveButtonBlinking();
-}
-
-function stopDeletedNodes() {
-    for (index in deletedNodes) {
-        console.error('stop has to be performed here');
-    }
-    deletedNodes = {};
 }
 
 function convert_edges(edges) {
