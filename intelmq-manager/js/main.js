@@ -318,7 +318,7 @@ function convert_nodes(nodes, includePositions) {
                 new_node.y = positions[index].y;
             } catch (err) {
                 console.error('positions in file are ignored:', err);
-                show_error('Saved positions are not valid or not complete. The configuration has possibly been modified outside of the IntelMQ-Manager.');
+                show_error('Saved positions are not valid or not complete. The configuration has possibly been modified outside of the IntelMQ-Manager.\nPlease click the save button to save the current positions of the botnet.');
                 includePositions = false;
             }
         }
