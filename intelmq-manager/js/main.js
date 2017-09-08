@@ -10,6 +10,7 @@ var span = null;
 var table = null;
 var modal = null;
 var disabledKeys = ['group', 'name', 'module'];
+var deletedNodes = {};
 
 var bot_before_altering = null;
 var EDIT_DEFAULT_BUTTON_ID = 'editDefaults';
@@ -249,6 +250,8 @@ function save_data_on_files() {
 
     nodes = remove_defaults(nodes);
 
+    stopDeletedNodes();
+
     var alert_error = function (file, jqxhr, textStatus, error) {
         show_error('There was an error saving ' + file + ':\nStatus: ' + textStatus + '\nError: ' + error);
     }
@@ -275,6 +278,13 @@ function save_data_on_files() {
 
     nodes = add_defaults_to_nodes(nodes, defaults);
     disableSaveButtonBlinking();
+}
+
+function stopDeletedNodes() {
+    for (index in deletedNodes) {
+        console.error('stop has to be performed here');
+    }
+    deletedNodes = {};
 }
 
 function convert_edges(edges) {
@@ -767,6 +777,7 @@ function draw() {
                 }
 
                 for (index in data.nodes) {
+                    deletedNodes[data.nodes[index]] = nodes[data.nodes[index]];
                     delete nodes[data.nodes[index]];
                 }
                 enableSaveButtonBlinking();
