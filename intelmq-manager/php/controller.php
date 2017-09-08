@@ -86,7 +86,7 @@
     $return = shell_exec($command);
 
     if ($return === NULL) {
-        echo '"error"';
+        echo 'Failed to execute intelmqctl';
     } else {
         if ($scope != 'version') {
             echo $return;

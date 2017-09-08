@@ -18,6 +18,7 @@ CHANGELOG
   File needs to be writeable
 * parameters from defaults are shown for new bots (#107)
 * parameters are grouped by type: generic, runtime, defaults
+* better feedback on errors with backend (#69, #99)
 
 ### Management
 * Reload and restart have been added as actions on bots and the whole botnet (#114)
