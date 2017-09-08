@@ -28,6 +28,7 @@ CHANGELOG
 
 ### Backend
 * Fix regex checks on bot ids and log line number in controller, they have not been effective
+* fix overflow in extended message box (#49)
 
 0.2.1
 -----
