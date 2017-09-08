@@ -16,6 +16,7 @@ CHANGELOG
 * Allow redrawing of botnet on demand
 * Save/load position of bots in/from /opt/intelmq/etc/manager/positions.conf
   File needs to be writeable
+* Edit node window is now much bigger
 
 ### Management
 * Reload and restart have been added as actions on bots and the whole botnet (#114)
