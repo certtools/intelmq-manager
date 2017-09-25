@@ -1,6 +1,11 @@
 CHANGELOG
 =========
 
+0.3.1
+-----
+### Configuration
+* Fixed validation on files before saving them, this has rejected valid data
+
 0.3
 ---
 * Partly support for CentOS/RHEL 7 (#55, #103)

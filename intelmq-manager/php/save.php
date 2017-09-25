@@ -14,7 +14,7 @@
     $post_contents = file_get_contents("php://input");
 
     $decoded_config = json_decode($post_contents);
-    if (gettype($decoded_config) != 'array') {
+    if (gettype($decoded_config) != 'object') {
         die('File must consist of an array.');
     }
 
