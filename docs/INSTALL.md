@@ -74,11 +74,19 @@ https://software.opensuse.org/download.html?project=home%3Asebix%3Aintelmq&packa
 
 Currently, these operating systems are supported by the packages:
 * CentOS 7, install `epel-release` first
-* Debian 8
-* Fedora 25
-* openSUSE Leap 42.2
+* RHEL 7, install `epel-release` first
+* Debian 8 and Debian 9 (install `php-json` too)
+* Fedora 25, 26 and Rawhide
+* openSUSE Leap 42.2 and Leap 42.3
 * openSUSE Tumbleweed
-* Ubuntu 16.04
+* Ubuntu 16.04 and Ubuntu 17.04, install `php-json` too
+
+The package is always called `intelmq-manager`.
+
+For Debian and Ubuntu you need to make the configuration files writable by the group:
+```bash
+chmod 664 /etc/intelmq/*.conf /etc/intelmq/manager/positions.conf
+```
 
 ## Manually
 
