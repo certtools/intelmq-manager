@@ -4,11 +4,19 @@
 
     if (array_key_exists($_GET['file'], $FILES)) {
         $filename = $FILES[$_GET['file']];
+    } else {
+        die("Invalid file.");
+    }
+    if ($_GET['file'] == "bots") {
+        die("You are not allowed to write the bots file.");
     }
 
     $post_contents = file_get_contents("php://input");
 
     $decoded_config = json_decode($post_contents);
+    if (gettype($decoded_config) != 'array') {
+        die('File must consist of an array.');
+    }
 
     if($_GET['file'] != 'defaults' && $_GET['file'] != 'positions') {
         foreach ($decoded_config as $key => $value) {
