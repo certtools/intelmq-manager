@@ -3,8 +3,8 @@ NEWS
 
 See the changelog for a full list of changes.
 
-0.2.2 (unreleased)
-------------------
+0.3
+---
 * The IntelMQ Manager is now capable of saving the positions of bots.
   You need to create the file `/opt/intelmq/etc/manager/positions.conf` and
   allow the webserver process to write to it, e.g.:
