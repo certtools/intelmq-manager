@@ -1,11 +1,11 @@
 Description: Fix paths for LSB
 Author: Sebastian Wagner <wagner@cert.at>
-Last-Update: 2016-07-20
+Last-Update: 2017-09-25
 ---
 This patch header follows DEP-3: http://dep.debian.net/deps/dep3/
---- a/intelmq-manager/php/config.php	2017-06-07 13:06:54.215185776 +0200
-+++ b/intelmq-manager/php/config2.php	2017-06-07 13:06:50.351194626 +0200
-@@ -1,15 +1,15 @@
+--- a/intelmq-manager/php/config.php	2017-09-25 14:12:44.282477416 +0200
++++ b/intelmq-manager/php/config.php	2017-09-25 14:22:07.680864318 +0200
+@@ -1,16 +1,16 @@
  <?php
  
      $FILES = array(
@@ -14,13 +14,15 @@ This patch header follows DEP-3: http://dep.debian.net/deps/dep3/
 -        'harmonization' => '/opt/intelmq/etc/harmonization.conf',
 -        'pipeline' 	=> '/opt/intelmq/etc/pipeline.conf',
 -        'runtime' 	=> '/opt/intelmq/etc/runtime.conf',
--        'system' 	=> '/opt/intelmq/etc/system.conf'
+-        'system' 	=> '/opt/intelmq/etc/system.conf',
+-        'positions' => '/opt/intelmq/etc/manager/positions.conf',
 +        'bots' 		=> '/etc/intelmq/BOTS',
 +        'defaults' 	=> '/etc/intelmq/defaults.conf',
 +        'harmonization' => '/etc/intelmq/harmonization.conf',
 +        'pipeline' 	=> '/etc/intelmq/pipeline.conf',
 +        'runtime' 	=> '/etc/intelmq/runtime.conf',
-+        'system' 	=> '/etc/intelmq/system.conf'
++        'system' 	=> '/etc/intelmq/system.conf',
++        'positions' => '/etc/intelmq/manager/positions.conf',
      );
  
 -    $CONTROLLER = "sudo -u intelmq /usr/local/bin/intelmqctl --type json %s";
