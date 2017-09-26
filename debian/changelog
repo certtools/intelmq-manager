@@ -1,3 +1,9 @@
+intelmq-manager (0.3.1-1) experimental; urgency=medium
+
+  * update to 0.3.1
+
+ -- Sebastian Wagner <wagner@cert.at>  Tue, 26 Sep 2017 09:53:47 +0200
+
 intelmq-manager (0.3-1) experimental; urgency=low
 
   * Update to version 0.3, see changelog

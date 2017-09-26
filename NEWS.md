@@ -3,6 +3,11 @@ NEWS
 
 See the changelog for a full list of changes.
 
+0.3.1
+-----
+
+No changes are required by administrators.
+
 0.3
 ---
 * The IntelMQ Manager is now capable of saving the positions of bots.
