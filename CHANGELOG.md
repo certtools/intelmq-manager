@@ -12,8 +12,6 @@ CHANGELOG
 * Note on security considerations in Readme to avoid misunderstandings
 * Show versions of intelmq and intelmq manager on about page
 * Update vis.js to current version
-* update jQuery to 3.2.1
-* update metisMenu to 2.7.0
 
 ### Configuration
 * interface for defaults.conf (#45)
