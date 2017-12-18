@@ -1,6 +1,11 @@
 CHANGELOG
 =========
 
+unreleased
+----------
+### Configuration
+* Fixed handling of special parameter `run_mode` (#150)
+
 0.3.1
 -----
 ### Configuration
