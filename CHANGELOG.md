@@ -12,6 +12,7 @@ CHANGELOG
 ### Documentation
 * Note on header Content-Security-Policy (#113)
 * Note on security considerations in Readme to avoid misunderstandings
+* Remove compatibility warning from README
 
 ### Third-party libraries
 * reverted update jQuery to 3.2.1
