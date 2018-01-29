@@ -126,6 +126,7 @@ function load_bots(config) {
                 'description': bot['description'],
                 'enabled': true,
                 'parameters': bot['parameters'],
+                'run_mode': 'continuous',
             }
 
             for (parameter in bot['parameters']) {
