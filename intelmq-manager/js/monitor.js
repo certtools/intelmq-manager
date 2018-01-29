@@ -28,7 +28,7 @@ window.onresize = function () {
 $(document).ready(function () {
     var bot_id = getUrlParameter('bot_id');
     if (typeof(bot_id) !== 'undefined') {
-        window.history.replaceState(null, null, 'monitor.html');
+        window.history.replaceState(null, null, '?page=monitor');
         select_bot(bot_id);
     }
 })

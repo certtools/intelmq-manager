@@ -59,7 +59,7 @@ function update_bot_status() {
 		
 		$('#bot-table-body tr').click(function (event) {
 			if($(event.target).closest('td').index() == 0) {
-				window.location.href = "monitor.html?bot_id=" + event.target.innerText;
+				window.location.href = "?page=monitor&bot_id=" + event.target.innerText;
 			}
 		});
 
