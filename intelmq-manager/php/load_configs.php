@@ -2,6 +2,8 @@
 
     require('config.php');
 
+    header('Content-Type: application/json');
+
     $config_text = '';
 
     if (array_key_exists($_GET['file'], $FILES)) {

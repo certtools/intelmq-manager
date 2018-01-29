@@ -55,8 +55,8 @@ function resize() {
 function load_html_elements() {
     // Load popup, span and table
     network_container = document.getElementById('network-container');
-    network_container.setAttribute('ondrop', 'handleDrop(event)');
-    network_container.setAttribute('ondragover', 'allowDrop(event)');
+    network_container.addEventListener('drop', function(event) {handleDrop(event)});
+    network_container.addEventListener('dragover', function(event) {allowDrop(event)});
     popup = document.getElementById("network-popUp");
     span = document.getElementById('network-popUp-title');
     table = document.getElementById("network-popUp-fields");
@@ -96,6 +96,9 @@ function load_bots(config) {
         group_menu.style.borderBottomColor = GROUP_COLORS[bot_group];
 
         available_bots.appendChild(group_menu);
+        fill_bot_func = function(bot_group, bot_name){
+            fill_bot(undefined, bot_group, bot_name);
+        }
 
         for (bot_name in group) {
             var bot = group[bot_name];
@@ -104,7 +107,8 @@ function load_bots(config) {
             bot_title.setAttribute('data-toggle', 'tooltip');
             bot_title.setAttribute('data-placement', 'right');
             bot_title.setAttribute('title', bot['description']);
-            bot_title.setAttribute('onclick', 'fill_bot(undefined, "' + bot_group + '", "' + bot_name + '")');
+            bot_title.addEventListener('click', function(bot_group, bot_name) {
+                return function(){fill_bot_func(bot_group, bot_name)}}(bot_group, bot_name))
             bot_title.innerHTML = bot_name;
 
             var bot_submenu = document.createElement('li');
@@ -143,10 +147,10 @@ function load_bots(config) {
     btnEditDefault.innerHTML = 'Edit Defaults';
     btnEditDefault.style.textAlign = 'center';
     btnEditDefault.id = EDIT_DEFAULT_BUTTON_ID;
-    btnEditDefault.onclick = function () {
+    btnEditDefault.addEventListener('click', function () {
         create_form('Edit Defaults', EDIT_DEFAULT_BUTTON_ID, undefined);
         fill_editDefault(defaults);
-    };
+    });
     buttonContainer = document.createElement('li');
     buttonContainer.appendChild(btnEditDefault);
     buttonContainer.setAttribute('id', 'customListItem');
@@ -409,7 +413,7 @@ function insertBorder(border_type) {
             addButtonSpan.setAttribute('class', 'glyphicon glyphicon-plus-sign');
             addButton.setAttribute('class', 'btn btn-warning');
             addButton.setAttribute('title', 'add new key');
-            addButton.setAttribute('onclick', 'showModal()');
+            addButton.addEventListener('click', showModal);
             addButton.appendChild(addButtonSpan);
             addButtonCell.appendChild(addButton);
             new_row.setAttribute('id', border_type);
@@ -447,6 +451,10 @@ function insertKeyValue(key, value, section, allowXButtons, insertAt) {
         valueInput.setAttribute('disabled', "true");
     }
 
+    parameter_func = function(action_function, argument){
+        action_function(argument);
+    }
+
     if (allowXButtons === true) {
         var xButton = document.createElement('button');
         var xButtonSpan = document.createElement('span');
@@ -454,12 +462,14 @@ function insertKeyValue(key, value, section, allowXButtons, insertAt) {
             xButtonSpan.setAttribute('class', 'glyphicon glyphicon-refresh');
             xButton.setAttribute('class', 'btn btn-default');
             xButton.setAttribute('title', 'reset to default');
-            xButton.setAttribute('onclick', 'resetToDefault(\'' + key + '\')');
+            xButton.addEventListener('click', function(resetToDefault, key) {
+                return function(){parameter_func(resetToDefault, key)}}(resetToDefault, key))
         } else {
             xButtonSpan.setAttribute('class', 'glyphicon glyphicon-remove-circle');
             xButton.setAttribute('class', 'btn btn-danger');
             xButton.setAttribute('title', 'delete parameter');
-            xButton.setAttribute('onclick', 'deleteParameter(\'' + key + '\')');
+            xButton.addEventListener('click', function(deleteParameter, key) {
+                return function(){parameter_func(deleteParameter, key)}}(deleteParameter, key))
         }
 
         xButton.appendChild(xButtonSpan);
@@ -903,3 +913,7 @@ load_file(BOTS_FILE, load_bots);
 // Dynamically adapt to fit screen
 window.onresize = resize;
 
+document.addEventListener('DOMContentLoaded', function () {
+    document.getElementById('addNewKeyModal-cancel').addEventListener('click', hideModal);
+    document.getElementById('addNewKeyModal-ok').addEventListener('click', addNewKey);
+})

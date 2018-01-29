@@ -85,6 +85,7 @@
 
     $return = shell_exec($command);
 
+    header('Content-Type: application/json');
     if ($return === NULL) {
         echo 'Failed to execute intelmqctl';
     } else {

@@ -45,10 +45,10 @@ function update_bot_status() {
         var bot_class = 'bg-danger';
         
         buttons_cell = '' +
-            '<button type="submit" class="btn btn-default" title="Start" onclick="start_bot(\'' + bot_id + '\')"><span class="glyphicon glyphicon-play"></span></button>' + 
-            '<button type="submit" class="btn btn-default" title="Stop" onclick="stop_bot(\'' + bot_id + '\')"><span class="glyphicon glyphicon-stop"></span></button>' +
-            '<button type="submit" class="btn btn-default" title="Reload" onclick="reload_bot(\'' + bot_id + '\')"><span class="glyphicon glyphicon-repeat"></span></button>' +
-            '<button type="submit" class="btn btn-default" title="Restart" onclick="restart_bot(\'' + bot_id + '\')"><span class="glyphicon glyphicon-refresh"></span></button>';
+            '<button type="submit" class="btn btn-default" title="Start" id="button-start-bot-' + bot_id + '"><span class="glyphicon glyphicon-play"></span></button>' +
+            '<button type="submit" class="btn btn-default" title="Stop" id="button-stop-bot-' + bot_id + '"><span class="glyphicon glyphicon-stop"></span></button>' +
+            '<button type="submit" class="btn btn-default" title="Reload" id="button-reload-bot-' + bot_id + '"><span class="glyphicon glyphicon-repeat"></span></button>' +
+            '<button type="submit" class="btn btn-default" title="Restart" id="button-restart-bot-' + bot_id + '"><span class="glyphicon glyphicon-refresh"></span></button>';
 
         bot_row = {
             'bot_id': bot_id,
@@ -64,6 +64,17 @@ function update_bot_status() {
 		});
 
         $('#bot-table').dataTable().fnAddData(bot_row);
+        bot_action_func = function(action_function, message_index){
+            action_function(message_index);
+        }
+        document.getElementById('button-start-bot-' + bot_id).addEventListener('click', function(start_bot, bot_id) {
+                return function(){bot_action_func(start_bot, bot_id)}}(start_bot, bot_id))
+        document.getElementById('button-stop-bot-' + bot_id).addEventListener('click', function(stop_bot, bot_id) {
+                return function(){bot_action_func(stop_bot, bot_id)}}(stop_bot, bot_id))
+        document.getElementById('button-reload-bot-' + bot_id).addEventListener('click', function(reload_bot, bot_id) {
+                return function(){bot_action_func(reload_bot, bot_id)}}(reload_bot, bot_id))
+        document.getElementById('button-restart-bot-' + bot_id).addEventListener('click', function(restart_bot, bot_id) {
+                return function(){bot_action_func(restart_bot, bot_id)}}(restart_bot, bot_id))
     }
     
     update_botnet_status(botnet_status);
@@ -109,12 +120,16 @@ function update_botnet_status(newStatus) {
     botnet_status_element.innerHTML = botnet_status;
     
     botnet_buttons_element.innerHTML = '' +
-        '<button type="submit" class="btn btn-default" title="Start" onclick="start_botnet()"><span class="glyphicon glyphicon-play"></span></button>' + 
-        '<button type="submit" class="btn btn-default" title="Stop" onclick="stop_botnet()"><span class="glyphicon glyphicon-stop"></span></button>' + 
-        '<button type="submit" class="btn btn-default" title="Reload" onclick="reload_botnet()"><span class="glyphicon glyphicon-repeat"></span></button>' +
-        '<button type="submit" class="btn btn-default" title="Restart" onclick="restart_botnet()"><span class="glyphicon glyphicon-refresh"></span></button>';
+        '<button type="submit" class="btn btn-default" title="Start" id="button-start-botnet"><span class="glyphicon glyphicon-play"></span></button>' + 
+        '<button type="submit" class="btn btn-default" title="Stop" id="button-stop-botnet"><span class="glyphicon glyphicon-stop"></span></button>' + 
+        '<button type="submit" class="btn btn-default" title="Reload" id="button-reload-botnet"><span class="glyphicon glyphicon-repeat"></span></button>' +
+        '<button type="submit" class="btn btn-default" title="Restart" id="button-restart-botnet"><span class="glyphicon glyphicon-refresh"></span></button>';
 
-    
+    document.getElementById('button-start-botnet').addEventListener('click', start_botnet);
+    document.getElementById('button-stop-botnet').addEventListener('click', stop_botnet);
+    document.getElementById('button-reload-botnet').addEventListener('click', reload_botnet);
+    document.getElementById('button-restart-botnet').addEventListener('click', restart_botnet);
+
     $('#botnet-status-panel-title').removeClass('waiting');
 }
 

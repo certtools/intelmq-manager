@@ -18,6 +18,10 @@ unreleased
 * Show versions of intelmq and intelmq manager on about page
 * Update vis.js to current version
 
+### Documentation
+* Note on header Content-Security-Policy
+* Note on security considerations in Readme to avoid misunderstandings
+
 ### Configuration
 * interface for defaults.conf (#45)
 * drag&drop (#105, #41)

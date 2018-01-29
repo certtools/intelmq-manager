@@ -64,15 +64,18 @@ function redraw_logs() {
     
     for (index in bot_logs) {
         var log_row = $.extend(true, {}, bot_logs[index]);
+        var has_button = false;
         
         if (log_row['extended_message']) {
             buttons_cell = '' +
-                '<button type="submit" class="btn btn-default btn-xs" data-toggle="modal" data-target="#extended-message-modal" onclick="show_extended_message(\'' + index + '\')"><span class="glyphicon glyphicon-plus"></span></button>';
+                '<button type="submit" class="btn btn-default btn-xs" data-toggle="modal" data-target="#extended-message-modal" id="button-extended-message-' + index + '"><span class="glyphicon glyphicon-plus"></span></button>';
+            has_button = true;
             log_row['actions'] = buttons_cell;
         } else if (log_row['message'].length > MESSAGE_LENGTH) {
             log_row['message'] = log_row['message'].slice(0, MESSAGE_LENGTH) + '<strong>...</strong>';
             buttons_cell = '' +
-                '<button type="submit" class="btn btn-default btn-xs" data-toggle="modal" data-target="#extended-message-modal" onclick="show_extended_message(\'' + index + '\')"><span class="glyphicon glyphicon-plus"></span></button>';
+                '<button type="submit" class="btn btn-default btn-xs" data-toggle="modal" data-target="#extended-message-modal" id="button-extended-message-' + index + '"><span class="glyphicon glyphicon-plus"></span></button>';
+            has_button = true;
             log_row['actions'] = buttons_cell;            
         } else {
             log_row['actions'] = '';
@@ -83,6 +86,13 @@ function redraw_logs() {
         
         
         $('#log-table').dataTable().fnAddData(log_row);
+        if (has_button) {
+            extended_message_func = function(message_index){
+                show_extended_message(message_index);
+            }
+            document.getElementById('button-extended-message-' + index).addEventListener('click', function(index) {
+                return function(){extended_message_func(index)}}(index))
+        }
     }
     
     $('#log-table').dataTable().fnAdjustColumnSizing();
@@ -302,11 +312,17 @@ $.getJSON(MANAGEMENT_SCRIPT + '?scope=botnet&action=status')
     .done(function (data) {
         var sidemenu = document.getElementById('side-menu');
         
+        select_bot_func = function(bot_id) {
+            select_bot(bot_id);
+            return false;
+        }
+
         var li_element = document.createElement('li');
         var link_element = document.createElement('a');
         link_element.innerHTML = ALL_BOTS;
         link_element.setAttribute('href', '#');
-        link_element.setAttribute('onclick', 'select_bot("' + ALL_BOTS + '"); return false');
+        link_element.addEventListener('click', function(ALL_BOTS) {
+                return function(){select_bot_func(ALL_BOTS)}}(ALL_BOTS))
             
         li_element.appendChild(link_element);
         sidemenu.appendChild(li_element);        
@@ -321,7 +337,8 @@ $.getJSON(MANAGEMENT_SCRIPT + '?scope=botnet&action=status')
             
             link_element.innerHTML = bot_id;
             link_element.setAttribute('href', '#');
-            link_element.setAttribute('onclick', 'select_bot("' + bot_id + '"); return false');
+            link_element.addEventListener('click', function(bot_id) {
+                return function(){select_bot_func(bot_id)}}(bot_id))
             
             li_element.appendChild(link_element);
             sidemenu.appendChild(li_element);
@@ -332,3 +349,7 @@ $.getJSON(MANAGEMENT_SCRIPT + '?scope=botnet&action=status')
     });
     
 select_bot(ALL_BOTS);
+
+document.addEventListener('DOMContentLoaded', function () {
+    document.getElementById('log-level-indicator').addEventListener('change', load_bot_log);
+})
