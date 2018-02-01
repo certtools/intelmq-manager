@@ -36,4 +36,4 @@ switch ($page) {
         break;
 }
 
-include("php/template.php");
+include("./php/template.php");

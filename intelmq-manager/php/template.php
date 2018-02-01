@@ -46,7 +46,7 @@
             <!-- Navigation -->
             <nav class="navbar navbar-default navbar-static-top" role="navigation" style="margin-bottom: 0">
                 <div class="navbar-header">
-                    <a class="navbar-brand" href="homepage"><img height="24px"  style="margin-right:10px" src="./images/logo2.png"><img height="20px" src="./images/logo_no_margin_6.png"/></a>
+                    <a class="navbar-brand" href="index.php"><img height="24px"  style="margin-right:10px" src="./images/logo2.png"><img height="20px" src="./images/logo_no_margin_6.png"/></a>
                 </div>
                 <!-- /.navbar-header -->
 
@@ -68,7 +68,7 @@
                     </li>
                     <li>
                         <a href="?page=check">
-                            <span class="top-menu-text"><img src="./images/about.png" width="24px" height="24px">&nbsp;Check</span>
+                            <span class="top-menu-text"><img src="./images/check.png" width="24px" height="24px">&nbsp;Check</span>
                         </a>
                     </li>
                     <li>
