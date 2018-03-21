@@ -111,10 +111,7 @@ Give webserver user (www-data, wwwrun, apache or nginx) permissions to execute i
 www-data ALL=(intelmq) NOPASSWD: /usr/local/bin/intelmqctl
 ```
 
-Edit '/var/www/html/php/config.php' and check if the $CONTROLLER value is correct:
-```php
-$CONTROLLER = "sudo -u intelmq /usr/local/bin/intelmqctl --type json %s";
-```
+The default way of accessing `intelmqctl` program is by command `sudo -u intelmq /usr/local/bin/intelmqctl`. If that does not suit you, you may set an environmental variable   `INTELMQ_MANGER_CONTROLER_CMD` to I.E. `~/.local/bin/intelmqctl` or `sudo -u intelmq ~/.local/bin/intelmqctl` or whereever you need.
 
 ### Notes on CentOS / RHEL
 

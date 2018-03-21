@@ -8,6 +8,7 @@ CHANGELOG
 
 ### Configuration
 * Fixed handling of special parameter `run_mode` (#150)
+* Intelmqctl controller may be set via an env variable `INTELMQ_MANGER_CONTROLER_CMD`
 
 ### Documentation
 * Note on header Content-Security-Policy (#113)

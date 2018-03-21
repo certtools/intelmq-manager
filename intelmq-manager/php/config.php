@@ -9,9 +9,11 @@
         'system' 	=> '/opt/intelmq/etc/system.conf',
         'positions' => '/opt/intelmq/etc/manager/positions.conf',
     );
-
-    $CONTROLLER = "sudo -u intelmq /usr/local/bin/intelmqctl --type json %s";
-
+    if(!($c = getenv("INTELMQ_MANGER_CONTROLER_CMD"))) {
+        $c = "sudo -u intelmq /usr/local/bin/intelmqctl";
+    }
+    $CONTROLLER = $c." --type json %s";
+    
     $BOT_CONFIGS_REJECT_REGEX = '/[^[:print:]\n\r\t]/';
     $BOT_ID_REJECT_REGEX = '/[^A-Za-z0-9.-]/';
     $VERSION = "0.3.1";
