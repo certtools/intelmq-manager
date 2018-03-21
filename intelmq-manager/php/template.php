@@ -79,7 +79,7 @@
                 </ul>
                 <!-- /.navbar-top-links -->
             </nav>
-            <?php include($page . ".html"); ?>
+            <?php include("templates/$page.html"); ?>
 
             <!-- jQuery Version 1.11.0 -->
             <script src="plugins/jquery-1.11.0.js"></script>

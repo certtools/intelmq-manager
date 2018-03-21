@@ -21,8 +21,10 @@ switch ($page) {
         break;
     case "management":
         $libraries[] = "js/management.js";
+        break;
     case "monitor":
         $libraries[] = "js/monitor.js";
+        break;
     case "configs":
         $libraries = array_merge($libraries, ["plugins/vis.js/vis.js",
             "js/runtime.js",
