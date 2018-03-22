@@ -3,12 +3,22 @@ CHANGELOG
 
 0.4.0 (unreleased)
 ------------------
+
 ### Backend
 * Set content type correctly for JSON data in configuration loading (#112)
 
-### Configuration
+### Pages
+* All pages are now deliverd by php, reducing the amount of duplicate code drastically.
+
+#### Landing page
+* Added a new block for the new check page, changed the formatting a bit.
+
+#### Configuration
 * Fixed handling of special parameter `run_mode` (#150)
 * Intelmqctl controller may be set via an env variable `INTELMQ_MANGER_CONTROLER_CMD`
+
+#### Check
+* Added, showing the output of `intelmqctl check` (#118).
 
 ### Documentation
 * Note on header Content-Security-Policy (#113)
