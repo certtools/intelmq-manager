@@ -176,3 +176,14 @@ Require valid-user
 ```
 
 After this is done you'll have to put the user/pass combination you have created with htpasswd to access the web pages of IntelMQ Manager. To use other authentication methods visit: http://httpd.apache.org/docs/2.4/howto/auth.html
+
+## Content-Security-Policy Headers
+
+### Manually
+
+It is recommended to set these two headers for all requests:
+
+```
+Content-Security-Policy: script-src 'self'
+X-Content-Security-Policy: script-src 'self'
+```

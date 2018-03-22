@@ -1,17 +1,39 @@
 CHANGELOG
 =========
 
-0.3.1
------
+0.4.0 (unreleased)
+------------------
+### Backend
+* Set content type correctly for JSON data in configuration loading (#112)
+
+### Configuration
+* Fixed handling of special parameter `run_mode` (#150)
+
+### Documentation
+* Note on header Content-Security-Policy (#113)
+* Note on security considerations in Readme to avoid misunderstandings
+* Remove compatibility warning from README
+
+### Third-party libraries
+* reverted update jQuery to 3.2.1
+* reverted update metisMenu to 2.7.0
+
+### Licenses
+* Licenses of used and included software is now inventarized and properly declared in LICENSES/ (#134)
+
+0.3.1 (2017-09-26)
+------------------
 ### Configuration
 * Fixed validation on files before saving them, this has rejected valid data
 
-0.3
----
+0.3 (2017-09-25)
+----------------
 * Partly support for CentOS/RHEL 7 (#55, #103)
 * Note on security considerations in Readme to avoid misunderstandings
 * Show versions of intelmq and intelmq manager on about page
 * Update vis.js to current version
+* update jQuery to 3.2.1
+* update metisMenu to 2.7.0
 
 ### Configuration
 * interface for defaults.conf (#45)
@@ -39,10 +61,10 @@ CHANGELOG
 * Fix regex checks on bot ids and log line number in controller, they have not been effective
 * fix overflow in extended message box (#49)
 
-0.2.1
------
+0.2.1 (2017-06-20)
+------------------
 * Fix syntax error in pipeline.js preventing loading of configuration page
 
-0.2.0
-----
+0.2.0 (2017-06-20)
+------------------
 * first release

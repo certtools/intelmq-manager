@@ -25,6 +25,11 @@ function read_runtime_conf(config) {
         } else {
             nodes[id]['enabled'] = true;
         }
+        if('run_mode' in bot) {
+            nodes[id]['run_mode'] = bot['run_mode'];
+        } else {
+            nodes[id]['run_mode'] = 'continuous';
+        }
     }
 
     return nodes;
