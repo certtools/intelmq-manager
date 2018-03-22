@@ -28,7 +28,7 @@ window.onresize = function () {
 $(document).ready(function () {
     var bot_id = getUrlParameter('bot_id');
     if (typeof(bot_id) !== 'undefined') {
-        window.history.replaceState(null, null, 'monitor.html');
+        window.history.replaceState(null, null, '?page=monitor');
         select_bot(bot_id);
     }
 })
@@ -55,17 +55,17 @@ function redraw() {
 
 function redraw_logs() {
     $('#log-table').dataTable().fnClearTable();
-    
+
     if  (bot_logs == {}) {
         $('#log-table').dataTable().fnAdjustColumnSizing();
         $('#log-table').dataTable().fnDraw();
         return;
     }
-    
+
     for (index in bot_logs) {
         var log_row = $.extend(true, {}, bot_logs[index]);
         var has_button = false;
-        
+
         if (log_row['extended_message']) {
             buttons_cell = '' +
                 '<button type="submit" class="btn btn-default btn-xs" data-toggle="modal" data-target="#extended-message-modal" id="button-extended-message-' + index + '"><span class="glyphicon glyphicon-plus"></span></button>';
@@ -76,15 +76,15 @@ function redraw_logs() {
             buttons_cell = '' +
                 '<button type="submit" class="btn btn-default btn-xs" data-toggle="modal" data-target="#extended-message-modal" id="button-extended-message-' + index + '"><span class="glyphicon glyphicon-plus"></span></button>';
             has_button = true;
-            log_row['actions'] = buttons_cell;            
+            log_row['actions'] = buttons_cell;
         } else {
             log_row['actions'] = '';
         }
-        
-        
+
+
         log_row['DT_RowClass'] = LEVEL_CLASS[log_row['log_level']];
-        
-        
+
+
         $('#log-table').dataTable().fnAddData(log_row);
         if (has_button) {
             extended_message_func = function(message_index){
@@ -94,7 +94,7 @@ function redraw_logs() {
                 return function(){extended_message_func(index)}}(index))
         }
     }
-    
+
     $('#log-table').dataTable().fnAdjustColumnSizing();
     $('#log-table').dataTable().fnDraw();
 }
@@ -220,12 +220,12 @@ function clearQueue(queue_id) {
 
 function load_bot_log() {
     $('#logs-panel-title').addClass('waiting');
-    
+
     var number_of_lines = LOAD_X_LOG_LINES;
-    
+
     var bot_id = document.getElementById('monitor-target').innerHTML;
     var level = document.getElementById('log-level-indicator').value;
-        
+
     $.getJSON(MANAGEMENT_SCRIPT + '?scope=log&id=' + bot_id + '&lines=' + number_of_lines + '&level=' + level)
         .done(function (data) {
             bot_logs = data;
@@ -241,9 +241,9 @@ function load_bot_log() {
 
 function load_bot_queues() {
     $('#queues-panel-title').addClass('waiting');
-    
+
     var bot_id = document.getElementById('monitor-target').innerHTML;
-    
+
     $.getJSON(MANAGEMENT_SCRIPT + '?scope=queues')
         .done(function (data) {
             bot_queues = data;
@@ -252,21 +252,21 @@ function load_bot_queues() {
         })
         .fail(function (err1, err2, errMessage) {
             show_error('Error loading bot queues information: ' + errMessage);
-        });    
+        });
 }
 
-function select_bot(bot_id) {    
+function select_bot(bot_id) {
     if(reload_queues != null) {
         clearInterval(reload_queues);
     }
-    
+
     if(reload_logs != null) {
         clearInterval(reload_logs);
     }
-    
+
     document.getElementById('monitor-target').innerHTML = bot_id;
     load_bot_queues();
-    
+
     reload_queues = setInterval(function () {
         load_bot_queues();
     }, RELOAD_QUEUES_EVERY * 1000);
@@ -297,21 +297,21 @@ function select_bot(bot_id) {
 
 function show_extended_message(index) {
     var modal_body = document.getElementById('modal-body');
-    
+
     var message = bot_logs[index]['message'];
-    
+
     if (bot_logs[index]['extended_message']) {
-        message += '<br>\n' + 
+        message += '<br>\n' +
                     bot_logs[index]['extended_message'].replace(/\n/g, '<br>\n').replace(/ /g, '&nbsp;');
     }
-                           
+
     modal_body.innerHTML = message;
 }
 
 $.getJSON(MANAGEMENT_SCRIPT + '?scope=botnet&action=status')
     .done(function (data) {
         var sidemenu = document.getElementById('side-menu');
-        
+
         select_bot_func = function(bot_id) {
             select_bot(bot_id);
             return false;
@@ -323,23 +323,23 @@ $.getJSON(MANAGEMENT_SCRIPT + '?scope=botnet&action=status')
         link_element.setAttribute('href', '#');
         link_element.addEventListener('click', function(ALL_BOTS) {
                 return function(){select_bot_func(ALL_BOTS)}}(ALL_BOTS))
-            
+
         li_element.appendChild(link_element);
-        sidemenu.appendChild(li_element);        
-        
+        sidemenu.appendChild(li_element);
+
         var bots_ids = Object.keys(data);
         bots_ids.sort();
-        
+
         for (index in bots_ids) {
             var bot_id = bots_ids[index];
             li_element = document.createElement('li');
             link_element = document.createElement('a');
-            
+
             link_element.innerHTML = bot_id;
             link_element.setAttribute('href', '#');
             link_element.addEventListener('click', function(bot_id) {
                 return function(){select_bot_func(bot_id)}}(bot_id))
-            
+
             li_element.appendChild(link_element);
             sidemenu.appendChild(li_element);
         }
@@ -347,7 +347,7 @@ $.getJSON(MANAGEMENT_SCRIPT + '?scope=botnet&action=status')
     .fail(function (err1, err2, errMessage) {
         show_error('Error loading botnet status: ' + errMessage);
     });
-    
+
 select_bot(ALL_BOTS);
 
 document.addEventListener('DOMContentLoaded', function () {
