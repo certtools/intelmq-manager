@@ -5,10 +5,27 @@ CHANGELOG
 ------------------
 ### Backend
 * Set content type correctly for JSON data in configuration loading (#112)
+* Using LESS for writing CSS (so CSS is now readonly)
+* Fix on several places: intervals won't flood server if there is a lag, they'll wait till previous request has finished. Auto-delay/boost depending on server lag.
+
+### Frontend - error handling
+* Error reporting in a less-disturbing text box rather than an tab-wide javascript alert. Click to enlarge, double click to hide.
+* Fix on several places: Much more detailed Error reporting. What was earlier just mere 'SyntaxError: JSON.parse ...' has now included 'Failed to execute intelmqctl:~/.local/bin/intelmqctl --type json list queues' - see? That's a full command that'll help the developer so much in debugging. (Long error reports got automatically truncated to 200 characters.)
+* If an error appears again and again (redis down?) it blinks instead of spamming you.
 
 ### Configuration
 * Fixed handling of special parameter `run_mode` (#150)
 * Intelmqctl controller may be set via an env variable `INTELMQ_MANGER_CONTROLER_CMD`
+* New menu item linking selected bot with the monitor
+* New menu item to duplicate current bot, its queues included (and focus the new one)
+* You may now see live data, each bot has its queue length in the label
+* Button labels (Add bot, Add queue instead of Add node, Add edge) now makes more sense and won't shock a newcomer
+
+### Monitor
+* Fixed bot crawling in Monitor section (F5 will take you on the same page, not on the main monitoring page, permanent links, history browsing)
+* Prefer updating the destination queues overview table over redrawing it all the time (so that you can select some text)
+* Reloading a page sometimes caused a disturbing 'Error loading' alert in Firefox if an AJAX request had not yet been completed
+* Fixed bug: when clicking on bot destination queue in bot detail, we won't end in an undefined bot
 
 ### Documentation
 * Note on header Content-Security-Policy (#113)

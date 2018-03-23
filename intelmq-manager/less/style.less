@@ -1,0 +1,80 @@
+/*
+ * Common elements
+ */
+#wrapper .navbar #log-window {
+    background-color: black;
+    color: white;
+    display:none;
+    float:right;
+    margin:5px 5px;
+    padding: 5px;
+    width: 500px;
+    height: 44px;
+    overflow: auto;
+    resize: vertical;
+    position:absolute;
+    right:0;
+    &.extended {
+        height: auto;
+    }
+}
+
+/*
+ * Monitor page
+ */
+#inspect-panel{
+    button[data-role="clear"] {
+        float:right;
+    }
+    #command-show {
+        display: none;
+    }
+    textarea {
+        resize: vertical;
+    }
+}
+
+/*
+ * Config page
+ */
+
+#templates {
+    display: none;
+}
+#network-container {
+    .monitor-button {
+        background-image: url('../plugins/vis.js/img/network/rightArrow.png');
+        background-size: 24%;
+        div a {
+            color: black;
+        }
+    }
+    .duplicate-button {
+        background-image: url('../plugins/vis.js/img/network/addNodeIcon.png');
+    }
+
+    .vis-live-toggle {
+        display: block;
+        border-radius: 10px;
+        position: absolute;
+        right: 470px;
+        top: 35px;
+        white-space: nowrap;
+        padding: 5px 0 5px 5px;
+        cursor: pointer;
+        .icon {
+            background-image: url("../images/monitor.png");
+            background-repeat: no-repeat;
+            background-size: 30%; // this is a big image
+            padding-left: 30px;
+            padding-right: 15px;
+            position: relative;
+            z-index:20;
+        }
+        &.running {
+            //padding: 4px 0 4px 4px;
+            //border:1px solid green;
+            background-color: #00D000;
+        }
+    }
+}

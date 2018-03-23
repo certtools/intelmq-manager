@@ -38,12 +38,12 @@ window.onresize = function () {
 
 function update_bot_status() {
     var bot_table_element = document.getElementById('bot-table-body');
-    
+
     $('#bot-table').dataTable().fnClearTable();
-    
+
     for (bot_id in bot_status) {
         var bot_class = 'bg-danger';
-        
+
         buttons_cell = '' +
             '<button type="submit" class="btn btn-default" title="Start" id="button-start-bot-' + bot_id + '"><span class="glyphicon glyphicon-play"></span></button>' +
             '<button type="submit" class="btn btn-default" title="Stop" id="button-stop-bot-' + bot_id + '"><span class="glyphicon glyphicon-stop"></span></button>' +
@@ -56,7 +56,7 @@ function update_bot_status() {
             'actions': buttons_cell,
             'DT_RowClass': BOT_CLASS_DEFINITION[bot_status[bot_id]]
         };
-		
+
 		$('#bot-table-body tr').click(function (event) {
 			if($(event.target).closest('td').index() == 0) {
 				window.location.href = "?page=monitor&bot_id=" + event.target.innerText;
@@ -76,19 +76,19 @@ function update_bot_status() {
         document.getElementById('button-restart-bot-' + bot_id).addEventListener('click', function(restart_bot, bot_id) {
                 return function(){bot_action_func(restart_bot, bot_id)}}(restart_bot, bot_id))
     }
-    
+
     update_botnet_status(botnet_status);
-    
+
     $('#bot-table').dataTable().fnAdjustColumnSizing();
     $('#bot-table').dataTable().fnDraw();
-    
+
 }
 
 function update_botnet_status(newStatus) {
     var botnet_status_element = document.getElementById('botnet-status');
     var botnet_buttons_element = document.getElementById('botnet-buttons');
 
-    if((newStatus == BOT_STATUS_DEFINITION.stopped) || (newStatus == BOT_STATUS_DEFINITION.running) || 
+    if((newStatus == BOT_STATUS_DEFINITION.stopped) || (newStatus == BOT_STATUS_DEFINITION.running) ||
         (newStatus == BOT_STATUS_DEFINITION.incomplete) || (botnet_status == '')) {
         var atLeastOneStopped = false;
         var atLeastOneRunning = false;
@@ -118,10 +118,10 @@ function update_botnet_status(newStatus) {
 
     botnet_status_element.setAttribute('class', 'bg-' + BOT_CLASS_DEFINITION[botnet_status]);
     botnet_status_element.innerHTML = botnet_status;
-    
+
     botnet_buttons_element.innerHTML = '' +
-        '<button type="submit" class="btn btn-default" title="Start" id="button-start-botnet"><span class="glyphicon glyphicon-play"></span></button>' + 
-        '<button type="submit" class="btn btn-default" title="Stop" id="button-stop-botnet"><span class="glyphicon glyphicon-stop"></span></button>' + 
+        '<button type="submit" class="btn btn-default" title="Start" id="button-start-botnet"><span class="glyphicon glyphicon-play"></span></button>' +
+        '<button type="submit" class="btn btn-default" title="Stop" id="button-stop-botnet"><span class="glyphicon glyphicon-stop"></span></button>' +
         '<button type="submit" class="btn btn-default" title="Reload" id="button-reload-botnet"><span class="glyphicon glyphicon-repeat"></span></button>' +
         '<button type="submit" class="btn btn-default" title="Restart" id="button-restart-botnet"><span class="glyphicon glyphicon-refresh"></span></button>';
 
@@ -140,12 +140,12 @@ function get_botnet_status() {
             bot_status = data;
             update_bot_status();
         })
-        .fail(function (err1, err2, errMessage) {
-            show_error('Error loading botnet status: ' + errMessage);
-        });
+        .fail(ajax_fail_callback("Error loading botnet status:"));
+
+
 }
-    
-    
+
+
 function start_bot(bot_id) {
     $('#botnet-status-panel-title').addClass('waiting');
     bot_status[bot_id] = BOT_STATUS_DEFINITION.starting;
@@ -155,8 +155,8 @@ function start_bot(bot_id) {
             bot_status[bot_id] = status;
             update_bot_status();
         })
-        .fail(function (err1, err2, errMessage) {
-            show_error('Error starting bot: ' + errMessage);
+        .fail(function () {
+            ajax_fail_callback('Error starting bot: ').apply(null, arguments);
             bot_status[bot_id] = BOT_CLASS_DEFINITION.stopped;
         });
 }
@@ -213,7 +213,7 @@ function start_botnet() {
             botnet_status = ''; //will be re-evaluated in update_bot_status()
             update_bot_status();
         })
-        .fail(function (err1, err2, err3) {
+        .fail(function (err1, err2, errMessage) {
             show_error('Error starting botnet: ' + errMessage);
         });
 }
@@ -228,9 +228,9 @@ function stop_botnet() {
             botnet_status = ''; //will be re-evaluated in update_bot_status()
             update_bot_status();
         })
-        .fail(function (err1, err2, err3) {
+        .fail(function (err1, err2, errMessage) {
             show_error('Error stopping botnet: ' + errMessage);
-        });    
+        });
 }
 
 function reload_botnet() {
@@ -243,9 +243,9 @@ function reload_botnet() {
             botnet_status = ''; //will be re-evaluated in update_bot_status()
             update_bot_status();
         })
-        .fail(function (err1, err2, err3) {
+        .fail(function (err1, err2, errMessage) {
             show_error('Error reloading botnet: ' + errMessage);
-        });    
+        });
 }
 
 function restart_botnet() {
@@ -258,9 +258,9 @@ function restart_botnet() {
             botnet_status = ''; //will be re-evaluated in update_bot_status()
             update_bot_status();
         })
-        .fail(function (err1, err2, err3) {
+        .fail(function (err1, err2, errMessage) {
             show_error('Error restarting botnet: ' + errMessage);
-        });    
+        });
 }
 
 get_botnet_status();

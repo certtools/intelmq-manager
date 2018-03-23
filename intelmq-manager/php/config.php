@@ -12,9 +12,9 @@
     if(!($c = getenv("INTELMQ_MANGER_CONTROLER_CMD"))) {
         $c = "sudo -u intelmq /usr/local/bin/intelmqctl";
     }
-    $CONTROLLER = $c." --type json %s";
-    
+    $CONTROLLER_JSON = $c." --type json %s";
+    $CONTROLLER = $c." %s";
+
     $BOT_CONFIGS_REJECT_REGEX = '/[^[:print:]\n\r\t]/';
     $BOT_ID_REJECT_REGEX = '/[^A-Za-z0-9.-]/';
     $VERSION = "0.3.1";
-?>

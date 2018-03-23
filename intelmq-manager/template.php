@@ -28,6 +28,7 @@
 
         <!-- Custom CSS -->
         <link href="css/sb-admin-2.css" rel="stylesheet">
+        <link href="css/style.css" rel="stylesheet">
 
         <link rel="icon" type="image/png" href="images/logo2.png">
 
@@ -78,6 +79,7 @@
                     </li>
                 </ul>
                 <!-- /.navbar-top-links -->
+                <div id='log-window'></div>
             </nav>
             <?php include("templates/$page.html"); ?>
 

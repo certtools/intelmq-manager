@@ -31,6 +31,7 @@ switch ($page) {
             "js/pipeline.js",
             "js/positions.js",
             "js/defaults.js",
+            "js/network-configuration.js",
             "js/main.js"]);
         break;
     case "check":
@@ -38,4 +39,4 @@ switch ($page) {
         break;
 }
 
-include("./php/template.php");
+include("./template.php");

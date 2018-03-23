@@ -5,11 +5,13 @@ var bots = {};
 
 var network = null;
 var network_container = null;
+var network_data = {}; // we may update existing info in the network on the fly
 var popup = null;
 var span = null;
 var table = null;
 var modal = null;
 var disabledKeys = ['group', 'name', 'module'];
+var $manipulation; // jQuery of Vis control panel
 
 var bot_before_altering = null;
 var EDIT_DEFAULT_BUTTON_ID = 'editDefaults';
@@ -26,7 +28,7 @@ var BORDER_TYPES = {
 }
 
 var draggedElement = null;
-var options = null;
+var options = NETWORK_OPTIONS;
 var positions = null;
 var isTooltipEnabled = true;
 
@@ -55,8 +57,12 @@ function resize() {
 function load_html_elements() {
     // Load popup, span and table
     network_container = document.getElementById('network-container');
-    network_container.addEventListener('drop', function(event) {handleDrop(event)});
-    network_container.addEventListener('dragover', function(event) {allowDrop(event)});
+    network_container.addEventListener('drop', function (event) {
+        handleDrop(event)
+    });
+    network_container.addEventListener('dragover', function (event) {
+        allowDrop(event)
+    });
     popup = document.getElementById("network-popUp");
     span = document.getElementById('network-popUp-title');
     table = document.getElementById("network-popUp-fields");
@@ -65,14 +71,14 @@ function load_html_elements() {
 
 function load_file(url, callback) {
     $.getJSON(url)
-        .done(function (json) {
-            callback(json);
-        })
-        .fail(function (jqxhr, textStatus, error) {
-            var err = textStatus + ", " + error;
-            show_error('Failed to obtain JSON: ' + url + ' with error: ' + err);
-            callback({});
-        });
+            .done(function (json) {
+                callback(json);
+            })
+            .fail(function (jqxhr, textStatus, error) {
+                var err = textStatus + ", " + error;
+                show_error('Failed to obtain JSON: ' + url + ' with error: ' + err);
+                callback({});
+            });
 }
 
 function load_bots(config) {
@@ -96,7 +102,7 @@ function load_bots(config) {
         group_menu.style.borderBottomColor = GROUP_COLORS[bot_group];
 
         available_bots.appendChild(group_menu);
-        fill_bot_func = function(bot_group, bot_name){
+        fill_bot_func = function (bot_group, bot_name) {
             fill_bot(undefined, bot_group, bot_name);
         }
 
@@ -107,8 +113,11 @@ function load_bots(config) {
             bot_title.setAttribute('data-toggle', 'tooltip');
             bot_title.setAttribute('data-placement', 'right');
             bot_title.setAttribute('title', bot['description']);
-            bot_title.addEventListener('click', function(bot_group, bot_name) {
-                return function(){fill_bot_func(bot_group, bot_name)}}(bot_group, bot_name))
+            bot_title.addEventListener('click', function (bot_group, bot_name) {
+                return function () {
+                    fill_bot_func(bot_group, bot_name)
+                }
+            }(bot_group, bot_name))
             bot_title.innerHTML = bot_name;
 
             var bot_submenu = document.createElement('li');
@@ -140,7 +149,7 @@ function load_bots(config) {
         }
     }
 
-    $('#side-menu').metisMenu({ 'restart': true });
+    $('#side-menu').metisMenu({'restart': true});
 
     btnEditDefault = document.createElement('button');
     btnEditDefault.setAttribute('class', 'btn btn-warning');
@@ -200,7 +209,7 @@ function handleDrop(event) {
     }
     // ---
 
-    var domPointer = network.interactionHandler.getPointer({ x: event.clientX, y: event.clientY });
+    var domPointer = network.interactionHandler.getPointer({x: event.clientX, y: event.clientY});
     var canvasPointer = network.manipulation.canvas.DOMtoCanvas(domPointer);
 
     var clickData = {
@@ -220,6 +229,9 @@ function handleDrop(event) {
 function allowDrop(event) {
     event.preventDefault();
 }
+
+
+// Configuration files manipulation
 
 function load_defaults(config) {
     defaults = read_defaults_conf(config);
@@ -259,36 +271,36 @@ function save_data_on_files() {
     }
 
     $.post('./php/save.php?file=runtime', generate_runtime_conf(nodes))
-        .done(function (data) {
-            saveSucceeded(data);
-        })
-        .fail(function (jqxhr, textStatus, error) {
-            alert_error('runtime', jqxhr, textStatus, error);
-        });
+            .done(function (data) {
+                saveSucceeded(data);
+            })
+            .fail(function (jqxhr, textStatus, error) {
+                alert_error('runtime', jqxhr, textStatus, error);
+            });
 
     $.post('./php/save.php?file=pipeline', generate_pipeline_conf(edges))
-        .done(function (data) {
-            saveSucceeded(data);
-        })
-        .fail(function (jqxhr, textStatus, error) {
-            alert_error('pipeline', jqxhr, textStatus, error);
-        });
+            .done(function (data) {
+                saveSucceeded(data);
+            })
+            .fail(function (jqxhr, textStatus, error) {
+                alert_error('pipeline', jqxhr, textStatus, error);
+            });
 
     $.post('./php/save.php?file=positions', generate_positions_conf())
-        .done(function (data) {
-            saveSucceeded(data);
-        })
-        .fail(function (jqxhr, textStatus, error) {
-            alert_error('positions', jqxhr, textStatus, error);
-        });
+            .done(function (data) {
+                saveSucceeded(data);
+            })
+            .fail(function (jqxhr, textStatus, error) {
+                alert_error('positions', jqxhr, textStatus, error);
+            });
 
     $.post('./php/save.php?file=defaults', generate_defaults_conf(defaults))
-        .done(function (data) {
-            saveSucceeded(data);
-        })
-        .fail(function (jqxhr, textStatus, error) {
-            alert_error('defaults', jqxhr, textStatus, error);
-        });
+            .done(function (data) {
+                saveSucceeded(data);
+            })
+            .fail(function (jqxhr, textStatus, error) {
+                alert_error('defaults', jqxhr, textStatus, error);
+            });
 
     nodes = add_defaults_to_nodes(nodes, defaults);
     disableSaveButtonBlinking();
@@ -302,6 +314,8 @@ function saveSucceeded(response) {
         return false;
     }
 }
+
+// Prepare data from configuration files to be used in Vis
 
 function convert_edges(edges) {
     var new_edges = [];
@@ -365,8 +379,7 @@ function fill_bot(id, group, name) {
                 bot['defaults'][key] = defaults[key];
             }
         }
-    }
-    else {
+    } else {
         bot = nodes[id];
     }
 
@@ -451,7 +464,7 @@ function insertKeyValue(key, value, section, allowXButtons, insertAt) {
         valueInput.setAttribute('disabled', "true");
     }
 
-    parameter_func = function(action_function, argument){
+    parameter_func = function (action_function, argument) {
         action_function(argument);
     }
 
@@ -462,14 +475,20 @@ function insertKeyValue(key, value, section, allowXButtons, insertAt) {
             xButtonSpan.setAttribute('class', 'glyphicon glyphicon-refresh');
             xButton.setAttribute('class', 'btn btn-default');
             xButton.setAttribute('title', 'reset to default');
-            xButton.addEventListener('click', function(resetToDefault, key) {
-                return function(){parameter_func(resetToDefault, key)}}(resetToDefault, key))
+            xButton.addEventListener('click', function (resetToDefault, key) {
+                return function () {
+                    parameter_func(resetToDefault, key)
+                }
+            }(resetToDefault, key))
         } else {
             xButtonSpan.setAttribute('class', 'glyphicon glyphicon-remove-circle');
             xButton.setAttribute('class', 'btn btn-danger');
             xButton.setAttribute('title', 'delete parameter');
-            xButton.addEventListener('click', function(deleteParameter, key) {
-                return function(){parameter_func(deleteParameter, key)}}(deleteParameter, key))
+            xButton.addEventListener('click', function (deleteParameter, key) {
+                return function () {
+                    parameter_func(deleteParameter, key)
+                }
+            }(deleteParameter, key))
         }
 
         xButton.appendChild(xButtonSpan);
@@ -522,7 +541,7 @@ window.onclick = function (event) {
     }
 }
 
-$(document).keydown(function(event) {
+$(document).keydown(function (event) {
     if (event.keyCode == 27) {
         if ($('#addNewKeyModal').is(':visible')) {
             hideModal();
@@ -534,14 +553,14 @@ $(document).keydown(function(event) {
 
 $('#newKeyInput').keyup(function (event) {
     // 'enter' key
-    if (event.keyCode == 13){
+    if (event.keyCode == 13) {
         $('#addNewKeyModal-ok').click();
     }
 });
 
 $('#newValueInput').keyup(function (event) {
     // 'enter' key
-    if (event.keyCode == 13){
+    if (event.keyCode == 13) {
         $('#addNewKeyModal-ok').click();
     }
 });
@@ -559,7 +578,8 @@ function saveFormData() {
         var valueCell = table.rows[i].cells[1];
         var valueInput = valueCell.getElementsByTagName('input')[0];
 
-        if (valueInput === undefined) continue;
+        if (valueInput === undefined)
+            continue;
 
         var key = keyCell.innerText;
         var value = null;
@@ -728,157 +748,75 @@ function redrawNetwork() {
 function draw() {
     load_html_elements();
 
-    var data = {};
 
     if (window.location.hash == '#load') {
-        data = {
-            nodes: convert_nodes(nodes, true),
-            edges: convert_edges(edges)
+        network_data = {
+            nodes: new vis.DataSet(convert_nodes(nodes, true)),
+            edges: new vis.DataSet(convert_edges(edges))
         };
     }
 
-    options = {
-        physics: {
-            hierarchicalRepulsion: {
-                nodeDistance: 200,
-                springLength: 200
-            },
-            stabilization: {
-                enabled: true,
-                fit: true
-            },
-            solver: 'hierarchicalRepulsion'
-        },
-        interaction: {
-            tooltipDelay: 1000,
-            navigationButtons: true
-        },
-        nodes: {
-            font: {
-                size: 14, // px
-                face: 'arial',
-                align: 'center'
-            }
-        },
-        edges: {
-            length: 200,
-            arrows: {
-                to: { enabled: true, scaleFactor: 1, type: 'arrow' }
-            },
-            physics: true,
-            font: {
-                size: 14, // px
-                face: 'arial',
-            },
-            color: {
-                inherit: false
-            },
-            smooth: {
-                enabled: true,
-                type: 'continuous'
-            }
-        },
-        groups: {
-            Collector: {
-                shape: 'box',
-                color: GROUP_COLORS['Collector'],
-            },
-            Parser: {
-                shape: 'box',
-                color: GROUP_COLORS['Parser']
-            },
-            Expert: {
-                shape: 'box',
-                color: GROUP_COLORS['Expert'],
-                fontColor: "#FFFFFF"
-            },
-            Output: {
-                shape: 'box',
-                color: GROUP_COLORS['Output']
-            }
-        },
+    network = new vis.Network(network_container, network_data, options);
+    $manipulation = $(".vis-manipulation");
 
-        manipulation: {
-            enabled: true,
-            initiallyActive: true,
-            addNode: true,
-            addEdge: true,
-            editNode: true,
-            editEdge: false,
-            deleteNode: true,
-            deleteEdge: true,
-
-            addNode: function (data, callback) {
-                create_form("Add Node", data, callback);
-            },
-            editNode: function (data, callback) {
-                create_form("Edit Node", data, callback);
-                fill_bot(data.id, undefined, undefined);
-            },
-            deleteNode: function (data, callback) {
-                callback(data);
-
-                for (index in data.edges) {
-                    delete edges[data.edges[index]];
-                }
-
-                for (index in data.nodes) {
-                    delete nodes[data.nodes[index]];
-                }
-                enableSaveButtonBlinking();
-            },
-            addEdge: function (data, callback) {
-                if (data.from == data.to) {
-                    show_error('This action would cause an infinite loop');
-                    return;
-                }
-
-                for (index in edges) {
-                    if (edges[index].from == data.from && edges[index].to == data.to) {
-                        show_error('There is already a link between those bots');
-                        return;
-                    }
-                }
-
-                var neighbors = ACCEPTED_NEIGHBORS[nodes[data.from].group];
-                var available_neighbor = false;
-                for (index in neighbors) {
-                    if (nodes[data.to].group == neighbors[index]) {
-                        callback(data);
-                        available_neighbor = true;
-                    }
-                }
-
-                if (!available_neighbor) {
-                    if (neighbors.length == 0) {
-                        show_error("Node type " + nodes[data.from].group + " can't connect to other nodes");
-                    } else {
-                        show_error('Node type ' + nodes[data.from].group + ' can only connect to nodes of types: ' + neighbors.join());
-                    }
-                    return;
-                }
-
-
-                if (edges[data.id] === undefined) {
-                    edges[data.id] = {};
-                }
-
-                edges[data.id] = { 'from': data.from, 'to': data.to };
-                enableSaveButtonBlinking();
-            },
-            deleteEdge: function (data, callback) {
-                delete edges[data["edges"][0]];
-                callback(data);
-                enableSaveButtonBlinking();
-            }
-        },
-        layout: {
-            hierarchical: false,
-            randomSeed: undefined
-        }
+    // rename some menu buttons (unfortunately, there is not much a way to define a locale for vis.Network)
+    var maintainMenu = function () {
+        $(".vis-add .vis-label", $manipulation).text("Add bot");
+        $(".vis-connect .vis-label", $manipulation).text("Add queue");
     };
+    maintainMenu();
 
-    network = new vis.Network(network_container, data, options);
+    // add custom menu buttons
+    network.on("click", function (state) {
+        maintainMenu();
+        $(".network-added-menu", $manipulation).remove(); // get rid of all previous added menu button
+
+        if (state.nodes.length === 1) { // a bot is focused
+            var bot = state.nodes[0];
+            $("#templates .network-added-menu").clone().appendTo($manipulation);
+            $(".monitor-button", $manipulation).find("a").attr("href", MONITOR_BOT_URL.format(bot));
+            $(".duplicate-button", $manipulation).click(function duplicateNode() {
+                let i = 2;
+                //reserve a new unique name
+                let newbie = "{0}-{1}".format(bot, i);
+                while (newbie in nodes) {
+                    newbie = "{0}-{1}".format(bot, ++i);
+                }
+                // deep copy old bot information
+                nodes[newbie] = $.extend(true, {}, nodes[bot]);
+                nodes[newbie]["id"] = newbie;
+                // add to the Vis and focus
+                network_data.nodes.add(convert_nodes([nodes[newbie]]));
+                for (let id of network.getConnectedEdges(bot)) {
+                    let edge = network_data.edges.get(id);
+                    delete edge["id"];
+                    if (edge["from"] === bot) {
+                        edge["from"] = newbie;
+                    }
+                    if (edge["to"] === bot) {
+                        edge["to"] = newbie;
+                    }
+                    network_data.edges.add(edge);
+                }
+
+                network.selectNodes([newbie]);
+                enableSaveButtonBlinking();
+            });
+        }
+
+    });
+
+    // live manipulation button
+    var reload_queues = (new Interval(load_live_info, RELOAD_QUEUES_EVERY * 1000, true)).stop(); // by default on
+    $("#templates .vis-live-toggle").clone().insertAfter($manipulation).click(function () {
+        if (reload_queues.running) {
+            $(this).removeClass("running");
+            reload_queues.stop();
+        } else {
+            $(this).addClass("running");
+            reload_queues.start();
+        }
+    }).click();
 }
 
 // functions called in vis.js
@@ -916,4 +854,35 @@ window.onresize = resize;
 document.addEventListener('DOMContentLoaded', function () {
     document.getElementById('addNewKeyModal-cancel').addEventListener('click', hideModal);
     document.getElementById('addNewKeyModal-ok').addEventListener('click', addNewKey);
-})
+});
+
+
+
+/**
+ * This function fetches the current info and updates bot nodes on the graph
+ * XX in the future, we might fetch information about if bot is running; intelmqctl has to support it first in one single command
+ */
+function load_live_info() {
+    var that = this;
+    //$('#queues-panel-title').addClass('waiting');
+    //reload_queues.running = true;
+    return $.getJSON(MANAGEMENT_SCRIPT + '?scope=queues')
+            .done(function (bot_queues) {
+                for (let bot in bot_queues) {
+                    if ("source_queue" in bot_queues[bot]) {
+                        // we skip bots without source queue (collectors)
+                        let c = bot_queues[bot]['source_queue'][1];
+                        let label = (c > 0) ? "{0}\n{1}✉".format(bot, c) : bot;
+                        if (label !== network_data.nodes.get(bot).label) {
+                            // update queue count on bot label
+                            network_data.nodes.update({"id": bot, "label": label});
+                        }
+                    }
+
+                }
+            })
+            .fail(ajax_fail_callback('Error loading bot queues information:'))
+            .always(function () {
+                that.blocking = false;
+            });
+}
