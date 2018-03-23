@@ -26,6 +26,7 @@ CHANGELOG
 * Prefer updating the destination queues overview table over redrawing it all the time (so that you can select some text)
 * Reloading a page sometimes caused a disturbing 'Error loading' alert in Firefox if an AJAX request had not yet been completed
 * Fixed bug: when clicking on bot destination queue in bot detail, we won't end in an undefined bot
+* Inspect panel allows you to communicate via debug functions of `intelmqctl` (see and inject messages, process single message and see output)
 
 ### Documentation
 * Note on header Content-Security-Policy (#113)
