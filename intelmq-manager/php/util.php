@@ -1,5 +1,9 @@
 <?php
 /**
+ *
+ * XX Maybe this file want be used if my magic command (controller:30) will work smoothly.
+ * It's not used right now.
+ *
  * Execute a command and kill it if the timeout limit fired to prevent long php execution
  *
  * @see http://stackoverflow.com/questions/2603912/php-set-timeout-for-script-with-system-call-set-time-limit-not-working

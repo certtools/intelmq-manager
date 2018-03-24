@@ -95,6 +95,9 @@ if ($scope == 'botnet') {
             break;
         case "process":
             $arguments .= "process";
+            if(filter_input(INPUT_GET, "show", FILTER_VALIDATE_BOOLEAN)) {
+                $arguments .= " --show-sent";
+            }
             if(filter_input(INPUT_GET, "dry", FILTER_VALIDATE_BOOLEAN)) {
                 $arguments .= " --dry";
             }
@@ -120,16 +123,13 @@ if($json_wanted) {
 }
 $command = sprintf($c, $arguments);
 
-//echo $command; exit;
 
+// appending magic string that'll kill the command if run for too long
+$sec = 5;
+$command .= " & ii=0 && while [ \"2\" -eq \"`ps -p $! | wc -l`\" ];do ii=$((ii+1)); if [ \$ii -gt ".($sec)."0 ]; then echo 'Intelmqctl timeout!';kill $!; break;fi; sleep 0.1; done";
 set_time_limit(10);
-$return = ExecWaitTimeout($command, 9);
-
-
-
-//$return = shell_exec($command);
-
-//$return .= "  $command";
+//$return = ExecWaitTimeout($command, 9);
+$return = shell_exec($command);
 
 
 if ($return === NULL) {

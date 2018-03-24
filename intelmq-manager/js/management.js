@@ -140,7 +140,7 @@ function get_botnet_status() {
             bot_status = data;
             update_bot_status();
         })
-        .fail(ajax_fail_callback("Error loading botnet status:"));
+        .fail(ajax_fail_callback("Error loading botnet status"));
 
 
 }
@@ -156,7 +156,7 @@ function start_bot(bot_id) {
             update_bot_status();
         })
         .fail(function () {
-            ajax_fail_callback('Error starting bot: ').apply(null, arguments);
+            ajax_fail_callback('Error starting bot').apply(null, arguments);
             bot_status[bot_id] = BOT_CLASS_DEFINITION.stopped;
         });
 }

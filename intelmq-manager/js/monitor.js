@@ -229,7 +229,7 @@ function clearQueue(queue_id) {
                 console.log(data);
                 $('#queues-panel-title').removeClass('waiting');
             })
-            .fail(ajax_fail_callback('Error clearing queue ' + queue_id + ":"));
+            .fail(ajax_fail_callback('Error clearing queue ' + queue_id));
 }
 
 function load_bot_log() {
@@ -251,6 +251,7 @@ function load_bot_log() {
                 bot_logs = {};
                 redraw_logs();
                 $('#logs-panel-title').removeClass('waiting');
+                ajax_fail_callback('Error loading bot log information')(err1, err2, errMessage);
             })
             .always(function () {
                 that.blocking = false;
@@ -269,7 +270,7 @@ function load_bot_queues() {
                 redraw_queues();
                 $('#queues-panel-title').removeClass('waiting');
             })
-            .fail(ajax_fail_callback('Error loading bot queues information:'))
+            .fail(ajax_fail_callback('Error loading bot queues information'))
             .always(function () {
                 that.blocking = false;
             });
@@ -371,7 +372,7 @@ $.getJSON(MANAGEMENT_SCRIPT + '?scope=botnet&action=status')
                 sidemenu.appendChild(li_element);
             }
         })
-        .fail(ajax_fail_callback('Error loading botnet status:'));
+        .fail(ajax_fail_callback('Error loading botnet status'));
 
 
 
@@ -400,9 +401,18 @@ document.addEventListener('DOMContentLoaded', function () {
         run_command("message send", "send", $("#message-playground").val());
     });
     $("button[data-role=process]", $insp).click(function () {
-        let msg = $("[data-role=inject]", $insp).prop("checked") ? $("#message-playground").val() : "";
+        let msg;
+        if($("[data-role=inject]", $insp).prop("checked")) {
+            if(!$("#message-playground").val()) {
+                show_error("Can't inject message from above – you didn't write any message");
+                $("#message-playground").focus();
+                return false;
+            }
+            msg = $("#message-playground").val();
+        }
         let dry = $("[data-role=dry]", $insp).prop("checked");
-        run_command("process" + (dry ? " --dryrun" : "") + (msg ? " --msg" : ""), "process", msg, dry);
+        let show = $("[data-role=show-sent]", $insp).prop("checked");
+        run_command("process" + (show ? " --show-sent" : "") + (dry ? " --dryrun" : "") + (msg ? " --msg" : ""), "process", msg, dry, show);
     });
 });
 
@@ -415,44 +425,49 @@ document.addEventListener('DOMContentLoaded', function () {
  * @param {type} dry
  * @returns {undefined}
  */
-function run_command(display_cmd, cmd, msg = "", dry = false) {
+function run_command(display_cmd, cmd, msg = "", dry = false, show = false) {
     var bot = getUrlParameter('bot_id');
     $("#command-show").show().html("intelmqctl run {0} {1} {2}".format(bot, display_cmd, msg ? "'" + msg + "'" : ""));//XX dry are not syntax-correct
     $("#run-log").val("loading...");
     $.ajax({
-        //dataType: "json",
         method: "post",
         data: {"msg": msg},
-        url: MANAGEMENT_SCRIPT + '?scope=run&bot={0}&cmd={1}&dry={2}'.format(bot, cmd, dry),
-        timeout: 1000,
-        //data: data,
+        url: MANAGEMENT_SCRIPT + '?scope=run&bot={0}&cmd={1}&dry={2}&show={3}'.format(bot, cmd, dry, show),
+        //timeout: 1000, server side timeouts well
     }).done(function (data) {
         // Parses the received data to message part and to log-only part
-        let logs = "";
-        let msg = "";
-        let logging = true;
+        let logs = [];
+        let msg = [];
+        let logging = logs;
         for (let line of data.split("\n")) {
-            if (line === "{") {
-                logging = false;
-            }
-            if (logging) {
-                logs += line + "\n";
+            if (logging === logs) {
+                if (line === "{") {
+                    logging = msg;
+                }
             } else {
-                msg += line + "\n";
+                if (line === "}") {
+                    msg.push(line);
+                    logging = logs;
+                    continue;
+                }
             }
+
+            logging.push(line); //write either to logs or msgs
         }
-        if (msg) { // we won't rewrite an old message if nothing came
-            $("#message-playground").attr("rows", 18).val(msg);
+        if (msg.length) { // we won't rewrite an old message if nothing came
+            $("#message-playground").attr("rows", msg.length).val(msg.join("\n"));
         }
-        $("#run-log").attr("rows", 22).val(logs);
+        $("#run-log").attr("rows", logs.length).val(logs.join("\n"));
         //$('#queues-panel-title').removeClass('waiting');
-    }).fail(function (jqXHR, textStatus) {
+    }).fail(ajax_fail_callback('Error getting message')/*
+    XX This is not used right now, controller is now able to timeout itself more reliably!
+    function (jqXHR, textStatus) {
         if (textStatus === "timeout") {
             show_error("Message timeout, maybe bot has nothing in the queue?");
             return;
         }
         ajax_fail_callback('Error getting message:').apply(null, arguments);
-    });
+    }*/);
 }
 
 

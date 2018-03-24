@@ -881,7 +881,7 @@ function load_live_info() {
 
                 }
             })
-            .fail(ajax_fail_callback('Error loading bot queues information:'))
+            .fail(ajax_fail_callback('Error loading bot queues information'))
             .always(function () {
                 that.blocking = false;
             });

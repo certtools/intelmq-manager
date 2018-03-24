@@ -11,7 +11,7 @@ CHANGELOG
 ### Frontend - error handling
 * Error reporting in a less-disturbing text box rather than an tab-wide javascript alert. Click to enlarge, double click to hide.
 * Fix on several places: Much more detailed Error reporting. What was earlier just mere 'SyntaxError: JSON.parse ...' has now included 'Failed to execute intelmqctl:~/.local/bin/intelmqctl --type json list queues' - see? That's a full command that'll help the developer so much in debugging. (Long error reports got automatically truncated to 200 characters.)
-* If an error appears again and again (redis down?) it blinks instead of spamming you.
+* If an error appears again and again (redis down?) it blinks instead of spamming you, updates its time and show number of times it has been thrown.
 
 ### Configuration
 * Fixed handling of special parameter `run_mode` (#150)

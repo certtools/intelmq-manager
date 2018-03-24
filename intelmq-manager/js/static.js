@@ -92,14 +92,28 @@ $(function () {
 });
 function show_error(string) {
     let d = new Date();
-    let time = "{0}:{1}".format(d.getHours(),d.getMinutes());
-    if ($("#log-window p:eq(0) span:eq(1)").html() === string) {
-        // we've seen this message before; just blink
-        $("#log-window p:eq(0) span:eq(0)").text(time).stop().animate({opacity: 0.1}, 100, function () {
-            $(this).animate({opacity: 1}, 100);
-        });
-    } else {
-        $("#log-window").show().prepend("<p><span>{0}</span> <span>{1}</span></p>".format(time, string));
+    let time = new Date().toLocaleTimeString().replace(/:\d+ /, ' ');
+    $lw = $("#log-window");
+    $el = $("<p><span>{0}</span> <span></span> <span>{1}</span></p>".format(time, string));
+    var found = false;
+    $("p", $lw).each(function () {
+        if ($("span:eq(2)", $(this)).text() === $("span:eq(2)", $el).text()) {
+            // we've seen this message before
+            found = true;
+            // put it in front of the other errors
+            $(this).prependTo($lw);
+            //blink
+            $("span:eq(0)", $(this)).text(time).stop().animate({opacity: 0.1}, 100, function () {
+                $(this).animate({opacity: 1}, 100);
+            });
+            // increment 'seen' counter
+            let counter = parseInt($("span:eq(1)", $(this)).text()) || 1;
+            $("span:eq(1)", $(this)).text(counter + 1 + "×");
+            return false;
+        }
+    });
+    if (!found) {
+        $("#log-window").show().prepend($el);
     }
     /*if(!page_is_exiting) {
      alert(string);
@@ -110,13 +124,15 @@ function show_error(string) {
 function ajax_fail_callback(str) {
     return function (jqXHR, textStatus, message) {
         if (textStatus === "timeout") {
+            // this is just a timeout, no other info needed
             show_error(str + " timeout");
+            return;
         }
         if (jqXHR.status === 0) { // page refreshed before ajax finished
             return;
         }
         // include full report but truncate the length to 200 chars
-        show_error(str + " " + message + " " + jqXHR.responseText.replace(/^(.{200}).+/, "$1..."));
+        show_error("{0}: <b>{1}</b> {2}".format(str, jqXHR.responseText.replace(/^(.{200}).+/, "$1..."), message));
     };
 }
 
