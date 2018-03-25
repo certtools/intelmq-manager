@@ -174,10 +174,9 @@ class Interval {
         return this;
     }
     stop() {
-        setTimeout(this.instance);
+        clearTimeout(this.instance);
         this.running = false;
         return this;
-
     }
 
     set blocking(b) {

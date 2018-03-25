@@ -3,7 +3,7 @@ function generate_runtime_conf(nodes) {
     var tmp_nodes = nodes;
 
     sortObjectByPropertyName(tmp_nodes);
-    for (id in tmp_nodes) {
+    for (let id in tmp_nodes) {
         delete tmp_nodes[id].id;
         if('parameters' in tmp_nodes[id]) {
             sortObjectByPropertyName(tmp_nodes[id].parameters);

@@ -17,7 +17,7 @@ CHANGELOG
 * Fixed handling of special parameter `run_mode` (#150)
 * Intelmqctl controller may be set via an env variable `INTELMQ_MANGER_CONTROLER_CMD`
 * New menu item linking selected bot with the monitor
-* New menu item to duplicate current bot, its queues included (and focus the new one)
+* New menu item to duplicate current bot, its queues included (and focus the new one); the new bot is selected and focused so that the user finds it on a big plan
 * You may now see live data, each bot has its queue length in the label
 * Button labels (Add bot, Add queue instead of Add node, Add edge) now makes more sense and won't shock a newcomer
 
