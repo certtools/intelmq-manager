@@ -132,7 +132,8 @@ function ajax_fail_callback(str) {
             return;
         }
         // include full report but truncate the length to 200 chars
-        show_error("{0}: <b>{1}</b> {2}".format(str, jqXHR.responseText.replace(/^(.{200}).+/, "$1..."), message));
+        // (since '.' is not matching newline characters, we're using '[\s\S]' so that even multiline string is shortened)
+        show_error("{0}: <b>{1}</b> {2}".format(str, jqXHR.responseText.replace(/^(.{200})[\s\S]+/, "$1..."), message));
     };
 }
 
@@ -149,28 +150,19 @@ class Interval {
      * @param {type} fn
      * @param {type} delay
      * @param {bool} blocking If true, the fn is an AJAX call. The fn will not be called again unless it calls `this.blocking = false` when AJAX is finished.
-     *      You may wont to include
-     *      `var that = this;` before AJAX calling and `.always(function () {that.blocking = false;})` after
+     *      You may wont to include `.always(() => {this.blocking = false;})` after the AJAX call. (In 'this' should be instance of the Interval object.)
      *
      *      (Note that we preferred that.blocking setter over method unblock() because interval function
-     *      can be called from other sources than this class, non-existent method would pose a problem.)
+     *      can be called from other sources than this class (ex: at first run) and a non-existent method would pose a problem.)
      * @returns {Interval}
      */
     constructor(fn, delay, ajax_wait) {
         this.fn = fn;
         this.delay = this._delay = delay;
-        this._blocking = ajax_wait ? false : null;
         this._delayed = function () {
-            if (!this._blocking) {
-                if (this._blocking !== null) {
-                    this._blocking = true;
-                    this.time1 = +new Date();
-                }
-                this.fn.call(this);
-            } else {
-                console.log("BLONGIN!");
-            }
-            if (this._blocking === null) {
+            this.time1 = +new Date();
+            this.fn.call(this);
+            if (ajax_wait !== true && this.running) {
                 this.start();
             }
         }.bind(this);
@@ -188,12 +180,7 @@ class Interval {
 
     }
 
-    get blocking() {
-        return this._blocking;
-    }
-
     set blocking(b) {
-        this._blocking = b;
         if (b === false) {
             let rtt = +new Date() - this.time1;
             if (rtt > this._delay / 3) {
@@ -203,7 +190,9 @@ class Interval {
             } else if (rtt < this._delay / 4 && this._delay >= this.delay) {
                 this._delay -= 100;
             }
-            this.start();
+            if (this.running) {
+                this.start();
+            }
         }
     }
 }

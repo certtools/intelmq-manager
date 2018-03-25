@@ -734,27 +734,37 @@ function disableSaveButtonBlinking() {
 function redrawNetwork() {
     options.layout.randomSeed = Math.round(Math.random() * 1000000);
 
-    var data = {
+/*    var data = {
         nodes: convert_nodes(nodes, false),
         edges: convert_edges(edges)
     };
-
+      //nodes = convert_nodes(nodes, false);
+      //  edges = convert_edges(edges);
+*/
     network.destroy();
     network = null;
-    network = new vis.Network(network_container, data, options);
+
+    initNetwork(false);
+    //network = new vis.Network(network_container, data, options);
     enableSaveButtonBlinking();
 }
 
 function draw() {
     load_html_elements();
 
+    if (window.location.hash !== '#load') {
+      nodes = {};
+      edges = {};
+    }
 
-    if (window.location.hash == '#load') {
-        network_data = {
-            nodes: new vis.DataSet(convert_nodes(nodes, true)),
+    initNetwork();
+    }
+
+function initNetwork(includePositions = true){
+    network_data = {
+            nodes: new vis.DataSet(convert_nodes(nodes, includePositions)),
             edges: new vis.DataSet(convert_edges(edges))
         };
-    }
 
     network = new vis.Network(network_container, network_data, options);
     $manipulation = $(".vis-manipulation");
@@ -806,8 +816,8 @@ function draw() {
 
     });
 
-    // live manipulation button
-    var reload_queues = (new Interval(load_live_info, RELOAD_QUEUES_EVERY * 1000, true)).stop(); // by default on
+    // live manipulation button (by default on)
+    var reload_queues = (new Interval(load_live_info, RELOAD_QUEUES_EVERY * 1000, true)).stop();
     $("#templates .vis-live-toggle").clone().insertAfter($manipulation).click(function () {
         if (reload_queues.running) {
             $(this).removeClass("running");
@@ -863,15 +873,13 @@ document.addEventListener('DOMContentLoaded', function () {
  * XX in the future, we might fetch information about if bot is running; intelmqctl has to support it first in one single command
  */
 function load_live_info() {
-    var that = this;
-    //$('#queues-panel-title').addClass('waiting');
-    //reload_queues.running = true;
+    $(".navbar").addClass('waiting');
     return $.getJSON(MANAGEMENT_SCRIPT + '?scope=queues')
             .done(function (bot_queues) {
                 for (let bot in bot_queues) {
                     if ("source_queue" in bot_queues[bot]) {
                         // we skip bots without source queue (collectors)
-                        let c = bot_queues[bot]['source_queue'][1];
+                        let c = bot_queues[bot]['source_queue'][1] + bot_queues[bot]['internal_queue'];
                         let label = (c > 0) ? "{0}\n{1}✉".format(bot, c) : bot;
                         if (label !== network_data.nodes.get(bot).label) {
                             // update queue count on bot label
@@ -882,7 +890,8 @@ function load_live_info() {
                 }
             })
             .fail(ajax_fail_callback('Error loading bot queues information'))
-            .always(function () {
-                that.blocking = false;
+            .always(() => {
+                $(".navbar").removeClass('waiting');
+                this.blocking = false;
             });
 }

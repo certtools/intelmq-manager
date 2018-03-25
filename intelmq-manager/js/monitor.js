@@ -233,7 +233,6 @@ function clearQueue(queue_id) {
 }
 
 function load_bot_log() {
-    var that = this;
     $('#logs-panel-title').addClass('waiting');
 
     var number_of_lines = LOAD_X_LOG_LINES;
@@ -253,13 +252,12 @@ function load_bot_log() {
                 $('#logs-panel-title').removeClass('waiting');
                 ajax_fail_callback('Error loading bot log information')(err1, err2, errMessage);
             })
-            .always(function () {
-                that.blocking = false;
+            .always(() => {
+                this.blocking = false;
             });
 }
 
 function load_bot_queues() {
-    var that = this;
     $('#queues-panel-title').addClass('waiting');
 
     var bot_id = document.getElementById('monitor-target').innerHTML;
@@ -271,8 +269,8 @@ function load_bot_queues() {
                 $('#queues-panel-title').removeClass('waiting');
             })
             .fail(ajax_fail_callback('Error loading bot queues information'))
-            .always(function () {
-                that.blocking = false;
+            .always( () => {
+                this.blocking = false;
             });
 }
 
@@ -381,10 +379,6 @@ window.addEventListener("popstate", popState);
 document.addEventListener('DOMContentLoaded', function () {
     document.getElementById('log-level-indicator').addEventListener('change', load_bot_log);
 
-    // XXXX JE TO SAFE? zkus tam dát ;
-    // nejake slashes ve zpravach
-    // escapeshellcmd?
-
     // Inspect panel functionality
     $insp = $("#inspect-panel");
     $("button[data-role=clear]", $insp).click(function () {
@@ -402,8 +396,8 @@ document.addEventListener('DOMContentLoaded', function () {
     });
     $("button[data-role=process]", $insp).click(function () {
         let msg;
-        if($("[data-role=inject]", $insp).prop("checked")) {
-            if(!$("#message-playground").val()) {
+        if ($("[data-role=inject]", $insp).prop("checked")) {
+            if (!$("#message-playground").val()) {
                 show_error("Can't inject message from above – you didn't write any message");
                 $("#message-playground").focus();
                 return false;
@@ -427,13 +421,13 @@ document.addEventListener('DOMContentLoaded', function () {
  */
 function run_command(display_cmd, cmd, msg = "", dry = false, show = false) {
     var bot = getUrlParameter('bot_id');
-    $("#command-show").show().html("intelmqctl run {0} {1} {2}".format(bot, display_cmd, msg ? "'" + msg + "'" : ""));//XX dry are not syntax-correct
+    $("#command-show").show().html("intelmqctl run {0} {1} {2}".format(bot, display_cmd, msg ? "'" + msg.replace("'", "'\\''") + "'" : ""));//XX dry are not syntax-correct
     $("#run-log").val("loading...");
-    $.ajax({
+    $('#inspect-panel-title').addClass('waiting');
+    let call = $.ajax({
         method: "post",
         data: {"msg": msg},
         url: MANAGEMENT_SCRIPT + '?scope=run&bot={0}&cmd={1}&dry={2}&show={3}'.format(bot, cmd, dry, show),
-        //timeout: 1000, server side timeouts well
     }).done(function (data) {
         // Parses the received data to message part and to log-only part
         let logs = [];
@@ -458,16 +452,19 @@ function run_command(display_cmd, cmd, msg = "", dry = false, show = false) {
             $("#message-playground").attr("rows", msg.length).val(msg.join("\n"));
         }
         $("#run-log").attr("rows", logs.length).val(logs.join("\n"));
-        //$('#queues-panel-title').removeClass('waiting');
-    }).fail(ajax_fail_callback('Error getting message')/*
-    XX This is not used right now, controller is now able to timeout itself more reliably!
-    function (jqXHR, textStatus) {
-        if (textStatus === "timeout") {
-            show_error("Message timeout, maybe bot has nothing in the queue?");
-            return;
+    }).fail(ajax_fail_callback('Error getting message'))
+            .always(() => {
+                $('#inspect-panel-title').removeClass('waiting');
+                $("#run-log").data("call", null);
+            });
+
+    // informate user if there is a lag
+    $("#run-log").data("call", call);
+    setTimeout(() => {
+        if ($("#run-log").data("call") === call) {
+            $("#run-log").val("loading... or timeouting...");
         }
-        ajax_fail_callback('Error getting message:').apply(null, arguments);
-    }*/);
+    }, 3000);
 }
 
 

@@ -82,7 +82,7 @@ if ($scope == 'botnet') {
 } else if ($scope == 'run') {
     $json_wanted = false;
 
-    $arguments = "run " . filter_input(INPUT_GET, "bot") . " ";
+    $arguments = "run " . escapeshellarg(filter_input(INPUT_GET, "bot")) . " ";
     switch (filter_input(INPUT_GET, "cmd")) {
         case "get":
             $arguments .= "message get";
@@ -91,7 +91,7 @@ if ($scope == 'botnet') {
             $arguments .= "message pop";
             break;
         case "send":
-            $arguments .= "message send '" . filter_input(INPUT_POST, "msg") . "'";
+            $arguments .= "message send '" . escapeshellarg(filter_input(INPUT_POST, "msg")) . "'";
             break;
         case "process":
             $arguments .= "process";
@@ -102,7 +102,7 @@ if ($scope == 'botnet') {
                 $arguments .= " --dry";
             }
             if(filter_input(INPUT_POST, "msg")) {
-                $arguments .= " --msg '" . filter_input(INPUT_POST, "msg") . "'";
+                $arguments .= " --msg " . escapeshellarg(filter_input(INPUT_POST, "msg")) . "";
             }
             break;
         default:
@@ -122,15 +122,14 @@ if($json_wanted) {
     $c = $CONTROLLER;
 }
 $command = sprintf($c, $arguments);
-
+//echo $command; exit;
 
 // appending magic string that'll kill the command if run for too long
-$sec = 5;
-$command .= " & ii=0 && while [ \"2\" -eq \"`ps -p $! | wc -l`\" ];do ii=$((ii+1)); if [ \$ii -gt ".($sec)."0 ]; then echo 'Intelmqctl timeout!';kill $!; break;fi; sleep 0.1; done";
 set_time_limit(10);
+$sec = 5;
 //$return = ExecWaitTimeout($command, 9);
-$return = shell_exec($command);
-
+$return = shell_exec($command . " 2>&1 & ii=0 && while [ \"2\" -eq \"`ps -p $! | wc -l`\" ];do ii=$((ii+1)); if [ \$ii -gt ".($sec)."0 ]; then echo 'Intelmqctl timeout!';kill $!; break;fi; sleep 0.1; done");
+//$return .= " \n$command";
 
 if ($return === NULL) {
     echo 'Failed to execute intelmqctl:' . $command;
