@@ -50947,15 +50947,11 @@ return /******/ (function(modules) { // webpackBootstrap
     }, {
       key: 'showManipulatorToolbar',
       value: function showManipulatorToolbar() {
+          console.log("UGS!!");
         // restore the state of any bound functions or events, remove control nodes, restore physics
         this._clean();
-
-        // INTELMQ
-        enableEditDefaultButton();
-        if((app.network !== null) && (isTooltipEnabled == false)) {
-          enableTooltip();
-          return;
-        }
+    
+        
 
         // reset global variables
         this.manipulationDOM = {};
@@ -51034,15 +51030,14 @@ return /******/ (function(modules) { // webpackBootstrap
 
     }, {
       key: 'addNodeMode',
-      value: function addNodeMode() {
+      value: function addNodeMode() {          
         // when using the gui, enable edit mode if it wasnt already.
         if (this.editMode !== true) {
           this.enableEditMode();
         }
 
         // restore the state of any bound functions or events, remove control nodes, restore physics
-        this._clean();
-        disableEditDefaultButton(); // INTELMQ
+        this._clean();        
 
         this.inMode = 'addNode';
         if (this.guiEnabled === true) {
@@ -51074,8 +51069,7 @@ return /******/ (function(modules) { // webpackBootstrap
         }
 
         // restore the state of any bound functions or events, remove control nodes, restore physics
-        this._clean();
-        disableEditDefaultButton(); // INTELMQ
+        this._clean();        
 
         var node = this.selectionHandler._getSelectedNode();
         if (node !== undefined) {
@@ -51119,13 +51113,10 @@ return /******/ (function(modules) { // webpackBootstrap
         if (this.editMode !== true) {
           this.enableEditMode();
         }
-
-        //INTELMQ
-        disableTooltip();
+        
 
         // restore the state of any bound functions or events, remove control nodes, restore physics
-        this._clean();
-        disableEditDefaultButton(); // INTELMQ
+        this._clean();    
 
         this.inMode = 'addEdge';
         if (this.guiEnabled === true) {
@@ -51360,9 +51351,7 @@ return /******/ (function(modules) { // webpackBootstrap
           this.closeDiv.style.display = this.manipulationDiv.style.display;
           this.canvas.frame.appendChild(this.closeDiv);
         }
-
-        /* Edited for INTELMQCP */       
-        /* End of edit for IntelMQCP */
+        
       }
 
       /**

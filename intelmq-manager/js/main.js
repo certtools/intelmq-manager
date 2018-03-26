@@ -40,7 +40,6 @@ var BORDER_TYPES = {
 }
 
 var draggedElement = null;
-var isTooltipEnabled = true;
 
 $(window).on('hashchange', function () {
     location.reload();
@@ -760,32 +759,17 @@ function initNetwork(includePositions = true) {
     app.network = new vis.Network(app.network_container, app.network_data, app.options);
     $manipulation = $(".vis-manipulation");
 
-    // rename some menu buttons (unfortunately, there is not much a way to define a locale for vis.Network)
-    var maintainMenu = function () {
-        $(".vis-add .vis-label", $manipulation).text("Add bot");
-        $(".vis-connect .vis-label", $manipulation).text("Add queue");
-    };
-    maintainMenu();
+    // rename some menu buttons (because we couldn't do that earlier)
+    app.network.options.locales.en.addNode = "Add Bot";
+    app.network.options.locales.en.addEdge = "Add Queue";
+    app.network.options.locales.en.editNode = "Edit Bot";
+    app.network.options.locales.en.editEdge = "Edit queue path";
 
-    // add custom menu buttons
-    app.network.on("click", function (state) {
-        maintainMenu();
-        $(".network-added-menu", $manipulation).remove(); // get rid of all previous added menu button
+    //
+    // add custom button to the side menu
+    //
 
-        if (state.nodes.length === 1) { // a bot is focused
-            var bot = state.nodes[0];
-            $("#templates .network-added-menu").clone().appendTo($manipulation);
-            $(".monitor-button", $manipulation).click(() => {
-                window.location = MONITOR_BOT_URL.format(bot);
-            }).find("a").attr("href", MONITOR_BOT_URL.format(bot));
-            $(".duplicate-button", $manipulation).click(() => {
-                duplicateNode(app, bot);
-            });
-        }
-
-    });
-
-    // 'live' button (by default on)
+    // 'Live' button (by default on)
     var reload_queues = (new Interval(load_live_info, RELOAD_QUEUES_EVERY * 1000, true)).stop();
     $("#templates .network-right-menu").clone().insertAfter($manipulation);
     $nc = $("#network-container");
@@ -799,7 +783,7 @@ function initNetwork(includePositions = true) {
         }
     }).click();
 
-    // 'save configuration' button can blink
+    // 'Save Configuration' button can blink
     $saveButton = $("#vis-save", $nc);
     $saveButton.children().on('click', function (event) {
         save_data_on_files();
@@ -811,12 +795,63 @@ function initNetwork(includePositions = true) {
         $(this).removeClass('vis-save-blinking');
     };
 
+    // 'Clear Configuration' button
     $("#vis-clear").children().on('click', function (event) {
         window.location.assign('#new');
     });
+
+    // 'Redraw Botnet' button
     $("#vis-redraw").children().on('click', function (event) {
         redrawNetwork();
     });
+
+    //
+    // add custom menu buttons
+    // (done by extending self the visjs function, responsible for menu creation
+    // so that we are sure our buttons are persistent when vis menu changes)
+    //
+    app.network.manipulation._showManipulatorToolbar = app.network.manipulation.showManipulatorToolbar;
+    app.network.manipulation.showManipulatorToolbar = function () {
+        // call the parent function that builds the default menu
+        app.network.manipulation._showManipulatorToolbar.call(this);
+
+        // enable 'Edit defaults' button
+        $('#' + EDIT_DEFAULT_BUTTON_ID).prop('disabled', false);
+
+        // enable tooltip (if disabled earler)
+        app.network.interactionHandler.options.tooltipDelay = 1000;
+
+        // clicking on 'Add Bot', 'Add Queues' etc buttons disables 'Edit defaults' button
+        var fn = function () {
+            $('#' + EDIT_DEFAULT_BUTTON_ID).prop('disabled', true);
+        };
+
+        Hammer($(".vis-add", $manipulation).get()[0]).on("tap", fn);
+        if ((el = $(".vis-edit", $manipulation).get()[0])) {
+            // 'Edit Bot' button is visible only when there is a bot selected
+            Hammer(el).on("tap", fn);
+        }
+        Hammer($(".vis-connect", $manipulation).get()[0]).on("tap", function () {
+            app.network.interactionHandler.options.tooltipDelay = 999999; // tooltip are disabled as well
+            fn();
+            ;
+        });
+
+        // 'Monitor' and 'Duplicate' buttons appear when there is a single node selected
+        let nodes = app.network.getSelectedNodes();
+        if (nodes.length === 1) { // a bot is focused
+            var bot = nodes[0];
+            $("#templates .network-added-menu").clone().appendTo($manipulation);
+            $(".monitor-button", $manipulation).click(() => {
+                window.location = MONITOR_BOT_URL.format(bot);
+            }).find("a").attr("href", MONITOR_BOT_URL.format(bot));
+            $(".duplicate-button", $manipulation).click(() => {
+                duplicateNode(app, bot);
+            });
+        }
+    };
+    // redraw immediately so that even the first click on the network is aware of that new monkeypatched function
+    app.network.manipulation.showManipulatorToolbar();
 }
 
 // INTELMQ
@@ -864,29 +899,4 @@ function load_live_info() {
                 $(".navbar").removeClass('waiting');
                 this.blocking = false;
             });
-}
-
-
-// functions called in vis.js (hardcoded)
-// XX would be great if we were able to refactor them from there (so that we can upgrade library in the future)
-// However, vis.js seem to not expose any callback for the beginning of edit when we'd like to call that functions
-// in order to the user view wasn't be covered when creating a new edge etc.
-function disableTooltip() {
-    app.options.interaction.tooltipDelay = 999999;
-    app.network.setOptions(app.options);
-    isTooltipEnabled = false;
-}
-
-function enableTooltip() {
-    app.options.interaction.tooltipDelay = 1000;
-    isTooltipEnabled = true;
-    app.network.setOptions(app.options);
-}
-
-function disableEditDefaultButton() {
-    $('#' + EDIT_DEFAULT_BUTTON_ID).prop('disabled', true);
-}
-
-function enableEditDefaultButton() {
-    $('#' + EDIT_DEFAULT_BUTTON_ID).prop('disabled', false);
 }
