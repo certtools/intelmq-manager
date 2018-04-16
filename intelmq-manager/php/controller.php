@@ -33,7 +33,14 @@ if (array_key_exists('action', $_GET) && ($_GET['action'] == 'start' ||
 }
 
 if ($scope == 'botnet') {
-    $arguments = $action;
+    // only listed values of flag group allowed
+    $g = filter_input(INPUT_GET, "group");
+    if(in_array($g, ["collectors", "parsers", "experts", "outputs"])) {
+        $g = " --group $g";
+    } else {// "botnet" or non-listed value
+        $g = null;
+    }
+    $arguments = $action . $g;
 } else if ($scope == 'bot') {
     if (!array_key_exists('id', $_GET)) {
         die("Missing 'id' argument on request.");
@@ -68,6 +75,8 @@ if ($scope == 'botnet') {
     $arguments = 'log ' . escapeshellcmd($id) . ' ' . escapeshellcmd((int) ($lines)) . ' ' . escapeshellcmd($level);
 } else if ($scope == 'queues') {
     $arguments = 'list queues';
+} else if ($scope == 'queues-and-status') {
+    $arguments = 'list queues-and-status';
 } else if ($scope == 'version') {
     $arguments = '--version';
 } else if ($scope == 'check') {

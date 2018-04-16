@@ -1,4 +1,4 @@
-#botnet-status-panel .panel-div {
+#botnet-panels > div.panel .panel-div {
   margin-bottom: 16px;
 }
 #botnet-status {

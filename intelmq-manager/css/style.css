@@ -1,6 +1,19 @@
 /*
+ * Navigation
+ */
+nav ul.nav.navbar-top-links li.active {
+  color: #555;
+  cursor: default;
+  background-color: #fff;
+  border: 1px solid #ddd;
+  border-bottom-color: transparent;
+}
+/*
  * Common elements
  */
+#common-templates {
+  display: none;
+}
 #wrapper .navbar #log-window {
   background-color: black;
   color: white;
@@ -19,9 +32,33 @@
 #wrapper .navbar #log-window.extended {
   height: auto;
 }
+#wrapper .navbar #log-window [role=close] {
+  float: right;
+}
+.fa {
+  font-family: FontAwesome;
+}
+.control-buttons [data-url=status] {
+  display: none;
+}
+/*
+ * Management page
+ */
+#botnet-panels > .panel[data-botnet-group] {
+  display: none;
+}
+#botnet-panels > .panel[data-botnet-group][data-botnet-group=botnet] {
+  display: block;
+}
 /*
  * Monitor page
  */
+#botnet-panels .panel .control-buttons [data-role=control-status] {
+  display: none;
+}
+#inspect-panel .control-buttons {
+  float: right;
+}
 #inspect-panel button[data-role="clear"] {
   float: right;
 }
@@ -37,9 +74,14 @@
 #templates {
   display: none;
 }
-#network-container .monitor-button {
-  background-image: url('../plugins/vis.js/img/network/rightArrow.png');
-  background-size: 24%;
+#network-container .control-buttons {
+  float: left;
+}
+#network-container .control-buttons button {
+  height: 25px;
+}
+#network-container .control-buttons button span {
+  top: -2px;
 }
 #network-container .monitor-button div a {
   color: black;

@@ -20,6 +20,7 @@ switch ($page) {
         $libraries[] = "js/about.js";
         break;
     case "management":
+        $libraries[] = "js/runtime.js";
         $libraries[] = "js/management.js";
         break;
     case "monitor":
@@ -32,7 +33,7 @@ switch ($page) {
             "js/positions.js",
             "js/defaults.js",
             "js/network-configuration.js",
-            "js/main.js"]);
+            "js/configs.js"]);
         break;
     case "check":
         $libraries[] = "js/check.js";

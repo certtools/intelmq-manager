@@ -50946,8 +50946,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
     }, {
       key: 'showManipulatorToolbar',
-      value: function showManipulatorToolbar() {
-          console.log("UGS!!");
+      value: function showManipulatorToolbar() {          
         // restore the state of any bound functions or events, remove control nodes, restore physics
         this._clean();
     

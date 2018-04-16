@@ -3,13 +3,49 @@
 <div id="page-wrapper">
     <div class="row">
         <div id="graph-container">
-            <div class="col-md-2">
-                <div class="panel panel-default" id="botnet-status-panel">
+            <div class="col-md-2" id="botnet-panels">
+                <div class="panel panel-default" data-botnet-group="botnet" data-botnet-url="">
                     <div class="panel-heading">
-                        <h4 id="botnet-status-panel-title">Botnet Status:</h4>
+                        <h4>Whole Botnet Status:</h4>
                     </div>
                     <div class="panel-body">
-                        <div class="panel-div">Status: <span id="botnet-status" class="bg-warning">Unknown</span></div><div id="botnet-buttons"></div>
+                        <div class="panel-div">Status: <span data-role="botnet-status" class="bg-warning">Unknown</span></div><div data-role="botnet-buttons"></div>
+                    </div>
+                </div>
+            <!-- may be implemented. But should be the list of bots completed on JS or Python side?-->
+                <div class="panel panel-default" data-botnet-group="collectors">
+                    <div class="panel-heading">
+                        <h4>Collectors Status:</h4>
+                    </div>
+                    <div class="panel-body">
+                        <div class="panel-div">Status: <span data-role="botnet-status" class="bg-warning">Unknown</span></div><div data-role="botnet-buttons"></div>
+                    </div>
+                </div>
+
+                <div class="panel panel-default" data-botnet-group="parsers">
+                    <div class="panel-heading">
+                        <h4>Parsers Status:</h4>
+                    </div>
+                    <div class="panel-body">
+                        <div class="panel-div">Status: <span data-role="botnet-status" class="bg-warning">Unknown</span></div><div data-role="botnet-buttons"></div>
+                    </div>
+                </div>
+
+                <div class="panel panel-default" data-botnet-group="experts">
+                    <div class="panel-heading">
+                        <h4>Experts Status:</h4>
+                    </div>
+                    <div class="panel-body">
+                        <div class="panel-div">Status: <span data-role="botnet-status" class="bg-warning">Unknown</span></div><div data-role="botnet-buttons"></div>
+                    </div>
+                </div>
+
+                <div class="panel panel-default" data-botnet-group="outputs">
+                    <div class="panel-heading">
+                        <h4>Outputs Status:</h4>
+                    </div>
+                    <div class="panel-body">
+                        <div class="panel-div">Status: <span id="botnet-status" class="bg-warning">Unknown</span></div><div data-role="botnet-buttons"></div>
                     </div>
                 </div>
             </div>

@@ -5,7 +5,7 @@ var bot_queues = {};
 var reload_queues = null;
 var reload_logs = null;
 
-$dq = $("#destination-queues");
+var $dq = $("#destination-queues");
 $('#log-table').dataTable({
     lengthMenu: [[5, 10, 25, -1], [5, 10, 25, "All"]],
     pageLength: 10,
@@ -24,6 +24,18 @@ window.onresize = function () {
     redraw();
 };
 
+$(document).keydown(function (event) {
+    if ($("#message-playground").is(":focus")) {
+        if ($("[data-role=inject]").attr("data-checked") === "") {
+            // when entered a char for first time ever, mark the "inject message" checkbox
+            $("[data-role=inject]").prop("checked", true).attr("data-checked", true);
+        }
+        if (event.ctrlKey && event.keyCode === 13) {
+            // ctrl+enter submits
+            $("button[data-role=process]").click();
+        }
+    }
+});
 
 function redraw() {
     redraw_logs();
@@ -81,7 +93,7 @@ function redraw_logs() {
 
 var queue_overview = {}; // one-time queue overview to allow traversing
 function redraw_queues() {
-    var bot_id = document.getElementById('monitor-target').innerHTML;
+    var bot_id = $('#monitor-target').text();
 
     var source_queue_element = document.getElementById('source-queue');
     var internal_queue_element = document.getElementById('internal-queue');
@@ -183,23 +195,6 @@ function redraw_queues() {
                     $("<td/>").appendTo($tr).html(generateClearQueueButton(queue)); // regenerate thrash button
                 }
             }
-
-            /* old code redrawing the table all the time:
-             var destination_queue = destination_queues_element.insertRow();
-
-             var cell0 = destination_queue.insertCell(0);
-             cell0.innerHTML = queue;
-             cell0.addEventListener("click", function (event) {
-             var selectedBot = dst_queues[$(event.target).closest('tr').index()]["parent"];
-             //window.location.href = MONITOR_BOT_URL.format(selectedBot);
-             select_bot(selectedBot);
-             });
-
-             var cell1 = destination_queue.insertCell(1);
-             cell1.innerHTML = dst_queues[index][1];
-
-             buttons_cell = destination_queue.insertCell(2);
-             buttons_cell.appendChild(generateClearQueueButton(queue));*/
         }
     }
 }
@@ -269,7 +264,7 @@ function load_bot_queues() {
                 $('#queues-panel-title').removeClass('waiting');
             })
             .fail(ajax_fail_callback('Error loading bot queues information'))
-            .always( () => {
+            .always(() => {
                 this.blocking = false;
             });
 }
@@ -289,14 +284,14 @@ function select_bot(bot_id, history_push = false) {
         clearInterval(reload_logs);
     }
 
-    document.getElementById('monitor-target').innerHTML = bot_id;
+    $('#monitor-target').html(bot_id);
     load_bot_queues();
 
     reload_queues = new Interval(load_bot_queues, RELOAD_QUEUES_EVERY * 1000, true);
 
     $("#destination-queues-table").addClass('highlightHovering');
     if (bot_id != ALL_BOTS) {
-        $("#logs-panel").css('display', 'block');
+        $("#logs-panel, #inspect-panel").css('display', 'block');
         $("#source-queue-table-div").css('display', 'block');
         $("#internal-queue-table-div").css('display', 'block');
         //$("#destination-queues-table").removeClass('highlightHovering');
@@ -307,8 +302,11 @@ function select_bot(bot_id, history_push = false) {
         load_bot_log();
         reload_logs = new Interval(load_bot_log, RELOAD_LOGS_EVERY * 1000, true);
 
+        // control buttons in inspect panel
+        $("#inspect-panel .panel-heading .control-buttons").remove();
+        $("#inspect-panel .panel-heading").prepend(generate_control_buttons(bot_id, false, null, true));
     } else {
-        $("#logs-panel").css('display', 'none');
+        $("#logs-panel, #inspect-panel").css('display', 'none');
         $("#source-queue-table-div").css('display', 'none');
         $("#internal-queue-table-div").css('display', 'none');
         //$("#destination-queues-table").addClass('highlightHovering');
@@ -354,6 +352,8 @@ $.getJSON(MANAGEMENT_SCRIPT + '?scope=botnet&action=status')
             sidemenu.appendChild(li_element);
 
             // Insert link for every bot
+            bot_status = data;
+            $(".control-buttons [data-role=control-status]").trigger("update");
             var bots_ids = Object.keys(data);
             bots_ids.sort();
 

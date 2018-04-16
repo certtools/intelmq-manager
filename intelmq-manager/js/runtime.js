@@ -34,3 +34,15 @@ function read_runtime_conf(config) {
 
     return nodes;
 }
+
+function load_file(url, callback) {
+    $.getJSON(url)
+            .done(function (json) {
+                callback(json);
+            })
+            .fail(function (jqxhr, textStatus, error) {
+                var err = textStatus + ", " + error;
+                show_error('Failed to obtain JSON: ' + url + ' with error: ' + err);
+                callback({});
+            });
+}

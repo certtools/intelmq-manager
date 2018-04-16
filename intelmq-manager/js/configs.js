@@ -78,22 +78,9 @@ function load_html_elements() {
     modal = document.getElementById('addNewKeyModal');
 }
 
-function load_file(url, callback) {
-    $.getJSON(url)
-            .done(function (json) {
-                callback(json);
-            })
-            .fail(function (jqxhr, textStatus, error) {
-                var err = textStatus + ", " + error;
-                show_error('Failed to obtain JSON: ' + url + ' with error: ' + err);
-                callback({});
-            });
-}
 
 function load_bots(config) {
-    var available_bots = document.getElementById("side-menu")
-    //available_bots.innerHTML = '';
-
+    var available_bots = document.getElementById("side-menu");
     for (let bot_group in config) {
         var group = config[bot_group];
 
@@ -108,7 +95,7 @@ function load_bots(config) {
         group_menu = document.createElement('li');
         group_menu.appendChild(new_element);
         group_menu.appendChild(bots_submenu);
-        group_menu.style.borderBottomColor = GROUP_COLORS[bot_group];
+        group_menu.style.borderBottomColor = GROUP_COLORS[bot_group][0];
 
         available_bots.appendChild(group_menu);
         fill_bot_func = function (bot_group, bot_name) {
@@ -764,6 +751,7 @@ function initNetwork(includePositions = true) {
     app.network.options.locales.en.addEdge = "Add Queue";
     app.network.options.locales.en.editNode = "Edit Bot";
     app.network.options.locales.en.editEdge = "Edit queue path";
+    app.network.options.locales.en.del = "Delete";
 
     //
     // add custom button to the side menu
@@ -842,12 +830,15 @@ function initNetwork(includePositions = true) {
         if (nodes.length === 1) { // a bot is focused
             var bot = nodes[0];
             $("#templates .network-added-menu").clone().appendTo($manipulation);
-            $(".monitor-button", $manipulation).click(() => {
-                window.location = MONITOR_BOT_URL.format(bot);
+            $(".monitor-button", $manipulation).click((event) => {
+                return click_link(MONITOR_BOT_URL.format(bot), event);
             }).find("a").attr("href", MONITOR_BOT_URL.format(bot));
             $(".duplicate-button", $manipulation).click(() => {
                 duplicateNode(app, bot);
-            });
+            }).insertBefore($(".vis-add").hide());
+
+            // insert start/stop buttons
+            $(".monitor-button", $manipulation).before(generate_control_buttons(bot, false, refresh_color, true));
         }
     };
     // redraw immediately so that even the first click on the network is aware of that new monkeypatched function
@@ -875,13 +866,22 @@ document.addEventListener('DOMContentLoaded', function () {
 
 /**
  * This function fetches the current info and updates bot nodes on the graph
- * XX in the future, we might fetch information about if bot is running; intelmqctl has to support it first in one single command
  */
+function refresh_color(bot) {
+    if (bot_status_previous[bot] !== bot_status[bot]) {
+        let col = GROUP_COLORS[app.nodes[bot].group][(bot_status[bot] === "running") ? 0 : 1];
+        if (app.network_data.nodes.get([bot])[0].color !== col) {
+            app.network_data.nodes.update({"id": bot, "color": col});
+        }
+    }
+}
 function load_live_info() {
     $(".navbar").addClass('waiting');
-    return $.getJSON(MANAGEMENT_SCRIPT + '?scope=queues')
-            .done(function (bot_queues) {
+    return $.getJSON(MANAGEMENT_SCRIPT + '?scope=queues-and-status')
+            .done(function (data) {
+                [bot_queues, bot_status] = data;
                 for (let bot in bot_queues) {
+
                     if ("source_queue" in bot_queues[bot]) {
                         // we skip bots without source queue (collectors)
                         let c = bot_queues[bot]['source_queue'][1] + bot_queues[bot]['internal_queue'];
@@ -893,6 +893,11 @@ function load_live_info() {
                     }
 
                 }
+                for (let bot in bot_status) {
+                    // bots that are not running are grim coloured
+                    refresh_color(bot);
+                }
+                bot_status_previous = $.extend({}, bot_status); // we need a shallow copy of a state, it's too slow to ask `app` every time
             })
             .fail(ajax_fail_callback('Error loading bot queues information'))
             .always(() => {

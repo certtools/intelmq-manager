@@ -60,11 +60,11 @@
                             <button data-role="pop" title="See the message that waits in the input (source or internal) queue and pop it from there">Pop</button>
                             <button data-role="send" title="Send directly, without processing) to the bot's ouput queue, just as it was sent by self.send_message() in bot's  process() method">Send</button>
                             <br>
-                            <textarea  class="form-control" rows="3" placeholder='json message {"feed.name": "example", ...}' id="message-playground"></textarea>
+                            <textarea  class="form-control" rows="3" placeholder='json message {"feed.name": "example", ...}&#10;Ctrl+Enter to process' id="message-playground"></textarea>
                             <br>
                             <button  class="btn btn-success" data-role="process" title="Bot's process() method will be run one time">Process</button>
                             <label>
-                                <input checked="" data-role="inject" type="checkbox">
+                                <input data-role="inject" data-checked="" type="checkbox">
                                 Inject message from above
                             </label>
                             <label>

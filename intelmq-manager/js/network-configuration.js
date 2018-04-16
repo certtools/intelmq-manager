@@ -47,20 +47,20 @@ var NETWORK_OPTIONS = {
     groups: {
         Collector: {
             shape: 'box',
-            color: GROUP_COLORS['Collector'],
+            color: GROUP_COLORS['Collector'][0],
         },
         Parser: {
             shape: 'box',
-            color: GROUP_COLORS['Parser']
+            color: GROUP_COLORS['Parser'][0]
         },
         Expert: {
             shape: 'box',
-            color: GROUP_COLORS['Expert'],
+            color: GROUP_COLORS['Expert'][0],
             fontColor: "#FFFFFF"
         },
         Output: {
             shape: 'box',
-            color: GROUP_COLORS['Output']
+            color: GROUP_COLORS['Output'][0]
         }
     },
 
