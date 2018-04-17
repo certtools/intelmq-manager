@@ -36,6 +36,11 @@ $(function () {
 
     // fetch info from server
     $('#botnet-panels [data-botnet-group=botnet] [data-url=status]').click();
+
+    //
+    $bt.on("click", 'tr td:first-child', function (event) {
+        return click_link(MONITOR_BOT_URL.format(event.target.innerText), event);
+    });
 });
 
 function refresh_status() {
@@ -61,9 +66,6 @@ function refresh_status() {
                 'DT_RowClass': class_,
                 "DT_RowAttr": {"data-bot-id": bot_id}
             };
-            $('#bot-table-body tr td:first-child').off("click").on("click", function (event) {
-                return click_link(MONITOR_BOT_URL.format(event.target.innerText), event);
-            });
             $bt.dataTable().api().row.add(bot_row);
             redraw_table = true;
         }

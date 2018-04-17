@@ -79,7 +79,7 @@
                     </li>
                 </ul>
                 <!-- /.navbar-top-links -->
-                <div id='log-window'>
+                <div title="Click to expand. Double-Click to close." id='log-window'>
                     <i role="close" class="fa fa-times"></i>
                     <div class="contents"></div>
                 </div>
