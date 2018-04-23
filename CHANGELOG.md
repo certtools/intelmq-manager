@@ -1,6 +1,31 @@
 CHANGELOG
 =========
 
+1.0.2 (unreleased)
+------------------
+
+### Backend
+
+### Pages
+
+#### Landing page
+
+#### Configuration
+
+#### Management
+
+#### Monitor
+
+#### Check
+
+### Documentation
+
+### Third-party libraries
+
+### Packaging
+
+### Known issues
+
 1.0.1 (2018-04-23)
 ------------------
 The version is compatible with intelmq >= 1.0.3
