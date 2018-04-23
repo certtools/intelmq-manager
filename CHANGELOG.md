@@ -32,6 +32,9 @@ CHANGELOG
 ### Licenses
 * Licenses of used and included software is now inventarized and properly declared in LICENSES/ (#134)
 
+### Packaging
+* fix packaging of positions.conf file for deb-packages (#133).
+
 0.3.1 (2017-09-26)
 ------------------
 ### Configuration
