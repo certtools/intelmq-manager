@@ -1,6 +1,20 @@
 CHANGELOG
 =========
 
+1.0.1 (2018-04-23)
+------------------
+The version is compatible with intelmq >= 1.0.3
+
+### Backend
+* Fix version number.
+
+### Known issues
+* Missing CSRF protection (#111).
+* Missing copyright notices (#140).
+* Graph jumps around on "Add edge" bug component (#148).
+* new runtime parameters with _ not possible (#153).
+* wrong error message for new bots with existing ID (#152).
+
 1.0.0 (2018-04-23)
 ------------------
 The version is compatible with intelmq >= 1.0.3
