@@ -24,9 +24,9 @@ This patch header follows DEP-3: http://dep.debian.net/deps/dep3/
 +        'system' 	=> '/etc/intelmq/system.conf',
 +        'positions' => '/etc/intelmq/manager/positions.conf',
      );
- 
--    $CONTROLLER = "sudo -u intelmq /usr/local/bin/intelmqctl --type json %s";
-+    $CONTROLLER = "sudo -u intelmq /usr/bin/intelmqctl --type json %s";
- 
-     $BOT_CONFIGS_REJECT_REGEX = '/[^[:print:]\n\r\t]/';
-     $BOT_ID_REJECT_REGEX = '/[^A-Za-z0-9.-]/';
+     if(!($c = getenv("INTELMQ_MANGER_CONTROLER_CMD"))) {
+-        $c = "sudo -u intelmq /usr/local/bin/intelmqctl";
++        $c = "sudo -u intelmq /usr/bin/intelmqctl";
+     }
+     $CONTROLLER = $c." --type json %s";
+     
