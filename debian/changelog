@@ -1,3 +1,10 @@
+intelmq-manager (1.0.0-1) stable; urgency=low
+
+  * update to 1.0.0
+  * fix permissions for intelmq configuration files
+
+ -- Wagner Sebastian <wagner@cert.at>  Mon, 23 Apr 2018 14:11:56 +0200
+
 intelmq-manager (0.3.1-1) experimental; urgency=medium
 
   * update to 0.3.1
