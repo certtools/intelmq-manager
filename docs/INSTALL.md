@@ -111,7 +111,7 @@ Give webserver user (www-data, wwwrun, apache or nginx) permissions to execute i
 www-data ALL=(intelmq) NOPASSWD: /usr/local/bin/intelmqctl
 ```
 
-The default way of accessing `intelmqctl` program is by command `sudo -u intelmq /usr/local/bin/intelmqctl`. If that does not suit you, you may set an environmental variable   `INTELMQ_MANGER_CONTROLER_CMD` to I.E. `~/.local/bin/intelmqctl` or `sudo -u intelmq ~/.local/bin/intelmqctl` or whereever you need.
+The default way of accessing `intelmqctl` program is by command `sudo -u intelmq /usr/local/bin/intelmqctl`. If that does not suit you, you may set an environmental variable   `INTELMQ_MANGER_CONTROLER_CMD` to I.E. `~/.local/bin/intelmqctl` or `PATH=~/.local/bin intelmqctl` or `sudo -u intelmq ~/.local/bin/intelmqctl` or whatever you need.
 
 ### Notes on CentOS / RHEL
 
@@ -122,7 +122,7 @@ If you can help to fix these issues, please join us!
 
 # Security considerations
 
-**Never ever run intelmq-manager on a public webserver without SSL and proper authentication**. 
+**Never ever run intelmq-manager on a public webserver without SSL and proper authentication**.
 
 The way the current version is written, anyone can send a POST request and change intelmq's configuration files via sending a HTTP POST request to ``save.php``. Intelmq-manager will reject non JSON data but nevertheless, we don't want anyone to be able to reconfigure an intelmq installation.
 
@@ -134,7 +134,7 @@ In addition, intelmq currently stores plaintext passwords in its configuration f
 
 # Configuration
 
-## Basic Authentication 
+## Basic Authentication
 
 ### Packages
 

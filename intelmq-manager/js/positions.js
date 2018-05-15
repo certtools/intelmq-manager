@@ -1,5 +1,6 @@
+var app = app || {};
 function generate_positions_conf() {
-    var new_positions = network.getPositions();
+    var new_positions = app.network.getPositions();
     new_positions = sortObjectByPropertyName(new_positions);
 
     return JSON.stringify(new_positions, undefined, 4);

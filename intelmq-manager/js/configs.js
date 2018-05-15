@@ -1,17 +1,31 @@
-var defaults = {};
-var nodes = {};
-var edges = {};
-var bots = {};
+var NETWORK_OPTIONS = NETWORK_OPTIONS || {};
+class VisModel {
+    constructor() {
 
-var network = null;
-var network_container = null;
+
+        this.defaults = {};
+        this.nodes = {};
+        this.edges = {};
+        this.bots = {};
+
+        this.network = null;
+        this.network_container = null;
+        this.network_data = {}; // we may update existing info in the network on the fly
+        this.bot_before_altering = null;
+
+        this.positions = null;
+        this.options = NETWORK_OPTIONS;
+    }
+}
+var app = new VisModel();
+
 var popup = null;
 var span = null;
 var table = null;
 var modal = null;
 var disabledKeys = ['group', 'name', 'module'];
+var $manipulation, $saveButton; // jQuery of Vis control panel; elements reseted with network
 
-var bot_before_altering = null;
 var EDIT_DEFAULT_BUTTON_ID = 'editDefaults';
 var BORDER_TYPE_CLASSES = {
     'DEFAULT': 'info',
@@ -26,9 +40,6 @@ var BORDER_TYPES = {
 }
 
 var draggedElement = null;
-var options = null;
-var positions = null;
-var isTooltipEnabled = true;
 
 $(window).on('hashchange', function () {
     location.reload();
@@ -45,8 +56,8 @@ function resize() {
     network_container.style.overflowX = "auto";
     network_container.style.overflowY = "auto";
 
-    if (network != null && network != undefined) {
-        network.redraw();
+    if (app.network !== null && app.network !== undefined) {
+        app.network.redraw();
     }
 
     load_html_elements();
@@ -54,32 +65,23 @@ function resize() {
 
 function load_html_elements() {
     // Load popup, span and table
-    network_container = document.getElementById('network-container');
-    network_container.addEventListener('drop', function(event) {handleDrop(event)});
-    network_container.addEventListener('dragover', function(event) {allowDrop(event)});
+    app.network_container = document.getElementById('network-container');
+    app.network_container.addEventListener('drop', function (event) {
+        handleDrop(event)
+    });
+    app.network_container.addEventListener('dragover', function (event) {
+        allowDrop(event)
+    });
     popup = document.getElementById("network-popUp");
     span = document.getElementById('network-popUp-title');
     table = document.getElementById("network-popUp-fields");
     modal = document.getElementById('addNewKeyModal');
 }
 
-function load_file(url, callback) {
-    $.getJSON(url)
-        .done(function (json) {
-            callback(json);
-        })
-        .fail(function (jqxhr, textStatus, error) {
-            var err = textStatus + ", " + error;
-            show_error('Failed to obtain JSON: ' + url + ' with error: ' + err);
-            callback({});
-        });
-}
 
 function load_bots(config) {
-    var available_bots = document.getElementById("side-menu")
-    //available_bots.innerHTML = '';
-
-    for (bot_group in config) {
+    var available_bots = document.getElementById("side-menu");
+    for (let bot_group in config) {
         var group = config[bot_group];
 
         group_title = document.createElement('a');
@@ -93,22 +95,25 @@ function load_bots(config) {
         group_menu = document.createElement('li');
         group_menu.appendChild(new_element);
         group_menu.appendChild(bots_submenu);
-        group_menu.style.borderBottomColor = GROUP_COLORS[bot_group];
+        group_menu.style.borderBottomColor = GROUP_COLORS[bot_group][0];
 
         available_bots.appendChild(group_menu);
-        fill_bot_func = function(bot_group, bot_name){
+        fill_bot_func = function (bot_group, bot_name) {
             fill_bot(undefined, bot_group, bot_name);
         }
 
-        for (bot_name in group) {
+        for (let bot_name in group) {
             var bot = group[bot_name];
 
             var bot_title = document.createElement('a');
             bot_title.setAttribute('data-toggle', 'tooltip');
             bot_title.setAttribute('data-placement', 'right');
             bot_title.setAttribute('title', bot['description']);
-            bot_title.addEventListener('click', function(bot_group, bot_name) {
-                return function(){fill_bot_func(bot_group, bot_name)}}(bot_group, bot_name))
+            bot_title.addEventListener('click', function (bot_group, bot_name) {
+                return function () {
+                    fill_bot_func(bot_group, bot_name)
+                }
+            }(bot_group, bot_name))
             bot_title.innerHTML = bot_name;
 
             var bot_submenu = document.createElement('li');
@@ -119,11 +124,11 @@ function load_bots(config) {
 
             bots_submenu.appendChild(bot_submenu);
 
-            if (bots[bot_group] === undefined) {
-                bots[bot_group] = {};
+            if (app.bots[bot_group] === undefined) {
+                app.bots[bot_group] = {};
             }
 
-            bots[bot_group][bot_name] = {
+            app.bots[bot_group][bot_name] = {
                 'name': bot_name,
                 'group': bot_group,
                 'module': bot['module'],
@@ -133,14 +138,14 @@ function load_bots(config) {
                 'run_mode': 'continuous',
             }
 
-            for (parameter in bot['parameters']) {
+            for (let parameter in bot['parameters']) {
                 var value = bot['parameters'][parameter];
-                bots[bot_group][bot_name]['parameters'][parameter] = value;
+                app.bots[bot_group][bot_name]['parameters'][parameter] = value;
             }
         }
     }
 
-    $('#side-menu').metisMenu({ 'restart': true });
+    $('#side-menu').metisMenu({'restart': true});
 
     btnEditDefault = document.createElement('button');
     btnEditDefault.setAttribute('class', 'btn btn-warning');
@@ -149,7 +154,7 @@ function load_bots(config) {
     btnEditDefault.id = EDIT_DEFAULT_BUTTON_ID;
     btnEditDefault.addEventListener('click', function () {
         create_form('Edit Defaults', EDIT_DEFAULT_BUTTON_ID, undefined);
-        fill_editDefault(defaults);
+        fill_editDefault(app.defaults);
     });
     buttonContainer = document.createElement('li');
     buttonContainer.appendChild(btnEditDefault);
@@ -157,19 +162,19 @@ function load_bots(config) {
 
     available_bots.appendChild(buttonContainer);
 
-    if (window.location.hash != '#new') {
+    if (window.location.hash !== '#new') {
         load_file(DEFAULTS_FILE, load_defaults);
     } else {
         draw();
         resize();
-        enableSaveButtonBlinking();
+        $saveButton.blinking();
     }
 }
 
 function fill_editDefault(data) {
     table.innerHTML = '';
 
-    for (key in data) {
+    for (let key in data) {
         insertKeyValue(key, data[key], 'defaultConfig', false);
     }
     // to enable scroll bar
@@ -177,7 +182,7 @@ function fill_editDefault(data) {
 }
 
 function handleDragStart(event) {
-    network.addNodeMode();
+    app.network.addNodeMode();
     var elementID = event.currentTarget.id.split('@');
 
     draggedElement = {
@@ -200,8 +205,8 @@ function handleDrop(event) {
     }
     // ---
 
-    var domPointer = network.interactionHandler.getPointer({ x: event.clientX, y: event.clientY });
-    var canvasPointer = network.manipulation.canvas.DOMtoCanvas(domPointer);
+    var domPointer = app.network.interactionHandler.getPointer({x: event.clientX, y: event.clientY});
+    var canvasPointer = app.network.manipulation.canvas.DOMtoCanvas(domPointer);
 
     var clickData = {
         pointer: {
@@ -212,7 +217,7 @@ function handleDrop(event) {
         }
     };
 
-    network.manipulation.temporaryEventFunctions[0].boundFunction(clickData);
+    app.network.manipulation.temporaryEventFunctions[0].boundFunction(clickData);
 
     fill_bot(undefined, draggedElement.bot_group, draggedElement.bot_name);
 }
@@ -221,27 +226,30 @@ function allowDrop(event) {
     event.preventDefault();
 }
 
+
+// Configuration files manipulation
+
 function load_defaults(config) {
-    defaults = read_defaults_conf(config);
+    app.defaults = read_defaults_conf(config);
 
     load_file(RUNTIME_FILE, load_runtime);
 }
 
 function load_runtime(config) {
-    nodes = read_runtime_conf(config);
+    app.nodes = read_runtime_conf(config);
 
     load_file(PIPELINE_FILE, load_pipeline);
 }
 
 function load_pipeline(config) {
-    edges = read_pipeline_conf(config, nodes);
-    nodes = add_defaults_to_nodes(nodes, defaults);
+    app.edges = read_pipeline_conf(config, app.nodes);
+    app.nodes = add_defaults_to_nodes(app.nodes, app.defaults);
 
     load_file(POSITIONS_FILE, load_positions);
 }
 
 function load_positions(config) {
-    positions = read_positions_conf(config);
+    app.positions = read_positions_conf(config);
 
     draw();
     resize();
@@ -252,46 +260,46 @@ function save_data_on_files() {
         return;
     }
 
-    nodes = remove_defaults(nodes);
+    app.nodes = remove_defaults(app.nodes);
 
     var alert_error = function (file, jqxhr, textStatus, error) {
         show_error('There was an error saving ' + file + ':\nStatus: ' + textStatus + '\nError: ' + error);
     }
 
-    $.post('./php/save.php?file=runtime', generate_runtime_conf(nodes))
-        .done(function (data) {
-            saveSucceeded(data);
-        })
-        .fail(function (jqxhr, textStatus, error) {
-            alert_error('runtime', jqxhr, textStatus, error);
-        });
+    $.post('./php/save.php?file=runtime', generate_runtime_conf(app.nodes))
+            .done(function (data) {
+                saveSucceeded(data);
+            })
+            .fail(function (jqxhr, textStatus, error) {
+                alert_error('runtime', jqxhr, textStatus, error);
+            });
 
-    $.post('./php/save.php?file=pipeline', generate_pipeline_conf(edges))
-        .done(function (data) {
-            saveSucceeded(data);
-        })
-        .fail(function (jqxhr, textStatus, error) {
-            alert_error('pipeline', jqxhr, textStatus, error);
-        });
+    $.post('./php/save.php?file=pipeline', generate_pipeline_conf(app.edges))
+            .done(function (data) {
+                saveSucceeded(data);
+            })
+            .fail(function (jqxhr, textStatus, error) {
+                alert_error('pipeline', jqxhr, textStatus, error);
+            });
 
     $.post('./php/save.php?file=positions', generate_positions_conf())
-        .done(function (data) {
-            saveSucceeded(data);
-        })
-        .fail(function (jqxhr, textStatus, error) {
-            alert_error('positions', jqxhr, textStatus, error);
-        });
+            .done(function (data) {
+                saveSucceeded(data);
+            })
+            .fail(function (jqxhr, textStatus, error) {
+                alert_error('positions', jqxhr, textStatus, error);
+            });
 
-    $.post('./php/save.php?file=defaults', generate_defaults_conf(defaults))
-        .done(function (data) {
-            saveSucceeded(data);
-        })
-        .fail(function (jqxhr, textStatus, error) {
-            alert_error('defaults', jqxhr, textStatus, error);
-        });
+    $.post('./php/save.php?file=defaults', generate_defaults_conf(app.defaults))
+            .done(function (data) {
+                saveSucceeded(data);
+            })
+            .fail(function (jqxhr, textStatus, error) {
+                alert_error('defaults', jqxhr, textStatus, error);
+            });
 
-    nodes = add_defaults_to_nodes(nodes, defaults);
-    disableSaveButtonBlinking();
+    app.nodes = add_defaults_to_nodes(app.nodes, app.defaults);
+    $saveButton.unblinking();
 }
 
 function saveSucceeded(response) {
@@ -302,6 +310,8 @@ function saveSucceeded(response) {
         return false;
     }
 }
+
+// Prepare data from configuration files to be used in Vis
 
 function convert_edges(edges) {
     var new_edges = [];
@@ -330,8 +340,8 @@ function convert_nodes(nodes, includePositions) {
 
         if (includePositions === true) {
             try {
-                new_node.x = positions[index].x;
-                new_node.y = positions[index].y;
+                new_node.x = app.positions[index].x;
+                new_node.y = app.positions[index].y;
             } catch (err) {
                 console.error('positions in file are ignored:', err);
                 show_error('Saved positions are not valid or not complete. The configuration has possibly been modified outside of the IntelMQ-Manager.');
@@ -350,7 +360,7 @@ function fill_bot(id, group, name) {
     table.innerHTML = '';
 
     if (id === undefined) {
-        bot = bots[group][name];
+        bot = app.bots[group][name];
 
         name = bot['name'].replace(/\ /g, '-').replace(/[^A-Za-z0-9-]/g, '');
         group = bot['group'].replace(/\ /g, '-');
@@ -358,33 +368,32 @@ function fill_bot(id, group, name) {
         bot['id'] = default_id;
         bot['defaults'] = {};
 
-        for (key in defaults) {
+        for (key in app.defaults) {
             if (key in bot.parameters) {
                 continue;
             } else {
-                bot['defaults'][key] = defaults[key];
+                bot['defaults'][key] = app.defaults[key];
             }
         }
-    }
-    else {
-        bot = nodes[id];
+    } else {
+        bot = app.nodes[id];
     }
 
-    bot_before_altering = bot;
+    app.bot_before_altering = bot;
 
     insertKeyValue('id', bot['id'], 'id', false);
     insertBorder(BORDER_TYPES.GENERIC);
-    for (key in bot) {
+    for (let key in bot) {
         if (STARTUP_KEYS.includes(key)) {
             insertKeyValue(key, bot[key], BORDER_TYPES.GENERIC, false);
         }
     }
     insertBorder(BORDER_TYPES.RUNTIME);
-    for (key in bot.parameters) {
+    for (let key in bot.parameters) {
         insertKeyValue(key, bot.parameters[key], BORDER_TYPES.RUNTIME, true);
     }
     insertBorder(BORDER_TYPES.DEFAULT);
-    for (key in bot.defaults) {
+    for (let key in bot.defaults) {
         insertKeyValue(key, bot.defaults[key], BORDER_TYPES.DEFAULT, false);
     }
 
@@ -451,25 +460,31 @@ function insertKeyValue(key, value, section, allowXButtons, insertAt) {
         valueInput.setAttribute('disabled', "true");
     }
 
-    parameter_func = function(action_function, argument){
+    parameter_func = function (action_function, argument) {
         action_function(argument);
     }
 
     if (allowXButtons === true) {
         var xButton = document.createElement('button');
         var xButtonSpan = document.createElement('span');
-        if (key in defaults) {
+        if (key in app.defaults) {
             xButtonSpan.setAttribute('class', 'glyphicon glyphicon-refresh');
             xButton.setAttribute('class', 'btn btn-default');
             xButton.setAttribute('title', 'reset to default');
-            xButton.addEventListener('click', function(resetToDefault, key) {
-                return function(){parameter_func(resetToDefault, key)}}(resetToDefault, key))
+            xButton.addEventListener('click', function (resetToDefault, key) {
+                return function () {
+                    parameter_func(resetToDefault, key)
+                }
+            }(resetToDefault, key))
         } else {
             xButtonSpan.setAttribute('class', 'glyphicon glyphicon-remove-circle');
             xButton.setAttribute('class', 'btn btn-danger');
             xButton.setAttribute('title', 'delete parameter');
-            xButton.addEventListener('click', function(deleteParameter, key) {
-                return function(){parameter_func(deleteParameter, key)}}(deleteParameter, key))
+            xButton.addEventListener('click', function (deleteParameter, key) {
+                return function () {
+                    parameter_func(deleteParameter, key)
+                }
+            }(deleteParameter, key))
         }
 
         xButton.appendChild(xButtonSpan);
@@ -483,7 +498,7 @@ function insertKeyValue(key, value, section, allowXButtons, insertAt) {
 }
 
 function resetToDefault(input_id) {
-    $('#' + input_id)[0].value = defaults[input_id];
+    $('#' + input_id)[0].value = app.defaults[input_id];
 }
 
 function deleteParameter(input_id) {
@@ -522,7 +537,7 @@ window.onclick = function (event) {
     }
 }
 
-$(document).keydown(function(event) {
+$(document).keydown(function (event) {
     if (event.keyCode == 27) {
         if ($('#addNewKeyModal').is(':visible')) {
             hideModal();
@@ -534,22 +549,22 @@ $(document).keydown(function(event) {
 
 $('#newKeyInput').keyup(function (event) {
     // 'enter' key
-    if (event.keyCode == 13){
+    if (event.keyCode == 13) {
         $('#addNewKeyModal-ok').click();
     }
 });
 
 $('#newValueInput').keyup(function (event) {
     // 'enter' key
-    if (event.keyCode == 13){
+    if (event.keyCode == 13) {
         $('#addNewKeyModal-ok').click();
     }
 });
 
 function saveDefaults_tmp(data, callback) {
-    defaults = {};
+    app.defaults = {};
     saveFormData();
-    enableSaveButtonBlinking();
+    $saveButton.blinking();
     clearPopUp(data, callback);
 }
 
@@ -559,7 +574,8 @@ function saveFormData() {
         var valueCell = table.rows[i].cells[1];
         var valueInput = valueCell.getElementsByTagName('input')[0];
 
-        if (valueInput === undefined) continue;
+        if (valueInput === undefined)
+            continue;
 
         var key = keyCell.innerText;
         var value = null;
@@ -583,7 +599,7 @@ function saveFormData() {
             case 'border':
                 break;
             case 'defaultConfig':
-                defaults[key] = value;
+                app.defaults[key] = value;
                 break;
             default:
                 node['defaults'][key] = value;
@@ -604,7 +620,7 @@ function saveData(data, callback) {
         return;
     }
 
-    if (node.id != bot_before_altering.id) {
+    if (node.id != app.bot_before_altering.id) {
         if (!confirm("When you edit an ID what you are doing in fact is to create a clone of the current bot. You will have to delete the old one manually. Proceed with the operation?")) {
             return;
         }
@@ -617,12 +633,12 @@ function saveData(data, callback) {
 
 
     // switch paremters and defaults
-    for (key in node) {
+    for (let key in node) {
         if (key === 'parameters') {
             for (parameterKey in node.parameters) {
-                if (node.parameters[parameterKey] !== bot_before_altering.parameters[parameterKey]) {
-                    if (parameterKey in defaults) {
-                        if (node.parameters[parameterKey] === defaults[parameterKey]) {
+                if (node.parameters[parameterKey] !== app.bot_before_altering.parameters[parameterKey]) {
+                    if (parameterKey in app.defaults) {
+                        if (node.parameters[parameterKey] === app.defaults[parameterKey]) {
                             swapToDefaults(node, parameterKey);
                         }
                     }
@@ -630,7 +646,7 @@ function saveData(data, callback) {
             }
         } else if (key === 'defaults') {
             for (defaultsKey in node.defaults) {
-                if (node.defaults[defaultsKey] !== defaults[defaultsKey]) {
+                if (node.defaults[defaultsKey] !== app.defaults[defaultsKey]) {
                     swapToParameters(node, defaultsKey);
                 }
             }
@@ -643,9 +659,9 @@ function saveData(data, callback) {
     data.level = GROUP_LEVELS[data.group];
     data.title = JSON.stringify(node, undefined, 2).replace(/\n/g, '\n<br>').replace(/ /g, "&nbsp;");
 
-    nodes[node.id] = node;
+    app.nodes[node.id] = node;
 
-    enableSaveButtonBlinking();
+    $saveButton.blinking();
     clearPopUp(data, callback);
 }
 
@@ -703,204 +719,132 @@ function clearPopUp(data, callback) {
     }
 }
 
-function enableSaveButtonBlinking() {
-    document.getElementById('vis-save').setAttribute('class', 'vis-save-blinking');
-}
-
-function disableSaveButtonBlinking() {
-    document.getElementById('vis-save').setAttribute('class', 'vis-save');
-}
-
 function redrawNetwork() {
-    options.layout.randomSeed = Math.round(Math.random() * 1000000);
-
-    var data = {
-        nodes: convert_nodes(nodes, false),
-        edges: convert_edges(edges)
-    };
-
-    network.destroy();
-    network = null;
-    network = new vis.Network(network_container, data, options);
-    enableSaveButtonBlinking();
+    app.options.layout.randomSeed = Math.round(Math.random() * 1000000);
+    app.network.destroy();
+    app.network = null;
+    initNetwork(false);
+    $saveButton.blinking();
 }
 
 function draw() {
     load_html_elements();
 
-    var data = {};
-
-    if (window.location.hash == '#load') {
-        data = {
-            nodes: convert_nodes(nodes, true),
-            edges: convert_edges(edges)
-        };
+    if (window.location.hash !== '#load') {
+        app.nodes = {};
+        app.edges = {};
     }
+    initNetwork();
+}
 
-    options = {
-        physics: {
-            hierarchicalRepulsion: {
-                nodeDistance: 200,
-                springLength: 200
-            },
-            stabilization: {
-                enabled: true,
-                fit: true
-            },
-            solver: 'hierarchicalRepulsion'
-        },
-        interaction: {
-            tooltipDelay: 1000,
-            navigationButtons: true
-        },
-        nodes: {
-            font: {
-                size: 14, // px
-                face: 'arial',
-                align: 'center'
-            }
-        },
-        edges: {
-            length: 200,
-            arrows: {
-                to: { enabled: true, scaleFactor: 1, type: 'arrow' }
-            },
-            physics: true,
-            font: {
-                size: 14, // px
-                face: 'arial',
-            },
-            color: {
-                inherit: false
-            },
-            smooth: {
-                enabled: true,
-                type: 'continuous'
-            }
-        },
-        groups: {
-            Collector: {
-                shape: 'box',
-                color: GROUP_COLORS['Collector'],
-            },
-            Parser: {
-                shape: 'box',
-                color: GROUP_COLORS['Parser']
-            },
-            Expert: {
-                shape: 'box',
-                color: GROUP_COLORS['Expert'],
-                fontColor: "#FFFFFF"
-            },
-            Output: {
-                shape: 'box',
-                color: GROUP_COLORS['Output']
-            }
-        },
-
-        manipulation: {
-            enabled: true,
-            initiallyActive: true,
-            addNode: true,
-            addEdge: true,
-            editNode: true,
-            editEdge: false,
-            deleteNode: true,
-            deleteEdge: true,
-
-            addNode: function (data, callback) {
-                create_form("Add Node", data, callback);
-            },
-            editNode: function (data, callback) {
-                create_form("Edit Node", data, callback);
-                fill_bot(data.id, undefined, undefined);
-            },
-            deleteNode: function (data, callback) {
-                callback(data);
-
-                for (index in data.edges) {
-                    delete edges[data.edges[index]];
-                }
-
-                for (index in data.nodes) {
-                    delete nodes[data.nodes[index]];
-                }
-                enableSaveButtonBlinking();
-            },
-            addEdge: function (data, callback) {
-                if (data.from == data.to) {
-                    show_error('This action would cause an infinite loop');
-                    return;
-                }
-
-                for (index in edges) {
-                    if (edges[index].from == data.from && edges[index].to == data.to) {
-                        show_error('There is already a link between those bots');
-                        return;
-                    }
-                }
-
-                var neighbors = ACCEPTED_NEIGHBORS[nodes[data.from].group];
-                var available_neighbor = false;
-                for (index in neighbors) {
-                    if (nodes[data.to].group == neighbors[index]) {
-                        callback(data);
-                        available_neighbor = true;
-                    }
-                }
-
-                if (!available_neighbor) {
-                    if (neighbors.length == 0) {
-                        show_error("Node type " + nodes[data.from].group + " can't connect to other nodes");
-                    } else {
-                        show_error('Node type ' + nodes[data.from].group + ' can only connect to nodes of types: ' + neighbors.join());
-                    }
-                    return;
-                }
-
-
-                if (edges[data.id] === undefined) {
-                    edges[data.id] = {};
-                }
-
-                edges[data.id] = { 'from': data.from, 'to': data.to };
-                enableSaveButtonBlinking();
-            },
-            deleteEdge: function (data, callback) {
-                delete edges[data["edges"][0]];
-                callback(data);
-                enableSaveButtonBlinking();
-            }
-        },
-        layout: {
-            hierarchical: false,
-            randomSeed: undefined
-        }
+function initNetwork(includePositions = true) {
+    app.network_data = {
+        nodes: new vis.DataSet(convert_nodes(app.nodes, includePositions)),
+        edges: new vis.DataSet(convert_edges(app.edges))
     };
 
-    network = new vis.Network(network_container, data, options);
+    app.network = new vis.Network(app.network_container, app.network_data, app.options);
+    $manipulation = $(".vis-manipulation");
+
+    // rename some menu buttons (because we couldn't do that earlier)
+    app.network.options.locales.en.addNode = "Add Bot";
+    app.network.options.locales.en.addEdge = "Add Queue";
+    app.network.options.locales.en.editNode = "Edit Bot";
+    app.network.options.locales.en.editEdge = "Edit queue path";
+    app.network.options.locales.en.del = "Delete";
+
+    //
+    // add custom button to the side menu
+    //
+
+    // 'Live' button (by default on)
+    var reload_queues = (new Interval(load_live_info, RELOAD_QUEUES_EVERY * 1000, true)).stop();
+    $("#templates .network-right-menu").clone().insertAfter($manipulation);
+    $nc = $("#network-container");
+    $(".vis-live-toggle", $nc).click(function () {
+        if (reload_queues.running) {
+            $(this).removeClass("running");
+            reload_queues.stop();
+        } else {
+            $(this).addClass("running");
+            reload_queues.start();
+        }
+    }).click();
+
+    // 'Save Configuration' button can blink
+    $saveButton = $("#vis-save", $nc);
+    $saveButton.children().on('click', function (event) {
+        save_data_on_files();
+    });
+    $saveButton.blinking = function () {
+        $(this).addClass('vis-save-blinking');
+    };
+    $saveButton.unblinking = function () {
+        $(this).removeClass('vis-save-blinking');
+    };
+
+    // 'Clear Configuration' button
+    $("#vis-clear").children().on('click', function (event) {
+        window.location.assign('#new');
+    });
+
+    // 'Redraw Botnet' button
+    $("#vis-redraw").children().on('click', function (event) {
+        redrawNetwork();
+    });
+
+    //
+    // add custom menu buttons
+    // (done by extending self the visjs function, responsible for menu creation
+    // so that we are sure our buttons are persistent when vis menu changes)
+    //
+    app.network.manipulation._showManipulatorToolbar = app.network.manipulation.showManipulatorToolbar;
+    app.network.manipulation.showManipulatorToolbar = function () {
+        // call the parent function that builds the default menu
+        app.network.manipulation._showManipulatorToolbar.call(this);
+
+        // enable 'Edit defaults' button
+        $('#' + EDIT_DEFAULT_BUTTON_ID).prop('disabled', false);
+
+        // enable tooltip (if disabled earler)
+        app.network.interactionHandler.options.tooltipDelay = 1000;
+
+        // clicking on 'Add Bot', 'Add Queues' etc buttons disables 'Edit defaults' button
+        var fn = function () {
+            $('#' + EDIT_DEFAULT_BUTTON_ID).prop('disabled', true);
+        };
+
+        Hammer($(".vis-add", $manipulation).get()[0]).on("tap", fn);
+        if ((el = $(".vis-edit", $manipulation).get()[0])) {
+            // 'Edit Bot' button is visible only when there is a bot selected
+            Hammer(el).on("tap", fn);
+        }
+        Hammer($(".vis-connect", $manipulation).get()[0]).on("tap", function () {
+            app.network.interactionHandler.options.tooltipDelay = 999999; // tooltip are disabled as well
+            fn();
+            ;
+        });
+
+        // 'Monitor' and 'Duplicate' buttons appear when there is a single node selected
+        let nodes = app.network.getSelectedNodes();
+        if (nodes.length === 1) { // a bot is focused
+            var bot = nodes[0];
+            $("#templates .network-added-menu").clone().appendTo($manipulation);
+            $(".monitor-button", $manipulation).click((event) => {
+                return click_link(MONITOR_BOT_URL.format(bot), event);
+            }).find("a").attr("href", MONITOR_BOT_URL.format(bot));
+            $(".duplicate-button", $manipulation).click(() => {
+                duplicateNode(app, bot);
+            }).insertBefore($(".vis-add").hide());
+
+            // insert start/stop buttons
+            $(".monitor-button", $manipulation).before(generate_control_buttons(bot, false, refresh_color, true));
+        }
+    };
+    // redraw immediately so that even the first click on the network is aware of that new monkeypatched function
+    app.network.manipulation.showManipulatorToolbar();
 }
 
-// functions called in vis.js
-function disableTooltip() {
-    options.interaction.tooltipDelay = 999999;
-    network.setOptions(options);
-    isTooltipEnabled = false;
-}
-
-function enableTooltip() {
-    options.interaction.tooltipDelay = 1000;
-    isTooltipEnabled = true;
-    network.setOptions(options);
-}
-
-function disableEditDefaultButton() {
-    $('#' + EDIT_DEFAULT_BUTTON_ID).prop('disabled', true);
-}
-
-function enableEditDefaultButton() {
-    $('#' + EDIT_DEFAULT_BUTTON_ID).prop('disabled', false);
-}
 // INTELMQ
 
 /*
@@ -916,4 +860,48 @@ window.onresize = resize;
 document.addEventListener('DOMContentLoaded', function () {
     document.getElementById('addNewKeyModal-cancel').addEventListener('click', hideModal);
     document.getElementById('addNewKeyModal-ok').addEventListener('click', addNewKey);
-})
+});
+
+
+
+/**
+ * This function fetches the current info and updates bot nodes on the graph
+ */
+function refresh_color(bot) {
+    if (bot_status_previous[bot] !== bot_status[bot]) {
+        let col = GROUP_COLORS[app.nodes[bot].group][(bot_status[bot] === "running") ? 0 : 1];
+        if (app.network_data.nodes.get([bot])[0].color !== col) {
+            app.network_data.nodes.update({"id": bot, "color": col});
+        }
+    }
+}
+function load_live_info() {
+    $(".navbar").addClass('waiting');
+    return $.getJSON(MANAGEMENT_SCRIPT + '?scope=queues-and-status')
+            .done(function (data) {
+                [bot_queues, bot_status] = data;
+                for (let bot in bot_queues) {
+
+                    if ("source_queue" in bot_queues[bot]) {
+                        // we skip bots without source queue (collectors)
+                        let c = bot_queues[bot]['source_queue'][1] + bot_queues[bot]['internal_queue'];
+                        let label = (c > 0) ? "{0}\n{1}✉".format(bot, c) : bot;
+                        if (label !== app.network_data.nodes.get(bot).label) {
+                            // update queue count on bot label
+                            app.network_data.nodes.update({"id": bot, "label": label});
+                        }
+                    }
+
+                }
+                for (let bot in bot_status) {
+                    // bots that are not running are grim coloured
+                    refresh_color(bot);
+                }
+                bot_status_previous = $.extend({}, bot_status); // we need a shallow copy of a state, it's too slow to ask `app` every time
+            })
+            .fail(ajax_fail_callback('Error loading bot queues information'))
+            .always(() => {
+                $(".navbar").removeClass('waiting');
+                this.blocking = false;
+            });
+}
