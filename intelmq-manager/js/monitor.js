@@ -176,7 +176,7 @@ function redraw_queues() {
             cell0.innerHTML = dst_queues[index][0];
             cell0.addEventListener("click", function (event) {
                 var selectedBot = dst_queues[$(event.target).closest('tr').index()]["parent"];
-                window.location.href = "monitor.html?bot_id=" + selectedBot;
+                window.location.href = "?page=monitor&bot_id=" + selectedBot;
             });
 
             var cell1 = destination_queue.insertCell(1);
