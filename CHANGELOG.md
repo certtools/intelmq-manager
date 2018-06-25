@@ -11,6 +11,7 @@ CHANGELOG
 #### Landing page
 
 #### Configuration
+- Underscore is now allowed for new parameter names (#153).
 
 #### Management
 
