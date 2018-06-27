@@ -16,6 +16,7 @@ CHANGELOG
 #### Management
 
 #### Monitor
+* Fix link to monitor page (#157).
 
 #### Check
 
