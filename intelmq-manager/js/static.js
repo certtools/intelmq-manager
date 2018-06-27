@@ -41,6 +41,7 @@ var LEVEL_CLASS = {
 var STARTUP_KEYS = ['group', 'name', 'module', 'description', 'enabled', 'run_mode'];
 
 var BOT_ID_REGEX = /^[0-9a-zA-Z.-]+$/;
+var PARAM_KEY_REGEX = /^[0-9a-zA-Z._-]+$/;
 
 var ROOT = window.location.href.substring(0, window.location.href.lastIndexOf('/') + 1);
 

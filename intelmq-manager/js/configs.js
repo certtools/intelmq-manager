@@ -511,8 +511,8 @@ function addNewKey() {
     var newKeyInput = document.getElementById('newKeyInput');
     var newValueInput = document.getElementById('newValueInput');
 
-    if (!BOT_ID_REGEX.test(newKeyInput.value)) {
-        show_error("Bot ID's can only be composed of numbers, letters and hiphens");
+    if (!PARAM_KEY_REGEX.test(newKeyInput.value)) {
+        show_error("Parameter names can only be composed of numbers, letters, hiphens and underscores");
         $('#newKeyInput').focus();
     } else {
         hideModal();
