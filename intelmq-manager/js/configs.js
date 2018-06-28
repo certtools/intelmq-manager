@@ -163,7 +163,7 @@ function load_bots(config) {
     available_bots.appendChild(buttonContainer);
 
     if (window.location.hash !== '#new') {
-        load_file(DEFAULTS_FILE, load_defaults);
+        load_configuration();
     } else {
         draw();
         resize();
@@ -229,32 +229,6 @@ function allowDrop(event) {
 
 // Configuration files manipulation
 
-function load_defaults(config) {
-    app.defaults = read_defaults_conf(config);
-
-    load_file(RUNTIME_FILE, load_runtime);
-}
-
-function load_runtime(config) {
-    app.nodes = read_runtime_conf(config);
-
-    load_file(PIPELINE_FILE, load_pipeline);
-}
-
-function load_pipeline(config) {
-    app.edges = read_pipeline_conf(config, app.nodes);
-    app.nodes = add_defaults_to_nodes(app.nodes, app.defaults);
-
-    load_file(POSITIONS_FILE, load_positions);
-}
-
-function load_positions(config) {
-    app.positions = read_positions_conf(config);
-
-    draw();
-    resize();
-}
-
 function save_data_on_files() {
     if (!confirm("By clicking 'OK' you are replacing the configuration in your files by the one represented by the network on this page. Do you agree?")) {
         return;
@@ -264,7 +238,7 @@ function save_data_on_files() {
 
     var alert_error = function (file, jqxhr, textStatus, error) {
         show_error('There was an error saving ' + file + ':\nStatus: ' + textStatus + '\nError: ' + error);
-    }
+    };
 
     $.post('./php/save.php?file=runtime', generate_runtime_conf(app.nodes))
             .done(function (data) {
