@@ -81,7 +81,31 @@
 
 <!-- HTML templates -->
 <div id='templates'>
-    <div class="network-added-menu">
+    <div class="modal fade" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <form class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title">Modal title</h4>
+                </div>
+                <div class="modal-body">
+                    <p>One fine body&hellip;</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary">Ok</button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <div class="network-edge-menu">
+        <div class="vis-button vis-edit">
+            <div class="vis-label">
+                Edit Path
+            </div>
+        </div>
+    </div>
+    <div class="network-node-menu">
         <div class="vis-button duplicate-button ">
             <div class="vis-label">
                 Duplicate
@@ -118,5 +142,5 @@
             </div>
         </div>
 
-</div>
+    </div>
 </div>

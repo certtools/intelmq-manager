@@ -264,7 +264,7 @@ function save_data_on_files() {
 
     var alert_error = function (file, jqxhr, textStatus, error) {
         show_error('There was an error saving ' + file + ':\nStatus: ' + textStatus + '\nError: ' + error);
-    }
+    };
 
     $.post('./php/save.php?file=runtime', generate_runtime_conf(app.nodes))
             .done(function (data) {
@@ -321,6 +321,8 @@ function convert_edges(edges) {
         new_edge.id = edges[index]['id'];
         new_edge.from = edges[index]['from'];
         new_edge.to = edges[index]['to'];
+
+        new_edge.label = edges[index]['path'];
 
         new_edges.push(new_edge);
     }
@@ -675,6 +677,27 @@ function swapToDefaults(node, key) {
     delete node.parameters[key];
 }
 
+
+/**
+ * Popups a custom modal window containing the given body.
+ * @example popupModal("Title", $input, () => {$input.val();})
+ */
+function popupModal(title, body, callback) {
+    $el = $("#templates > .modal").clone().appendTo("body");
+    $(".modal-title", $el).html(title);
+    $(".modal-body", $el).html(body);
+    $el.modal().on('shown.bs.modal', function () {
+        if (($ee = $('input,textarea,button', $(".modal-body", this)).first())) {
+            $ee.focus();
+        }
+    });
+    return $el.on('submit', 'form', function () {
+        callback();
+        $(this).closest(".modal").modal('hide');
+        return false;
+    });
+}
+
 function create_form(title, data, callback) {
     span.innerHTML = title;
 
@@ -750,7 +773,6 @@ function initNetwork(includePositions = true) {
     app.network.options.locales.en.addNode = "Add Bot";
     app.network.options.locales.en.addEdge = "Add Queue";
     app.network.options.locales.en.editNode = "Edit Bot";
-    app.network.options.locales.en.editEdge = "Edit queue path";
     app.network.options.locales.en.del = "Delete";
 
     //
@@ -829,7 +851,7 @@ function initNetwork(includePositions = true) {
         let nodes = app.network.getSelectedNodes();
         if (nodes.length === 1) { // a bot is focused
             var bot = nodes[0];
-            $("#templates .network-added-menu").clone().appendTo($manipulation);
+            $("#templates .network-node-menu").clone().appendTo($manipulation);
             $(".monitor-button", $manipulation).click((event) => {
                 return click_link(MONITOR_BOT_URL.format(bot), event);
             }).find("a").attr("href", MONITOR_BOT_URL.format(bot));
@@ -839,6 +861,11 @@ function initNetwork(includePositions = true) {
 
             // insert start/stop buttons
             $(".monitor-button", $manipulation).before(generate_control_buttons(bot, false, refresh_color, true));
+        } else if ((edges = app.network.getSelectedEdges()).length === 1) {
+            $("#templates .network-edge-menu").clone().appendTo($manipulation);
+            $(".vis-edit", $manipulation).click(() => {
+                editPath(app, edges[0]);
+            }).insertBefore($(".vis-delete"));
         }
     };
     // redraw immediately so that even the first click on the network is aware of that new monkeypatched function
