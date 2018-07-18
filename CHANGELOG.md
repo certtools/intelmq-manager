@@ -21,6 +21,7 @@ CHANGELOG
 
 #### Monitor
 * Fix link to monitor page (#157).
+* The new parameters panel that displays the bot's parameters on the bot's monitor page. For parameters which are filenames, the content of these files will be shown as text if they reside in the allowed paths (set in config.php).
 
 #### Check
 
