@@ -46,41 +46,11 @@
             <input type="button" class="btn-success btn-block" value="ok" id="network-popUp-ok">
         </form>
     </div>
-    <div id="addNewKeyModal" class="addNewKeyModal">
-        <div class="addNewKeyModal-content">
-            <div>
-                <h4>
-                    Add Key
-                </h4>
-            </div>
-            <div>
-                <form>
-                    <div class="form-group">
-                        <label  class="col-sm-2 control-label">Key</label>
-                        <div class="col-sm-10">
-                            <input type="text" class="form-control" id="newKeyInput" required/>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label class="col-sm-2 control-label">Value</label>
-                        <div class="col-sm-10">
-                            <input type="text" class="form-control" id="newValueInput" required/>
-                        </div>
-                    </div>
-                </form>
-            </div>
-            <form>
-                <input type="button" class="btn-danger btn-block" value="cancel" id="addNewKeyModal-cancel">
-            </form>
-            <form>
-                <input type="button" class="btn-success btn-block" value="ok" id="addNewKeyModal-ok">
-            </form>
-        </div>
-    </div>
 </div>
 
 <!-- HTML templates -->
 <div id='templates'>
+    <button class="btn btn-warning new-key-btn" title="add new key"><span class="glyphicon glyphicon-plus-sign"></span></button>
     <div class="modal fade" tabindex="-1" role="dialog">
         <div class="modal-dialog" role="document">
             <form class="modal-content">
@@ -92,12 +62,27 @@
                     <p>One fine body&hellip;</p>
                 </div>
                 <div class="modal-footer">
-                    <button type="submit" class="btn btn-primary">Ok</button>
-                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    <button type="submit" class="btn-success btn btn-primary">Ok</button>
+                    <button type="button" class="btn-danger btn btn-default" data-dismiss="modal">Cancel</button>
                 </div>
             </form>
         </div>
     </div>
+    <div class="modal-add-new-key">
+        <div class="form-group">
+            <label  class="col-sm-2 control-label">Key</label>
+            <div class="col-sm-10">
+                <input type="text" class="form-control" name="newKeyInput" required/>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-2 control-label">Value</label>
+            <div class="col-sm-10">
+                <input type="text" class="form-control" name="newValueInput" required/>
+            </div>
+        </div>
+    </div>
+
     <div class="network-edge-menu">
         <div class="vis-button vis-edit">
             <div class="vis-label">

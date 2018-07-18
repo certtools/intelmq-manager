@@ -13,6 +13,9 @@ CHANGELOG
 #### Configuration
 - Underscore is now allowed for new parameter names (#153).
 - Manager now supports named queue paths. They are displayed along the edges and editable.
+- Double click edits the bot or the queue
+- Code cleanup: New modal window for performing multiple dialog actions. Intercepting visjs internals without using external Hammer library.
+- Enter key submits the edit bot dialog.
 
 #### Management
 

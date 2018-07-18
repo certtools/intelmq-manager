@@ -145,7 +145,7 @@ var NETWORK_OPTIONS = {
  * As this is not a standard-vis function, it has to be a separate method.
  */
 function editPath(app, edge) {
-    $input = $("<input/>", {"placeholder": "_default", "val": app.edges[edge]["path"]});
+    let $input = $("<input/>", {"placeholder": "_default", "val": app.edges[edge]["path"]});
     popupModal("Set the edge name", $input, () => {
         if(app.edges[edge]["path"] === $input.val()) {
             return;

@@ -22,7 +22,6 @@ var app = new VisModel();
 var popup = null;
 var span = null;
 var table = null;
-var modal = null;
 var disabledKeys = ['group', 'name', 'module'];
 var $manipulation, $saveButton; // jQuery of Vis control panel; elements reseted with network
 
@@ -75,7 +74,6 @@ function load_html_elements() {
     popup = document.getElementById("network-popUp");
     span = document.getElementById('network-popUp-title');
     table = document.getElementById("network-popUp-fields");
-    modal = document.getElementById('addNewKeyModal');
 }
 
 
@@ -419,14 +417,7 @@ function insertBorder(border_type) {
             break;
         case BORDER_TYPES.RUNTIME:
             new_row.setAttribute('class', BORDER_TYPE_CLASSES.RUNTIME);
-            var addButton = document.createElement('button');
-            var addButtonSpan = document.createElement('span');
-            addButtonSpan.setAttribute('class', 'glyphicon glyphicon-plus-sign');
-            addButton.setAttribute('class', 'btn btn-warning');
-            addButton.setAttribute('title', 'add new key');
-            addButton.addEventListener('click', showModal);
-            addButton.appendChild(addButtonSpan);
-            addButtonCell.appendChild(addButton);
+            $(addButtonCell).append($("#templates > .new-key-btn").clone().click(addNewKey));
             new_row.setAttribute('id', border_type);
             break;
         case BORDER_TYPES.DEFAULT:
@@ -509,57 +500,41 @@ function deleteParameter(input_id) {
 }
 
 function addNewKey() {
-    var current_index = $('#' + BORDER_TYPES.RUNTIME).index();
-    var newKeyInput = document.getElementById('newKeyInput');
-    var newValueInput = document.getElementById('newValueInput');
+    let $el = $("#templates .modal-add-new-key").clone();
+    popupModal("Add key", $el, () => {
+        var current_index = $('#' + BORDER_TYPES.RUNTIME).index();
+        var $key = $el.find("[name=newKeyInput]");
+        var val = $el.find("[name=newValueInput]").val();
 
-    if (!PARAM_KEY_REGEX.test(newKeyInput.value)) {
-        show_error("Parameter names can only be composed of numbers, letters, hiphens and underscores");
-        $('#newKeyInput').focus();
-    } else {
-        hideModal();
-        insertKeyValue(newKeyInput.value, newValueInput.value, BORDER_TYPES.RUNTIME, true, current_index + 1);
-        newKeyInput.value = '';
-        newValueInput.value = '';
-    }
-}
-
-function showModal() {
-    modal.style.display = "block";
-    $('#newKeyInput').focus();
-}
-
-function hideModal() {
-    modal.style.display = "none";
-}
-
-window.onclick = function (event) {
-    if (event.target == modal) {
-        modal.style.display = "none";
-    }
+        if (!PARAM_KEY_REGEX.test($key.val())) {
+            show_error("Parameter names can only be composed of numbers, letters, hiphens and underscores");
+            $key.focus();
+            return false;
+        } else {
+            // inserts new value and focus the field
+            insertKeyValue($key.val(), val, BORDER_TYPES.RUNTIME, true, current_index + 1);
+            // a bootstrap guru or somebody might want to rewrite this line without setTimeout
+            setTimeout(()=>{$('#network-popUp .new-key-btn').closest("tr").next("tr").find("input").focus()}, 300);
+        }
+    });
 }
 
 $(document).keydown(function (event) {
-    if (event.keyCode == 27) {
-        if ($('#addNewKeyModal').is(':visible')) {
-            hideModal();
+    if (event.keyCode === 27) {
+        if (($el = $("body > .modal:not([data-hiding])")).length) {
+            // close the most recent modal
+            $el.last().attr("data-hiding", true).modal('hide');
+            setTimeout(() => {
+                $("body > .modal[data-hiding]").first().remove();
+            }, 300);
         } else if ($('#network-popUp').is(':visible')) {
             $('#network-popUp-cancel').click();
         }
     }
-});
-
-$('#newKeyInput').keyup(function (event) {
-    // 'enter' key
-    if (event.keyCode == 13) {
-        $('#addNewKeyModal-ok').click();
-    }
-});
-
-$('#newValueInput').keyup(function (event) {
-    // 'enter' key
-    if (event.keyCode == 13) {
-        $('#addNewKeyModal-ok').click();
+    if (event.keyCode === 13 && $('#network-popUp').is(':visible') && $('#network-popUp :focus').length) {
+        // till network popup is not unified with the popupModal function that can handle Enter by default,
+        // let's make it possible to hit "Ok" by Enter as in any standard form
+        $('#network-popUp-ok').click();
     }
 });
 
@@ -686,14 +661,15 @@ function popupModal(title, body, callback) {
     $el = $("#templates > .modal").clone().appendTo("body");
     $(".modal-title", $el).html(title);
     $(".modal-body", $el).html(body);
-    $el.modal().on('shown.bs.modal', function () {
+    $el.modal({"keyboard": false}).on('shown.bs.modal', function () {
         if (($ee = $('input,textarea,button', $(".modal-body", this)).first())) {
             $ee.focus();
         }
     });
     return $el.on('submit', 'form', function () {
-        callback();
-        $(this).closest(".modal").modal('hide');
+        if (callback() !== false) {
+            $(this).closest(".modal").modal('hide');
+        }
         return false;
     });
 }
@@ -835,13 +811,11 @@ function initNetwork(includePositions = true) {
         var fn = function () {
             $('#' + EDIT_DEFAULT_BUTTON_ID).prop('disabled', true);
         };
-
-        Hammer($(".vis-add", $manipulation).get()[0]).on("tap", fn);
-        if ((el = $(".vis-edit", $manipulation).get()[0])) {
-            // 'Edit Bot' button is visible only when there is a bot selected
-            Hammer(el).on("tap", fn);
+        $(".vis-add", $manipulation).on("pointerdown", fn);
+        if (($el = $(".vis-edit", $manipulation)).length) { // 'Edit Bot' button is visible only when there is a bot selected
+            $el.on("pointerdown", fn);
         }
-        Hammer($(".vis-connect", $manipulation).get()[0]).on("tap", function () {
+        $(".vis-connect", $manipulation).on("pointerdown", function () {
             app.network.interactionHandler.options.tooltipDelay = 999999; // tooltip are disabled as well
             fn();
             ;
@@ -870,6 +844,25 @@ function initNetwork(includePositions = true) {
     };
     // redraw immediately so that even the first click on the network is aware of that new monkeypatched function
     app.network.manipulation.showManipulatorToolbar();
+
+    // double click action trigger editation
+    app.network.on("doubleClick", (active) => {
+        if (active.nodes.length === 1) {
+            let ev = document.createEvent('MouseEvent');// vis-js button need to be clicked this hard way
+            ev.initEvent("pointerdown", true, true);
+            $(".vis-edit", $manipulation).get()[0].dispatchEvent(ev);
+        }
+        if (active.edges.length === 1) {
+            $(".vis-edit", $manipulation).click();
+        }
+    });
+    /* right button ready for any feature request:
+     app.network.on("oncontext", (active)=>{
+     let nodeId = app.network.getNodeAt(active.pointer.DOM);
+     // what this should do? :)
+     });
+     */
+
 }
 
 // INTELMQ
@@ -883,13 +876,6 @@ load_file(BOTS_FILE, load_bots);
 
 // Dynamically adapt to fit screen
 window.onresize = resize;
-
-document.addEventListener('DOMContentLoaded', function () {
-    document.getElementById('addNewKeyModal-cancel').addEventListener('click', hideModal);
-    document.getElementById('addNewKeyModal-ok').addEventListener('click', addNewKey);
-});
-
-
 
 /**
  * This function fetches the current info and updates bot nodes on the graph
