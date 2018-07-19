@@ -2,6 +2,7 @@
 <div class="navbar-default sidebar" role="navigation">
     <div class="sidebar-nav navbar-collapse">
         <ul class="nav" id="side-menu">
+            <li id="customListItem"><button class="btn btn-warning" style="text-align: center;" id="editDefaults">Edit Defaults</button></li>
         </ul>
     </div>
 </div>
@@ -50,6 +51,16 @@
 
 <!-- HTML templates -->
 <div id='templates'>
+    <ul class="side-menu">
+        <li>
+            <a><span class="fa arrow"></span></a>
+            <ul class="nav nav-second-level collapse">
+                <li draggable="true">
+                    <a href="#" data-toggle="tooltip" data-placement="right"></a>
+                </li>
+            </ul>
+        </li>
+    </ul>
     <button class="btn btn-warning new-key-btn" title="add new key"><span class="glyphicon glyphicon-plus-sign"></span></button>
     <div class="modal fade" tabindex="-1" role="dialog">
         <div class="modal-dialog" role="document">
@@ -109,6 +120,11 @@
         <div class="vis-live-toggle">
             <div class="icon">
                 Live
+            </div>
+        </div>
+        <div class="vis-physics-toggle running">
+            <div class="icon fa-align-right fa">
+                Physics
             </div>
         </div>
         <div class="vis-save" id="vis-save">

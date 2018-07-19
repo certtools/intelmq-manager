@@ -25,7 +25,7 @@ var table = null;
 var disabledKeys = ['group', 'name', 'module'];
 var $manipulation, $saveButton; // jQuery of Vis control panel; elements reseted with network
 
-var EDIT_DEFAULT_BUTTON_ID = 'editDefaults';
+var $EDIT_DEFAULT_BUTTON = $("#editDefaults");
 var BORDER_TYPE_CLASSES = {
     'DEFAULT': 'info',
     'GENERIC': 'success',
@@ -66,10 +66,10 @@ function load_html_elements() {
     // Load popup, span and table
     app.network_container = document.getElementById('network-container');
     app.network_container.addEventListener('drop', function (event) {
-        handleDrop(event)
+        handleDrop(event);
     });
     app.network_container.addEventListener('dragover', function (event) {
-        allowDrop(event)
+        allowDrop(event);
     });
     popup = document.getElementById("network-popUp");
     span = document.getElementById('network-popUp-title');
@@ -78,49 +78,64 @@ function load_html_elements() {
 
 
 function load_bots(config) {
-    var available_bots = document.getElementById("side-menu");
-    for (let bot_group in config) {
-        var group = config[bot_group];
-
-        group_title = document.createElement('a');
-        group_title.innerHTML = bot_group + '<span class="fa arrow"></span>';
-
-        var new_element = group_title.cloneNode(true);
-
-        bots_submenu = document.createElement('ul');
-        bots_submenu.setAttribute('class', 'nav nav-second-level collapse');
-
-        group_menu = document.createElement('li');
-        group_menu.appendChild(new_element);
-        group_menu.appendChild(bots_submenu);
-        group_menu.style.borderBottomColor = GROUP_COLORS[bot_group][0];
-
-        available_bots.appendChild(group_menu);
-        fill_bot_func = function (bot_group, bot_name) {
-            fill_bot(undefined, bot_group, bot_name);
-        }
-
+    // Build side menu
+    console.log(config);
+    for (let bot_group of Object.keys(config).reverse()) {
+        let $bot_group = $("#templates > ul.side-menu > li").clone().prependTo("#side-menu").css("border-bottom-color", GROUP_COLORS[bot_group][0]);
+        $bot_group.find("> a").prepend(bot_group);
+        let group = config[bot_group];
         for (let bot_name in group) {
-            var bot = group[bot_name];
+            let bot = group[bot_name];
+            let $bot = $bot_group.find("ul > li:first").clone().appendTo($("ul", $bot_group))
+                    .attr("title", bot['description'])
+                    .attr("data-name", bot_name)
+                    .attr("data-group", bot_group)
+                    .click(() => {
+                        if ($('#network-popUp').is(':visible')) {
+                            // just creating a new bot
+                            fill_bot(undefined, bot_group, bot_name);
+                            return false;
+                        }
 
-            var bot_title = document.createElement('a');
-            bot_title.setAttribute('data-toggle', 'tooltip');
-            bot_title.setAttribute('data-placement', 'right');
-            bot_title.setAttribute('title', bot['description']);
-            bot_title.addEventListener('click', function (bot_group, bot_name) {
-                return function () {
-                    fill_bot_func(bot_group, bot_name)
-                }
-            }(bot_group, bot_name))
-            bot_title.innerHTML = bot_name;
+                        // cycling amongst the bot instances
+                        if (!$bot.data("cycled")) {
+                            $bot.data("cycled", []);
+                        }
+                        let found = null;
+                        for (let bot_node of Object.values(app.nodes)) {
+                            if (bot_node.module === bot["module"]) {
+                                if ($.inArray(bot_node.id, $bot.data("cycled")) !== -1) {
+                                    continue;
+                                } else {
+                                    $bot.data("cycled").push(bot_node.id);
+                                    found = bot_node.id;
+                                    break;
+                                }
+                            }
+                        }
+                        // not found or all bots cycled
+                        if (!found && $bot.data("cycled").length) {
+                            found = $bot.data("cycled")[0];
+                            $bot.data("cycled", [found]); // reset cycling
+                        }
+                        if (found) {
+                            fitNode(found);
+                        } else {
+                            show_error("No instance of the {0} found. Drag the label to the plan to create one.".format(bot_name));
+                        }
+                        return false;
+                    })
+                    .on('dragstart', (event) => { // drag to create a new bot instance
+                        app.network.addNodeMode();
+                        draggedElement = {
+                            bot_name: bot_name,
+                            bot_group: bot_group
+                        };
+                        // necessary for firefox
+                        event.originalEvent.dataTransfer.setData('text/plain', null);
+                    })
+                    .find("a").prepend(bot_name);
 
-            var bot_submenu = document.createElement('li');
-            bot_submenu.appendChild(bot_title);
-            bot_submenu.setAttribute('draggable', 'true');
-            bot_submenu.addEventListener('dragstart', handleDragStart, false);
-            bot_submenu.id = bot_name + '@' + bot_group;
-
-            bots_submenu.appendChild(bot_submenu);
 
             if (app.bots[bot_group] === undefined) {
                 app.bots[bot_group] = {};
@@ -133,34 +148,24 @@ function load_bots(config) {
                 'description': bot['description'],
                 'enabled': true,
                 'parameters': bot['parameters'],
-                'run_mode': 'continuous',
-            }
+                'run_mode': 'continuous'
+            };
 
             for (let parameter in bot['parameters']) {
                 var value = bot['parameters'][parameter];
                 app.bots[bot_group][bot_name]['parameters'][parameter] = value;
             }
         }
+        $bot_group.find("ul li").first().remove();// get rid of the HTML template
     }
 
     $('#side-menu').metisMenu({'restart': true});
-
-    btnEditDefault = document.createElement('button');
-    btnEditDefault.setAttribute('class', 'btn btn-warning');
-    btnEditDefault.innerHTML = 'Edit Defaults';
-    btnEditDefault.style.textAlign = 'center';
-    btnEditDefault.id = EDIT_DEFAULT_BUTTON_ID;
-    btnEditDefault.addEventListener('click', function () {
-        create_form('Edit Defaults', EDIT_DEFAULT_BUTTON_ID, undefined);
+    $EDIT_DEFAULT_BUTTON.click(function () {
+        create_form('Edit Defaults', $(this).attr("id"), undefined);
         fill_editDefault(app.defaults);
     });
-    buttonContainer = document.createElement('li');
-    buttonContainer.appendChild(btnEditDefault);
-    buttonContainer.setAttribute('id', 'customListItem');
 
-    available_bots.appendChild(buttonContainer);
-
-    if (window.location.hash !== '#new') {
+    if (getUrlParameter("configuration") !== "new") {
         load_configuration();
     } else {
         draw();
@@ -179,21 +184,7 @@ function fill_editDefault(data) {
     popup.setAttribute('class', "with-bot");
 }
 
-function handleDragStart(event) {
-    app.network.addNodeMode();
-    var elementID = event.currentTarget.id.split('@');
-
-    draggedElement = {
-        bot_name: elementID[0],
-        bot_group: elementID[1]
-    };
-
-    // necessary for firefox
-    event.dataTransfer.setData('text/plain', null);
-}
-
 function handleDrop(event) {
-
     // --- necessary for firefox
     if (event.preventDefault) {
         event.preventDefault();
@@ -488,7 +479,9 @@ function addNewKey() {
             // inserts new value and focus the field
             insertKeyValue($key.val(), val, BORDER_TYPES.RUNTIME, true, current_index + 1);
             // a bootstrap guru or somebody might want to rewrite this line without setTimeout
-            setTimeout(()=>{$('#network-popUp .new-key-btn').closest("tr").next("tr").find("input").focus()}, 300);
+            setTimeout(() => {
+                $('#network-popUp .new-key-btn').closest("tr").next("tr").find("input").focus()
+            }, 300);
         }
     });
 }
@@ -654,7 +647,7 @@ function create_form(title, data, callback) {
     var okButton = document.getElementById('network-popUp-ok');
     var cancelButton = document.getElementById('network-popUp-cancel');
 
-    if (data === EDIT_DEFAULT_BUTTON_ID) {
+    if (data === $EDIT_DEFAULT_BUTTON.attr("id")) {
         okButton.onclick = saveDefaults_tmp.bind(this, data, callback);
     } else {
         okButton.onclick = saveData.bind(this, data, callback);
@@ -703,11 +696,29 @@ function redrawNetwork() {
 function draw() {
     load_html_elements();
 
-    if (window.location.hash !== '#load') {
+    if (getUrlParameter("configuration") === "new") {
         app.nodes = {};
         app.edges = {};
     }
     initNetwork();
+    if (window.location.hash) {
+        let node = window.location.hash.substr(1);
+        setTimeout(() => { // doesnt work immediately, I don't know why. Maybe a js guru would bind to visjs onready if that exists or sth.
+            try {
+                fitNode(node);
+            } catch (e) {
+                show_error("Bot instance {0} not found in the current configuration.".format(node));
+            }
+        }, 100);
+
+
+    }
+}
+
+function fitNode(nodeId) {
+    app.network.fit({"nodes": [nodeId]});
+    app.network.selectNodes([nodeId], true);
+    app.network.manipulation.showManipulatorToolbar();
 }
 
 function initNetwork(includePositions = true) {
@@ -742,6 +753,11 @@ function initNetwork(includePositions = true) {
             reload_queues.start();
         }
     }).click();
+    let physics_running = true;
+    $(".vis-physics-toggle", $nc).click(function () {
+        $(this).toggleClass("running");
+        app.network.setOptions({physics: (physics_running = !physics_running)});
+    });
 
     // 'Save Configuration' button can blink
     $saveButton = $("#vis-save", $nc);
@@ -757,7 +773,7 @@ function initNetwork(includePositions = true) {
 
     // 'Clear Configuration' button
     $("#vis-clear").children().on('click', function (event) {
-        window.location.assign('#new');
+        window.location.assign('?page=configs&configuration=new');
     });
 
     // 'Redraw Botnet' button
@@ -776,14 +792,14 @@ function initNetwork(includePositions = true) {
         app.network.manipulation._showManipulatorToolbar.call(this);
 
         // enable 'Edit defaults' button
-        $('#' + EDIT_DEFAULT_BUTTON_ID).prop('disabled', false);
+        $EDIT_DEFAULT_BUTTON.prop('disabled', false);
 
         // enable tooltip (if disabled earler)
         app.network.interactionHandler.options.tooltipDelay = 1000;
 
         // clicking on 'Add Bot', 'Add Queues' etc buttons disables 'Edit defaults' button
         var fn = function () {
-            $('#' + EDIT_DEFAULT_BUTTON_ID).prop('disabled', true);
+            $EDIT_DEFAULT_BUTTON.prop('disabled', true);
         };
         $(".vis-add", $manipulation).on("pointerdown", fn);
         if (($el = $(".vis-edit", $manipulation)).length) { // 'Edit Bot' button is visible only when there is a bot selected

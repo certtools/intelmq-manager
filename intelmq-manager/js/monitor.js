@@ -2,6 +2,7 @@
 var ALL_BOTS = 'All Bots';
 var bot_logs = {};
 var bot_queues = {};
+var path_names = {};
 var reload_queues = null;
 var reload_logs = null;
 var app = app || {};
@@ -9,7 +10,7 @@ var buffered_bot = null;
 load_configuration(() => {
     // refresh parameters panel when ready
     if (buffered_bot) {
-        refresh_parameters_panel(buffered_bot);
+        refresh_configuration_info(buffered_bot);
     }
 });
 
@@ -182,7 +183,7 @@ function redraw_queues() {
 
             if ($("tr:eq({0}) td:eq(0)".format(bot), $dq).text() === queue) {
                 // row exist, just update the count
-                $("tr:eq({0}) td:eq(1)".format(bot), $dq).text(count);
+                $("tr:eq({0}) td:eq(2)".format(bot), $dq).text(count);
             } else {
                 // for some reason, dst_queues from server changed from the table
                 // let's find the table row
@@ -196,14 +197,15 @@ function redraw_queues() {
                     $tr = $("<tr/>").data("bot-id", queue_overview['destination_queues'][queue]["parent"]).appendTo($dq);
                     $("<td/>").appendTo($tr).text(queue).click(function () {
                         let selectBot = $(this).closest("tr").data("bot-id");
-                        console.log("selectBot", selectBot);
                         if (selectBot) {
                             select_bot(selectBot, true);
                         }
                     });
+                    $("<td/>").appendTo($tr).text("");
                     $("<td/>").appendTo($tr).text(count);
                     $("<td/>").appendTo($tr).html(generateClearQueueButton(queue)); // regenerate thrash button
                 }
+                refresh_path_names();
             }
         }
     }
@@ -227,11 +229,9 @@ function generateClearQueueButton(queue_id) {
 }
 
 function clearQueue(queue_id) {
-    console.log(queue_id);
     $.getJSON(MANAGEMENT_SCRIPT + '?scope=clear&id=' + queue_id)
             .done(function (data) {
                 redraw_queues();
-                console.log(data);
                 $('#queues-panel-title').removeClass('waiting');
             })
             .fail(ajax_fail_callback('Error clearing queue ' + queue_id));
@@ -295,6 +295,7 @@ function select_bot(bot_id, history_push = false) {
     }
 
     $('#monitor-target').html(bot_id);
+
     load_bot_queues();
 
     reload_queues = new Interval(load_bot_queues, RELOAD_QUEUES_EVERY * 1000, true);
@@ -305,8 +306,7 @@ function select_bot(bot_id, history_push = false) {
         $("#source-queue-table-div").css('display', 'block');
         $("#internal-queue-table-div").css('display', 'block');
         //$("#destination-queues-table").removeClass('highlightHovering');
-        $("#destination-queues-table-div").removeClass('col-md-12');
-        $("#destination-queues-table-div").addClass('col-md-4');
+        $("#destination-queues-table-div").removeClass().addClass('col-md-4'); // however, will be reset in refresh_path_names
         $("#destination-queue-header").html("Destination Queue");
 
         load_bot_log();
@@ -316,63 +316,119 @@ function select_bot(bot_id, history_push = false) {
         $("#inspect-panel .panel-heading .control-buttons").remove();
         $("#inspect-panel .panel-heading").prepend(generate_control_buttons(bot_id, false, null, true));
 
-        // parameters panel
-        refresh_parameters_panel(bot_id);
+        // connect to configuration panel
+        $('#monitor-target').append(' <a title="show in configuration" href="?page=configs#{0}"><img src="./images/config.png" width="24" height="24" /></a>'.format(bot_id));
+
     } else {
         $("#logs-panel, #inspect-panel, #parameters-panel").css('display', 'none');
         $("#source-queue-table-div").css('display', 'none');
         $("#internal-queue-table-div").css('display', 'none');
         //$("#destination-queues-table").addClass('highlightHovering');
-        $("#destination-queues-table-div").removeClass('col-md-4');
-        $("#destination-queues-table-div").addClass('col-md-12');
+        $("#destination-queues-table-div").removeClass().addClass('col-md-12');
         $("#destination-queue-header").html("Queue");
-}
+    }
+    // refresh additional information
+    refresh_configuration_info(bot_id);
 }
 
-function refresh_parameters_panel(bot_id) {
-    if (!app.nodes) {
+function refresh_path_names() {
+    if ($.isEmptyObject(path_names)) {
+        // expand the columns
+        //$dq.parent().find("col:eq(1)").css("visibility", "collapse");
+        $dq.parent().find("col:eq(1)").css("display", "none");
+        $("td:nth-child(2), th:nth-child(2)", $dq.parent()).css("display", "none");
+
+        $dq.parent().find("th:eq(0)").removeClass().addClass("width-80");
+        $dq.parent().find("th:eq(1)").removeClass();
+        if ($("#destination-queues-table-div").hasClass('col-md-12')) {
+            // in full width display of all bots, there is no need of another hassling
+            return;
+        }
+        $("#destination-queues-table-div").removeClass("col-md-5").addClass("col-md-4");
+        $("#internal-queue-table-div").removeClass("col-md-3").addClass("col-md-4");
+        return;
+    }
+
+    // fold the columns to make more space on the line due to the Path column
+    //$dq.parent().find("col:eq(1)").css("visibility", "inherit");
+    //$dq.parent().find("col:eq(1)").css("display", "inherit");
+    $("td:nth-child(2), th:nth-child(2)", $dq.parent()).css("display", "revert");
+
+
+    $dq.parent().find("th:eq(0)").removeClass().addClass("width-60");
+    $dq.parent().find("th:eq(1)").addClass("width-20");
+    $("#destination-queues-table-div").removeClass("col-md-4").addClass("col-md-5");
+    $("#internal-queue-table-div").removeClass("col-md-4").addClass("col-md-3");
+
+    $("tr td:first-child", $dq).each(function () {
+        let path = path_names[$(this).text()] || null;
+        let $el = $(this).next("td");
+        $el.html(path || "_default");
+        if (!path) {
+            $el.css({"color": "gray", "font-style": "italic"});
+        }
+    });
+}
+
+/**
+ * Refresh information dependent on the loaded config files: parameters panel + named queues
+ * Only when configuration has already been loaded.
+ * @param {type} bot_id
+ * @returns {undefined}
+ */
+function refresh_configuration_info(bot_id) {
+    if (!app.nodes || !app.edges) {
         // we're not yet ready, buffer the bot for later
         buffered_bot = bot_id;
         return;
     }
+
+    // search for named queue paths
+    path_names = {};
+    for (let edge of Object.values(app.edges)) {
+        if (edge.from === bot_id && edge.path) {
+            path_names[edge.to + "-queue"] = edge.path;
+        }
+    }
+    refresh_path_names();
+
+    // refresh parameters panel
     let $panel = $("#parameters-panel .panel-body");
     $panel.text("");
-    if(!app.nodes[bot_id] || !app.nodes[bot_id].parameters){
+    if (!app.nodes[bot_id] || !app.nodes[bot_id].parameters) {
         $panel.text("Failed to fetch the information.");
         return;
     }
     var params = app.nodes[bot_id].parameters;
     for (let key in params) {
-        $el = $("<li><b>"+key+"</b>: "+params[key]+"</li>");
-        console.log(params[key],key);
+        $el = $("<li><b>" + key + "</b>: " + params[key] + "</li>");
         if (params[key].indexOf && params[key].indexOf(ALLOWED_PATH) === 0) {
             let url = LOAD_CONFIG_SCRIPT + "?file=" + params[key];
             $.getJSON(url, (data) => {
-                console.log(data);
                 let html = "";
-                if(data.directory) {
+                if (data.directory) {
                     html += "<h3>Directory {0}</h3>".format(data.directory);
                 }
 
-                for(let file in data.files) {
+                for (let file in data.files) {
                     let size = data.files[file].size ? "<a data-role=fetchlink href='{0}?fetch=1&file={1}'>fetch {2} B</a>".format(LOAD_CONFIG_SCRIPT, data.files[file].path, data.files[file].size) : "";
                     html += "<h4>File {0}</h4>{1}".format(file, size);
-                    if (data.files[file].contents){
-                        html += "<pre>"+data.files[file].contents+"</pre>";
+                    if (data.files[file].contents) {
+                        html += "<pre>" + data.files[file].contents + "</pre>";
                     }
                 }
-                $("<div/>", {html:html}).appendTo($el);
+                $("<div/>", {html: html}).appendTo($el);
             });
         }
         $el.appendTo($panel);
     }
-    if(!Object.keys(params).length) {
+    if (!Object.keys(params).length) {
         $panel.html("No parameters.");
     }
 }
-$("#parameters-panel").on("click", "a[data-role=fetchlink]", function(){
-    $.get($(this).attr("href"), (data)=> {
-       $(this).after("<pre>"+data+"</pre>").remove();
+$("#parameters-panel").on("click", "a[data-role=fetchlink]", function () {
+    $.get($(this).attr("href"), (data) => {
+        $(this).after("<pre>" + data + "</pre>").remove();
     });
     return false;
 });
@@ -540,23 +596,5 @@ function popState() {
         select_bot(bot_id);
     } else {
         select_bot(ALL_BOTS);
-    }
-}
-
-
-// general functions
-
-function getUrlParameter(sParam) {
-    var sPageURL = decodeURIComponent(window.location.search.substring(1)),
-            sURLVariables = sPageURL.split('&'),
-            sParameterName,
-            i;
-
-    for (i = 0; i < sURLVariables.length; i++) {
-        sParameterName = sURLVariables[i].split('=');
-
-        if (sParameterName[0] === sParam) {
-            return sParameterName[1] === undefined ? true : sParameterName[1];
-        }
     }
 }

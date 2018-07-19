@@ -285,7 +285,7 @@ $(document).on("click", ".control-buttons button", function () {
                     Object.assign(bot_status, data); // merge to current list
                 }
             })
-            .fail(function() {
+            .fail(function () {
                 ajax_fail_callback('Error {0} bot{1}'.format(bot_status[bot] || botnet_status[botnet], (!bot ? "net" : ""))).apply(null, arguments);
                 bot_status[bot] = BOT_STATUS_DEFINITION.error;
             }).always(() => {
@@ -321,4 +321,17 @@ function generate_control_buttons(bot, botnet = null, callback_button = null, st
         }).prependTo($el).trigger("update");
     }
     return $el;
+}
+
+/**
+ * Reads the parameter from URL
+ */
+function getUrlParameter(sParam) {
+    var sPageURL = decodeURIComponent(window.location.search.substring(1)), sURLVariables = sPageURL.split('&'), sParameterName, i;
+    for (i = 0; i < sURLVariables.length; i++) {
+        sParameterName = sURLVariables[i].split('=');
+        if (sParameterName[0] === sParam) {
+            return sParameterName[1] === undefined ? true : sParameterName[1];
+        }
+    }
 }
