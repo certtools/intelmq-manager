@@ -22,6 +22,7 @@ CHANGELOG
 #### Check
 
 ### Documentation
+- Add a FAQ and add a section about the docker issue #160.
 
 ### Third-party libraries
 
