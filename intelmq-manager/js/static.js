@@ -46,7 +46,7 @@ var PARAM_KEY_REGEX = /^[0-9a-zA-Z._-]+$/;
 var ROOT = window.location.href.substring(0, window.location.href.lastIndexOf('/') + 1);
 
 var LOAD_CONFIG_SCRIPT = ROOT + "php/load_configs.php";
-var MANAGEMENT_SCRIPT = ROOT + "php/controller.php"
+var MANAGEMENT_SCRIPT = ROOT + "php/controller.php";
 
 var BOTS_FILE = LOAD_CONFIG_SCRIPT + "?file=bots";
 var DEFAULTS_FILE = LOAD_CONFIG_SCRIPT + "?file=defaults";
@@ -146,7 +146,6 @@ function ajax_fail_callback(str) {
         }
         // include full report but truncate the length to 200 chars
         // (since '.' is not matching newline characters, we're using '[\s\S]' so that even multiline string is shortened)
-        console.log("TEST", jqXHR);
         show_error("{0}: <b>{1}</b> {2}".format(str, jqXHR.responseText.replace(/^(.{200})[\s\S]+/, "$1..."), message));
     };
 }

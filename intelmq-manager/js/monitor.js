@@ -4,6 +4,16 @@ var bot_logs = {};
 var bot_queues = {};
 var reload_queues = null;
 var reload_logs = null;
+var app = app || {};
+var buffered_bot = null;
+load_configuration(() => {
+    // refresh parameters panel when ready
+    if (buffered_bot) {
+        refresh_parameters_panel(buffered_bot);
+    }
+});
+
+
 
 var $dq = $("#destination-queues");
 $('#log-table').dataTable({
@@ -290,8 +300,8 @@ function select_bot(bot_id, history_push = false) {
     reload_queues = new Interval(load_bot_queues, RELOAD_QUEUES_EVERY * 1000, true);
 
     $("#destination-queues-table").addClass('highlightHovering');
-    if (bot_id != ALL_BOTS) {
-        $("#logs-panel, #inspect-panel").css('display', 'block');
+    if (bot_id !== ALL_BOTS) {
+        $("#logs-panel, #inspect-panel, #parameters-panel").css('display', 'block');
         $("#source-queue-table-div").css('display', 'block');
         $("#internal-queue-table-div").css('display', 'block');
         //$("#destination-queues-table").removeClass('highlightHovering');
@@ -305,8 +315,11 @@ function select_bot(bot_id, history_push = false) {
         // control buttons in inspect panel
         $("#inspect-panel .panel-heading .control-buttons").remove();
         $("#inspect-panel .panel-heading").prepend(generate_control_buttons(bot_id, false, null, true));
+
+        // parameters panel
+        refresh_parameters_panel(bot_id);
     } else {
-        $("#logs-panel, #inspect-panel").css('display', 'none');
+        $("#logs-panel, #inspect-panel, #parameters-panel").css('display', 'none');
         $("#source-queue-table-div").css('display', 'none');
         $("#internal-queue-table-div").css('display', 'none');
         //$("#destination-queues-table").addClass('highlightHovering');
@@ -315,6 +328,54 @@ function select_bot(bot_id, history_push = false) {
         $("#destination-queue-header").html("Queue");
 }
 }
+
+function refresh_parameters_panel(bot_id) {
+    if (!app.nodes) {
+        // we're not yet ready, buffer the bot for later
+        buffered_bot = bot_id;
+        return;
+    }
+    let $panel = $("#parameters-panel .panel-body");
+    $panel.text("");
+    if(!app.nodes[bot_id] || !app.nodes[bot_id].parameters){
+        $panel.text("Failed to fetch the information.");
+        return;
+    }
+    var params = app.nodes[bot_id].parameters;
+    for (let key in params) {
+        $el = $("<li><b>"+key+"</b>: "+params[key]+"</li>");
+        console.log(params[key],key);
+        if (params[key].indexOf && params[key].indexOf(ALLOWED_PATH) === 0) {
+            let url = LOAD_CONFIG_SCRIPT + "?file=" + params[key];
+            $.getJSON(url, (data) => {
+                console.log(data);
+                let html = "";
+                if(data.directory) {
+                    html += "<h3>Directory {0}</h3>".format(data.directory);
+                }
+
+                for(let file in data.files) {
+                    let size = data.files[file].size ? "<a data-role=fetchlink href='{0}?fetch=1&file={1}'>fetch {2} B</a>".format(LOAD_CONFIG_SCRIPT, data.files[file].path, data.files[file].size) : "";
+                    html += "<h4>File {0}</h4>{1}".format(file, size);
+                    if (data.files[file].contents){
+                        html += "<pre>"+data.files[file].contents+"</pre>";
+                    }
+                }
+                $("<div/>", {html:html}).appendTo($el);
+            });
+        }
+        $el.appendTo($panel);
+    }
+    if(!Object.keys(params).length) {
+        $panel.html("No parameters.");
+    }
+}
+$("#parameters-panel").on("click", "a[data-role=fetchlink]", function(){
+    $.get($(this).attr("href"), (data)=> {
+       $(this).after("<pre>"+data+"</pre>").remove();
+    });
+    return false;
+});
 
 function show_extended_message(index) {
     var modal_body = document.getElementById('modal-body');

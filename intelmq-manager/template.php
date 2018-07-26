@@ -97,6 +97,9 @@
 
             <!-- Custom Application JavaScript -->
             <?php
+            if($ALLOWED_PATH):
+                echo "<script>ALLOWED_PATH=\"$ALLOWED_PATH\";</script>";
+            endif;
             foreach ($libraries as $lib):
                 echo "<script src='$lib'></script>";
             endforeach;
