@@ -5,6 +5,7 @@ CHANGELOG
 ------------------
 
 ### Backend
+- Emit a more specific error message for cases like #160.
 
 ### Pages
 
