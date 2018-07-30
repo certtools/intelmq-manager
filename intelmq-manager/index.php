@@ -27,6 +27,7 @@ switch ($page) {
     case "monitor":
         $libraries = array_merge($libraries, [
             "js/runtime.js",
+            "js/pipeline.js",
             "js/defaults.js",
             "js/monitor.js"]);
         break;

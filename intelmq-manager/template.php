@@ -53,7 +53,7 @@
 
                 <ul class="nav navbar-top-links navbar-left">
                     <li <?= (($_GET["page"] === "configs") ? "class='active'" : "") ?>>
-                        <a href="?page=configs#load">
+                        <a href="?page=configs">
                             <span class="top-menu-text"><img src="./images/config.png" width="24px" height="24px">&nbsp;Configuration</span>
                         </a>
                     </li>

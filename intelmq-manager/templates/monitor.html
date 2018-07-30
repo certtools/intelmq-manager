@@ -27,7 +27,7 @@
                                 </tbody>
                             </table>
                         </div>
-                        <div id="internal-queue-table-div" class="col-md-4">
+                        <div id="internal-queue-table-div" class="col-md-3">
                             <table class="table">
                                 <thead>
                                     <tr><th class="width-80">Internal Queue</th><th class="width-20">Count</th></tr>
@@ -36,10 +36,16 @@
                                 </tbody>
                             </table>
                         </div>
-                        <div id="destination-queues-table-div" class="col-md-4">
+                        <div id="destination-queues-table-div" class="col-md-5">
                             <table class="table" id="destination-queues-table">
+                                <colgroup>
+                                    <col><col>
+                                </colgroup>
                                 <thead>
-                                    <tr><th class="width-80" id="destination-queue-header">Destination Queue</th><th class="width-20">Count</th></tr>
+                                    <tr><th class="width-60" id="destination-queue-header">Destination Queue</th>
+                                        <th class="width-20">Path</th>
+                                        <th class="width-20">Count</th>
+                                    </tr>
                                 </thead>
                                 <tbody id="destination-queues">
                                 </tbody>

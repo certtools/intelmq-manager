@@ -92,14 +92,19 @@ nav ul.nav.navbar-top-links li.active {
 #network-container .network-right-menu > div {
   display: block;
 }
-#network-container .network-right-menu .vis-live-toggle {
+#network-container .network-right-menu .vis-live-toggle,
+#network-container .network-right-menu .vis-physics-toggle {
   border-radius: 10px;
   position: absolute;
-  right: 470px;
+  right: 560px;
   top: 35px;
   white-space: nowrap;
   padding: 5px 0 5px 5px;
   cursor: pointer;
+}
+#network-container .network-right-menu .vis-live-toggle.running,
+#network-container .network-right-menu .vis-physics-toggle.running {
+  background-color: #00D000;
 }
 #network-container .network-right-menu .vis-live-toggle .icon {
   background-image: url("../images/monitor.png");
@@ -110,7 +115,7 @@ nav ul.nav.navbar-top-links li.active {
   position: relative;
   z-index: 20;
 }
-#network-container .network-right-menu .vis-live-toggle.running {
-  background-color: #00D000;
+#network-container .network-right-menu .vis-physics-toggle {
+  right: 480px;
 }
 /*# sourceMappingURL=style.css.map */

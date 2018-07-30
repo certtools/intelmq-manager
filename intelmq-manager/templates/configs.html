@@ -2,6 +2,7 @@
 <div class="navbar-default sidebar" role="navigation">
     <div class="sidebar-nav navbar-collapse">
         <ul class="nav" id="side-menu">
+            <li id="customListItem"><button class="btn btn-warning" style="text-align: center;" id="editDefaults">Edit Defaults</button></li>
         </ul>
     </div>
 </div>
@@ -46,42 +47,61 @@
             <input type="button" class="btn-success btn-block" value="ok" id="network-popUp-ok">
         </form>
     </div>
-    <div id="addNewKeyModal" class="addNewKeyModal">
-        <div class="addNewKeyModal-content">
-            <div>
-                <h4>
-                    Add Key
-                </h4>
-            </div>
-            <div>
-                <form>
-                    <div class="form-group">
-                        <label  class="col-sm-2 control-label">Key</label>
-                        <div class="col-sm-10">
-                            <input type="text" class="form-control" id="newKeyInput" required/>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label class="col-sm-2 control-label">Value</label>
-                        <div class="col-sm-10">
-                            <input type="text" class="form-control" id="newValueInput" required/>
-                        </div>
-                    </div>
-                </form>
-            </div>
-            <form>
-                <input type="button" class="btn-danger btn-block" value="cancel" id="addNewKeyModal-cancel">
-            </form>
-            <form>
-                <input type="button" class="btn-success btn-block" value="ok" id="addNewKeyModal-ok">
-            </form>
-        </div>
-    </div>
 </div>
 
 <!-- HTML templates -->
 <div id='templates'>
-    <div class="network-added-menu">
+    <ul class="side-menu">
+        <li>
+            <a><span class="fa arrow"></span></a>
+            <ul class="nav nav-second-level collapse">
+                <li draggable="true">
+                    <a href="#" data-toggle="tooltip" data-placement="right"></a>
+                </li>
+            </ul>
+        </li>
+    </ul>
+    <button class="btn btn-warning new-key-btn" title="add new key"><span class="glyphicon glyphicon-plus-sign"></span></button>
+    <div class="modal fade" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <form class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title">Modal title</h4>
+                </div>
+                <div class="modal-body">
+                    <p>One fine body&hellip;</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn-success btn btn-primary">Ok</button>
+                    <button type="button" class="btn-danger btn btn-default" data-dismiss="modal">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <div class="modal-add-new-key">
+        <div class="form-group">
+            <label  class="col-sm-2 control-label">Key</label>
+            <div class="col-sm-10">
+                <input type="text" class="form-control" name="newKeyInput" required/>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-2 control-label">Value</label>
+            <div class="col-sm-10">
+                <input type="text" class="form-control" name="newValueInput" required/>
+            </div>
+        </div>
+    </div>
+
+    <div class="network-edge-menu">
+        <div class="vis-button vis-edit">
+            <div class="vis-label">
+                Edit Path
+            </div>
+        </div>
+    </div>
+    <div class="network-node-menu">
         <div class="vis-button duplicate-button ">
             <div class="vis-label">
                 Duplicate
@@ -102,6 +122,11 @@
                 Live
             </div>
         </div>
+        <div class="vis-physics-toggle running">
+            <div class="icon fa-align-right fa">
+                Physics
+            </div>
+        </div>
         <div class="vis-save" id="vis-save">
             <div class="vis-save-icon">
                 <span class="vis-save-label">Save Configuration</span>
@@ -118,5 +143,5 @@
             </div>
         </div>
 
-</div>
+    </div>
 </div>

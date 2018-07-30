@@ -83,6 +83,8 @@ nav ul.nav.navbar-top-links li.active {
 #templates {
     display: none;
 }
+#side-menu {
+}
 #network-container {
 
     .control-buttons {
@@ -110,28 +112,31 @@ nav ul.nav.navbar-top-links li.active {
         > div {
             display: block;
         }
-        .vis-live-toggle {
+        .vis-live-toggle,  .vis-physics-toggle {
             border-radius: 10px;
             position: absolute;
-            right: 470px;
+            right: 560px;
             top: 35px;
             white-space: nowrap;
             padding: 5px 0 5px 5px;
             cursor: pointer;
-            .icon {
-                background-image: url("../images/monitor.png");
-                background-repeat: no-repeat;
-                background-size: 30%; // this is a big image
-                padding-left: 30px;
-                padding-right: 15px;
-                position: relative;
-                z-index:20;
-            }
             &.running {
                 //padding: 4px 0 4px 4px;
                 //border:1px solid green;
                 background-color: #00D000;
             }
+        }
+        .vis-live-toggle .icon {
+            background-image: url("../images/monitor.png");
+            background-repeat: no-repeat;
+            background-size: 30%; // this is a big image
+            padding-left: 30px;
+            padding-right: 15px;
+            position: relative;
+            z-index:20;
+        }
+        .vis-physics-toggle {
+            right: 480px;
         }
     }
 }

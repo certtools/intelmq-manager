@@ -22,11 +22,10 @@ var app = new VisModel();
 var popup = null;
 var span = null;
 var table = null;
-var modal = null;
 var disabledKeys = ['group', 'name', 'module'];
 var $manipulation, $saveButton; // jQuery of Vis control panel; elements reseted with network
 
-var EDIT_DEFAULT_BUTTON_ID = 'editDefaults';
+var $EDIT_DEFAULT_BUTTON = $("#editDefaults");
 var BORDER_TYPE_CLASSES = {
     'DEFAULT': 'info',
     'GENERIC': 'success',
@@ -67,62 +66,76 @@ function load_html_elements() {
     // Load popup, span and table
     app.network_container = document.getElementById('network-container');
     app.network_container.addEventListener('drop', function (event) {
-        handleDrop(event)
+        handleDrop(event);
     });
     app.network_container.addEventListener('dragover', function (event) {
-        allowDrop(event)
+        allowDrop(event);
     });
     popup = document.getElementById("network-popUp");
     span = document.getElementById('network-popUp-title');
     table = document.getElementById("network-popUp-fields");
-    modal = document.getElementById('addNewKeyModal');
 }
 
 
 function load_bots(config) {
-    var available_bots = document.getElementById("side-menu");
-    for (let bot_group in config) {
-        var group = config[bot_group];
-
-        group_title = document.createElement('a');
-        group_title.innerHTML = bot_group + '<span class="fa arrow"></span>';
-
-        var new_element = group_title.cloneNode(true);
-
-        bots_submenu = document.createElement('ul');
-        bots_submenu.setAttribute('class', 'nav nav-second-level collapse');
-
-        group_menu = document.createElement('li');
-        group_menu.appendChild(new_element);
-        group_menu.appendChild(bots_submenu);
-        group_menu.style.borderBottomColor = GROUP_COLORS[bot_group][0];
-
-        available_bots.appendChild(group_menu);
-        fill_bot_func = function (bot_group, bot_name) {
-            fill_bot(undefined, bot_group, bot_name);
-        }
-
+    // Build side menu
+    console.log(config);
+    for (let bot_group of Object.keys(config).reverse()) {
+        let $bot_group = $("#templates > ul.side-menu > li").clone().prependTo("#side-menu").css("border-bottom-color", GROUP_COLORS[bot_group][0]);
+        $bot_group.find("> a").prepend(bot_group);
+        let group = config[bot_group];
         for (let bot_name in group) {
-            var bot = group[bot_name];
+            let bot = group[bot_name];
+            let $bot = $bot_group.find("ul > li:first").clone().appendTo($("ul", $bot_group))
+                    .attr("title", bot['description'])
+                    .attr("data-name", bot_name)
+                    .attr("data-group", bot_group)
+                    .click(() => {
+                        if ($('#network-popUp').is(':visible')) {
+                            // just creating a new bot
+                            fill_bot(undefined, bot_group, bot_name);
+                            return false;
+                        }
 
-            var bot_title = document.createElement('a');
-            bot_title.setAttribute('data-toggle', 'tooltip');
-            bot_title.setAttribute('data-placement', 'right');
-            bot_title.setAttribute('title', bot['description']);
-            bot_title.addEventListener('click', function (bot_group, bot_name) {
-                return function () {
-                    fill_bot_func(bot_group, bot_name)
-                }
-            }(bot_group, bot_name))
-            bot_title.innerHTML = bot_name;
+                        // cycling amongst the bot instances
+                        if (!$bot.data("cycled")) {
+                            $bot.data("cycled", []);
+                        }
+                        let found = null;
+                        for (let bot_node of Object.values(app.nodes)) {
+                            if (bot_node.module === bot["module"]) {
+                                if ($.inArray(bot_node.id, $bot.data("cycled")) !== -1) {
+                                    continue;
+                                } else {
+                                    $bot.data("cycled").push(bot_node.id);
+                                    found = bot_node.id;
+                                    break;
+                                }
+                            }
+                        }
+                        // not found or all bots cycled
+                        if (!found && $bot.data("cycled").length) {
+                            found = $bot.data("cycled")[0];
+                            $bot.data("cycled", [found]); // reset cycling
+                        }
+                        if (found) {
+                            fitNode(found);
+                        } else {
+                            show_error("No instance of the {0} found. Drag the label to the plan to create one.".format(bot_name));
+                        }
+                        return false;
+                    })
+                    .on('dragstart', (event) => { // drag to create a new bot instance
+                        app.network.addNodeMode();
+                        draggedElement = {
+                            bot_name: bot_name,
+                            bot_group: bot_group
+                        };
+                        // necessary for firefox
+                        event.originalEvent.dataTransfer.setData('text/plain', null);
+                    })
+                    .find("a").prepend(bot_name);
 
-            var bot_submenu = document.createElement('li');
-            bot_submenu.appendChild(bot_title);
-            bot_submenu.setAttribute('draggable', 'true');
-            bot_submenu.addEventListener('dragstart', handleDragStart, false);
-            bot_submenu.id = bot_name + '@' + bot_group;
-
-            bots_submenu.appendChild(bot_submenu);
 
             if (app.bots[bot_group] === undefined) {
                 app.bots[bot_group] = {};
@@ -135,34 +148,24 @@ function load_bots(config) {
                 'description': bot['description'],
                 'enabled': true,
                 'parameters': bot['parameters'],
-                'run_mode': 'continuous',
-            }
+                'run_mode': 'continuous'
+            };
 
             for (let parameter in bot['parameters']) {
                 var value = bot['parameters'][parameter];
                 app.bots[bot_group][bot_name]['parameters'][parameter] = value;
             }
         }
+        $bot_group.find("ul li").first().remove();// get rid of the HTML template
     }
 
     $('#side-menu').metisMenu({'restart': true});
-
-    btnEditDefault = document.createElement('button');
-    btnEditDefault.setAttribute('class', 'btn btn-warning');
-    btnEditDefault.innerHTML = 'Edit Defaults';
-    btnEditDefault.style.textAlign = 'center';
-    btnEditDefault.id = EDIT_DEFAULT_BUTTON_ID;
-    btnEditDefault.addEventListener('click', function () {
-        create_form('Edit Defaults', EDIT_DEFAULT_BUTTON_ID, undefined);
+    $EDIT_DEFAULT_BUTTON.click(function () {
+        create_form('Edit Defaults', $(this).attr("id"), undefined);
         fill_editDefault(app.defaults);
     });
-    buttonContainer = document.createElement('li');
-    buttonContainer.appendChild(btnEditDefault);
-    buttonContainer.setAttribute('id', 'customListItem');
 
-    available_bots.appendChild(buttonContainer);
-
-    if (window.location.hash !== '#new') {
+    if (getUrlParameter("configuration") !== "new") {
         load_configuration();
     } else {
         draw();
@@ -181,21 +184,7 @@ function fill_editDefault(data) {
     popup.setAttribute('class', "with-bot");
 }
 
-function handleDragStart(event) {
-    app.network.addNodeMode();
-    var elementID = event.currentTarget.id.split('@');
-
-    draggedElement = {
-        bot_name: elementID[0],
-        bot_group: elementID[1]
-    };
-
-    // necessary for firefox
-    event.dataTransfer.setData('text/plain', null);
-}
-
 function handleDrop(event) {
-
     // --- necessary for firefox
     if (event.preventDefault) {
         event.preventDefault();
@@ -296,6 +285,8 @@ function convert_edges(edges) {
         new_edge.from = edges[index]['from'];
         new_edge.to = edges[index]['to'];
 
+        new_edge.label = edges[index]['path'];
+
         new_edges.push(new_edge);
     }
 
@@ -391,14 +382,7 @@ function insertBorder(border_type) {
             break;
         case BORDER_TYPES.RUNTIME:
             new_row.setAttribute('class', BORDER_TYPE_CLASSES.RUNTIME);
-            var addButton = document.createElement('button');
-            var addButtonSpan = document.createElement('span');
-            addButtonSpan.setAttribute('class', 'glyphicon glyphicon-plus-sign');
-            addButton.setAttribute('class', 'btn btn-warning');
-            addButton.setAttribute('title', 'add new key');
-            addButton.addEventListener('click', showModal);
-            addButton.appendChild(addButtonSpan);
-            addButtonCell.appendChild(addButton);
+            $(addButtonCell).append($("#templates > .new-key-btn").clone().click(addNewKey));
             new_row.setAttribute('id', border_type);
             break;
         case BORDER_TYPES.DEFAULT:
@@ -481,57 +465,43 @@ function deleteParameter(input_id) {
 }
 
 function addNewKey() {
-    var current_index = $('#' + BORDER_TYPES.RUNTIME).index();
-    var newKeyInput = document.getElementById('newKeyInput');
-    var newValueInput = document.getElementById('newValueInput');
+    let $el = $("#templates .modal-add-new-key").clone();
+    popupModal("Add key", $el, () => {
+        var current_index = $('#' + BORDER_TYPES.RUNTIME).index();
+        var $key = $el.find("[name=newKeyInput]");
+        var val = $el.find("[name=newValueInput]").val();
 
-    if (!PARAM_KEY_REGEX.test(newKeyInput.value)) {
-        show_error("Parameter names can only be composed of numbers, letters, hiphens and underscores");
-        $('#newKeyInput').focus();
-    } else {
-        hideModal();
-        insertKeyValue(newKeyInput.value, newValueInput.value, BORDER_TYPES.RUNTIME, true, current_index + 1);
-        newKeyInput.value = '';
-        newValueInput.value = '';
-    }
-}
-
-function showModal() {
-    modal.style.display = "block";
-    $('#newKeyInput').focus();
-}
-
-function hideModal() {
-    modal.style.display = "none";
-}
-
-window.onclick = function (event) {
-    if (event.target == modal) {
-        modal.style.display = "none";
-    }
+        if (!PARAM_KEY_REGEX.test($key.val())) {
+            show_error("Parameter names can only be composed of numbers, letters, hiphens and underscores");
+            $key.focus();
+            return false;
+        } else {
+            // inserts new value and focus the field
+            insertKeyValue($key.val(), val, BORDER_TYPES.RUNTIME, true, current_index + 1);
+            // a bootstrap guru or somebody might want to rewrite this line without setTimeout
+            setTimeout(() => {
+                $('#network-popUp .new-key-btn').closest("tr").next("tr").find("input").focus()
+            }, 300);
+        }
+    });
 }
 
 $(document).keydown(function (event) {
-    if (event.keyCode == 27) {
-        if ($('#addNewKeyModal').is(':visible')) {
-            hideModal();
+    if (event.keyCode === 27) {
+        if (($el = $("body > .modal:not([data-hiding])")).length) {
+            // close the most recent modal
+            $el.last().attr("data-hiding", true).modal('hide');
+            setTimeout(() => {
+                $("body > .modal[data-hiding]").first().remove();
+            }, 300);
         } else if ($('#network-popUp').is(':visible')) {
             $('#network-popUp-cancel').click();
         }
     }
-});
-
-$('#newKeyInput').keyup(function (event) {
-    // 'enter' key
-    if (event.keyCode == 13) {
-        $('#addNewKeyModal-ok').click();
-    }
-});
-
-$('#newValueInput').keyup(function (event) {
-    // 'enter' key
-    if (event.keyCode == 13) {
-        $('#addNewKeyModal-ok').click();
+    if (event.keyCode === 13 && $('#network-popUp').is(':visible') && $('#network-popUp :focus').length) {
+        // till network popup is not unified with the popupModal function that can handle Enter by default,
+        // let's make it possible to hit "Ok" by Enter as in any standard form
+        $('#network-popUp-ok').click();
     }
 });
 
@@ -649,13 +619,35 @@ function swapToDefaults(node, key) {
     delete node.parameters[key];
 }
 
+
+/**
+ * Popups a custom modal window containing the given body.
+ * @example popupModal("Title", $input, () => {$input.val();})
+ */
+function popupModal(title, body, callback) {
+    $el = $("#templates > .modal").clone().appendTo("body");
+    $(".modal-title", $el).html(title);
+    $(".modal-body", $el).html(body);
+    $el.modal({"keyboard": false}).on('shown.bs.modal', function () {
+        if (($ee = $('input,textarea,button', $(".modal-body", this)).first())) {
+            $ee.focus();
+        }
+    });
+    return $el.on('submit', 'form', function () {
+        if (callback() !== false) {
+            $(this).closest(".modal").modal('hide');
+        }
+        return false;
+    });
+}
+
 function create_form(title, data, callback) {
     span.innerHTML = title;
 
     var okButton = document.getElementById('network-popUp-ok');
     var cancelButton = document.getElementById('network-popUp-cancel');
 
-    if (data === EDIT_DEFAULT_BUTTON_ID) {
+    if (data === $EDIT_DEFAULT_BUTTON.attr("id")) {
         okButton.onclick = saveDefaults_tmp.bind(this, data, callback);
     } else {
         okButton.onclick = saveData.bind(this, data, callback);
@@ -704,11 +696,29 @@ function redrawNetwork() {
 function draw() {
     load_html_elements();
 
-    if (window.location.hash !== '#load') {
+    if (getUrlParameter("configuration") === "new") {
         app.nodes = {};
         app.edges = {};
     }
     initNetwork();
+    if (window.location.hash) {
+        let node = window.location.hash.substr(1);
+        setTimeout(() => { // doesnt work immediately, I don't know why. Maybe a js guru would bind to visjs onready if that exists or sth.
+            try {
+                fitNode(node);
+            } catch (e) {
+                show_error("Bot instance {0} not found in the current configuration.".format(node));
+            }
+        }, 100);
+
+
+    }
+}
+
+function fitNode(nodeId) {
+    app.network.fit({"nodes": [nodeId]});
+    app.network.selectNodes([nodeId], true);
+    app.network.manipulation.showManipulatorToolbar();
 }
 
 function initNetwork(includePositions = true) {
@@ -724,7 +734,6 @@ function initNetwork(includePositions = true) {
     app.network.options.locales.en.addNode = "Add Bot";
     app.network.options.locales.en.addEdge = "Add Queue";
     app.network.options.locales.en.editNode = "Edit Bot";
-    app.network.options.locales.en.editEdge = "Edit queue path";
     app.network.options.locales.en.del = "Delete";
 
     //
@@ -744,6 +753,11 @@ function initNetwork(includePositions = true) {
             reload_queues.start();
         }
     }).click();
+    let physics_running = true;
+    $(".vis-physics-toggle", $nc).click(function () {
+        $(this).toggleClass("running");
+        app.network.setOptions({physics: (physics_running = !physics_running)});
+    });
 
     // 'Save Configuration' button can blink
     $saveButton = $("#vis-save", $nc);
@@ -759,7 +773,7 @@ function initNetwork(includePositions = true) {
 
     // 'Clear Configuration' button
     $("#vis-clear").children().on('click', function (event) {
-        window.location.assign('#new');
+        window.location.assign('?page=configs&configuration=new');
     });
 
     // 'Redraw Botnet' button
@@ -778,22 +792,20 @@ function initNetwork(includePositions = true) {
         app.network.manipulation._showManipulatorToolbar.call(this);
 
         // enable 'Edit defaults' button
-        $('#' + EDIT_DEFAULT_BUTTON_ID).prop('disabled', false);
+        $EDIT_DEFAULT_BUTTON.prop('disabled', false);
 
         // enable tooltip (if disabled earler)
         app.network.interactionHandler.options.tooltipDelay = 1000;
 
         // clicking on 'Add Bot', 'Add Queues' etc buttons disables 'Edit defaults' button
         var fn = function () {
-            $('#' + EDIT_DEFAULT_BUTTON_ID).prop('disabled', true);
+            $EDIT_DEFAULT_BUTTON.prop('disabled', true);
         };
-
-        Hammer($(".vis-add", $manipulation).get()[0]).on("tap", fn);
-        if ((el = $(".vis-edit", $manipulation).get()[0])) {
-            // 'Edit Bot' button is visible only when there is a bot selected
-            Hammer(el).on("tap", fn);
+        $(".vis-add", $manipulation).on("pointerdown", fn);
+        if (($el = $(".vis-edit", $manipulation)).length) { // 'Edit Bot' button is visible only when there is a bot selected
+            $el.on("pointerdown", fn);
         }
-        Hammer($(".vis-connect", $manipulation).get()[0]).on("tap", function () {
+        $(".vis-connect", $manipulation).on("pointerdown", function () {
             app.network.interactionHandler.options.tooltipDelay = 999999; // tooltip are disabled as well
             fn();
             ;
@@ -803,7 +815,7 @@ function initNetwork(includePositions = true) {
         let nodes = app.network.getSelectedNodes();
         if (nodes.length === 1) { // a bot is focused
             var bot = nodes[0];
-            $("#templates .network-added-menu").clone().appendTo($manipulation);
+            $("#templates .network-node-menu").clone().appendTo($manipulation);
             $(".monitor-button", $manipulation).click((event) => {
                 return click_link(MONITOR_BOT_URL.format(bot), event);
             }).find("a").attr("href", MONITOR_BOT_URL.format(bot));
@@ -813,10 +825,34 @@ function initNetwork(includePositions = true) {
 
             // insert start/stop buttons
             $(".monitor-button", $manipulation).before(generate_control_buttons(bot, false, refresh_color, true));
+        } else if ((edges = app.network.getSelectedEdges()).length === 1) {
+            $("#templates .network-edge-menu").clone().appendTo($manipulation);
+            $(".vis-edit", $manipulation).click(() => {
+                editPath(app, edges[0]);
+            }).insertBefore($(".vis-delete"));
         }
     };
     // redraw immediately so that even the first click on the network is aware of that new monkeypatched function
     app.network.manipulation.showManipulatorToolbar();
+
+    // double click action trigger editation
+    app.network.on("doubleClick", (active) => {
+        if (active.nodes.length === 1) {
+            let ev = document.createEvent('MouseEvent');// vis-js button need to be clicked this hard way
+            ev.initEvent("pointerdown", true, true);
+            $(".vis-edit", $manipulation).get()[0].dispatchEvent(ev);
+        }
+        if (active.edges.length === 1) {
+            $(".vis-edit", $manipulation).click();
+        }
+    });
+    /* right button ready for any feature request:
+     app.network.on("oncontext", (active)=>{
+     let nodeId = app.network.getNodeAt(active.pointer.DOM);
+     // what this should do? :)
+     });
+     */
+
 }
 
 // INTELMQ
@@ -830,13 +866,6 @@ load_file(BOTS_FILE, load_bots);
 
 // Dynamically adapt to fit screen
 window.onresize = resize;
-
-document.addEventListener('DOMContentLoaded', function () {
-    document.getElementById('addNewKeyModal-cancel').addEventListener('click', hideModal);
-    document.getElementById('addNewKeyModal-ok').addEventListener('click', addNewKey);
-});
-
-
 
 /**
  * This function fetches the current info and updates bot nodes on the graph

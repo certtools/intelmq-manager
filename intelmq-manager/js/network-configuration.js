@@ -141,6 +141,22 @@ var NETWORK_OPTIONS = {
 
 
 /**
+ * Setting path name.
+ * As this is not a standard-vis function, it has to be a separate method.
+ */
+function editPath(app, edge) {
+    let $input = $("<input/>", {"placeholder": "_default", "val": app.edges[edge]["path"]});
+    popupModal("Set the edge name", $input, () => {
+        if(app.edges[edge]["path"] === $input.val()) {
+            return;
+        }
+        app.edges[edge]["path"] = $input.val();
+        app.network_data.edges.update({"id": edge, "label": $input.val()});
+        $saveButton.blinking();
+    });
+}
+
+/**
  * As this is not a standard-vis function, it has to be a separate method.
  */
 function duplicateNode(app, bot) {

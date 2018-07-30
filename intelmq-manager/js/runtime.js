@@ -56,10 +56,10 @@ function load_configuration(callback = () => {}) {
         app.defaults = read_defaults_conf(config);
         load_file(RUNTIME_FILE, (config) => {
             app.nodes = read_runtime_conf(config);
-            if (typeof read_pipeline_conf !== "undefined") { // skipped on Monitor tab
-                load_file(PIPELINE_FILE, (config) => {
+            load_file(PIPELINE_FILE, (config) => {
                     app.edges = read_pipeline_conf(config, app.nodes);
                     app.nodes = add_defaults_to_nodes(app.nodes, app.defaults);
+                if (typeof read_positions_conf !== "undefined") { // skipped on Monitor tab
                     load_file(POSITIONS_FILE, (config) => {
                         app.positions = read_positions_conf(config);
                         draw();
@@ -67,10 +67,10 @@ function load_configuration(callback = () => {}) {
 
                         callback();
                     });
-                });
-            } else {
-                callback();
-            }
+                } else {
+                    callback();
+                }
+            });
         });
     });
 }
