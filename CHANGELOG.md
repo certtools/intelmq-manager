@@ -6,6 +6,7 @@ CHANGELOG
 
 ### Backend
 - Emit a more specific error message for cases like #160.
+- The timeout for calls to `intelmqctl` has been raised to 20s (#164).
 
 ### Pages
 
