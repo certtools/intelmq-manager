@@ -134,8 +134,8 @@ $command = sprintf($c, $arguments);
 //echo $command; exit;
 
 // appending magic string that'll kill the command if run for too long
-set_time_limit(10);
-$sec = 5;
+set_time_limit(20);
+$sec = 20;
 //$return = ExecWaitTimeout($command, 9);
 $return = shell_exec($command . " 2>&1 & ii=0 && while [ \"2\" -eq \"`ps -p $! | wc -l`\" ];do ii=$((ii+1)); if [ \$ii -gt ".($sec)."0 ]; then echo 'Intelmqctl timeout!';kill $!; break;fi; sleep 0.1; done");
 //$return .= " \n$command";

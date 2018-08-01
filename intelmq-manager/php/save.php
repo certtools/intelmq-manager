@@ -12,6 +12,9 @@
     }
 
     $post_contents = file_get_contents("php://input");
+    if ($post_contents === '') {
+        die('Error: Received an empty string, which is invalid. Check your webserver log for error messages.');
+    }
 
     $decoded_config = json_decode($post_contents);
     if (gettype($decoded_config) != 'object') {
