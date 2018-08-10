@@ -104,7 +104,7 @@ function redraw_logs() {
 
 var queue_overview = {}; // one-time queue overview to allow traversing
 function redraw_queues() {
-    var bot_id = $('#monitor-target').text();
+    var bot_id = $.trim($('#monitor-target').text());
 
     var source_queue_element = document.getElementById('source-queue');
     var internal_queue_element = document.getElementById('internal-queue');
