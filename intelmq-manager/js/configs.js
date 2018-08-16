@@ -889,7 +889,9 @@ function load_live_info() {
                         // we skip bots without source queue (collectors)
                         let c = bot_queues[bot]['source_queue'][1] + bot_queues[bot]['internal_queue'];
                         let label = (c > 0) ? "{0}\n{1}✉".format(bot, c) : bot;
-                        if (label !== app.network_data.nodes.get(bot).label) {
+                        if ((appbot = app.network_data.nodes.get(bot)) === null) {
+                            show_error("Non-existent bot {0} in pipelines.".format(bot));
+                        } else if (label !== appbot.label) {
                             // update queue count on bot label
                             app.network_data.nodes.update({"id": bot, "label": label});
                         }
