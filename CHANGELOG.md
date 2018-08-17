@@ -1,6 +1,64 @@
 CHANGELOG
 =========
 
+1.1.0 (unreleased)
+------------------
+
+### Backend
+* Using LESS for writing CSS (so CSS is now readonly)
+* Fix on several places: intervals won't flood server if there is a lag, they'll wait till previous request has finished. Auto-delay/boost depending on server lag.
+
+### Frontend
+* Error reporting in a less-disturbing text box rather than an tab-wide javascript alert. Click to enlarge, double click to hide.
+* Much more detailed Error reporting. What was earlier just mere 'SyntaxError: JSON.parse ...' has now included 'Failed to execute intelmqctl:~/.local/bin/intelmqctl --type json list queues' - see? That's a full command that'll help the developer so much in debugging. (Long error reports got automatically truncated to 200 characters.)
+* If an error appears again and again (redis down?) it blinks instead of spamming you, updates its time and show number of times it has been thrown.
+* Current tab marked in menu
+
+### Pages
+
+#### Landing page
+
+#### Configuration
+* New menu item linking selected bot with the monitor (just an icon to preserve space on precious menu bar). Supports ctrl+click to new tab on the whole button area.
+* New menu item to duplicate current bot, its queues included (and focus the new one); the new bot is selected and focused so that the user finds it on a big plan. It is inserted instead of the add button when a bot is selected.
+* You may now see live data, each bot has its queue length in the label
+* Button labels (Add bot, Add queue instead of Add node, Add edge) now makes more sense and won't shock a newcomer
+* Clearly visible bot statuses; if bot is not running, its colour is dimmed.
+- Manager now supports named queue paths. They are displayed along the edges and editable.
+- Double click edits the bot or the queue
+- Code cleanup: New modal window for performing multiple dialog actions. Intercepting visjs internals without using external Hammer library.
+- Enter key submits the edit bot dialog.
+- Clicking on the side-menu bot name cycles amongst bot instances in the canvas.
+- Got rid of the dumb "#load" and "#new" parameter → "#new" converted into a standard URL parameter "configuration=new".
+- Button to turn on/off physics
+- Detection for bots not configured in runtime but in pipeline configuration (#166).
+
+#### Management
+* Control buttons (start/stop...) now are not only part of the management tab but are common even for configuration tab and inspection panel in monitor tab. They need less configuration (thanks to $(document).on global configuration feature) and works better with less code used (single method instead of four of them). There is also a new red state 'error' for non-standard problems or invalid output from intelmqctl.
+* Clicking bot name support ctrl+click to new tab
+* Table doesn't redraw all the time (so that a highlighting of a browser search is preserved while clicking on a button)
+* It is now possible to start/stop a group of bots easily. Additional panels are linked, so that if you eg. start all the experts, but let other bots stopped, Experts panel shows that all bots are running and Botnet panel shows that only some bots are running.
+
+#### Monitor
+* Fixed bot crawling in Monitor section (F5 will take you on the same page, not on the main monitoring page, permanent links, history browsing)
+* Prefer updating the destination queues overview table over redrawing it all the time (so that you can select some text)
+* Reloading a page sometimes caused a disturbing 'Error loading' alert in Firefox if an AJAX request had not yet been completed
+* Fixed bug: when clicking on bot destination queue in bot detail, we won't end in an undefined bot
+* Inspect panel allows you to communicate via debug functions of `intelmqctl` (see and inject messages, process single message and see output). Ctrl+Enter hits the Process button (hint included in textarea placeholder). Checkbox 'Inject message from above' marked on first text ever written to message textarea.
+* The new parameters panel that displays the bot's parameters on the bot's monitor page. For parameters which are filenames, the content of these files will be shown as text if they reside in the allowed paths (set in config.php).
+* When needed, Path column appears, resizing the Queues panel accordingly.
+* Connected with the configuration panel → a link appears next to the bot title that takes you directly to the bot
+
+#### Check
+
+### Documentation
+
+### Third-party libraries
+
+### Packaging
+
+### Known issues
+
 1.0.2 (unreleased)
 ------------------
 
@@ -14,21 +72,11 @@ CHANGELOG
 
 #### Configuration
 - Underscore is now allowed for new parameter names (#153).
-- Manager now supports named queue paths. They are displayed along the edges and editable.
-- Double click edits the bot or the queue
-- Code cleanup: New modal window for performing multiple dialog actions. Intercepting visjs internals without using external Hammer library.
-- Enter key submits the edit bot dialog.
-- Clicking on the side-menu bot name cycles amongst bot instances in the canvas.
-- Got rid of the dumb "#load" and "#new" parameter → "#new" converted into a standard URL parameter "configuration=new".
-- Button to turn on/off physics
 
 #### Management
 
 #### Monitor
 * Fix link to monitor page (#157).
-* The new parameters panel that displays the bot's parameters on the bot's monitor page. For parameters which are filenames, the content of these files will be shown as text if they reside in the allowed paths (set in config.php).
-* When needed, Path column appears, resizing the Queues panel accordingly.
-* Connected with the configuration panel → a link appears next to the bot title that takes you directly to the bot
 
 #### Check
 
@@ -61,14 +109,6 @@ The version is compatible with intelmq >= 1.0.3
 
 ### Backend
 * Set content type correctly for JSON data in configuration loading (#112)
-* Using LESS for writing CSS (so CSS is now readonly)
-* Fix on several places: intervals won't flood server if there is a lag, they'll wait till previous request has finished. Auto-delay/boost depending on server lag.
-
-### Frontend
-* Error reporting in a less-disturbing text box rather than an tab-wide javascript alert. Click to enlarge, double click to hide.
-* Much more detailed Error reporting. What was earlier just mere 'SyntaxError: JSON.parse ...' has now included 'Failed to execute intelmqctl:~/.local/bin/intelmqctl --type json list queues' - see? That's a full command that'll help the developer so much in debugging. (Long error reports got automatically truncated to 200 characters.)
-* If an error appears again and again (redis down?) it blinks instead of spamming you, updates its time and show number of times it has been thrown.
-* Current tab marked in menu
 
 ### Pages
 * All pages are now deliverd by php, reducing the amount of duplicate code drastically.
@@ -79,27 +119,6 @@ The version is compatible with intelmq >= 1.0.3
 #### Configuration
 * Fixed handling of special parameter `run_mode` (#150)
 * Intelmqctl controller may be set via an env variable `INTELMQ_MANGER_CONTROLER_CMD`
-* New menu item linking selected bot with the monitor (just an icon to preserve space on precious menu bar). Supports ctrl+click to new tab on the whole button area.
-* New menu item to duplicate current bot, its queues included (and focus the new one); the new bot is selected and focused so that the user finds it on a big plan. It is inserted instead of the add button when a bot is selected.
-* You may now see live data, each bot has its queue length in the label
-* Button labels (Add bot, Add queue instead of Add node, Add edge) now makes more sense and won't shock a newcomer
-* Clearly visible bot statuses; if bot is not running, its colour is dimmed.
-
-
-### Management
-* Control buttons (start/stop...) now are not only part of the management tab but are common even for configuration tab and inspection panel in monitor tab. They need less configuration (thanks to $(document).on global configuration feature) and works better with less code used (single method instead of four of them). There is also a new red state 'error' for non-standard problems or invalid output from intelmqctl.
-* Clicking bot name support ctrl+click to new tab
-* Table doesn't redraw all the time (so that a highlighting of a browser search is preserved while clicking on a button)
-* Ot is now possible to start/stop a group of bots easily. Additional panels are linked, so that if you eg. start all the experts, but let other bots stopped, Experts panel shows that all bots are running and Botnet panel shows that only some bots are running.
-
-
-### Monitor
-* Fixed bot crawling in Monitor section (F5 will take you on the same page, not on the main monitoring page, permanent links, history browsing)
-* Prefer updating the destination queues overview table over redrawing it all the time (so that you can select some text)
-* Reloading a page sometimes caused a disturbing 'Error loading' alert in Firefox if an AJAX request had not yet been completed
-* Fixed bug: when clicking on bot destination queue in bot detail, we won't end in an undefined bot
-* Inspect panel allows you to communicate via debug functions of `intelmqctl` (see and inject messages, process single message and see output). Ctrl+Enter hits the Process button (hint included in textarea placeholder). Checkbox 'Inject message from above' marked on first text ever written to message textarea.
-
 
 #### Check
 * Added, showing the output of `intelmqctl check` (#118).
