@@ -24,6 +24,7 @@ CHANGELOG
 
 ### Documentation
 - Add a FAQ and add a section about the docker issue #160.
+- Add instructions for Debian 9, Ubuntu 18.04, and openSUSE Leap 42.3, 15.0 (#168).
 
 ### Third-party libraries
 
