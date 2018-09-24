@@ -1,7 +1,7 @@
 CHANGELOG
 =========
 
-1.0.2 (unreleased)
+1.0.2 (2018-09-24)
 ------------------
 
 ### Backend
@@ -10,28 +10,26 @@ CHANGELOG
 
 ### Pages
 
-#### Landing page
-
 #### Configuration
 - Underscore is now allowed for new parameter names (#153).
-
-#### Management
 
 #### Monitor
 * Fix link to monitor page (#157).
 
-#### Check
-
 ### Documentation
-- Add a FAQ and add a section about the docker issue #160.
+- Add a FAQ and add a section about the docker issue (#160).
 - Add instructions for Debian 9, Ubuntu 18.04, and openSUSE Leap 42.3, 15.0 (#168).
-
-### Third-party libraries
 
 ### Packaging
 - Include a positions file matching the default configuration of intelmq (#171).
 
 ### Known issues
+* Missing CSRF protection (#111).
+* Missing copyright notices (#140).
+* Graph jumps around on "Add edge" bug component (#148).
+* new runtime parameters with _ not possible (#153).
+* wrong error message for new bots with existing ID (#152).
+* Queue size for deleted queue remains displayed (#158).
 
 1.0.1 (2018-04-23)
 ------------------
