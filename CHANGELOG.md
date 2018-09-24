@@ -29,6 +29,7 @@ CHANGELOG
 ### Third-party libraries
 
 ### Packaging
+- Include a positions file matching the default configuration of intelmq (#171).
 
 ### Known issues
 
