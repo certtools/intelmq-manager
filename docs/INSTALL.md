@@ -4,6 +4,7 @@
 2. [Install Dependencies](#install-dependencies)
    * [Ubuntu 14.04 / Debian 8](#ubuntu-1404--debian-8)
    * [Ubuntu 16.04](#ubuntu-1604)
+   * [Ubuntu 18.04](#ubuntu-1804)
    * [CentOS 7](#centos-7)
    * [openSUSE Leap 42.2](#opensuse-leap-422)
 3. [Installation](#installation)
