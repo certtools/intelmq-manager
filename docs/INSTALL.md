@@ -47,7 +47,7 @@ If you are using native packages, you can simply skip this section as all depend
 apt-get install git apache2 php5 libapache2-mod-php5
 ```
 
-## Ubuntu 16.04
+## Ubuntu 16.04 / Debian 9
 
 ```bash
 apt-get install git apache2 php libapache2-mod-php7.0
@@ -56,7 +56,7 @@ apt-get install git apache2 php libapache2-mod-php7.0
 ## Ubuntu 18.04
 
 ```bash
-apt-get install git apache2 php libapache2-mod-php
+apt-get install git apache2 php libapache2-mod-php7.2
 ```
 
 ## CentOS 7
@@ -66,7 +66,7 @@ yum install epel-release
 yum install git httpd httpd-tools php
 ```
 
-## openSUSE Leap 42.2
+## openSUSE Leap 42.2 / 42.3 / 15.0
 
 ```bash
 yum install git apache2 apache2-utils apache2-mod_php7

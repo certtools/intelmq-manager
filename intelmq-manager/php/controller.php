@@ -80,7 +80,7 @@
 
     $command = sprintf($CONTROLLER, $arguments);
 
-    set_time_limit(10);
+    set_time_limit(20);
 
     $return = shell_exec($command);
 
