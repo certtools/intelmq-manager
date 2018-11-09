@@ -32,6 +32,7 @@ CHANGELOG
 - Got rid of the dumb "#load" and "#new" parameter → "#new" converted into a standard URL parameter "configuration=new".
 - Button to turn on/off physics
 - Detection for bots not configured in runtime but in pipeline configuration (#166).
+- Runtime parameters with the names 'group', 'name' or 'module' were not editable (they are read-only for the 'generic' section) (#172).
 
 #### Management
 * Control buttons (start/stop...) now are not only part of the management tab but are common even for configuration tab and inspection panel in monitor tab. They need less configuration (thanks to $(document).on global configuration feature) and works better with less code used (single method instead of four of them). There is also a new red state 'error' for non-standard problems or invalid output from intelmqctl.
@@ -59,7 +60,7 @@ CHANGELOG
 
 ### Known issues
 
-1.0.2 (unreleased)
+1.0.2 (2018-09-24)
 ------------------
 
 ### Backend
@@ -68,26 +69,26 @@ CHANGELOG
 
 ### Pages
 
-#### Landing page
-
 #### Configuration
 - Underscore is now allowed for new parameter names (#153).
-
-#### Management
 
 #### Monitor
 * Fix link to monitor page (#157).
 
-#### Check
-
 ### Documentation
-- Add a FAQ and add a section about the docker issue #160.
-
-### Third-party libraries
+- Add a FAQ and add a section about the docker issue (#160).
+- Add instructions for Debian 9, Ubuntu 18.04, and openSUSE Leap 42.3, 15.0 (#168).
 
 ### Packaging
+- Include a positions file matching the default configuration of intelmq (#171).
 
 ### Known issues
+* Missing CSRF protection (#111).
+* Missing copyright notices (#140).
+* Graph jumps around on "Add edge" bug component (#148).
+* new runtime parameters with _ not possible (#153).
+* wrong error message for new bots with existing ID (#152).
+* Queue size for deleted queue remains displayed (#158).
 
 1.0.1 (2018-04-23)
 ------------------

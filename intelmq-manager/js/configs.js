@@ -414,7 +414,7 @@ function insertKeyValue(key, value, section, allowXButtons, insertAt) {
     valueInput.setAttribute('type', 'text');
     valueInput.setAttribute('id', key);
 
-    if (disabledKeys.includes(key) === true) {
+    if (section == 'generic' && disabledKeys.includes(key) === true) {
         valueInput.setAttribute('disabled', "true");
     }
 
