@@ -3,20 +3,27 @@ NEWS
 
 See the changelog for a full list of changes.
 
+1.2.0 (unreleased)
+------------------
+
+
 1.0.1 (2018-09-24)
 ------------------
 
 No changes are required by administrators.
+
 
 1.0.0 (2018-04-23)
 ------------------
 
 No changes are required by administrators.
 
+
 0.3.1
 -----
 
 No changes are required by administrators.
+
 
 0.3
 ---

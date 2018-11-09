@@ -71,3 +71,5 @@ Add a new empty changelog section:
 
 ### Known issues
 ```
+
+And an empty section in the NEWS file.

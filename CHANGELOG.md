@@ -1,6 +1,32 @@
 CHANGELOG
 =========
 
+1.2.0 (unreleased)
+------------------
+
+### Backend
+
+### Pages
+
+#### Landing page
+
+#### Configuration
+
+#### Management
+
+#### Monitor
+
+#### Check
+
+### Documentation
+
+### Third-party libraries
+
+### Packaging
+
+### Known issues
+
+
 1.1.0 (unreleased)
 ------------------
 
