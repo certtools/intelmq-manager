@@ -9,7 +9,7 @@ $(function() {
 function resize_handler() {
     var window_height = (this.window.innerHeight > 0) ? this.window.innerHeight : this.screen.height;
     var window_width = (this.window.innerWidth > 0) ? this.window.innerWidth : this.screen.width;
-    
+
     // Resize body
     var body = document.getElementsByTagName('body')[0];
     body.style.height = window_height + "px";
@@ -24,7 +24,7 @@ function resize_handler() {
     var title_height = (window_height * 0.10);
     $('.page-header-text').css('font-size', title_height + "px");
     $('.page-header-text').css('line-height', (title_height * 2) + "px");
-    
+
     topOffset = 50;
     width = window_width;
     if (width < 768) {

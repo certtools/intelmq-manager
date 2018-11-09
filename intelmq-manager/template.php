@@ -28,6 +28,7 @@
 
         <!-- Custom CSS -->
         <link href="css/sb-admin-2.css" rel="stylesheet">
+        <link href="css/style.css" rel="stylesheet">
 
         <link rel="icon" type="image/png" href="images/logo2.png">
 
@@ -51,33 +52,37 @@
                 <!-- /.navbar-header -->
 
                 <ul class="nav navbar-top-links navbar-left">
-                    <li>
-                        <a href="?page=configs#load">
+                    <li <?= (($_GET["page"] === "configs") ? "class='active'" : "") ?>>
+                        <a href="?page=configs">
                             <span class="top-menu-text"><img src="./images/config.png" width="24px" height="24px">&nbsp;Configuration</span>
                         </a>
                     </li>
-                    <li>
+                    <li <?= (($_GET["page"] === "management") ? "class='active'" : "") ?>>
                         <a href="?page=management">
                             <span class="top-menu-text"><img src="./images/botnet.png" width="24px" height="24px">&nbsp;Management</span>
                         </a>
                     </li>
-                    <li>
+                    <li <?= (($_GET["page"] === "monitor") ? "class='active'" : "") ?>>
                         <a href="?page=monitor">
                             <span class="top-menu-text"><img src="./images/monitor.png" width="24px" height="24px">&nbsp;Monitor</span>
                         </a>
                     </li>
-                    <li>
+                    <li <?= (($_GET["page"] === "check") ? "class='active'" : "") ?>>
                         <a href="?page=check">
                             <span class="top-menu-text"><img src="./images/check.png" width="24px" height="24px">&nbsp;Check</span>
                         </a>
                     </li>
-                    <li>
+                    <li <?= (($_GET["page"] === "about") ? "class='active'" : "") ?>>
                         <a href="?page=about">
                             <span class="top-menu-text"><img src="./images/about.png" width="24px" height="24px">&nbsp;About</span>
                         </a>
                     </li>
                 </ul>
                 <!-- /.navbar-top-links -->
+                <div title="Click to expand. Double-Click to close." id='log-window'>
+                    <i role="close" class="fa fa-times"></i>
+                    <div class="contents"></div>
+                </div>
             </nav>
             <?php include("templates/$page.html"); ?>
 
@@ -92,12 +97,23 @@
 
             <!-- Custom Application JavaScript -->
             <?php
+            if($ALLOWED_PATH):
+                echo "<script>ALLOWED_PATH=\"$ALLOWED_PATH\";</script>";
+            endif;
             foreach ($libraries as $lib):
                 echo "<script src='$lib'></script>";
             endforeach;
             ?>
 
         </div>
+        <div id="common-templates">
+            <div class="control-buttons" data-bot-id="" data-botnet="">
+                <button type="submit" class="btn btn-default" title="Start" data-status-definition="starting" data-url="start"><span class="glyphicon glyphicon-play"></span></button>
+                <button type="submit" class="btn btn-default" title="Stop" data-status-definition="stopping" data-url="stop"><span class="glyphicon glyphicon-stop"></span></button>
+                <button type="submit" class="btn btn-default" title="Reload" data-status-definition="reloading" data-url="reload"><span class="glyphicon glyphicon-repeat"></span></button>
+                <button type="submit" class="btn btn-default" title="Restart" data-status-definition="restarting" data-url="restart"><span class="glyphicon glyphicon-refresh"></span></button>
+                <button type="submit" class="btn btn-default" title="Status" data-url="status"><span class="glyphicon glyphicon-arrow-down"></span></button>
+            </div>
+        </div>
     </body>
-
 </html>
