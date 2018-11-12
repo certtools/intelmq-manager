@@ -1,7 +1,7 @@
 CHANGELOG
 =========
 
-1.1.0 (unreleased)
+1.1.0 (2018-11-12)
 ------------------
 - Add generic MIT license text to make `reuse` license checker happy (#140).
 
@@ -16,8 +16,6 @@ CHANGELOG
 * Current tab marked in menu
 
 ### Pages
-
-#### Landing page
 
 #### Configuration
 * New menu item linking selected bot with the monitor (just an icon to preserve space on precious menu bar). Supports ctrl+click to new tab on the whole button area.
@@ -52,15 +50,10 @@ CHANGELOG
 * When needed, Path column appears, resizing the Queues panel accordingly.
 * Connected with the configuration panel → a link appears next to the bot title that takes you directly to the bot
 
-#### Check
-
-### Documentation
-
-### Third-party libraries
-
-### Packaging
-
 ### Known issues
+* Missing CSRF protection (#111).
+* Graph jumps around on "Add edge" bug component (#148).
+* wrong error message for new bots with existing ID (#152).
 
 1.0.2 (2018-09-24)
 ------------------
@@ -88,7 +81,6 @@ CHANGELOG
 * Missing CSRF protection (#111).
 * Missing copyright notices (#140).
 * Graph jumps around on "Add edge" bug component (#148).
-* new runtime parameters with _ not possible (#153).
 * wrong error message for new bots with existing ID (#152).
 * Queue size for deleted queue remains displayed (#158).
 
