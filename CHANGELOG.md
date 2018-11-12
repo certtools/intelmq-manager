@@ -33,6 +33,7 @@ CHANGELOG
 - Button to turn on/off physics
 - Detection for bots not configured in runtime but in pipeline configuration (#166).
 - Runtime parameters with the names 'group', 'name' or 'module' were not editable (they are read-only for the 'generic' section) (#172).
+- Message counter for removed queues is correctly reset (#158).
 
 #### Management
 * Control buttons (start/stop...) now are not only part of the management tab but are common even for configuration tab and inspection panel in monitor tab. They need less configuration (thanks to $(document).on global configuration feature) and works better with less code used (single method instead of four of them). There is also a new red state 'error' for non-standard problems or invalid output from intelmqctl.
