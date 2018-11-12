@@ -1,6 +1,32 @@
 CHANGELOG
 =========
 
+1.1.1 (unreleased)
+------------------
+
+### Backend
+
+### Pages
+
+#### Landing page
+
+#### Configuration
+
+#### Management
+
+#### Monitor
+
+#### Check
+
+### Documentation
+
+### Third-party libraries
+
+### Packaging
+
+### Known issues
+
+
 1.1.0 (2018-11-12)
 ------------------
 - Add generic MIT license text to make `reuse` license checker happy (#140).
