@@ -3,6 +3,7 @@ CHANGELOG
 
 1.1.0 (unreleased)
 ------------------
+- Add generic MIT license text to make `reuse` license checker happy (#140).
 
 ### Backend
 * Using LESS for writing CSS (so CSS is now readonly)
