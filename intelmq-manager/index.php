@@ -1,10 +1,11 @@
 <?php
 
-// Controller
+require 'php/config.php';
 
+// Controller
 // Get a whitelisted page
 $page = filter_input(INPUT_GET, "page", FILTER_SANITIZE_STRING);
-if(!in_array($page, ["about", "blank", "check", "configs", "homepage", "management", "monitor"])) {
+if (!in_array($page, ["about", "blank", "check", "configs", "homepage", "management", "monitor"])) {
     $page = "homepage";
 }
 
@@ -20,10 +21,15 @@ switch ($page) {
         $libraries[] = "js/about.js";
         break;
     case "management":
+        $libraries[] = "js/runtime.js";
         $libraries[] = "js/management.js";
         break;
     case "monitor":
-        $libraries[] = "js/monitor.js";
+        $libraries = array_merge($libraries, [
+            "js/runtime.js",
+            "js/pipeline.js",
+            "js/defaults.js",
+            "js/monitor.js"]);
         break;
     case "configs":
         $libraries = array_merge($libraries, ["plugins/vis.js/vis.js",
@@ -31,11 +37,12 @@ switch ($page) {
             "js/pipeline.js",
             "js/positions.js",
             "js/defaults.js",
-            "js/main.js"]);
+            "js/network-configuration.js",
+            "js/configs.js"]);
         break;
     case "check":
         $libraries[] = "js/check.js";
         break;
 }
 
-include("./php/template.php");
+include("./template.php");
