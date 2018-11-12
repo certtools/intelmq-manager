@@ -7,6 +7,15 @@ See the changelog for a full list of changes.
 ------------------
 
 
+1.1.1 (unreleased)
+------------------
+
+
+1.1.0 (2018-11-12)
+------------------
+
+No changes are required by administrators.
+
 1.0.1 (2018-09-24)
 ------------------
 

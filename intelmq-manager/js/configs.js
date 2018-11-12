@@ -883,8 +883,8 @@ function load_live_info() {
     return $.getJSON(MANAGEMENT_SCRIPT + '?scope=queues-and-status')
             .done(function (data) {
                 [bot_queues, bot_status] = data;
-                for (let bot in bot_queues) {
 
+                for (let bot in bot_queues) {
                     if ("source_queue" in bot_queues[bot]) {
                         // we skip bots without source queue (collectors)
                         let c = bot_queues[bot]['source_queue'][1] + bot_queues[bot]['internal_queue'];
@@ -895,8 +895,10 @@ function load_live_info() {
                             // update queue count on bot label
                             app.network_data.nodes.update({"id": bot, "label": label});
                         }
+                    } else {
+                        // https://github.com/certtools/intelmq-manager/issues/158
+                        app.network_data.nodes.update({"id": bot, "label": bot});
                     }
-
                 }
                 for (let bot in bot_status) {
                     // bots that are not running are grim coloured

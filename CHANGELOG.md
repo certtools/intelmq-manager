@@ -27,8 +27,35 @@ CHANGELOG
 ### Known issues
 
 
-1.1.0 (unreleased)
+1.1.1 (unreleased)
 ------------------
+
+### Backend
+
+### Pages
+
+#### Landing page
+
+#### Configuration
+
+#### Management
+
+#### Monitor
+
+#### Check
+
+### Documentation
+
+### Third-party libraries
+
+### Packaging
+
+### Known issues
+
+
+1.1.0 (2018-11-12)
+------------------
+- Add generic MIT license text to make `reuse` license checker happy (#140).
 
 ### Backend
 * Using LESS for writing CSS (so CSS is now readonly)
@@ -41,8 +68,6 @@ CHANGELOG
 * Current tab marked in menu
 
 ### Pages
-
-#### Landing page
 
 #### Configuration
 * New menu item linking selected bot with the monitor (just an icon to preserve space on precious menu bar). Supports ctrl+click to new tab on the whole button area.
@@ -59,6 +84,7 @@ CHANGELOG
 - Button to turn on/off physics
 - Detection for bots not configured in runtime but in pipeline configuration (#166).
 - Runtime parameters with the names 'group', 'name' or 'module' were not editable (they are read-only for the 'generic' section) (#172).
+- Message counter for removed queues is correctly reset (#158).
 
 #### Management
 * Control buttons (start/stop...) now are not only part of the management tab but are common even for configuration tab and inspection panel in monitor tab. They need less configuration (thanks to $(document).on global configuration feature) and works better with less code used (single method instead of four of them). There is also a new red state 'error' for non-standard problems or invalid output from intelmqctl.
@@ -76,15 +102,10 @@ CHANGELOG
 * When needed, Path column appears, resizing the Queues panel accordingly.
 * Connected with the configuration panel → a link appears next to the bot title that takes you directly to the bot
 
-#### Check
-
-### Documentation
-
-### Third-party libraries
-
-### Packaging
-
 ### Known issues
+* Missing CSRF protection (#111).
+* Graph jumps around on "Add edge" bug component (#148).
+* wrong error message for new bots with existing ID (#152).
 
 1.0.2 (2018-09-24)
 ------------------
@@ -112,7 +133,6 @@ CHANGELOG
 * Missing CSRF protection (#111).
 * Missing copyright notices (#140).
 * Graph jumps around on "Add edge" bug component (#148).
-* new runtime parameters with _ not possible (#153).
 * wrong error message for new bots with existing ID (#152).
 * Queue size for deleted queue remains displayed (#158).
 
