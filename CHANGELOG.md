@@ -45,6 +45,7 @@ CHANGELOG
 #### Check
 
 ### Documentation
+- Add SECURITY.md file.
 
 ### Third-party libraries
 
