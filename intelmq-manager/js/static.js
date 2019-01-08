@@ -81,9 +81,9 @@ if (!String.prototype.format) {
         var args = arguments;
         return this.replace(/{(\d+)}/g, function (match, number) {
             return typeof args[number] !== 'undefined'
-                    ? args[number]
-                    : match
-                    ;
+                ? args[number]
+                : match
+                ;
         });
     };
 }
@@ -98,11 +98,12 @@ $(function () {
     };
 
     $("#log-window")
-            .dblclick(closeFn).click(function () {
+        .dblclick(closeFn).click(function () {
         $(this).toggleClass("extended");
     });
     $("#log-window [role=close]").click(closeFn);
 });
+
 function show_error(string) {
     let d = new Date();
     let time = new Date().toLocaleTimeString().replace(/:\d+ /, ' ');
@@ -181,11 +182,13 @@ class Interval {
         }.bind(this);
         this.start();
     }
+
     start() {
         this.running = true;
         this.instance = setTimeout(this._delayed, this._delay);
         return this;
     }
+
     stop() {
         clearTimeout(this.instance);
         this.running = false;
@@ -276,25 +279,26 @@ $(document).on("click", ".control-buttons button", function () {
     $(this).siblings("[data-role=control-status]").trigger("update");
 
     $.getJSON(url)
-            .done((data) => {
-                if (bot) {
-                    // only restarting action returns an array of two values, the latter is important; otherwise, this is a string
-                    bot_status[bot] = Array.isArray(data) ? data.slice(-1)[0] : data;
-                } else {
-                    // we received a {bot => status} object
-                    Object.assign(bot_status, data); // merge to current list
-                }
-            })
-            .fail(function () {
-                ajax_fail_callback('Error {0} bot{1}'.format(bot_status[bot] || botnet_status[botnet], (!bot ? "net" : ""))).apply(null, arguments);
-                bot_status[bot] = BOT_STATUS_DEFINITION.error;
-            }).always(() => {
+        .done((data) => {
+            if (bot) {
+                // only restarting action returns an array of two values, the latter is important; otherwise, this is a string
+                bot_status[bot] = Array.isArray(data) ? data.slice(-1)[0] : data;
+            } else {
+                // we received a {bot => status} object
+                Object.assign(bot_status, data); // merge to current list
+            }
+        })
+        .fail(function () {
+            ajax_fail_callback('Error {0} bot{1}'.format(bot_status[bot] || botnet_status[botnet], (!bot ? "net" : ""))).apply(null, arguments);
+            bot_status[bot] = BOT_STATUS_DEFINITION.error;
+        }).always(() => {
         $(this).siblings("[data-role=control-status]").trigger("update");
         $('#botnet-panels [data-botnet-group=botnet] h4').removeClass('waiting');
         $(this).closest(".panel").find("h4").removeClass("waiting");
         callback_button(bot);
     });
 });
+
 /**
  * Public method to include control buttons to DOM.
  * @param {string} bot id
@@ -334,4 +338,27 @@ function getUrlParameter(sParam) {
             return sParameterName[1] === undefined ? true : sParameterName[1];
         }
     }
+}
+
+/**
+ * Accesskeyfie
+ * Turns visible [data-accesskey] to elements with accesskey and shows the accesskey with an underscore if possible.
+ */
+function accesskeyfie() {
+    let seen = new Set();
+    $("[data-accesskey]").attr("accesskey", ""); // reset all accesskeys. In Chrome, there might be only one accesskey 'e' on page.
+    $("[data-accesskey]:visible").each(function () {
+        let key = $(this).attr("data-accesskey");
+        if (seen.has(key)) {
+            return false; // already defined at current page state
+        }
+        seen.add(key);
+        $(this).attr("accesskey", key);
+        // add underscore to the accesskeyed letter if possible (can work badly with elements having nested DOM children)
+        let t1 = $(this).text()
+        let t2 = t1.replace(new RegExp(key, "i"), (match) => `<u>${match}</u>`)
+        if (t1 != t2) {
+            $(this).html(t2);
+        }
+    });
 }
