@@ -125,12 +125,12 @@ var NETWORK_OPTIONS = {
             }
 
             app.edges[data.id] = {'from': data.from, 'to': data.to};
-            $saveButton.blinking();
+            $saveButton.blinking(data.from);
         },
         deleteEdge: function (data, callback) {
+            $saveButton.blinking(app.edges[data["edges"][0]].from);
             delete app.edges[data["edges"][0]];
             callback(data);
-            $saveButton.blinking();
         }
     },
     layout: {
