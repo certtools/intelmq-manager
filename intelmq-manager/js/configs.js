@@ -753,7 +753,9 @@ function initNetwork(includePositions = true) {
             reload_queues.start();
         }
     }).click();
-    let physics_running = true;
+    let physics_running = false;
+    app.network.setOptions({physics: (physics_running = false)});
+    $(".vis-physics-toggle", $nc).toggleClass("running");
     $(".vis-physics-toggle", $nc).click(function () {
         $(this).toggleClass("running");
         app.network.setOptions({physics: (physics_running = !physics_running)});
