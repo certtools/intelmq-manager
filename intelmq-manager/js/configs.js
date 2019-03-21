@@ -844,6 +844,22 @@ function initNetwork(includePositions = true) {
                 editPath(app, edges[0]);
             }).insertBefore($(".vis-delete"));
         }
+        // refresh shortcuts
+        // (it is so hard to click on the 'Add Node' button we rather register click event)
+        $(".vis-add .vis-label", $manipulation).attr("data-accesskey", "t").click(function () {
+            // We use 't' for 'Add bot' and 'Duplicate' because that's a common letter.
+            app.network.addNodeMode();
+        });
+        $(".vis-connect .vis-label", $manipulation).attr("data-accesskey", "q").click(function () {
+            app.network.addEdgeMode();
+        })
+        $(".vis-delete .vis-label", $manipulation).attr("data-accesskey", "d").click(function () {
+            app.network.deleteSelected();
+        });
+        $(".vis-edit .vis-label", $manipulation).attr("data-accesskey", "e").click(function () {
+            app.network.editNode();
+        });
+        accesskeyfie();
     };
     // redraw immediately so that even the first click on the network is aware of that new monkeypatched function
     app.network.manipulation.showManipulatorToolbar();

@@ -38,6 +38,8 @@ CHANGELOG
 #### Landing page
 
 #### Configuration
+- Allow standard vis.js arrow and +/- navigation when network chart is focused.
+- Underscored letters denote shortcuts - you can now edit the network without wandering the mouse all around the screen.
 
 #### Management
 

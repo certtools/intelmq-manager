@@ -18,13 +18,15 @@ You will be able to see the pipeline in a graph-like visualisation similar to th
 ![Main Interface](docs/screenshots/configuration.png?raw=true "Main Interface")
 
 #### Bots Configuration
-When you add a node or edit one you'll be presented with a form with the available parameters for a bot. There you can easily change the parameters as show in the screenshot:
+When you add a node or edit one you'll be presented with a form with the available parameters for a bot. There you can easily change the parameters as shown in the screenshot:
 
 ![Parameter editing](docs/screenshots/configuration2.png?raw=true "Parameter editing")
 
 After editing the bots' configuration and pipeline, simply click "Save Configuration" to automatically write the changes to the correct files.  The configurations are now ready to be deployed.
 
 **Note well**: if you do not press "Save Configuration" your changes will be lost whenever you reload the web page or move between different tabs within the IntelMQ manager page.
+
+Any underscored letter denotes access key shortcut (ex: <kbd>Alt + (Shift) + letter</kbd>).
 
 #### Botnet Management
 When you save a configuration you can go to the 'Management' section to see what bots are running and start/stop the entire botnet, or a single bot.

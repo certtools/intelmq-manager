@@ -1,6 +1,6 @@
 /**
  * Big variable options, passed to vis library.
- * There is also all the manipulation methods.
+ * There are also all the manipulation methods.
  */
 
 var NETWORK_OPTIONS = {
@@ -17,7 +17,10 @@ var NETWORK_OPTIONS = {
     },
     interaction: {
         tooltipDelay: 1000,
-        navigationButtons: true
+        navigationButtons: true,
+        keyboard: {
+            bindToWindow: false
+        }
     },
     nodes: {
         font: {
