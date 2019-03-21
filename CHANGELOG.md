@@ -11,6 +11,7 @@ CHANGELOG
 #### Landing page
 
 #### Configuration
+- "Save Configuration" button reloads the bots whose destination queues changed (#175).
 
 #### Management
 
@@ -37,7 +38,6 @@ CHANGELOG
 #### Landing page
 
 #### Configuration
-- "Save Configuration" button reloads the bots whose destination queues changed.
 
 #### Management
 

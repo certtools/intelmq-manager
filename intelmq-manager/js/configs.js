@@ -779,7 +779,7 @@ function initNetwork(includePositions = true) {
             promises.push($.getJSON(url));
         }
         Promise.all(promises).then(()=>{
-            show_error("Successfully reloaded bots: " + bots.join(", "));
+            show_error("Reloaded bots: " + bots.join(", "));
             bots.length = 0;
         });
     };
