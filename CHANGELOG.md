@@ -14,10 +14,12 @@ CHANGELOG
 - "Save Configuration" button reloads the bots whose destination queues changed (#175).
 - Allow standard vis.js arrow and +/- navigation when network chart is focused (#176).
 - Underscored letters denote shortcuts - you can now edit the network without wandering the mouse all around the screen (#176).
+- Correctly load JSON parameters when editing a bot: content instead of '[object Object]' string.
 
 #### Management
 
 #### Monitor
+- Correctly display JSON parameters: content instead of '[object Object]' string.
 
 #### Check
 

@@ -401,9 +401,13 @@ function refresh_configuration_info(bot_id) {
     }
     var params = app.nodes[bot_id].parameters;
     for (let key in params) {
-        $el = $("<li><b>" + key + "</b>: " + params[key] + "</li>");
-        if (params[key].indexOf && params[key].indexOf(ALLOWED_PATH) === 0) {
-            let url = LOAD_CONFIG_SCRIPT + "?file=" + params[key];
+        let param = params[key];
+        if (param !== null && typeof value === "object") { // display json/list instead of "[Object object]"
+            param = JSON.stringify(param);
+        }
+        $el = $(`<li><b>${key}</b>: ${param}</li>`);
+        if (param && param.indexOf && param.indexOf(ALLOWED_PATH) === 0) {
+            let url = LOAD_CONFIG_SCRIPT + "?file=" + param;
             $.getJSON(url, (data) => {
                 let html = "";
                 if (data.directory) {
