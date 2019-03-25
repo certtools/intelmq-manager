@@ -781,10 +781,12 @@ function initNetwork(includePositions = true) {
             let url = `${MANAGEMENT_SCRIPT}?scope=bot&action=reload&id=${bot_id}`;
             promises.push($.getJSON(url));
         }
-        Promise.all(promises).then(()=>{
-            show_error("Reloaded bots: " + bots.join(", "));
-            bots.length = 0;
-        });
+        if (promises.length) {
+            Promise.all(promises).then(()=>{
+                show_error("Reloaded bots: " + bots.join(", "));
+                bots.length = 0;
+            });
+        }
     };
 
     // 'Clear Configuration' button
