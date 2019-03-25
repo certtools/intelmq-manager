@@ -451,6 +451,9 @@ function insertKeyValue(key, value, section, allowXButtons, insertAt) {
     valueCell.appendChild(valueInput);
 
     keyCell.innerHTML = key;
+    if (value !== null && typeof value === "object") {
+               value = JSON.stringify(value);
+    }
     valueInput.setAttribute('value', value);
 }
 
