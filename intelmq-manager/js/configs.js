@@ -922,7 +922,8 @@ function load_live_info() {
             for (let bot in bot_queues) {
                 if ("source_queue" in bot_queues[bot]) {
                     // we skip bots without source queue (collectors)
-                    let c = bot_queues[bot]['source_queue'][1] + bot_queues[bot]['internal_queue'];
+                    // Assume an empty internal queue if no data is given (The AMQP pipeline does not have/need internal queues)
+                    let c = bot_queues[bot]['source_queue'][1] + (bot_queues[bot]['internal_queue'] || 0);
                     let label = (c > 0) ? "{0}\n{1}✉".format(bot, c) : bot;
                     if ((appbot = app.network_data.nodes.get(bot)) === null) {
                         show_error("Non-existent bot {0} in pipelines.".format(bot));
