@@ -452,7 +452,7 @@ function insertKeyValue(key, value, section, allowXButtons, insertAt) {
 
     keyCell.innerHTML = key;
     if (value !== null && typeof value === "object") {
-               value = JSON.stringify(value);
+        value = JSON.stringify(value);
     }
     valueInput.setAttribute('value', value);
 }
@@ -777,12 +777,12 @@ function initNetwork(includePositions = true) {
         $(this).removeClass('vis-save-blinking');
         let promises = [];
         let bots = $.unique($(this).data("reloadables"));
-        for(let bot_id of bots) {
+        for (let bot_id of bots) {
             let url = `${MANAGEMENT_SCRIPT}?scope=bot&action=reload&id=${bot_id}`;
             promises.push($.getJSON(url));
         }
         if (promises.length) {
-            Promise.all(promises).then(()=>{
+            Promise.all(promises).then(() => {
                 show_error("Reloaded bots: " + bots.join(", "));
                 bots.length = 0;
             });
@@ -905,11 +905,32 @@ window.onresize = resize;
  * This function fetches the current info and updates bot nodes on the graph
  */
 function refresh_color(bot) {
-    if (bot_status_previous[bot] !== bot_status[bot]) {
-        let col = GROUP_COLORS[app.nodes[bot].group][(bot_status[bot] === "running") ? 0 : 1];
+    if (bot_status_previous[bot] !== bot_status[bot]) { // status changed since last time
+
+        // we use light colour if we expect bot will be running
+        // (when reloading from stopped state bot will not be running)
+        let col = GROUP_COLORS[app.nodes[bot].group][([
+            BOT_STATUS_DEFINITION.running,
+            BOT_STATUS_DEFINITION.starting,
+            BOT_STATUS_DEFINITION.restarting,
+            bot_status_previous[bot] === BOT_STATUS_DEFINITION.running ? BOT_STATUS_DEFINITION.reloading : 0
+        ].indexOf(bot_status[bot]) > -1) ? 0 : 1];
+
+        // change bot color if needed
         if (app.network_data.nodes.get([bot])[0].color !== col) {
             app.network_data.nodes.update({"id": bot, "color": col});
         }
+
+        // we dash the border if the status has to be changed (not running or stopping) or is faulty (error, incomplete)
+        if ([BOT_STATUS_DEFINITION.running, BOT_STATUS_DEFINITION.stopped].indexOf(bot_status[bot]) === -1) {
+            app.network_data.nodes.update({"id": bot, shapeProperties: {borderDashes: [5, 5]}})
+        } else if ([BOT_STATUS_DEFINITION.running, BOT_STATUS_DEFINITION.stopped, undefined].indexOf(bot_status_previous[bot]) === -1) {
+            // we remove dash border since bot has been in a dash-border state and is no more
+            // (that means that bot wasn't either in a running, stopped or initially undefined state)
+            app.network_data.nodes.update({"id": bot, shapeProperties: {"borderDashes": false}});
+        }
+
+        bot_status_previous[bot] = bot_status[bot];
     }
 }
 
@@ -939,7 +960,6 @@ function load_live_info() {
                 // bots that are not running are grim coloured
                 refresh_color(bot);
             }
-            bot_status_previous = $.extend({}, bot_status); // we need a shallow copy of a state, it's too slow to ask `app` every time
         })
         .fail(ajax_fail_callback('Error loading bot queues information'))
         .always(() => {
