@@ -56,8 +56,8 @@ var RUNTIME_FILE = LOAD_CONFIG_SCRIPT + "?file=runtime";
 var SYSTEM_FILE = LOAD_CONFIG_SCRIPT + "?file=system";
 var POSITIONS_FILE = LOAD_CONFIG_SCRIPT + "?file=positions";
 
-var RELOAD_QUEUES_EVERY = 1; /* 2 seconds */
-var RELOAD_LOGS_EVERY = 300; /* 300 seconds */
+var RELOAD_QUEUES_EVERY = 1; /* 1 seconds */
+var RELOAD_LOGS_EVERY = 3; /* 3 seconds */
 var LOAD_X_LOG_LINES = 30;
 
 var MESSAGE_LENGTH = 200;
@@ -243,7 +243,8 @@ var BOT_CLASS_DEFINITION = {
     'reloading': 'warning',
     'restarting': 'warning',
     'incomplete': 'warning',
-    'error': 'danger'
+    'error': 'danger',
+    'disabled': 'ligth'
 };
 var BOT_STATUS_DEFINITION = {
     'starting': 'starting',
@@ -258,24 +259,23 @@ var BOT_STATUS_DEFINITION = {
 
 var botnet_status = {}; // {group | true (for whole botnet) : BOT_STATUS_DEFINITION}
 var bot_status = {}; // {bot-id : BOT_STATUS_DEFINITION}
-var bot_status_previous = {};
+var bot_status_previous = {}; // we need a shallow copy of bot_status, it's too slow to ask `app` every time
 var bot_definition = {};// {bot-id : runtime information (group, ...)}; only management.js uses this in time
 
 $(document).on("click", ".control-buttons button", function () {
     let bot = $(this).parent().attr("data-bot-id");
     let botnet = $(this).parent().attr("data-botnet");
-    let callback_button = $(this).parent().data("callback-button");
-    $('#botnet-panels [data-botnet-group=botnet] h4').addClass('waiting'); // XXX panel
-    $(this).closest(".panel").find("h4").addClass("waiting");
+    let callback_fn = $(this).parent().data("callback_fn");
     let url;
     if (bot) {
+        bot_status_previous[bot] = bot_status[bot];
         bot_status[bot] = $(this).attr("data-status-definition");
         url = '{0}?scope=bot&action={1}&id={2}'.format(MANAGEMENT_SCRIPT, $(this).attr("data-url"), bot);
     } else {
         botnet_status[botnet] = $(this).attr("data-status-definition");
         url = '{0}?scope=botnet&action={1}&group={2}'.format(MANAGEMENT_SCRIPT, $(this).attr("data-url"), botnet);
     }
-    callback_button();
+    callback_fn.call(this, bot||botnet, 0);
     $(this).siblings("[data-role=control-status]").trigger("update");
 
     $.getJSON(url)
@@ -293,9 +293,7 @@ $(document).on("click", ".control-buttons button", function () {
             bot_status[bot] = BOT_STATUS_DEFINITION.error;
         }).always(() => {
         $(this).siblings("[data-role=control-status]").trigger("update");
-        $('#botnet-panels [data-botnet-group=botnet] h4').removeClass('waiting');
-        $(this).closest(".panel").find("h4").removeClass("waiting");
-        callback_button(bot);
+        callback_fn.call(this, bot||botnet, 1);
     });
 });
 
@@ -303,13 +301,14 @@ $(document).on("click", ".control-buttons button", function () {
  * Public method to include control buttons to DOM.
  * @param {string} bot id
  * @param {string} botnet Manipulate the whole botnet or a group. Possible values: "botnet", "collectors", "parsers", ... Parameter bot_id should be null.
- * @param {fn} This function is called when a (start or other) button gets clicked AND when launched ajax gets completed. Receives bot-id parameter.
  * @param {bool} status_info If true, dynamic word containing current status is inserted.
+ * @param {fn} Fn (this = button clicked, bot-id|botnet, status = 0|1)
+ *              Launched when a button is clicked (status 0) and callback after AJAX completed (status 1).
  * @returns {$jQuery}
  */
-function generate_control_buttons(bot, botnet = null, callback_button = null, status_info = false) {
-    $el = $("#common-templates .control-buttons").clone().data("callback-button", callback_button || (() => {
-    }));
+function generate_control_buttons(bot = null, botnet = null, callback_fn = null, status_info = false) {
+    let $el = $("#common-templates .control-buttons").clone()
+        .data("callback_fn", callback_fn || (() => {}));
     if (bot) {
         $el.attr("data-bot-id", bot);
         $el.attr("data-botnet", "botnet");

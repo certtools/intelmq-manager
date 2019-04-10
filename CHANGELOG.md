@@ -15,11 +15,16 @@ CHANGELOG
 - Allow standard vis.js arrow and +/- navigation when network chart is focused (#176).
 - Underscored letters denote shortcuts - you can now edit the network without wandering the mouse all around the screen (#176).
 - Correctly load JSON parameters when editing a bot: content instead of '[object Object]' string.
+- Handle not explicitly given internal queues.
+- When changing state or being disabled or erroneous, bot receives dashed border.
 
 #### Management
 
 #### Monitor
 - Correctly display JSON parameters: content instead of '[object Object]' string.
+- Reloading logs fixed
+- Reloading logs every 3 sec instead of 300 sec
+- Auto-reloading logs after bot started/stopped
 
 #### Check
 

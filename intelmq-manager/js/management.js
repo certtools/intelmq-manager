@@ -43,13 +43,22 @@ $(function () {
     });
 });
 
-function refresh_status() {
+function refresh_status(bot, status) {
+    if(status === 0) {
+        $('#botnet-panels [data-botnet-group=botnet] h4').addClass('waiting');  // highlight "Whole Botnet Status"
+        $(this).closest(".panel").find("h4").addClass("waiting"); // highlight current Panel (ex: Parsers)
+    } else {
+        $('#botnet-panels [data-botnet-group=botnet] h4').removeClass('waiting');
+        $(this).closest(".panel").find("h4").removeClass("waiting");
+    }
+
     // Refresh bot table
     let redraw_table = false;
     for (let bot_id in bot_status) {
         let class_ = BOT_CLASS_DEFINITION[bot_status[bot_id]];
         let status = bot_status[bot_id];
-        if ((el = $("tr[data-bot-id={0}]".format(bot_id), $bt)).length) {
+        let el = $("tr[data-bot-id={0}]".format(bot_id), $bt);
+        if (el.length) {
             // row exist, just update the status
             if (!el.hasClass(class_)) {// class of this bot changes
                 for (let state of Object.values(BOT_CLASS_DEFINITION)) { // remove any other status-class
@@ -59,14 +68,13 @@ function refresh_status() {
                 $("td:eq(1)", el).text(status);
             }
         } else {
-            bot_row = {
+            $bt.dataTable().api().row.add({
                 'bot_id': bot_id,
                 'bot_status': status,
                 'actions': "",
                 'DT_RowClass': class_,
                 "DT_RowAttr": {"data-bot-id": bot_id}
-            };
-            $bt.dataTable().api().row.add(bot_row);
+            });
             redraw_table = true;
         }
 
@@ -80,8 +88,8 @@ function refresh_status() {
 
 
     // Refresh botnet panels
-    var atLeastOneStopped = {};
-    var atLeastOneRunning = {};
+    let atLeastOneStopped = {};
+    let atLeastOneRunning = {};
     for (let bot_id in bot_status) { // analyze all bots status
         if (bot_status[bot_id] === BOT_STATUS_DEFINITION.stopped) {
             atLeastOneStopped["botnet"] = atLeastOneStopped[GROUPNAME_TO_GROUP[bot_definition[bot_id].group]] = true;
@@ -89,7 +97,7 @@ function refresh_status() {
             atLeastOneRunning["botnet"] = atLeastOneRunning[GROUPNAME_TO_GROUP[bot_definition[bot_id].group]] = true;
         }
     }
-    get_group_status = function (stopped, running) {
+    let get_group_status = function (stopped, running) {
         if (stopped && running) {
             return BOT_STATUS_DEFINITION.incomplete;
         } else if (stopped && !running) {
