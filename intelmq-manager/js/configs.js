@@ -276,15 +276,25 @@ function save_data_on_files() {
 // Prepare data from configuration files to be used in Vis
 
 function convert_edges(edges) {
-    var new_edges = [];
-
-    for (index in edges) {
-        var new_edge = {};
+    let new_edges = [];
+    let roundness = {};
+    for (let index in edges) {
+        let new_edge = {};
         new_edge.id = edges[index]['id'];
         new_edge.from = edges[index]['from'];
         new_edge.to = edges[index]['to'];
-
         new_edge.label = edges[index]['path'];
+
+        // if there is multiple edges between nodes we have to distinguish them manually, see https://github.com/almende/vis/issues/1957
+        let hash = new_edge.from + new_edge.to;
+        if (hash in roundness) {
+            roundness[hash] += 0.3;
+        } else {
+            roundness[hash] = 0;
+        }
+        if (roundness[hash]) {
+            new_edge.smooth = {type: "curvedCCW", "roundness": roundness[hash]};
+        }
 
         new_edges.push(new_edge);
     }
