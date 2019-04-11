@@ -611,28 +611,15 @@ div.vis-network div.vis-save {
   user-select: none;
 }
 
-div.vis-network div.vis-save-blinking {
-  border-radius: 10px;
-  position:absolute;
-  right: -10px;
-  top: 35px;
-  white-space: nowrap;
-  padding-bottom: 5px;
-  padding-left: 5px;
-  padding-top: 5px;
-
-  cursor: pointer;
-  -webkit-touch-callout: none;
-  -webkit-user-select: none;
-  -khtml-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
-  user-select: none;
-
+div.vis-network div.vis-save.vis-save-blinking {
   -webkit-animation: blinking 1500ms infinite;
   -moz-animation: blinking 1500ms infinite;
   -o-animation: blinking 1500ms infinite;
   animation: blinking 1500ms infinite;
+}
+
+div.vis-network div.vis-save.blinking-once {
+    animation: blinking 1000ms 2;
 }
 
 div.vis-network div.vis-save:hover {

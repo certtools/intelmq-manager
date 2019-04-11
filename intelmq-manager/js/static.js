@@ -66,6 +66,11 @@ var MONITOR_BOT_URL = "?page=monitor&bot_id={0}";
 
 var page_is_exiting = false;
 
+var settings = {
+    physics : null, // by default, physics is on depending on bot count
+    live : true, // by default on
+};
+
 $(window).on('unload', function () {
     page_is_exiting = true;
 });
