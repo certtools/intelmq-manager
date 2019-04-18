@@ -8,6 +8,7 @@ require 'util.php';
 $scope = '';
 $id = '';
 $json_wanted = true;
+$cache = false;
 
 if (array_key_exists('scope', $_GET)) {
     $scope = $_GET['scope'];
@@ -72,10 +73,13 @@ if ($scope == 'botnet') {
         $level = 'DEBUG';
     }
 
+    $cache = true;
     $arguments = 'log ' . escapeshellcmd($id) . ' ' . escapeshellcmd((int) ($lines)) . ' ' . escapeshellcmd($level);
 } else if ($scope == 'queues') {
+    $cache = true;
     $arguments = 'list queues';
 } else if ($scope == 'queues-and-status') {
+    $cache = true;
     $arguments = 'list queues-and-status';
 } else if ($scope == 'version') {
     $arguments = '--version';
@@ -124,6 +128,14 @@ if ($scope == 'botnet') {
 /**
  * Final command here
  */
+if($cache) {
+    $seconds_to_cache = 3;
+    $ts = gmdate("D, d M Y H:i:s", time() + $seconds_to_cache) . " GMT";
+    header("Expires: $ts");
+    header("Pragma: cache");
+    header("Cache-Control: max-age=$seconds_to_cache");
+}
+
 if($json_wanted) {
     $c = $CONTROLLER_JSON;
     header('Content-Type: application/json');
