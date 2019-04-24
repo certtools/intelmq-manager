@@ -19,6 +19,7 @@ CHANGELOG
 - When changing state or being disabled or erroneous, bot receives dashed border.
 
 #### Management
+- Clicking an action on a bot will make group pane correspond immediately
 
 #### Monitor
 - Correctly display JSON parameters: content instead of '[object Object]' string.

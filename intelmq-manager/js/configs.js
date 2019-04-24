@@ -747,13 +747,8 @@ function initNetwork(includePositions = true) {
     $("#templates .network-right-menu").clone().insertAfter($manipulation);
     $nc = $("#network-container");
     $(".vis-live-toggle", $nc).click(function () {
-        if (reload_queues.running) {
-            $(this).removeClass("running");
-            reload_queues.stop();
-        } else {
-            $(this).addClass("running");
-            reload_queues.start();
-        }
+        $(this).toggleClass("running", !reload_queues.running);
+        reload_queues.toggle(!reload_queues.running);
     }).click();
     let physics_running = true;
     $(".vis-physics-toggle", $nc).click(function () {

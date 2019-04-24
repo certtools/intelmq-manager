@@ -17,20 +17,22 @@ function generate_runtime_conf(nodes) {
 }
 
 function read_runtime_conf(config) {
-    var nodes = {};
-    for (id in config) {
-        var bot = config[id];
-        nodes[id] = bot;
-        nodes[id]['id'] = id;
+    bot_definition = config;
+    let nodes = {};
+    for (let bot_id in config) {
+        bot_definition[bot_id].groupname = GROUPNAME_TO_GROUP[bot_definition[bot_id].group]; // translate ex: `Parser` to `parsers`
+        let bot = config[bot_id];
+        nodes[bot_id] = bot;
+        nodes[bot_id]['bot_id'] = bot_id;
         if ('enabled' in bot) {
-            nodes[id]['enabled'] = bot['enabled'];
+            nodes[bot_id]['enabled'] = bot['enabled'];
         } else {
-            nodes[id]['enabled'] = true;
+            nodes[bot_id]['enabled'] = true;
         }
         if ('run_mode' in bot) {
-            nodes[id]['run_mode'] = bot['run_mode'];
+            nodes[bot_id]['run_mode'] = bot['run_mode'];
         } else {
-            nodes[id]['run_mode'] = 'continuous';
+            nodes[bot_id]['run_mode'] = 'continuous';
         }
     }
 

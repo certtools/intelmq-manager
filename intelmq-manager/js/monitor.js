@@ -282,12 +282,12 @@ function select_bot(bot_id, history_push = false) {
 
     $("tr", $dq).remove(); // make destination table rebuild itself
 
-    if (reload_queues != null) {
-        clearInterval(reload_queues);
+    if (reload_queues) {
+        reload_queues.stop();
     }
 
-    if (reload_logs != null) {
-        clearInterval(reload_logs);
+    if (reload_logs) {
+        reload_logs.stop();
     }
 
     $('#monitor-target').html(bot_id);
