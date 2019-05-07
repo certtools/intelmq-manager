@@ -56,8 +56,9 @@ var RUNTIME_FILE = LOAD_CONFIG_SCRIPT + "?file=runtime";
 var SYSTEM_FILE = LOAD_CONFIG_SCRIPT + "?file=system";
 var POSITIONS_FILE = LOAD_CONFIG_SCRIPT + "?file=positions";
 
-var RELOAD_QUEUES_EVERY = 1; /* 2 seconds */
-var RELOAD_LOGS_EVERY = 300; /* 300 seconds */
+var RELOAD_QUEUES_EVERY = 1; /* 1 seconds */
+var RELOAD_LOGS_EVERY = 3; /* 3 seconds */
+var RELOAD_STATE_EVERY = 3; /* 3 seconds */
 var LOAD_X_LOG_LINES = 30;
 
 var MESSAGE_LENGTH = 200;
@@ -169,7 +170,7 @@ class Interval {
      * @param {type} fn
      * @param {type} delay
      * @param {bool} blocking If true, the fn is an AJAX call. The fn will not be called again unless it calls `this.blocking = false` when AJAX is finished.
-     *      You may wont to include `.always(() => {this.blocking = false;})` after the AJAX call. (In 'this' should be instance of the Interval object.)
+     *      You may want to include `.always(() => {this.blocking = false;})` after the AJAX call. (In 'this' should be instance of the Interval object.)
      *
      *      (Note that we preferred that.blocking setter over method unblock() because interval function
      *      can be called from other sources than this class (ex: at first run) and a non-existent method would pose a problem.)
@@ -189,6 +190,7 @@ class Interval {
     }
 
     start() {
+        this.stop();
         this.running = true;
         this.instance = setTimeout(this._delayed, this._delay);
         return this;
@@ -197,6 +199,32 @@ class Interval {
     stop() {
         clearTimeout(this.instance);
         this.running = false;
+        return this;
+    }
+
+    /**
+     * Launch callback function now, reset and start the interval.
+     * @return {Interval}
+     */
+    call_now() {
+        this.stop();
+        this._delayed();
+        this.start();
+        return this;
+    }
+
+    /**
+     * Start if stopped or vice versa.
+     * @param start If defined, true to be started or vice versa.
+     */
+    toggle(start = null) {
+        if (start === null) {
+            this.toggle(!this.running);
+        } else if (start) {
+            this.start();
+        } else {
+            this.stop();
+        }
         return this;
     }
 
@@ -248,7 +276,9 @@ var BOT_CLASS_DEFINITION = {
     'reloading': 'warning',
     'restarting': 'warning',
     'incomplete': 'warning',
-    'error': 'danger'
+    'error': 'danger',
+    'disabled': 'ligth',
+    'unknown': 'warning'
 };
 var BOT_STATUS_DEFINITION = {
     'starting': 'starting',
@@ -258,20 +288,19 @@ var BOT_STATUS_DEFINITION = {
     'reloading': 'reloading',
     'restarting': 'restarting',
     'incomplete': 'incomplete',
-    'error': 'error'
+    'error': 'error',
+    'unknown': 'unknown'
 };
 
 var botnet_status = {}; // {group | true (for whole botnet) : BOT_STATUS_DEFINITION}
 var bot_status = {}; // {bot-id : BOT_STATUS_DEFINITION}
-var bot_status_previous = {};
+var bot_status_previous = {}; // we need a shallow copy of bot_status, it's too slow to ask `app` every time
 var bot_definition = {};// {bot-id : runtime information (group, ...)}; only management.js uses this in time
 
 $(document).on("click", ".control-buttons button", function () {
     let bot = $(this).parent().attr("data-bot-id");
-    let botnet = $(this).parent().attr("data-botnet");
-    let callback_button = $(this).parent().data("callback-button");
-    $('#botnet-panels [data-botnet-group=botnet] h4').addClass('waiting'); // XXX panel
-    $(this).closest(".panel").find("h4").addClass("waiting");
+    let botnet = $(this).parent().attr("data-botnet-group");
+    let callback_fn = $(this).parent().data("callback_fn");
     let url;
     if (bot) {
         bot_status[bot] = $(this).attr("data-status-definition");
@@ -279,17 +308,21 @@ $(document).on("click", ".control-buttons button", function () {
     } else {
         botnet_status[botnet] = $(this).attr("data-status-definition");
         url = '{0}?scope=botnet&action={1}&group={2}'.format(MANAGEMENT_SCRIPT, $(this).attr("data-url"), botnet);
+        for (let bot_d of Object.values(bot_definition)) {
+            if (bot_d.groupname === botnet) {
+                bot_status[bot_d.bot_id] = $(this).attr("data-status-definition");
+            }
+        }
+
     }
-    callback_button();
+    callback_fn.call(this, bot || botnet, 0);
     $(this).siblings("[data-role=control-status]").trigger("update");
 
     $.getJSON(url)
-        .done((data) => {
-            if (bot) {
-                // only restarting action returns an array of two values, the latter is important; otherwise, this is a string
+        .done(function (data) {
+            if (bot) { // only restarting action returns an array of two values, the latter is important; otherwise, this is a string
                 bot_status[bot] = Array.isArray(data) ? data.slice(-1)[0] : data;
-            } else {
-                // we received a {bot => status} object
+            } else { // we received a {bot => status} object
                 Object.assign(bot_status, data); // merge to current list
             }
         })
@@ -298,33 +331,33 @@ $(document).on("click", ".control-buttons button", function () {
             bot_status[bot] = BOT_STATUS_DEFINITION.error;
         }).always(() => {
         $(this).siblings("[data-role=control-status]").trigger("update");
-        $('#botnet-panels [data-botnet-group=botnet] h4').removeClass('waiting');
-        $(this).closest(".panel").find("h4").removeClass("waiting");
-        callback_button(bot);
+        callback_fn.call(this, bot || botnet, 1);
     });
 });
 
 /**
  * Public method to include control buttons to DOM.
- * @param {string} bot id
- * @param {string} botnet Manipulate the whole botnet or a group. Possible values: "botnet", "collectors", "parsers", ... Parameter bot_id should be null.
- * @param {fn} This function is called when a (start or other) button gets clicked AND when launched ajax gets completed. Receives bot-id parameter.
+ * @param {string|null} bot id
+ * @param {string|null} botnet Manipulate the whole botnet or a group. Possible values: "botnet", "collectors", "parsers", ... Parameter bot_id should be null.
  * @param {bool} status_info If true, dynamic word containing current status is inserted.
+ * @param {fn} Fn (this = button clicked, bot-id|botnet, finished = 0|1)
+ *              Launched when a button is clicked (finished 0) and callback after AJAX completed (finished 1).
  * @returns {$jQuery}
  */
-function generate_control_buttons(bot, botnet = null, callback_button = null, status_info = false) {
-    $el = $("#common-templates .control-buttons").clone().data("callback-button", callback_button || (() => {
-    }));
+function generate_control_buttons(bot = null, botnet = null, callback_fn = null, status_info = false) {
+    let $el = $("#common-templates .control-buttons").clone()
+        .data("callback_fn", callback_fn || (() => {
+        }));
     if (bot) {
         $el.attr("data-bot-id", bot);
-        $el.attr("data-botnet", "botnet");
+        $el.attr("data-botnet-group", bot in bot_definition ? bot_definition[bot].groupname: null); // specify group (ignore in Monitor, not needed and might not be ready)
     } else {
-        $el.attr("data-botnet", botnet);
+        $el.attr("data-botnet-group", botnet);
     }
     if (status_info) {
         $("<span/>", {"data-role": "control-status"}).bind("update", function () {
             let bot = $(this).closest(".control-buttons").attr("data-bot-id");
-            let botnet = $(this).closest(".control-buttons").attr("data-botnet");
+            let botnet = $(this).closest(".control-buttons").attr("data-botnet-group");
             let status = bot ? bot_status[bot] : botnet_status[botnet];
             $(this).text(status).removeClass().addClass("bg-{0}".format(BOT_CLASS_DEFINITION[status]));
         }).prependTo($el).trigger("update");

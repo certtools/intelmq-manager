@@ -18,11 +18,16 @@ CHANGELOG
 - Correctly load JSON parameters when editing a bot: content instead of '[object Object]' string.
 - Handle not explicitly given internal queues.
 - Physics / Live button are now rememberable in the positions.conf file on the server.
+- When changing state or being disabled or erroneous, bot receives dashed border.
 
 #### Management
+- Clicking an action on a bot will make group pane correspond immediately
 
 #### Monitor
 - Correctly display JSON parameters: content instead of '[object Object]' string.
+- Reloading logs fixed
+- Reloading logs every 3 sec instead of 300 sec
+- Auto-reloading logs after bot started/stopped
 
 #### Check
 

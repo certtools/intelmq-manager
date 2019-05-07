@@ -738,12 +738,26 @@ function initNetwork(includePositions = true) {
     app.network.options.locales.en.editNode = "Edit Bot";
     app.network.options.locales.en.del = "Delete";
 
+    // 'Live' button (by default on when botnet is not too big) and 'Physics' button
+    // initially stopped
+    let reload_queues = (new Interval(load_live_info, RELOAD_QUEUES_EVERY * 1000, true)).stop();
+    app.network.setOptions({physics: false});
+
     //
     // add custom button to the side menu
     //
 
     $("#templates .network-right-menu").clone().insertAfter($manipulation);
     $nc = $("#network-container");
+    $(".vis-live-toggle", $nc).click(function () {
+        $(this).toggleClass("running", !reload_queues.running);
+        reload_queues.toggle(!reload_queues.running);
+    }).click();
+    let physics_running = true;
+    $(".vis-physics-toggle", $nc).click(function () {
+        $(this).toggleClass("running");
+        app.network.setOptions({physics: (physics_running = !physics_running)});
+    });
 
     // 'Save Configuration' button blinks and lists all the bots that should be reloaded after successful save.
     $saveButton = $("#vis-save", $nc);
@@ -778,11 +792,6 @@ function initNetwork(includePositions = true) {
             });
         }
     };
-
-    // 'Live' button (by default on when botnet is not too big) and 'Physics' button
-    // initially stopped
-    let reload_queues = (new Interval(load_live_info, RELOAD_QUEUES_EVERY * 1000, true)).stop();
-    app.network.setOptions({physics: false});
 
     let allow_blinking_once = false; // Save Configuration button will not blink when a button is clicked now automatically
     // list of button callbacks in form ["button/settings name"] => function called when clicked receives true/false according to the clicked state
@@ -923,11 +932,32 @@ window.onresize = resize;
  * This function fetches the current info and updates bot nodes on the graph
  */
 function refresh_color(bot) {
-    if (bot_status_previous[bot] !== bot_status[bot]) {
-        let col = GROUP_COLORS[app.nodes[bot].group][(bot_status[bot] === "running") ? 0 : 1];
+    if (bot_status_previous[bot] !== bot_status[bot]) { // status changed since last time
+
+        // we use light colour if we expect bot will be running
+        // (when reloading from stopped state bot will not be running)
+        let col = GROUP_COLORS[app.nodes[bot].group][([
+            BOT_STATUS_DEFINITION.running,
+            BOT_STATUS_DEFINITION.starting,
+            BOT_STATUS_DEFINITION.restarting,
+            bot_status_previous[bot] === BOT_STATUS_DEFINITION.running ? BOT_STATUS_DEFINITION.reloading : 0
+        ].indexOf(bot_status[bot]) > -1) ? 0 : 1];
+
+        // change bot color if needed
         if (app.network_data.nodes.get([bot])[0].color !== col) {
             app.network_data.nodes.update({"id": bot, "color": col});
         }
+
+        // we dash the border if the status has to be changed (not running or stopping) or is faulty (error, incomplete)
+        if ([BOT_STATUS_DEFINITION.running, BOT_STATUS_DEFINITION.stopped].indexOf(bot_status[bot]) === -1) {
+            app.network_data.nodes.update({"id": bot, shapeProperties: {borderDashes: [5, 5]}})
+        } else if ([BOT_STATUS_DEFINITION.running, BOT_STATUS_DEFINITION.stopped, undefined].indexOf(bot_status_previous[bot]) === -1) {
+            // we remove dash border since bot has been in a dash-border state and is no more
+            // (that means that bot wasn't either in a running, stopped or initially undefined state)
+            app.network_data.nodes.update({"id": bot, shapeProperties: {"borderDashes": false}});
+        }
+
+        bot_status_previous[bot] = bot_status[bot];
     }
 }
 
@@ -958,7 +988,6 @@ function load_live_info() {
                 // bots that are not running are grim coloured
                 refresh_color(bot);
             }
-            bot_status_previous = $.extend({}, bot_status); // we need a shallow copy of a state, it's too slow to ask `app` every time
         })
         .fail(ajax_fail_callback('Error loading bot queues information'))
         .always(() => {
