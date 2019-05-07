@@ -5,6 +5,7 @@ CHANGELOG
 ------------------
 
 ### Backend
+- Some AJAX requests are marked as to-be-cached for a little amount of time so that server load decreases when you need many tabs open.
 
 ### Pages
 
