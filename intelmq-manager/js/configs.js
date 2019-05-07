@@ -452,7 +452,7 @@ function insertKeyValue(key, value, section, allowXButtons, insertAt) {
 
     keyCell.innerHTML = key;
     if (value !== null && typeof value === "object") {
-               value = JSON.stringify(value);
+        value = JSON.stringify(value);
     }
     valueInput.setAttribute('value', value);
 }
@@ -742,24 +742,8 @@ function initNetwork(includePositions = true) {
     // add custom button to the side menu
     //
 
-    // 'Live' button (by default on)
-    var reload_queues = (new Interval(load_live_info, RELOAD_QUEUES_EVERY * 1000, true)).stop();
     $("#templates .network-right-menu").clone().insertAfter($manipulation);
     $nc = $("#network-container");
-    $(".vis-live-toggle", $nc).click(function () {
-        if (reload_queues.running) {
-            $(this).removeClass("running");
-            reload_queues.stop();
-        } else {
-            $(this).addClass("running");
-            reload_queues.start();
-        }
-    }).click();
-    let physics_running = true;
-    $(".vis-physics-toggle", $nc).click(function () {
-        $(this).toggleClass("running");
-        app.network.setOptions({physics: (physics_running = !physics_running)});
-    });
 
     // 'Save Configuration' button blinks and lists all the bots that should be reloaded after successful save.
     $saveButton = $("#vis-save", $nc);
@@ -767,6 +751,12 @@ function initNetwork(includePositions = true) {
         save_data_on_files();
     });
     $saveButton.data("reloadables", []);
+    $saveButton.blinkOnce = function() {
+        $(this).addClass('blinking-once');
+        setTimeout(() => {
+            $(this).removeClass('blinking-once')
+        }, 2000);
+    }
     $saveButton.blinking = function (bot_id = null) {
         $(this).addClass('vis-save-blinking')
         if (bot_id) {
@@ -777,17 +767,45 @@ function initNetwork(includePositions = true) {
         $(this).removeClass('vis-save-blinking');
         let promises = [];
         let bots = $.unique($(this).data("reloadables"));
-        for(let bot_id of bots) {
+        for (let bot_id of bots) {
             let url = `${MANAGEMENT_SCRIPT}?scope=bot&action=reload&id=${bot_id}`;
             promises.push($.getJSON(url));
         }
         if (promises.length) {
-            Promise.all(promises).then(()=>{
+            Promise.all(promises).then(() => {
                 show_error("Reloaded bots: " + bots.join(", "));
                 bots.length = 0;
             });
         }
     };
+
+    // 'Live' button (by default on when botnet is not too big) and 'Physics' button
+    // initially stopped
+    let reload_queues = (new Interval(load_live_info, RELOAD_QUEUES_EVERY * 1000, true)).stop();
+    app.network.setOptions({physics: false});
+
+    let allow_blinking_once = false; // Save Configuration button will not blink when a button is clicked now automatically
+    // list of button callbacks in form ["button/settings name"] => function called when clicked receives true/false according to the clicked state
+    let callbacks = [["live", (val) => {
+        reload_queues[val ? "start" : "stop"]();
+    }], ["physics", (val) => {
+        app.network.setOptions({physics: val});
+    }]];
+    for (let [name, fn] of callbacks) {
+        let $el = $(`.vis-${name}-toggle`, $nc).click(function () {
+            // button click will callback and blinks Save Configuration button few times
+            fn(settings[name] = !settings[name]);
+            $(this).toggleClass("running", settings[name]);
+
+            if (allow_blinking_once) {
+                $saveButton.blinkOnce();
+            }
+        });
+        // initially turn on/off buttons according to the server-stored settings
+        settings[name] = !settings[name];
+        $el.click();
+    }
+    allow_blinking_once = true;
 
     // 'Clear Configuration' button
     $("#vis-clear").children().on('click', function (event) {

@@ -17,6 +17,7 @@ CHANGELOG
 - Underscored letters denote shortcuts - you can now edit the network without wandering the mouse all around the screen (#176).
 - Correctly load JSON parameters when editing a bot: content instead of '[object Object]' string.
 - Handle not explicitly given internal queues.
+- Physics / Live button are now rememberable in the positions.conf file on the server.
 
 #### Management
 
