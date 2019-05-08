@@ -19,6 +19,7 @@ CHANGELOG
 - Handle not explicitly given internal queues.
 - Physics / Live button are now rememberable in the positions.conf file on the server.
 - When changing state or being disabled or erroneous, bot receives dashed border.
+- You are allowed to create multiple edges between the same nodes - correctly displayed. If the edges should have the same paths, rename dialog appears.
 
 #### Management
 - Clicking an action on a bot will make group pane correspond immediately
