@@ -22,7 +22,9 @@ CHANGELOG
 - You are allowed to create multiple edges between the same nodes - correctly displayed. If the edges should have the same paths, rename dialog appears.
 
 #### Management
-- Clicking an action on a bot will make group pane correspond immediately
+- Auto-reloading
+- Clicking an action on a bot will make group panel correspond immediately
+- Clicking an action on a panel will make group in the table correspond immediately
 
 #### Monitor
 - Correctly display JSON parameters: content instead of '[object Object]' string.
