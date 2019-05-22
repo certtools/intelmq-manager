@@ -1,15 +1,13 @@
 CHANGELOG
 =========
 
-1.2.0 (unreleased)
+2.0.0 (2019-05-22)
 ------------------
 
 ### Backend
 - Some AJAX requests are marked as to-be-cached for a little amount of time so that server load decreases when you need many tabs open.
 
 ### Pages
-
-#### Landing page
 
 #### Configuration
 - "Save Configuration" button reloads the bots whose destination queues changed (#175).
@@ -32,42 +30,13 @@ CHANGELOG
 - Reloading logs every 3 sec instead of 300 sec
 - Auto-reloading logs after bot started/stopped
 
-#### Check
-
-### Documentation
-
-### Third-party libraries
-
-### Packaging
-
-### Known issues
-
-
-1.1.1 (unreleased)
-------------------
-
-### Backend
-
-### Pages
-
-#### Landing page
-
-#### Configuration
-
-#### Management
-
-#### Monitor
-
-#### Check
-
 ### Documentation
 - Add SECURITY.md file.
 
-### Third-party libraries
-
-### Packaging
-
 ### Known issues
+* Missing CSRF protection (#111).
+* Graph jumps around on "Add edge" bug component (#148).
+* wrong error message for new bots with existing ID (#152).
 
 
 1.1.0 (2018-11-12)

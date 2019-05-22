@@ -3,12 +3,10 @@ NEWS
 
 See the changelog for a full list of changes.
 
-1.2.0 (unreleased)
+2.0.0 (2019-05-22)
 ------------------
 
-
-1.1.1 (unreleased)
-------------------
+No changes are required by administrators.
 
 
 1.1.0 (2018-11-12)
