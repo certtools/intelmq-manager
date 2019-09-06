@@ -1,10 +1,14 @@
 var CORE_FIELDS = 5;
 
 var ACCEPTED_NEIGHBORS = {
-    'Collector': ['Parser', 'Output'],
+    'Collector': ['Parser', 'Expert', 'Output'],
     'Parser': ['Expert', 'Output'],
-    'Expert': ['Expert', 'Output'],
+    'Expert': ['Parser', 'Expert', 'Output'],
     'Output': []
+}
+var CAUTIOUS_NEIGHBORS = {
+    'Collector': ['Expert'],
+    'Expert': ['Parser']
 }
 
 var GROUP_LEVELS = {
@@ -68,8 +72,8 @@ var MONITOR_BOT_URL = "?page=monitor&bot_id={0}";
 var page_is_exiting = false;
 
 var settings = {
-    physics : null, // by default, physics is on depending on bot count
-    live : true, // by default on
+    physics: null, // by default, physics is on depending on bot count
+    live: true, // by default on
 };
 
 $(window).on('unload', function () {
@@ -97,31 +101,49 @@ if (!String.prototype.format) {
 /*
  * error reporting
  */
+let lw_tips = new Set();
 $(function () {
-    var closeFn = function () {
-        $("#log-window").hide();
-        $("#log-window .contents").html("");
+    let $lw = $("#log-window");
+    let closeFn = function () {
+        $lw.hide();
+        $(".contents", $lw).html("");
+        lw_tips.clear(); // no tips displayed
+        return false;
     };
 
-    $("#log-window")
-        .dblclick(closeFn).click(function () {
-        $(this).toggleClass("extended");
-    });
+    $lw
+        .on("click", function () { // clicking enlarges but not shrinks so that we may copy the text
+            if (!$(this).hasClass("extended")) {
+                $(this).toggleClass("extended");
+
+                //$(".alert", this).prependTo($(this));
+
+                $(document).on('keydown.close-log-window', function (event) {
+                    if (event.key == "Escape") {
+                        $(document).off('keydown.close-log-window');
+                        $lw.removeClass("extended");
+                    }
+                });
+            }
+        });
     $("#log-window [role=close]").click(closeFn);
 });
 
 function show_error(string) {
     let d = new Date();
     let time = new Date().toLocaleTimeString().replace(/:\d+ /, ' ');
-    $lw = $("#log-window .contents");
-    $el = $("<p><span>{0}</span> <span></span> <span>{1}</span></p>".format(time, string));
+    let $lwc = $("#log-window .contents");
+    let $el = $("<p><span>{0}</span> <span></span> <span>{1}</span></p>".format(time, string));
     var found = false;
-    $("p", $lw).each(function () {
+    $("p", $lwc).each(function () {
         if ($("span:eq(2)", $(this)).text() === $("span:eq(2)", $el).text()) {
             // we've seen this message before
             found = true;
             // put it in front of the other errors
-            $(this).prependTo($lw);
+            // only if the error window is not expanded (so that it does not shuffle when the user read the details)
+            if (!$(this).closest("#log-window").hasClass("extended")) {
+                $(this).prependTo($lwc);
+            }
             //blink
             $("span:eq(0)", $(this)).text(time).stop().animate({opacity: 0.1}, 100, function () {
                 $(this).animate({opacity: 1}, 100);
@@ -133,7 +155,7 @@ function show_error(string) {
         }
     });
     if (!found) {
-        $("#log-window").show().removeClass("extended").find(".contents").prepend($el);
+        $("#log-window").show().find(".contents").prepend($el);
     }
     /*if(!page_is_exiting) {
      alert(string);
@@ -151,9 +173,29 @@ function ajax_fail_callback(str) {
         if (jqXHR.status === 0) { // page refreshed before ajax finished
             return;
         }
-        // include full report but truncate the length to 200 chars
-        // (since '.' is not matching newline characters, we're using '[\s\S]' so that even multiline string is shortened)
-        show_error("{0}: <b>{1}</b> {2}".format(str, jqXHR.responseText.replace(/^(.{200})[\s\S]+/, "$1..."), message));
+
+        let command = "", tip = "", report = "";
+        try {
+            let data = JSON.parse(jqXHR.responseText);
+            report = data.message.replace(/(?:\r\n|\r|\n)/g, '<br>');
+            command = " <span class='command'>{0}</span>".format(data.command);
+            if (data.tip && !lw_tips.has(data.tip)) {
+                // display the tip if not yet displayed on the screen
+                lw_tips.add(data.tip);
+                tip = " <div class='alert alert-info'>TIP: {0}</div>".format(data.tip);
+            }
+            if (message === "Internal Server Error") {
+                message = ""; // this is expected since we generated this in PHP when an error was spot, ignore
+            }
+        } catch (e) {
+            report = jqXHR.responseText;
+        }
+        if (report) {
+            // include full report but truncate the length to 2000 chars
+            // (since '.' is not matching newline characters, we're using '[\s\S]' so that even multiline string is shortened)
+            report = " <b>{0}</b>".format(report.replace(/^(.{2000})[\s\S]+/, "$1..."));
+        }
+        show_error("{0}:{1}{2}{3} {4}".format(str, report, command, tip, message));
     };
 }
 
@@ -350,7 +392,7 @@ function generate_control_buttons(bot = null, botnet = null, callback_fn = null,
         }));
     if (bot) {
         $el.attr("data-bot-id", bot);
-        $el.attr("data-botnet-group", bot in bot_definition ? bot_definition[bot].groupname: null); // specify group (ignore in Monitor, not needed and might not be ready)
+        $el.attr("data-botnet-group", bot in bot_definition ? bot_definition[bot].groupname : null); // specify group (ignore in Monitor, not needed and might not be ready)
     } else {
         $el.attr("data-botnet-group", botnet);
     }

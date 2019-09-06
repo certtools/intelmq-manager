@@ -9,11 +9,16 @@
         'system' 	=> '/opt/intelmq/etc/system.conf',
         'positions' => '/opt/intelmq/etc/manager/positions.conf',
     );
-    if(!($c = getenv("INTELMQ_MANGER_CONTROLER_CMD"))) {
+    if(!($c = getenv("INTELMQ_MANGER_CONTROLLER_CMD"))) {
         $c = "sudo -u intelmq /usr/local/bin/intelmqctl";
     }
-    $CONTROLLER_JSON = $c." --type json %s";
-    $CONTROLLER = $c." %s";
+
+    // to be displayed so that user can replicate
+    $CONTROLLER_REPLICABLE ="sudo -u " . exec('whoami') . " " ; // seen when an error occurs
+    $CONTROLLER_CMD = $CONTROLLER_REPLICABLE . $c; // seen in monitor
+
+    $CONTROLLER_JSON = $c ." --type json %s";
+    $CONTROLLER = $c . " %s";
 
     $BOT_CONFIGS_REJECT_REGEX = '/[^[:print:]\n\r\t]/';
     $BOT_ID_REJECT_REGEX = '/[^A-Za-z0-9.-]/';
