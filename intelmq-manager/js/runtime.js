@@ -42,11 +42,17 @@ function read_runtime_conf(config) {
 function load_file(url, callback) {
     $.getJSON(url)
             .done(function (json) {
-                callback(json);
+                try {
+                    callback(json);
+                }
+                catch(e) {
+                    // don't bother to display error, I think the problem will be clearly seen with the resource itself, not within the processing
+                    show_error('Failed to load config file properly <a class="command" href="{0}">{1}</a>.'.format(url, url));
+                }
             })
             .fail(function (jqxhr, textStatus, error) {
                 var err = textStatus + ", " + error;
-                show_error('Failed to obtain JSON: ' + url + ' with error: ' + err);
+                show_error('Get an error <b>{0}</b> when trying to obtain config file properly <a class="command" href="{1}">{2}</a>.'.format(err, url, url));
                 callback({});
             });
 }

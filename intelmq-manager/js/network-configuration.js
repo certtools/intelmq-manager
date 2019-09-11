@@ -118,20 +118,25 @@ var NETWORK_OPTIONS = {
                 data.smooth = {'type': 'curvedCCW', 'roundness': roundness};
             }
 
-            let neighbors = ACCEPTED_NEIGHBORS[app.nodes[data.from].group];
+            let group_from = app.nodes[data.from].group;
+            let group_to = app.nodes[data.to].group;
+            let neighbors = ACCEPTED_NEIGHBORS[group_from];
             let available_neighbor = false;
             for (let index in neighbors) {
-                if (app.nodes[data.to].group == neighbors[index]) {
+                if (group_to == neighbors[index]) {
                     callback(data);
                     available_neighbor = true;
+                    if(CAUTIOUS_NEIGHBORS[group_from] && CAUTIOUS_NEIGHBORS[group_from].indexOf(group_to) !== -1) {
+                        show_error('Node type ' + group_from + ' can connect to the ' + group_to + ', however it\'s not so common.');
+                    }
                 }
             }
 
             if (!available_neighbor) {
                 if (neighbors.length == 0) {
-                    show_error("Node type " + app.nodes[data.from].group + " can't connect to other nodes");
+                    show_error("Node type " + group_from + " can't connect to other nodes");
                 } else {
-                    show_error('Node type ' + app.nodes[data.from].group + ' can only connect to nodes of types: ' + neighbors.join());
+                    show_error('Node type ' + group_from + ' can only connect to nodes of types: ' + neighbors.join());
                 }
                 return;
             }
