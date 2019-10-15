@@ -1,8 +1,8 @@
 CHANGELOG
 =========
 
-unreleased
-----------
+2.1.0 (2019-10-15)
+------------------
 
 ### Backend
 - Fix mispelling of the environmental variable `INTELMQ_MANGER_CONTROLER_CMD` to `INTELMQ_MANGER_CONTROLLER_CMD` (you might be required to add the double 'l' to your nginx/apache server configuration)
@@ -15,7 +15,7 @@ unreleased
   - Invalid Syntax Error message removed. Till now, all error messages generated the string that JSON received is invalid – that wasn't needed, we knew it's invalid because it contained string message.
   - Double click does not close log window anymore since it would interfere with the user trying to select whole text by mouse.
   - Escape minimizes the reporting.
-  - For common seen errors, a tip is displayed (preferable with a link to the Github manual).  
+  - For common seen errors, a tip is displayed (preferable with a link to the Github manual).
  
 ### Pages
  
