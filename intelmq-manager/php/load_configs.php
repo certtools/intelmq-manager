@@ -1,7 +1,6 @@
 <?php
 
 require('config.php');
-
 if (array_key_exists($_GET['file'], $FILES)) {
     // standard whitelisted config file
     header('Content-Type: application/json');

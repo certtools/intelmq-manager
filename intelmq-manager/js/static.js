@@ -1,10 +1,14 @@
 var CORE_FIELDS = 5;
 
 var ACCEPTED_NEIGHBORS = {
-    'Collector': ['Parser', 'Output'],
+    'Collector': ['Parser', 'Expert', 'Output'],
     'Parser': ['Expert', 'Output'],
-    'Expert': ['Expert', 'Output'],
+    'Expert': ['Parser', 'Expert', 'Output'],
     'Output': []
+}
+var CAUTIOUS_NEIGHBORS = {
+    'Collector': ['Expert'],
+    'Expert': ['Parser']
 }
 
 var GROUP_LEVELS = {
@@ -56,8 +60,9 @@ var RUNTIME_FILE = LOAD_CONFIG_SCRIPT + "?file=runtime";
 var SYSTEM_FILE = LOAD_CONFIG_SCRIPT + "?file=system";
 var POSITIONS_FILE = LOAD_CONFIG_SCRIPT + "?file=positions";
 
-var RELOAD_QUEUES_EVERY = 1; /* 2 seconds */
-var RELOAD_LOGS_EVERY = 300; /* 300 seconds */
+var RELOAD_QUEUES_EVERY = 1; /* 1 seconds */
+var RELOAD_LOGS_EVERY = 3; /* 3 seconds */
+var RELOAD_STATE_EVERY = 3; /* 3 seconds */
 var LOAD_X_LOG_LINES = 30;
 
 var MESSAGE_LENGTH = 200;
@@ -65,6 +70,11 @@ var MESSAGE_LENGTH = 200;
 var MONITOR_BOT_URL = "?page=monitor&bot_id={0}";
 
 var page_is_exiting = false;
+
+var settings = {
+    physics: null, // by default, physics is on depending on bot count
+    live: true, // by default on
+};
 
 $(window).on('unload', function () {
     page_is_exiting = true;
@@ -81,9 +91,9 @@ if (!String.prototype.format) {
         var args = arguments;
         return this.replace(/{(\d+)}/g, function (match, number) {
             return typeof args[number] !== 'undefined'
-                    ? args[number]
-                    : match
-                    ;
+                ? args[number]
+                : match
+                ;
         });
     };
 }
@@ -91,30 +101,49 @@ if (!String.prototype.format) {
 /*
  * error reporting
  */
+let lw_tips = new Set();
 $(function () {
-    var closeFn = function () {
-        $("#log-window").hide();
-        $("#log-window .contents").html("");
+    let $lw = $("#log-window");
+    let closeFn = function () {
+        $lw.hide();
+        $(".contents", $lw).html("");
+        lw_tips.clear(); // no tips displayed
+        return false;
     };
 
-    $("#log-window")
-            .dblclick(closeFn).click(function () {
-        $(this).toggleClass("extended");
-    });
+    $lw
+        .on("click", function () { // clicking enlarges but not shrinks so that we may copy the text
+            if (!$(this).hasClass("extended")) {
+                $(this).toggleClass("extended");
+
+                //$(".alert", this).prependTo($(this));
+
+                $(document).on('keydown.close-log-window', function (event) {
+                    if (event.key == "Escape") {
+                        $(document).off('keydown.close-log-window');
+                        $lw.removeClass("extended");
+                    }
+                });
+            }
+        });
     $("#log-window [role=close]").click(closeFn);
 });
+
 function show_error(string) {
     let d = new Date();
     let time = new Date().toLocaleTimeString().replace(/:\d+ /, ' ');
-    $lw = $("#log-window .contents");
-    $el = $("<p><span>{0}</span> <span></span> <span>{1}</span></p>".format(time, string));
+    let $lwc = $("#log-window .contents");
+    let $el = $("<p><span>{0}</span> <span></span> <span>{1}</span></p>".format(time, string));
     var found = false;
-    $("p", $lw).each(function () {
+    $("p", $lwc).each(function () {
         if ($("span:eq(2)", $(this)).text() === $("span:eq(2)", $el).text()) {
             // we've seen this message before
             found = true;
             // put it in front of the other errors
-            $(this).prependTo($lw);
+            // only if the error window is not expanded (so that it does not shuffle when the user read the details)
+            if (!$(this).closest("#log-window").hasClass("extended")) {
+                $(this).prependTo($lwc);
+            }
             //blink
             $("span:eq(0)", $(this)).text(time).stop().animate({opacity: 0.1}, 100, function () {
                 $(this).animate({opacity: 1}, 100);
@@ -126,7 +155,7 @@ function show_error(string) {
         }
     });
     if (!found) {
-        $("#log-window").show().removeClass("extended").find(".contents").prepend($el);
+        $("#log-window").show().find(".contents").prepend($el);
     }
     /*if(!page_is_exiting) {
      alert(string);
@@ -144,9 +173,29 @@ function ajax_fail_callback(str) {
         if (jqXHR.status === 0) { // page refreshed before ajax finished
             return;
         }
-        // include full report but truncate the length to 200 chars
-        // (since '.' is not matching newline characters, we're using '[\s\S]' so that even multiline string is shortened)
-        show_error("{0}: <b>{1}</b> {2}".format(str, jqXHR.responseText.replace(/^(.{200})[\s\S]+/, "$1..."), message));
+
+        let command = "", tip = "", report = "";
+        try {
+            let data = JSON.parse(jqXHR.responseText);
+            report = data.message.replace(/(?:\r\n|\r|\n)/g, '<br>');
+            command = " <span class='command'>{0}</span>".format(data.command);
+            if (data.tip && !lw_tips.has(data.tip)) {
+                // display the tip if not yet displayed on the screen
+                lw_tips.add(data.tip);
+                tip = " <div class='alert alert-info'>TIP: {0}</div>".format(data.tip);
+            }
+            if (message === "Internal Server Error") {
+                message = ""; // this is expected since we generated this in PHP when an error was spot, ignore
+            }
+        } catch (e) {
+            report = jqXHR.responseText;
+        }
+        if (report) {
+            // include full report but truncate the length to 2000 chars
+            // (since '.' is not matching newline characters, we're using '[\s\S]' so that even multiline string is shortened)
+            report = " <b>{0}</b>".format(report.replace(/^(.{2000})[\s\S]+/, "$1..."));
+        }
+        show_error("{0}:{1}{2}{3} {4}".format(str, report, command, tip, message));
     };
 }
 
@@ -163,7 +212,7 @@ class Interval {
      * @param {type} fn
      * @param {type} delay
      * @param {bool} blocking If true, the fn is an AJAX call. The fn will not be called again unless it calls `this.blocking = false` when AJAX is finished.
-     *      You may wont to include `.always(() => {this.blocking = false;})` after the AJAX call. (In 'this' should be instance of the Interval object.)
+     *      You may want to include `.always(() => {this.blocking = false;})` after the AJAX call. (In 'this' should be instance of the Interval object.)
      *
      *      (Note that we preferred that.blocking setter over method unblock() because interval function
      *      can be called from other sources than this class (ex: at first run) and a non-existent method would pose a problem.)
@@ -181,14 +230,43 @@ class Interval {
         }.bind(this);
         this.start();
     }
+
     start() {
+        this.stop();
         this.running = true;
         this.instance = setTimeout(this._delayed, this._delay);
         return this;
     }
+
     stop() {
         clearTimeout(this.instance);
         this.running = false;
+        return this;
+    }
+
+    /**
+     * Launch callback function now, reset and start the interval.
+     * @return {Interval}
+     */
+    call_now() {
+        this.stop();
+        this._delayed();
+        this.start();
+        return this;
+    }
+
+    /**
+     * Start if stopped or vice versa.
+     * @param start If defined, true to be started or vice versa.
+     */
+    toggle(start = null) {
+        if (start === null) {
+            this.toggle(!this.running);
+        } else if (start) {
+            this.start();
+        } else {
+            this.stop();
+        }
         return this;
     }
 
@@ -240,7 +318,9 @@ var BOT_CLASS_DEFINITION = {
     'reloading': 'warning',
     'restarting': 'warning',
     'incomplete': 'warning',
-    'error': 'danger'
+    'error': 'danger',
+    'disabled': 'ligth',
+    'unknown': 'warning'
 };
 var BOT_STATUS_DEFINITION = {
     'starting': 'starting',
@@ -250,20 +330,19 @@ var BOT_STATUS_DEFINITION = {
     'reloading': 'reloading',
     'restarting': 'restarting',
     'incomplete': 'incomplete',
-    'error': 'error'
+    'error': 'error',
+    'unknown': 'unknown'
 };
 
 var botnet_status = {}; // {group | true (for whole botnet) : BOT_STATUS_DEFINITION}
 var bot_status = {}; // {bot-id : BOT_STATUS_DEFINITION}
-var bot_status_previous = {};
+var bot_status_previous = {}; // we need a shallow copy of bot_status, it's too slow to ask `app` every time
 var bot_definition = {};// {bot-id : runtime information (group, ...)}; only management.js uses this in time
 
 $(document).on("click", ".control-buttons button", function () {
     let bot = $(this).parent().attr("data-bot-id");
-    let botnet = $(this).parent().attr("data-botnet");
-    let callback_button = $(this).parent().data("callback-button");
-    $('#botnet-panels [data-botnet-group=botnet] h4').addClass('waiting'); // XXX panel
-    $(this).closest(".panel").find("h4").addClass("waiting");
+    let botnet = $(this).parent().attr("data-botnet-group");
+    let callback_fn = $(this).parent().data("callback_fn");
     let url;
     if (bot) {
         bot_status[bot] = $(this).attr("data-status-definition");
@@ -271,51 +350,56 @@ $(document).on("click", ".control-buttons button", function () {
     } else {
         botnet_status[botnet] = $(this).attr("data-status-definition");
         url = '{0}?scope=botnet&action={1}&group={2}'.format(MANAGEMENT_SCRIPT, $(this).attr("data-url"), botnet);
+        for (let bot_d of Object.values(bot_definition)) {
+            if (bot_d.groupname === botnet) {
+                bot_status[bot_d.bot_id] = $(this).attr("data-status-definition");
+            }
+        }
+
     }
-    callback_button();
+    callback_fn.call(this, bot || botnet, 0);
     $(this).siblings("[data-role=control-status]").trigger("update");
 
     $.getJSON(url)
-            .done((data) => {
-                if (bot) {
-                    // only restarting action returns an array of two values, the latter is important; otherwise, this is a string
-                    bot_status[bot] = Array.isArray(data) ? data.slice(-1)[0] : data;
-                } else {
-                    // we received a {bot => status} object
-                    Object.assign(bot_status, data); // merge to current list
-                }
-            })
-            .fail(function () {
-                ajax_fail_callback('Error {0} bot{1}'.format(bot_status[bot] || botnet_status[botnet], (!bot ? "net" : ""))).apply(null, arguments);
-                bot_status[bot] = BOT_STATUS_DEFINITION.error;
-            }).always(() => {
+        .done(function (data) {
+            if (bot) { // only restarting action returns an array of two values, the latter is important; otherwise, this is a string
+                bot_status[bot] = Array.isArray(data) ? data.slice(-1)[0] : data;
+            } else { // we received a {bot => status} object
+                Object.assign(bot_status, data); // merge to current list
+            }
+        })
+        .fail(function () {
+            ajax_fail_callback('Error {0} bot{1}'.format(bot_status[bot] || botnet_status[botnet], (!bot ? "net" : ""))).apply(null, arguments);
+            bot_status[bot] = BOT_STATUS_DEFINITION.error;
+        }).always(() => {
         $(this).siblings("[data-role=control-status]").trigger("update");
-        $('#botnet-panels [data-botnet-group=botnet] h4').removeClass('waiting');
-        $(this).closest(".panel").find("h4").removeClass("waiting");
-        callback_button(bot);
+        callback_fn.call(this, bot || botnet, 1);
     });
 });
+
 /**
  * Public method to include control buttons to DOM.
- * @param {string} bot id
- * @param {string} botnet Manipulate the whole botnet or a group. Possible values: "botnet", "collectors", "parsers", ... Parameter bot_id should be null.
- * @param {fn} This function is called when a (start or other) button gets clicked AND when launched ajax gets completed. Receives bot-id parameter.
+ * @param {string|null} bot id
+ * @param {string|null} botnet Manipulate the whole botnet or a group. Possible values: "botnet", "collectors", "parsers", ... Parameter bot_id should be null.
  * @param {bool} status_info If true, dynamic word containing current status is inserted.
+ * @param {fn} Fn (this = button clicked, bot-id|botnet, finished = 0|1)
+ *              Launched when a button is clicked (finished 0) and callback after AJAX completed (finished 1).
  * @returns {$jQuery}
  */
-function generate_control_buttons(bot, botnet = null, callback_button = null, status_info = false) {
-    $el = $("#common-templates .control-buttons").clone().data("callback-button", callback_button || (() => {
-    }));
+function generate_control_buttons(bot = null, botnet = null, callback_fn = null, status_info = false) {
+    let $el = $("#common-templates .control-buttons").clone()
+        .data("callback_fn", callback_fn || (() => {
+        }));
     if (bot) {
         $el.attr("data-bot-id", bot);
-        $el.attr("data-botnet", "botnet");
+        $el.attr("data-botnet-group", bot in bot_definition ? bot_definition[bot].groupname : null); // specify group (ignore in Monitor, not needed and might not be ready)
     } else {
-        $el.attr("data-botnet", botnet);
+        $el.attr("data-botnet-group", botnet);
     }
     if (status_info) {
         $("<span/>", {"data-role": "control-status"}).bind("update", function () {
             let bot = $(this).closest(".control-buttons").attr("data-bot-id");
-            let botnet = $(this).closest(".control-buttons").attr("data-botnet");
+            let botnet = $(this).closest(".control-buttons").attr("data-botnet-group");
             let status = bot ? bot_status[bot] : botnet_status[botnet];
             $(this).text(status).removeClass().addClass("bg-{0}".format(BOT_CLASS_DEFINITION[status]));
         }).prependTo($el).trigger("update");
@@ -334,4 +418,27 @@ function getUrlParameter(sParam) {
             return sParameterName[1] === undefined ? true : sParameterName[1];
         }
     }
+}
+
+/**
+ * Accesskeyfie
+ * Turns visible [data-accesskey] to elements with accesskey and shows the accesskey with an underscore if possible.
+ */
+function accesskeyfie() {
+    let seen = new Set();
+    $("[data-accesskey]").attr("accesskey", ""); // reset all accesskeys. In Chrome, there might be only one accesskey 'e' on page.
+    $("[data-accesskey]:visible").each(function () {
+        let key = $(this).attr("data-accesskey");
+        if (seen.has(key)) {
+            return false; // already defined at current page state
+        }
+        seen.add(key);
+        $(this).attr("accesskey", key);
+        // add underscore to the accesskeyed letter if possible (can work badly with elements having nested DOM children)
+        let t1 = $(this).text()
+        let t2 = t1.replace(new RegExp(key, "i"), (match) => `<u>${match}</u>`)
+        if (t1 != t2) {
+            $(this).html(t2);
+        }
+    });
 }

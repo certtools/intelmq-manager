@@ -8,6 +8,7 @@ require 'util.php';
 $scope = '';
 $id = '';
 $json_wanted = true;
+$cache = false;
 
 if (array_key_exists('scope', $_GET)) {
     $scope = $_GET['scope'];
@@ -72,10 +73,13 @@ if ($scope == 'botnet') {
         $level = 'DEBUG';
     }
 
+    $cache = true;
     $arguments = 'log ' . escapeshellcmd($id) . ' ' . escapeshellcmd((int) ($lines)) . ' ' . escapeshellcmd($level);
 } else if ($scope == 'queues') {
+    $cache = true;
     $arguments = 'list queues';
 } else if ($scope == 'queues-and-status') {
+    $cache = true;
     $arguments = 'list queues-and-status';
 } else if ($scope == 'version') {
     $arguments = '--version';
@@ -124,6 +128,14 @@ if ($scope == 'botnet') {
 /**
  * Final command here
  */
+if($cache) {
+    $seconds_to_cache = 3;
+    $ts = gmdate("D, d M Y H:i:s", time() + $seconds_to_cache) . " GMT";
+    header("Expires: $ts");
+    header("Pragma: cache");
+    header("Cache-Control: max-age=$seconds_to_cache");
+}
+
 if($json_wanted) {
     $c = $CONTROLLER_JSON;
     header('Content-Type: application/json');
@@ -134,20 +146,49 @@ $command = sprintf($c, $arguments);
 //echo $command; exit;
 
 // appending magic string that'll kill the command if run for too long
-set_time_limit(20);
 $sec = 20;
-//$return = ExecWaitTimeout($command, 9);
-$return = shell_exec($command . " 2>&1 & ii=0 && while [ \"2\" -eq \"`ps -p $! | wc -l`\" ];do ii=$((ii+1)); if [ \$ii -gt ".($sec)."0 ]; then echo 'Intelmqctl timeout!';kill $!; break;fi; sleep 0.1; done");
-//$return .= " \n$command";
+set_time_limit($sec + 1); // we prefer to timeout in the command ($sec), if that does not work, kill it by PHP timeout
 
-if ($return === NULL) {
-    echo 'Failed to execute intelmqctl:' . $command;
+$cmd = $command . " & ii=0 && while [ \"2\" -eq \"`ps -p $! | wc -l`\" ];do ii=$((ii+1)); if [ \$ii -gt ".($sec)."0 ]; then echo '***Intelmqctl timeout!***';kill $!; break;fi; sleep 0.1; done";
+$proc = proc_open($cmd,[
+    1 => ['pipe','w'],
+    2 => ['pipe','w'],
+],$pipes);
+$stdout = stream_get_contents($pipes[1]);
+fclose($pipes[1]);
+$stderr = stream_get_contents($pipes[2]);
+fclose($pipes[2]);
+$status = proc_close($proc);
+
+//$return = shell_exec($command . " 2>&1 & ii=0 && while [ \"2\" -eq \"`ps -p $! | wc -l`\" ];do ii=$((ii+1)); if [ \$ii -gt ".($sec)."0 ]; then echo 'Intelmqctl timeout!';kill $!; break;fi; sleep 0.1; done");
+
+
+if (!$stdout or $stderr or $status!==0) {
+    http_response_code(500);
+    if(!$stdout and !$stderr) {
+        $stderr = 'Failed to execute intelmqctl.';
+    }
+
+    // tips for common errors
+    $tip = "";
+    if(strpos($stderr, "sudo: no tty present and no askpass program specified") !== FALSE) {
+        $tip = "Is sudoers file or the environmental variable `INTELMQ_MANGER_CONTROLLER_CMD` <a href='https://github.com/certtools/intelmq-manager/blob/master/docs/INSTALL.md#allow-access-to-intelmqctl'>set up correctly</a>?";
+    }
+    else if(strpos($stderr, "Permission denied: '/opt/intelmq") !== FALSE) {
+        $tip = "Has the user accessing intelmq folder the read/write permissions? This might be user intelmq or www-data, depending on your configuration, ex: <code>sudo chown intelmq.intelmq /opt/intelmq -R && sudo chmod u+rw /opt/intelmq -R</code>";
+    }
+
+    echo json_encode(array(
+            "command" => $CONTROLLER_REPLICABLE . $command,
+            "message" => $stderr,
+            "tip" => $tip
+        ));
 } else {
     if ($scope != 'version') {
-        echo $return;
+        echo $stdout;
     } else {
         echo json_encode(array(
-            "intelmq" => rtrim($return),
+            "intelmq" => rtrim($stdout),
             "intelmq-manager" => $VERSION,
         ));
     }

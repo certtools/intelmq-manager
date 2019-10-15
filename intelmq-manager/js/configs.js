@@ -1,4 +1,5 @@
 var NETWORK_OPTIONS = NETWORK_OPTIONS || {};
+
 class VisModel {
     constructor() {
 
@@ -17,6 +18,7 @@ class VisModel {
         this.options = NETWORK_OPTIONS;
     }
 }
+
 var app = new VisModel();
 
 var popup = null;
@@ -87,54 +89,54 @@ function load_bots(config) {
         for (let bot_name in group) {
             let bot = group[bot_name];
             let $bot = $bot_group.find("ul > li:first").clone().appendTo($("ul", $bot_group))
-                    .attr("title", bot['description'])
-                    .attr("data-name", bot_name)
-                    .attr("data-group", bot_group)
-                    .click(() => {
-                        if ($('#network-popUp').is(':visible')) {
-                            // just creating a new bot
-                            fill_bot(undefined, bot_group, bot_name);
-                            return false;
-                        }
+                .attr("title", bot['description'])
+                .attr("data-name", bot_name)
+                .attr("data-group", bot_group)
+                .click(() => {
+                    if ($('#network-popUp').is(':visible')) {
+                        // just creating a new bot
+                        fill_bot(undefined, bot_group, bot_name);
+                        return false;
+                    }
 
-                        // cycling amongst the bot instances
-                        if (!$bot.data("cycled")) {
-                            $bot.data("cycled", []);
-                        }
-                        let found = null;
-                        for (let bot_node of Object.values(app.nodes)) {
-                            if (bot_node.module === bot["module"]) {
-                                if ($.inArray(bot_node.id, $bot.data("cycled")) !== -1) {
-                                    continue;
-                                } else {
-                                    $bot.data("cycled").push(bot_node.id);
-                                    found = bot_node.id;
-                                    break;
-                                }
+                    // cycling amongst the bot instances
+                    if (!$bot.data("cycled")) {
+                        $bot.data("cycled", []);
+                    }
+                    let found = null;
+                    for (let bot_node of Object.values(app.nodes)) {
+                        if (bot_node.module === bot["module"]) {
+                            if ($.inArray(bot_node.id, $bot.data("cycled")) !== -1) {
+                                continue;
+                            } else {
+                                $bot.data("cycled").push(bot_node.id);
+                                found = bot_node.id;
+                                break;
                             }
                         }
-                        // not found or all bots cycled
-                        if (!found && $bot.data("cycled").length) {
-                            found = $bot.data("cycled")[0];
-                            $bot.data("cycled", [found]); // reset cycling
-                        }
-                        if (found) {
-                            fitNode(found);
-                        } else {
-                            show_error("No instance of the {0} found. Drag the label to the plan to create one.".format(bot_name));
-                        }
-                        return false;
-                    })
-                    .on('dragstart', (event) => { // drag to create a new bot instance
-                        app.network.addNodeMode();
-                        draggedElement = {
-                            bot_name: bot_name,
-                            bot_group: bot_group
-                        };
-                        // necessary for firefox
-                        event.originalEvent.dataTransfer.setData('text/plain', null);
-                    })
-                    .find("a").prepend(bot_name);
+                    }
+                    // not found or all bots cycled
+                    if (!found && $bot.data("cycled").length) {
+                        found = $bot.data("cycled")[0];
+                        $bot.data("cycled", [found]); // reset cycling
+                    }
+                    if (found) {
+                        fitNode(found);
+                    } else {
+                        show_error("No instance of the {0} found. Drag the label to the plan to create one.".format(bot_name));
+                    }
+                    return false;
+                })
+                .on('dragstart', (event) => { // drag to create a new bot instance
+                    app.network.addNodeMode();
+                    draggedElement = {
+                        bot_name: bot_name,
+                        bot_group: bot_group
+                    };
+                    // necessary for firefox
+                    event.originalEvent.dataTransfer.setData('text/plain', null);
+                })
+                .find("a").prepend(bot_name);
 
 
             if (app.bots[bot_group] === undefined) {
@@ -225,67 +227,74 @@ function save_data_on_files() {
 
     app.nodes = remove_defaults(app.nodes);
 
-    var alert_error = function (file, jqxhr, textStatus, error) {
+    let reloadable = 0;
+    let alert_error = (file, jqxhr, textStatus, error) => {
         show_error('There was an error saving ' + file + ':\nStatus: ' + textStatus + '\nError: ' + error);
     };
+    let saveSucceeded = (response) => {
+        if (++reloadable === 4) {
 
-    $.post('./php/save.php?file=runtime', generate_runtime_conf(app.nodes))
-            .done(function (data) {
-                saveSucceeded(data);
-            })
-            .fail(function (jqxhr, textStatus, error) {
-                alert_error('runtime', jqxhr, textStatus, error);
-            });
-
-    $.post('./php/save.php?file=pipeline', generate_pipeline_conf(app.edges))
-            .done(function (data) {
-                saveSucceeded(data);
-            })
-            .fail(function (jqxhr, textStatus, error) {
-                alert_error('pipeline', jqxhr, textStatus, error);
-            });
-
-    $.post('./php/save.php?file=positions', generate_positions_conf())
-            .done(function (data) {
-                saveSucceeded(data);
-            })
-            .fail(function (jqxhr, textStatus, error) {
-                alert_error('positions', jqxhr, textStatus, error);
-            });
-
-    $.post('./php/save.php?file=defaults', generate_defaults_conf(app.defaults))
-            .done(function (data) {
-                saveSucceeded(data);
-            })
-            .fail(function (jqxhr, textStatus, error) {
-                alert_error('defaults', jqxhr, textStatus, error);
-            });
-
-    app.nodes = add_defaults_to_nodes(app.nodes, app.defaults);
-    $saveButton.unblinking();
-}
-
-function saveSucceeded(response) {
-    if (response === 'success') {
-        return true;
-    } else {
-        alert(response);
-        return false;
+        }
+        if (response === 'success') {
+            return true;
+        } else {
+            alert(response);
+            return false;
+        }
     }
+
+    Promise.all([
+        $.post('./php/save.php?file=runtime', generate_runtime_conf(app.nodes))
+            .done(saveSucceeded)
+            .fail(() => {
+                alert_error('runtime', ...arguments)
+            }),
+        $.post('./php/save.php?file=pipeline', generate_pipeline_conf(app.edges))
+            .done(saveSucceeded)
+            .fail(() => {
+                alert_error('pipeline', ...arguments)
+            }),
+        $.post('./php/save.php?file=positions', generate_positions_conf())
+            .done(saveSucceeded)
+            .fail(() => {
+                alert_error('positions', ...arguments)
+            }),
+        $.post('./php/save.php?file=defaults', generate_defaults_conf(app.defaults))
+            .done(saveSucceeded)
+            .fail(() => {
+                alert_error('defaults', ...arguments)
+            }),])
+        .then(function () {
+            // all files were correctly saved
+
+            app.nodes = add_defaults_to_nodes(app.nodes, app.defaults);
+            $saveButton.unblinking();
+        });
 }
+
 
 // Prepare data from configuration files to be used in Vis
 
 function convert_edges(edges) {
-    var new_edges = [];
-
-    for (index in edges) {
-        var new_edge = {};
+    let new_edges = [];
+    let roundness = {};
+    for (let index in edges) {
+        let new_edge = {};
         new_edge.id = edges[index]['id'];
         new_edge.from = edges[index]['from'];
         new_edge.to = edges[index]['to'];
-
         new_edge.label = edges[index]['path'];
+
+        // if there is multiple edges between nodes we have to distinguish them manually, see https://github.com/almende/vis/issues/1957
+        let hash = new_edge.from + new_edge.to;
+        if (hash in roundness) {
+            roundness[hash] += 0.3;
+        } else {
+            roundness[hash] = 0;
+        }
+        if (roundness[hash]) {
+            new_edge.smooth = {type: "curvedCCW", "roundness": roundness[hash]};
+        }
 
         new_edges.push(new_edge);
     }
@@ -452,6 +461,9 @@ function insertKeyValue(key, value, section, allowXButtons, insertAt) {
     valueCell.appendChild(valueInput);
 
     keyCell.innerHTML = key;
+    if (value !== null && typeof value === "object") {
+        value = JSON.stringify(value);
+    }
     valueInput.setAttribute('value', value);
 }
 
@@ -736,22 +748,20 @@ function initNetwork(includePositions = true) {
     app.network.options.locales.en.editNode = "Edit Bot";
     app.network.options.locales.en.del = "Delete";
 
+    // 'Live' button (by default on when botnet is not too big) and 'Physics' button
+    // initially stopped
+    let reload_queues = (new Interval(load_live_info, RELOAD_QUEUES_EVERY * 1000, true)).stop();
+    app.network.setOptions({physics: false});
+
     //
     // add custom button to the side menu
     //
 
-    // 'Live' button (by default on)
-    var reload_queues = (new Interval(load_live_info, RELOAD_QUEUES_EVERY * 1000, true)).stop();
     $("#templates .network-right-menu").clone().insertAfter($manipulation);
     $nc = $("#network-container");
     $(".vis-live-toggle", $nc).click(function () {
-        if (reload_queues.running) {
-            $(this).removeClass("running");
-            reload_queues.stop();
-        } else {
-            $(this).addClass("running");
-            reload_queues.start();
-        }
+        $(this).toggleClass("running", !reload_queues.running);
+        reload_queues.toggle(!reload_queues.running);
     }).click();
     let physics_running = true;
     $(".vis-physics-toggle", $nc).click(function () {
@@ -759,17 +769,62 @@ function initNetwork(includePositions = true) {
         app.network.setOptions({physics: (physics_running = !physics_running)});
     });
 
-    // 'Save Configuration' button can blink
+    // 'Save Configuration' button blinks and lists all the bots that should be reloaded after successful save.
     $saveButton = $("#vis-save", $nc);
     $saveButton.children().on('click', function (event) {
         save_data_on_files();
     });
-    $saveButton.blinking = function () {
-        $(this).addClass('vis-save-blinking');
+    $saveButton.data("reloadables", []);
+    $saveButton.blinkOnce = function() {
+        $(this).addClass('blinking-once');
+        setTimeout(() => {
+            $(this).removeClass('blinking-once')
+        }, 2000);
+    }
+    $saveButton.blinking = function (bot_id = null) {
+        $(this).addClass('vis-save-blinking')
+        if (bot_id) {
+            $(this).data("reloadables").push(bot_id);
+        }
     };
     $saveButton.unblinking = function () {
         $(this).removeClass('vis-save-blinking');
+        let promises = [];
+        let bots = $.unique($(this).data("reloadables"));
+        for (let bot_id of bots) {
+            let url = `${MANAGEMENT_SCRIPT}?scope=bot&action=reload&id=${bot_id}`;
+            promises.push($.getJSON(url));
+        }
+        if (promises.length) {
+            Promise.all(promises).then(() => {
+                show_error("Reloaded bots: " + bots.join(", "));
+                bots.length = 0;
+            });
+        }
     };
+
+    let allow_blinking_once = false; // Save Configuration button will not blink when a button is clicked now automatically
+    // list of button callbacks in form ["button/settings name"] => function called when clicked receives true/false according to the clicked state
+    let callbacks = [["live", (val) => {
+        reload_queues[val ? "start" : "stop"]();
+    }], ["physics", (val) => {
+        app.network.setOptions({physics: val});
+    }]];
+    for (let [name, fn] of callbacks) {
+        let $el = $(`.vis-${name}-toggle`, $nc).click(function () {
+            // button click will callback and blinks Save Configuration button few times
+            fn(settings[name] = !settings[name]);
+            $(this).toggleClass("running", settings[name]);
+
+            if (allow_blinking_once) {
+                $saveButton.blinkOnce();
+            }
+        });
+        // initially turn on/off buttons according to the server-stored settings
+        settings[name] = !settings[name];
+        $el.click();
+    }
+    allow_blinking_once = true;
 
     // 'Clear Configuration' button
     $("#vis-clear").children().on('click', function (event) {
@@ -831,6 +886,22 @@ function initNetwork(includePositions = true) {
                 editPath(app, edges[0]);
             }).insertBefore($(".vis-delete"));
         }
+        // refresh shortcuts
+        // (it is so hard to click on the 'Add Node' button we rather register click event)
+        $(".vis-add .vis-label", $manipulation).attr("data-accesskey", "t").click(function () {
+            // We use 't' for 'Add bot' and 'Duplicate' because that's a common letter.
+            app.network.addNodeMode();
+        });
+        $(".vis-connect .vis-label", $manipulation).attr("data-accesskey", "q").click(function () {
+            app.network.addEdgeMode();
+        })
+        $(".vis-delete .vis-label", $manipulation).attr("data-accesskey", "d").click(function () {
+            app.network.deleteSelected();
+        });
+        $(".vis-edit .vis-label", $manipulation).attr("data-accesskey", "e").click(function () {
+            app.network.editNode();
+        });
+        accesskeyfie();
     };
     // redraw immediately so that even the first click on the network is aware of that new monkeypatched function
     app.network.manipulation.showManipulatorToolbar();
@@ -871,44 +942,66 @@ window.onresize = resize;
  * This function fetches the current info and updates bot nodes on the graph
  */
 function refresh_color(bot) {
-    if (bot_status_previous[bot] !== bot_status[bot]) {
-        let col = GROUP_COLORS[app.nodes[bot].group][(bot_status[bot] === "running") ? 0 : 1];
+    if (bot_status_previous[bot] !== bot_status[bot]) { // status changed since last time
+
+        // we use light colour if we expect bot will be running
+        // (when reloading from stopped state bot will not be running)
+        let col = GROUP_COLORS[app.nodes[bot].group][([
+            BOT_STATUS_DEFINITION.running,
+            BOT_STATUS_DEFINITION.starting,
+            BOT_STATUS_DEFINITION.restarting,
+            bot_status_previous[bot] === BOT_STATUS_DEFINITION.running ? BOT_STATUS_DEFINITION.reloading : 0
+        ].indexOf(bot_status[bot]) > -1) ? 0 : 1];
+
+        // change bot color if needed
         if (app.network_data.nodes.get([bot])[0].color !== col) {
             app.network_data.nodes.update({"id": bot, "color": col});
         }
+
+        // we dash the border if the status has to be changed (not running or stopping) or is faulty (error, incomplete)
+        if ([BOT_STATUS_DEFINITION.running, BOT_STATUS_DEFINITION.stopped].indexOf(bot_status[bot]) === -1) {
+            app.network_data.nodes.update({"id": bot, shapeProperties: {borderDashes: [5, 5]}})
+        } else if ([BOT_STATUS_DEFINITION.running, BOT_STATUS_DEFINITION.stopped, undefined].indexOf(bot_status_previous[bot]) === -1) {
+            // we remove dash border since bot has been in a dash-border state and is no more
+            // (that means that bot wasn't either in a running, stopped or initially undefined state)
+            app.network_data.nodes.update({"id": bot, shapeProperties: {"borderDashes": false}});
+        }
+
+        bot_status_previous[bot] = bot_status[bot];
     }
 }
+
 function load_live_info() {
     $(".navbar").addClass('waiting');
     return $.getJSON(MANAGEMENT_SCRIPT + '?scope=queues-and-status')
-            .done(function (data) {
-                [bot_queues, bot_status] = data;
+        .done(function (data) {
+            [bot_queues, bot_status] = data;
 
-                for (let bot in bot_queues) {
-                    if ("source_queue" in bot_queues[bot]) {
-                        // we skip bots without source queue (collectors)
-                        let c = bot_queues[bot]['source_queue'][1] + bot_queues[bot]['internal_queue'];
-                        let label = (c > 0) ? "{0}\n{1}✉".format(bot, c) : bot;
-                        if ((appbot = app.network_data.nodes.get(bot)) === null) {
-                            show_error("Non-existent bot {0} in pipelines.".format(bot));
-                        } else if (label !== appbot.label) {
-                            // update queue count on bot label
-                            app.network_data.nodes.update({"id": bot, "label": label});
-                        }
-                    } else {
-                        // https://github.com/certtools/intelmq-manager/issues/158
-                        app.network_data.nodes.update({"id": bot, "label": bot});
+            for (let bot in bot_queues) {
+                if ("source_queue" in bot_queues[bot]) {
+                    // we skip bots without source queue (collectors)
+                    // Assume an empty internal queue if no data is given (The AMQP pipeline does not have/need internal queues)
+                    let c = bot_queues[bot]['source_queue'][1] + (bot_queues[bot]['internal_queue'] || 0);
+                    let label = (c > 0) ? "{0}\n{1}✉".format(bot, c) : bot;
+                    if ((appbot = app.network_data.nodes.get(bot)) === null) {
+                        show_error("Non-existent bot {0} in pipelines.".format(bot));
+                    } else if (label !== appbot.label) {
+                        // update queue count on bot label
+                        app.network_data.nodes.update({"id": bot, "label": label});
                     }
+                } else {
+                    // https://github.com/certtools/intelmq-manager/issues/158
+                    app.network_data.nodes.update({"id": bot, "label": bot});
                 }
-                for (let bot in bot_status) {
-                    // bots that are not running are grim coloured
-                    refresh_color(bot);
-                }
-                bot_status_previous = $.extend({}, bot_status); // we need a shallow copy of a state, it's too slow to ask `app` every time
-            })
-            .fail(ajax_fail_callback('Error loading bot queues information'))
-            .always(() => {
-                $(".navbar").removeClass('waiting');
-                this.blocking = false;
-            });
+            }
+            for (let bot in bot_status) {
+                // bots that are not running are grim coloured
+                refresh_color(bot);
+            }
+        })
+        .fail(ajax_fail_callback('Error loading bot queues information'))
+        .always(() => {
+            $(".navbar").removeClass('waiting');
+            this.blocking = false;
+        });
 }

@@ -1,31 +1,63 @@
 CHANGELOG
 =========
 
-1.1.1 (unreleased)
+2.1.0 (2019-10-15)
 ------------------
 
 ### Backend
+- Fix mispelling of the environmental variable `INTELMQ_MANGER_CONTROLER_CMD` to `INTELMQ_MANGER_CONTROLLER_CMD` (you might be required to add the double 'l' to your nginx/apache server configuration)
+- When displaying a command to be replicated by debugging user, the string "sudo -u {webserver user}" string is prepended so that linux user do not have to bother with sudoing himself on the commonly used user "www-data" – which often can't be sudoed to (no bash provided due to good security measures). (Used in monitor and error reporting.) 
+
+### Frontend
+- Error reporting
+  - Click will enlarge the dialog that contains much more useful info, notably the very command that failed so that it can be easily reproduced.
+  - Error messages are shuffled only when minimized, not when maximized. That would disturb the user trying to read the details. 
+  - Invalid Syntax Error message removed. Till now, all error messages generated the string that JSON received is invalid – that wasn't needed, we knew it's invalid because it contained string message.
+  - Double click does not close log window anymore since it would interfere with the user trying to select whole text by mouse.
+  - Escape minimizes the reporting.
+  - For common seen errors, a tip is displayed (preferable with a link to the Github manual).
+ 
+### Pages
+ 
+#### Configuration
+ - Node group Collector now may connect to Expert and Expert can connect to Parser, however you receive a warning that it is not very common.
+
+2.0.0 (2019-05-22)
+------------------
+
+### Backend
+- Some AJAX requests are marked as to-be-cached for a little amount of time so that server load decreases when you need many tabs open.
 
 ### Pages
 
-#### Landing page
-
 #### Configuration
+- "Save Configuration" button reloads the bots whose destination queues changed (#175).
+- Allow standard vis.js arrow and +/- navigation when network chart is focused (#176).
+- Underscored letters denote shortcuts - you can now edit the network without wandering the mouse all around the screen (#176).
+- Correctly load JSON parameters when editing a bot: content instead of '[object Object]' string.
+- Handle not explicitly given internal queues.
+- Physics / Live button are now rememberable in the positions.conf file on the server.
+- When changing state or being disabled or erroneous, bot receives dashed border.
+- You are allowed to create multiple edges between the same nodes - correctly displayed. If the edges should have the same paths, rename dialog appears.
 
 #### Management
+- Auto-reloading
+- Clicking an action on a bot will make group panel correspond immediately
+- Clicking an action on a panel will make group in the table correspond immediately
 
 #### Monitor
-
-#### Check
+- Correctly display JSON parameters: content instead of '[object Object]' string.
+- Reloading logs fixed
+- Reloading logs every 3 sec instead of 300 sec
+- Auto-reloading logs after bot started/stopped
 
 ### Documentation
 - Add SECURITY.md file.
 
-### Third-party libraries
-
-### Packaging
-
 ### Known issues
+* Missing CSRF protection (#111).
+* Graph jumps around on "Add edge" bug component (#148).
+* wrong error message for new bots with existing ID (#152).
 
 
 1.1.0 (2018-11-12)
@@ -140,7 +172,7 @@ The version is compatible with intelmq >= 1.0.3
 
 #### Configuration
 * Fixed handling of special parameter `run_mode` (#150)
-* Intelmqctl controller may be set via an env variable `INTELMQ_MANGER_CONTROLER_CMD`
+* Intelmqctl controller may be set via an env variable `INTELMQ_MANGER_CONTROLLER_CMD`
 
 #### Check
 * Added, showing the output of `intelmqctl check` (#118).

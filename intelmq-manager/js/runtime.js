@@ -17,20 +17,22 @@ function generate_runtime_conf(nodes) {
 }
 
 function read_runtime_conf(config) {
-    var nodes = {};
-    for (id in config) {
-        var bot = config[id];
-        nodes[id] = bot;
-        nodes[id]['id'] = id;
+    bot_definition = config;
+    let nodes = {};
+    for (let bot_id in config) {
+        bot_definition[bot_id].groupname = GROUPNAME_TO_GROUP[bot_definition[bot_id].group]; // translate ex: `Parser` to `parsers`
+        let bot = config[bot_id];
+        nodes[bot_id] = bot;
+        nodes[bot_id]['bot_id'] = bot_id;
         if ('enabled' in bot) {
-            nodes[id]['enabled'] = bot['enabled'];
+            nodes[bot_id]['enabled'] = bot['enabled'];
         } else {
-            nodes[id]['enabled'] = true;
+            nodes[bot_id]['enabled'] = true;
         }
         if ('run_mode' in bot) {
-            nodes[id]['run_mode'] = bot['run_mode'];
+            nodes[bot_id]['run_mode'] = bot['run_mode'];
         } else {
-            nodes[id]['run_mode'] = 'continuous';
+            nodes[bot_id]['run_mode'] = 'continuous';
         }
     }
 
@@ -40,11 +42,17 @@ function read_runtime_conf(config) {
 function load_file(url, callback) {
     $.getJSON(url)
             .done(function (json) {
-                callback(json);
+                try {
+                    callback(json);
+                }
+                catch(e) {
+                    // don't bother to display error, I think the problem will be clearly seen with the resource itself, not within the processing
+                    show_error('Failed to load config file properly <a class="command" href="{0}">{1}</a>.'.format(url, url));
+                }
             })
             .fail(function (jqxhr, textStatus, error) {
                 var err = textStatus + ", " + error;
-                show_error('Failed to obtain JSON: ' + url + ' with error: ' + err);
+                show_error('Get an error <b>{0}</b> when trying to obtain config file properly <a class="command" href="{1}">{2}</a>.'.format(err, url, url));
                 callback({});
             });
 }

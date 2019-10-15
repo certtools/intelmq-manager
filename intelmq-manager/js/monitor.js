@@ -104,7 +104,7 @@ function redraw_logs() {
 
 var queue_overview = {}; // one-time queue overview to allow traversing
 function redraw_queues() {
-    var bot_id = $.trim($('#monitor-target').text());
+    var bot_id = getUrlParameter('bot_id') || ALL_BOTS;
 
     var source_queue_element = document.getElementById('source-queue');
     var internal_queue_element = document.getElementById('internal-queue');
@@ -144,7 +144,6 @@ function redraw_queues() {
     if (bot_id !== ALL_BOTS) {
         var bot_info = bot_queues[bot_id];
     }
-
     if (bot_info) {
         if (bot_info['source_queue']) {
             var source_queue = source_queue_element.insertRow();
@@ -240,33 +239,30 @@ function clearQueue(queue_id) {
 function load_bot_log() {
     $('#logs-panel-title').addClass('waiting');
 
-    var number_of_lines = LOAD_X_LOG_LINES;
+    let number_of_lines = LOAD_X_LOG_LINES;
 
-    var bot_id = document.getElementById('monitor-target').innerHTML;
-    var level = document.getElementById('log-level-indicator').value;
-
+    let bot_id = getUrlParameter('bot_id') || ALL_BOTS;
+    let level = document.getElementById('log-level-indicator').value;
+    if(bot_id === ALL_BOTS) {
+         return;
+     }
+    
     $.getJSON(MANAGEMENT_SCRIPT + '?scope=log&id=' + bot_id + '&lines=' + number_of_lines + '&level=' + level)
             .done(function (data) {
-                bot_logs = data;
-                redraw_logs();
-                $('#logs-panel-title').removeClass('waiting');
+                if(JSON.stringify(data) != JSON.stringify(bot_logs)) { // redraw only if content changed
+                    bot_logs = data;
+                    redraw_logs();
+                }
             })
-            .fail(function (err1, err2, errMessage) {
-                bot_logs = {};
-                redraw_logs();
-                $('#logs-panel-title').removeClass('waiting');
-                ajax_fail_callback('Error loading bot log information')(err1, err2, errMessage);
-            })
+            .fail(ajax_fail_callback('Error loading bot log information'))
             .always(() => {
+                $('#logs-panel-title').removeClass('waiting');
                 this.blocking = false;
             });
 }
 
 function load_bot_queues() {
     $('#queues-panel-title').addClass('waiting');
-
-    var bot_id = document.getElementById('monitor-target').innerHTML;
-
     $.getJSON(MANAGEMENT_SCRIPT + '?scope=queues')
             .done(function (data) {
                 bot_queues = data;
@@ -286,12 +282,12 @@ function select_bot(bot_id, history_push = false) {
 
     $("tr", $dq).remove(); // make destination table rebuild itself
 
-    if (reload_queues != null) {
-        clearInterval(reload_queues);
+    if (reload_queues) {
+        reload_queues.stop();
     }
 
-    if (reload_logs != null) {
-        clearInterval(reload_logs);
+    if (reload_logs) {
+        reload_logs.stop();
     }
 
     $('#monitor-target').html(bot_id);
@@ -307,14 +303,14 @@ function select_bot(bot_id, history_push = false) {
         $("#internal-queue-table-div").css('display', 'block');
         //$("#destination-queues-table").removeClass('highlightHovering');
         $("#destination-queues-table-div").removeClass().addClass('col-md-4'); // however, will be reset in refresh_path_names
-        $("#destination-queue-header").html("Destination Queue");
+        $("#destination-queue-header").html("Destination Queues");
 
         load_bot_log();
         reload_logs = new Interval(load_bot_log, RELOAD_LOGS_EVERY * 1000, true);
 
         // control buttons in inspect panel
         $("#inspect-panel .panel-heading .control-buttons").remove();
-        $("#inspect-panel .panel-heading").prepend(generate_control_buttons(bot_id, false, null, true));
+        $("#inspect-panel .panel-heading").prepend(generate_control_buttons(bot_id, false, load_bot_log, true));
 
         // connect to configuration panel
         $('#monitor-target').append(' <a title="show in configuration" href="?page=configs#{0}"><img src="./images/config.png" width="24" height="24" /></a>'.format(bot_id));
@@ -401,9 +397,13 @@ function refresh_configuration_info(bot_id) {
     }
     var params = app.nodes[bot_id].parameters;
     for (let key in params) {
-        $el = $("<li><b>" + key + "</b>: " + params[key] + "</li>");
-        if (params[key].indexOf && params[key].indexOf(ALLOWED_PATH) === 0) {
-            let url = LOAD_CONFIG_SCRIPT + "?file=" + params[key];
+        let param = params[key];
+        if (param !== null && typeof value === "object") { // display json/list instead of "[Object object]"
+            param = JSON.stringify(param);
+        }
+        $el = $(`<li><b>${key}</b>: ${param}</li>`);
+        if (param && param.indexOf && param.indexOf(ALLOWED_PATH) === 0) {
+            let url = LOAD_CONFIG_SCRIPT + "?file=" + param;
             $.getJSON(url, (data) => {
                 let html = "";
                 if (data.directory) {
@@ -462,7 +462,7 @@ $.getJSON(MANAGEMENT_SCRIPT + '?scope=botnet&action=status')
             var li_element = document.createElement('li');
             var link_element = document.createElement('a');
             link_element.innerHTML = ALL_BOTS;
-            link_element.setAttribute('href', "#" + MONITOR_BOT_URL.format(bot_id));
+            link_element.setAttribute('href', "#" + MONITOR_BOT_URL.format(ALL_BOTS));
             link_element.addEventListener('click', select_bot_func(ALL_BOTS));
 
             li_element.appendChild(link_element);
@@ -480,7 +480,7 @@ $.getJSON(MANAGEMENT_SCRIPT + '?scope=botnet&action=status')
                 link_element = document.createElement('a');
 
                 link_element.innerHTML = bot_id;
-                link_element.setAttribute('href', "#" + MONITOR_BOT_URL.format(bot_id)); //XX don't know what is that good for, seem have no impact to funcionality
+                link_element.setAttribute('href', "#" + MONITOR_BOT_URL.format(bot_id));
                 link_element.addEventListener('click', select_bot_func(bot_id));
 
                 li_element.appendChild(link_element);
@@ -537,14 +537,14 @@ document.addEventListener('DOMContentLoaded', function () {
  * @returns {undefined}
  */
 function run_command(display_cmd, cmd, msg = "", dry = false, show = false) {
-    var bot = getUrlParameter('bot_id');
-    $("#command-show").show().html("intelmqctl run {0} {1} {2}".format(bot, display_cmd, msg ? "'" + msg.replace("'", "'\\''") + "'" : ""));//XX dry are not syntax-correct
+    var bot_id = getUrlParameter('bot_id') || ALL_BOTS;
+    $("#command-show").show().html("{0} run {1} {2} {3}".format(CONTROLLER_CMD, bot_id, display_cmd, msg ? "'" + msg.replace("'", "'\\''") + "'" : ""));//XX dry are not syntax-correct
     $("#run-log").val("loading...");
     $('#inspect-panel-title').addClass('waiting');
     let call = $.ajax({
         method: "post",
         data: {"msg": msg},
-        url: MANAGEMENT_SCRIPT + '?scope=run&bot={0}&cmd={1}&dry={2}&show={3}'.format(bot, cmd, dry, show),
+        url: MANAGEMENT_SCRIPT + '?scope=run&bot={0}&cmd={1}&dry={2}&show={3}'.format(bot_id, cmd, dry, show),
     }).done(function (data) {
         // Parses the received data to message part and to log-only part
         let logs = [];
@@ -590,7 +590,7 @@ function run_command(display_cmd, cmd, msg = "", dry = false, show = false) {
  */
 function popState() {
     $("#run-log").val("");
-    var bot_id = getUrlParameter('bot_id');
+    var bot_id = getUrlParameter('bot_id') || ALL_BOTS;
     if (typeof (bot_id) !== 'undefined') {
         //window.history.replaceState(null, null, MONITOR_BOT_URL.format(bot_id));
         select_bot(bot_id);

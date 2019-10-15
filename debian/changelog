@@ -1,3 +1,15 @@
+intelmq-manager (2.1.0) stable; urgency=medium
+
+  * Update to version 2.1.0
+
+ -- Wagner Sebastian <wagner@cert.at>  Tue, 15 Oct 2019 11:34:13 +0200
+
+intelmq-manager (2.0.0-1) stable; urgency=medium
+
+  * Update to 2.0.0
+
+ -- Sebastian Wagner <wagner@cert.at>  Wed, 22 May 2019 15:00:52 +0200
+
 intelmq-manager (1.1.0-2) stable; urgency=medium
 
   * Really update the debian package to 1.1.0, the version 1.0.1 has been shipped previously.
