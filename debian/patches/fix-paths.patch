@@ -1,10 +1,10 @@
 Description: Fix paths for LSB
 Author: Sebastian Wagner <wagner@cert.at>
-Last-Update: 2019-03-21
+Last-Update: 2019-10-15
 ---
 This patch header follows DEP-3: http://dep.debian.net/deps/dep3/
---- a/intelmq-manager/php/config.php	2019-01-16 15:18:02.740660887 +0100
-+++ b/intelmq-manager/php/config.php	2019-03-21 12:41:03.381250023 +0100
+--- a/intelmq-manager/php/config.php	2019-10-15 11:37:08.919388631 +0200
++++ b/intelmq-manager/php/config.php	2019-10-15 11:48:37.518199337 +0200
 @@ -1,16 +1,16 @@
  <?php
  
@@ -28,5 +28,5 @@ This patch header follows DEP-3: http://dep.debian.net/deps/dep3/
 -        $c = "sudo -u intelmq /usr/local/bin/intelmqctl";
 +        $c = "sudo -u intelmq /usr/bin/intelmqctl";
      }
-     $CONTROLLER_JSON = $c." --type json %s";
-     $CONTROLLER = $c." %s";
+ 
+     // to be displayed so that user can replicate

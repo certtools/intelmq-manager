@@ -19,7 +19,7 @@ Commit your changes, the message should start with `REL: `. Push and create a pu
 
 Tag the commit with `git tag -s version HEAD`, merge it into master, push the both branches *and* the tag. The tag is just `a.b.c`, not prefixed with `v` (that was necessary only with SVN a long time ago...).
 
-Go to https://github.com/certtools/intelmq/tags and enter the release notes (changelog) for the new tag, then it's considered a release by github.
+Go to https://github.com/certtools/intelmq-manager/tags and enter the release notes (changelog) for the new tag, then it's considered a release by github.
 
 ## Packages
 We are currently using the public Open Build Service instance of openSUSE: http://build.opensuse.org/project/show/home:sebix:intelmq
