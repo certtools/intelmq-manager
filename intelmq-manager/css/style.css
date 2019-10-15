@@ -26,14 +26,42 @@ nav ul.nav.navbar-top-links li.active {
   overflow: auto;
   resize: vertical;
   position: absolute;
+  top: 0;
   right: 0;
   cursor: pointer;
 }
 #wrapper .navbar #log-window.extended {
   height: auto;
+  max-height: 100vh;
+  width: auto;
+  cursor: unset;
+  overflow: scroll;
 }
 #wrapper .navbar #log-window [role=close] {
   float: right;
+  cursor: pointer;
+}
+#wrapper .navbar #log-window .command {
+  display: block;
+  padding: 9.5px;
+  margin: 0 0 10px;
+  font-size: 13px;
+  line-height: 1.42857143;
+  color: #333;
+  word-break: break-all;
+  word-wrap: break-word;
+  background-color: #f5f5f5;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  overflow: auto;
+  font-family: Menlo, Monaco, Consolas, "Courier New", monospace;
+}
+#wrapper .navbar #log-window .alert a {
+  text-decoration: underline;
+  display: inline-block;
+  padding: 4px;
+  border: 1px solid #ccc;
+  border-radius: 10px;
 }
 .fa {
   font-family: FontAwesome;

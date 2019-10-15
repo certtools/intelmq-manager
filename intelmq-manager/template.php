@@ -79,7 +79,7 @@
                     </li>
                 </ul>
                 <!-- /.navbar-top-links -->
-                <div title="Click to expand. Double-Click to close." id='log-window'>
+                <div title="Click to expand, then escape to minimize again." id='log-window'>
                     <i role="close" class="fa fa-times"></i>
                     <div class="contents"></div>
                 </div>
@@ -103,6 +103,7 @@
             foreach ($libraries as $lib):
                 echo "<script src='$lib'></script>";
             endforeach;
+            echo "<script>CONTROLLER_CMD=\"$CONTROLLER_CMD\";</script>";
             ?>
 
         </div>

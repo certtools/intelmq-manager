@@ -24,7 +24,7 @@ This patch header follows DEP-3: http://dep.debian.net/deps/dep3/
 +        'system' 	=> '/etc/intelmq/system.conf',
 +        'positions' => '/etc/intelmq/manager/positions.conf',
      );
-     if(!($c = getenv("INTELMQ_MANGER_CONTROLER_CMD"))) {
+     if(!($c = getenv("INTELMQ_MANGER_CONTROLLER_CMD"))) {
 -        $c = "sudo -u intelmq /usr/local/bin/intelmqctl";
 +        $c = "sudo -u intelmq /usr/bin/intelmqctl";
      }

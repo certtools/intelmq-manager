@@ -538,7 +538,7 @@ document.addEventListener('DOMContentLoaded', function () {
  */
 function run_command(display_cmd, cmd, msg = "", dry = false, show = false) {
     var bot_id = getUrlParameter('bot_id') || ALL_BOTS;
-    $("#command-show").show().html("intelmqctl run {0} {1} {2}".format(bot_id, display_cmd, msg ? "'" + msg.replace("'", "'\\''") + "'" : ""));//XX dry are not syntax-correct
+    $("#command-show").show().html("{0} run {1} {2} {3}".format(CONTROLLER_CMD, bot_id, display_cmd, msg ? "'" + msg.replace("'", "'\\''") + "'" : ""));//XX dry are not syntax-correct
     $("#run-log").val("loading...");
     $('#inspect-panel-title').addClass('waiting');
     let call = $.ajax({
