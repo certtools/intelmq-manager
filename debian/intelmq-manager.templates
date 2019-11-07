@@ -4,7 +4,7 @@ _Description: IntelMQ web administration user:
  Please provide the user name to be created for use of the IntelMQ Manager.
  .
  This is the username you will use to log in to the IntelMQ web interface
- after configuration is complete.  Users can late be added and modified by
+ after configuration is complete.  Users can later be added and modified by
  editing "/etc/intelmq-manager.htusers" using the standard "htpasswd" tool.
 
 Template: intelmq-manager/password
