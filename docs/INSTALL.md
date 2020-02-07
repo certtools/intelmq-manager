@@ -28,9 +28,9 @@ The following instructions assume the following requirements:
 * a supported operating system
 
 Supported and recommended operating systems are:
-* Debian 8
-* OpenSUSE Leap 42.2
-* Ubuntu: 14.04 and 16.04 LTS
+* Debian 8, 9, 10
+* OpenSUSE Leap 42.2, 15
+* Ubuntu: 14.04, 16.04, 18.04 LTS
 
 Partly supported are:
 * RHEL 7
