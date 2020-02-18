@@ -1,6 +1,13 @@
 CHANGELOG
 =========
 
+
+2.1.1 (unreleased)
+------------------
+
+### Documentation
+- Update supported operating systems in Installation documentation (i.a. PR #191).
+
 2.1.0 (2019-10-15)
 ------------------
 
