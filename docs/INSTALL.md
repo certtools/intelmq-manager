@@ -5,8 +5,9 @@
    * [Ubuntu 14.04 / Debian 8](#ubuntu-1404--debian-8)
    * [Ubuntu 16.04](#ubuntu-1604)
    * [Ubuntu 18.04](#ubuntu-1804)
+   * [Debian 10](#debian-10)
    * [CentOS 7](#centos-7)
-   * [openSUSE Leap 42.2](#opensuse-leap-422)
+   * [openSUSE Leap 15.1](#opensuse-leap-151)
 3. [Installation](#installation)
    * [Native packages](#native-packages)
    * [Manually](#manually)
@@ -59,6 +60,12 @@ apt-get install git apache2 php libapache2-mod-php7.0
 apt-get install git apache2 php libapache2-mod-php7.2
 ```
 
+## Debian 10
+
+```bash
+apt install libapache2-mod-php7.3
+```
+
 ## CentOS 7
 
 ```bash
@@ -66,10 +73,10 @@ yum install epel-release
 yum install git httpd httpd-tools php
 ```
 
-## openSUSE Leap 42.2 / 42.3 / 15.0
+## openSUSE Leap 15.1
 
 ```bash
-yum install git apache2 apache2-utils apache2-mod_php7
+zypper install git apache2 apache2-utils apache2-mod_php7
 ```
 
 # Installation
