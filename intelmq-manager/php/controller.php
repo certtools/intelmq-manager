@@ -121,6 +121,8 @@ if ($scope == 'botnet') {
         default:
             break;
     }
+} else if ($scope == 'debug') {
+    $arguments = 'debug';
 } else {
     die('Invalid scope');
 }

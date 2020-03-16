@@ -5,6 +5,7 @@ See the changelog for a full list of changes.
 
 2.2.0 (unreleased)
 ------------------
+This IntelMQ Manager version requires IntelMQ >= 2.2.0.
 
 
 2.1.0 (2019-10-15)

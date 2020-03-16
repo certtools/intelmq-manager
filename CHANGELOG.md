@@ -4,6 +4,7 @@ CHANGELOG
 
 2.2.0 (unreleased)
 ------------------
+This IntelMQ Manager version requires IntelMQ >= 2.2.0.
 
 ### Backend
 
@@ -18,6 +19,9 @@ CHANGELOG
 #### Monitor
 
 #### Check
+
+#### About
+- Show output of `intelmqctl debug`.
 
 ### Documentation
 
