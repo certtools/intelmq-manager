@@ -31,8 +31,29 @@ CHANGELOG
 2.1.1 (unreleased)
 ------------------
 
+
+### Backend
+
+### Pages
+
+#### Landing page
+
+#### Configuration
+
+#### Management
+
+#### Monitor
+
+#### Check
+
 ### Documentation
 - Update supported operating systems in Installation documentation (i.a. PR #191).
+
+### Third-party libraries
+
+### Packaging
+
+### Known issues
 
 2.1.0 (2019-10-15)
 ------------------
