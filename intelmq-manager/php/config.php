@@ -9,7 +9,9 @@
         'system' 	=> '/opt/intelmq/etc/system.conf',
         'positions' => '/opt/intelmq/etc/manager/positions.conf',
     );
-    if(!($c = getenv("INTELMQ_MANGER_CONTROLLER_CMD"))) {
+    $backwardscompat = getenv("INTELMQ_MANGER_CONTROLLER_CMD");
+    $controller = getenv("INTELMQ_MANAGER_CONTROLLER_CMD");
+    if(!($c = $controller ? $controller : $backwardscompat)) {
         $c = "sudo -u intelmq /usr/local/bin/intelmqctl";
     }
 

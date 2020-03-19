@@ -3,6 +3,11 @@ NEWS
 
 See the changelog for a full list of changes.
 
+2.1.1 (unreleased)
+------------------
+The environment variable name was corrected from `INTELMQ_MANGER_CONTROLLER_CMD` to `INTELMQ_MANGAER_CONTROLLER_CMD` you might need to adapt your configuration.
+The old name will be available until version 3.0.
+
 2.1.0 (2019-10-15)
 ------------------
 The environment variable name was corrected from `INTELMQ_MANGER_CONTROLER_CMD` to `INTELMQ_MANGER_CONTROLLER_CMD` you might need to adapt your configuration.

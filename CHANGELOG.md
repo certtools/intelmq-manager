@@ -7,6 +7,7 @@ CHANGELOG
 
 
 ### Backend
+- Fix mispelling of the environmental variable `INTELMQ_MANGER_CONTROLLER_CMD` to `INTELMQ_MANAGER_CONTROLLER_CMD` (an 'a' was missing).
 
 ### Pages
 
