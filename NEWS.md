@@ -11,6 +11,11 @@ This IntelMQ Manager version requires IntelMQ >= 2.2.0.
 The paths for configuration files is not queried from the IntelMQ Core.
 The environment variables `INTELMQ_ROOT_DIR` and `INTELMQ_PATHS_NO_OPT`/`INTELMQ_PATHS_OPT` are now respected.
 
+2.1.1 (unreleased)
+------------------
+The environment variable name was corrected from `INTELMQ_MANGER_CONTROLLER_CMD` to `INTELMQ_MANGAER_CONTROLLER_CMD` you might need to adapt your configuration.
+The old name will be available until version 3.0.
+
 2.1.0 (2019-10-15)
 ------------------
 The environment variable name was corrected from `INTELMQ_MANGER_CONTROLER_CMD` to `INTELMQ_MANGER_CONTROLLER_CMD` you might need to adapt your configuration.

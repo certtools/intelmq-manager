@@ -26,7 +26,6 @@ After editing the bots' configuration and pipeline, simply click "Save Configura
 
 **Note well**: if you do not press "Save Configuration" your changes will be lost whenever you reload the web page or move between different tabs within the IntelMQ manager page.
 
-Any underscored letter denotes access key shortcut (ex: <kbd>Alt + (Shift) + letter</kbd>).
 
 #### Botnet Management
 When you save a configuration you can go to the 'Management' section to see what bots are running and start/stop the entire botnet, or a single bot.
