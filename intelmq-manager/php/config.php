@@ -1,6 +1,6 @@
 <?php
     if(!($c = getenv("INTELMQ_MANGER_CONTROLLER_CMD"))) {
-        $c = "sudo -u intelmq /usr/bin/intelmqctl";
+        $c = "sudo -u intelmq /usr/local/bin/intelmqctl";
     }
 
     // to be displayed so that user can replicate

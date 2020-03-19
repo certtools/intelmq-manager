@@ -7,7 +7,7 @@ CHANGELOG
 This IntelMQ Manager version requires IntelMQ >= 2.2.0.
 
 ### Backend
-- `config`: Get file paths from `intelmctl debug --get-paths` if possible and fall back to hard-coded paths otherwise. Thereby environment variables influencing the paths are respected.
+- `config`: Get file paths from `intelmctl debug --get-paths` if possible and fall back to hard-coded paths otherwise. Thereby environment variables influencing the paths are respected (#193).
 
 ### Pages
 
