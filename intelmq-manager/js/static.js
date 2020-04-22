@@ -50,7 +50,8 @@ var PARAM_KEY_REGEX = /^[0-9a-zA-Z._-]+$/;
 var ROOT = window.location.href.substring(0, window.location.href.lastIndexOf('/') + 1);
 
 var LOAD_CONFIG_SCRIPT = ROOT + "php/load_configs.php";
-var MANAGEMENT_SCRIPT = ROOT + "php/controller.php";
+var MANAGEMENT_BASE_URL = ROOT + "api/";
+var MANAGEMENT_SCRIPT = MANAGEMENT_BASE_URL + "controller";
 
 var BOTS_FILE = LOAD_CONFIG_SCRIPT + "?file=bots";
 var DEFAULTS_FILE = LOAD_CONFIG_SCRIPT + "?file=defaults";
@@ -346,10 +347,10 @@ $(document).on("click", ".control-buttons button", function () {
     let url;
     if (bot) {
         bot_status[bot] = $(this).attr("data-status-definition");
-        url = '{0}?scope=bot&action={1}&id={2}'.format(MANAGEMENT_SCRIPT, $(this).attr("data-url"), bot);
+        url = managementUrl("bot", 'action={0}&id={1}'.format($(this).attr("data-url"), bot));
     } else {
         botnet_status[botnet] = $(this).attr("data-status-definition");
-        url = '{0}?scope=botnet&action={1}&group={2}'.format(MANAGEMENT_SCRIPT, $(this).attr("data-url"), botnet);
+        url = managementUrl('botnet', 'action={0}&group={1}'.format($(this).attr("data-url"), botnet));
         for (let bot_d of Object.values(bot_definition)) {
             if (bot_d.groupname === botnet) {
                 bot_status[bot_d.bot_id] = $(this).attr("data-status-definition");
@@ -441,4 +442,16 @@ function accesskeyfie() {
             $(this).html(t2);
         }
     });
+}
+
+
+/**
+ * Determine the URL for management commands.
+ */
+function managementUrl(cmd, params) {
+    var url = MANAGEMENT_BASE_URL + cmd;
+    if (params !== undefined) {
+	url += "?" + params;
+    }
+    return url;
 }

@@ -2,7 +2,7 @@ function get_versions() {
     var intelmq_version_element = document.getElementById('intelmq-version');
     var intelmq_manager_version_element = document.getElementById('intelmq-manager-version');
     
-    $.getJSON(MANAGEMENT_SCRIPT + '?scope=version')
+    $.getJSON(managementUrl('version'))
         .done(function (data) {
             intelmq_version_element.innerHTML = data['intelmq'];
             intelmq_manager_version_element.innerHTML = data['intelmq-manager'];
@@ -16,7 +16,7 @@ function get_versions() {
 function get_debug() {
     var section_element = document.getElementById('debugging');
 
-    $.getJSON(MANAGEMENT_SCRIPT + '?scope=debug')
+    $.getJSON(managementUrl('debug'))
         .done(function (data) {
             for (const section in data) {
                 section_heading = document.createElement("h3");

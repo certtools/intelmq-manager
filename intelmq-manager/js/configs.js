@@ -792,7 +792,7 @@ function initNetwork(includePositions = true) {
         let promises = [];
         let bots = $.unique($(this).data("reloadables"));
         for (let bot_id of bots) {
-            let url = `${MANAGEMENT_SCRIPT}?scope=bot&action=reload&id=${bot_id}`;
+            let url = managementUrl("bot", `action=reload&id=${bot_id}`);
             promises.push($.getJSON(url));
         }
         if (promises.length) {
@@ -973,7 +973,7 @@ function refresh_color(bot) {
 
 function load_live_info() {
     $(".navbar").addClass('waiting');
-    return $.getJSON(MANAGEMENT_SCRIPT + '?scope=queues-and-status')
+    return $.getJSON(managementUrl('queues-and-status'))
         .done(function (data) {
             [bot_queues, bot_status] = data;
 

@@ -228,7 +228,7 @@ function generateClearQueueButton(queue_id) {
 }
 
 function clearQueue(queue_id) {
-    $.getJSON(MANAGEMENT_SCRIPT + '?scope=clear&id=' + queue_id)
+    $.getJSON(managementUrl('clear', 'id=' + queue_id))
             .done(function (data) {
                 redraw_queues();
                 $('#queues-panel-title').removeClass('waiting');
@@ -245,9 +245,13 @@ function load_bot_log() {
     let level = document.getElementById('log-level-indicator').value;
     if(bot_id === ALL_BOTS) {
          return;
-     }
-    
-    $.getJSON(MANAGEMENT_SCRIPT + '?scope=log&id=' + bot_id + '&lines=' + number_of_lines + '&level=' + level)
+    }
+    // NOTE: The URL to fetch the log used to be "...?scope=log&...".
+    // It's now ".../getlog" instead of ".../log" because for some
+    // reason, the client (at least the Firefox versions I tested) did
+    // not even try to fetch the URL in the latter case. Switching from
+    // "log" to "getlog" made it work.
+    $.getJSON(managementUrl('getlog', 'id=' + bot_id + '&lines=' + number_of_lines + '&level=' + level))
             .done(function (data) {
                 if(JSON.stringify(data) != JSON.stringify(bot_logs)) { // redraw only if content changed
                     bot_logs = data;
@@ -263,7 +267,7 @@ function load_bot_log() {
 
 function load_bot_queues() {
     $('#queues-panel-title').addClass('waiting');
-    $.getJSON(MANAGEMENT_SCRIPT + '?scope=queues')
+    $.getJSON(managementUrl('queues'))
             .done(function (data) {
                 bot_queues = data;
                 redraw_queues();
@@ -446,7 +450,7 @@ function show_extended_message(index) {
     modal_body.innerHTML = message;
 }
 
-$.getJSON(MANAGEMENT_SCRIPT + '?scope=botnet&action=status')
+$.getJSON(managementUrl('botnet', 'action=status'))
         .done(function (data) {
             var sidemenu = document.getElementById('side-menu');
 
@@ -544,7 +548,7 @@ function run_command(display_cmd, cmd, msg = "", dry = false, show = false) {
     let call = $.ajax({
         method: "post",
         data: {"msg": msg},
-        url: MANAGEMENT_SCRIPT + '?scope=run&bot={0}&cmd={1}&dry={2}&show={3}'.format(bot_id, cmd, dry, show),
+        url: managementUrl('run', 'bot={0}&cmd={1}&dry={2}&show={3}'.format(bot_id, cmd, dry, show)),
     }).done(function (data) {
         // Parses the received data to message part and to log-only part
         let logs = [];
