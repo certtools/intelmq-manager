@@ -49,8 +49,8 @@ var PARAM_KEY_REGEX = /^[0-9a-zA-Z._-]+$/;
 
 var ROOT = window.location.href.substring(0, window.location.href.lastIndexOf('/') + 1);
 
-var LOAD_CONFIG_SCRIPT = ROOT + "php/load_configs.php";
 var MANAGEMENT_BASE_URL = ROOT + "api/";
+var LOAD_CONFIG_SCRIPT = MANAGEMENT_BASE_URL + "config";
 var MANAGEMENT_SCRIPT = MANAGEMENT_BASE_URL + "controller";
 
 var BOTS_FILE = LOAD_CONFIG_SCRIPT + "?file=bots";

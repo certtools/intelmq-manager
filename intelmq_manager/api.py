@@ -1,10 +1,13 @@
+import os
 import string
+import pathlib
 import typing
 from datetime import datetime, timedelta
 
 import hug  # type: ignore
 
 import intelmq_manager.runctl as runctl
+import intelmq_manager.files as files
 
 
 Levels = hug.types.OneOf(["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL",
@@ -84,3 +87,12 @@ def debug():
     return get_runner().debug()
 
 
+@hug.get("/config")
+def config(response, file: str, fetch: bool=False):
+    result = files.load_file_or_directory(file, fetch)
+    if result is None:
+        return ["Unknown resource"]
+
+    content_type, contents = result
+    response.content_type = content_type
+    return contents
