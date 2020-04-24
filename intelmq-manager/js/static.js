@@ -58,7 +58,6 @@ var DEFAULTS_FILE = LOAD_CONFIG_SCRIPT + "?file=defaults";
 var HARMONIZATION_FILE = LOAD_CONFIG_SCRIPT + "?file=harmonization";
 var PIPELINE_FILE = LOAD_CONFIG_SCRIPT + "?file=pipeline";
 var RUNTIME_FILE = LOAD_CONFIG_SCRIPT + "?file=runtime";
-var SYSTEM_FILE = LOAD_CONFIG_SCRIPT + "?file=system";
 var POSITIONS_FILE = LOAD_CONFIG_SCRIPT + "?file=positions";
 
 var RELOAD_QUEUES_EVERY = 1; /* 1 seconds */

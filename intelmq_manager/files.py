@@ -9,7 +9,6 @@ FILES = {
     'harmonization': Path('/opt/intelmq/etc/harmonization.conf'),
     'pipeline': Path('/opt/intelmq/etc/pipeline.conf'),
     'runtime': Path('/opt/intelmq/etc/runtime.conf'),
-    'system': Path('/opt/intelmq/etc/system.conf'),
     'positions': Path('/opt/intelmq/etc/manager/positions.conf'),
     }
 
