@@ -8,6 +8,8 @@ See the changelog for a full list of changes.
 The environment variable name was corrected from `INTELMQ_MANGER_CONTROLLER_CMD` to `INTELMQ_MANGAER_CONTROLLER_CMD` you might need to adapt your configuration.
 The old name will be available until version 3.0.
 
+Use IntelMQ Manager only from a browser that can only access internal, trusted sites. (Because CSRF development is under way, see [#111](github.com/certtools/intelmq/issues/111)).
+
 2.1.0 (2019-10-15)
 ------------------
 The environment variable name was corrected from `INTELMQ_MANGER_CONTROLER_CMD` to `INTELMQ_MANGER_CONTROLLER_CMD` you might need to adapt your configuration.

@@ -143,6 +143,8 @@ The way the current version is written, anyone can send a POST request and chang
 
 Therefore you will need authentication and SSL.
 
+Use IntelMQ Manager only from a browser that can only access internal, trusted sites. (Because CSRF development is under way, see [#111](https://github.com/certtools/intelmq-manager/issues/111)).
+
 In addition, intelmq currently stores plaintext passwords in its configuration files. These can be read via intelmq-manager.
 
 **Never ever allow unencrypted, unauthenticated access to intelmq-manager**.
