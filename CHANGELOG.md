@@ -2,35 +2,28 @@ CHANGELOG
 =========
 
 
-2.1.1 (unreleased)
+2.1.1 (2020-04-27)
 ------------------
 Bernhard Herzog (Intevation) discovered that the backend incorrectly handled messages given by user-input in the "send" functionality of the Inspect-tool of the Monitor component. An attacker with access to the IntelMQ Manager could possibly use this issue to execute arbitrary code with the privileges of the webserver.
 
 ### Backend
-- Fix mispelling of the environmental variable `INTELMQ_MANGER_CONTROLLER_CMD` to `INTELMQ_MANAGER_CONTROLLER_CMD` (an 'a' was missing).
+- Fix misspelling of the environmental variable `INTELMQ_MANGER_CONTROLLER_CMD` to `INTELMQ_MANAGER_CONTROLLER_CMD` (an 'a' was missing).
 - Fix handling of POST variable `msg` of the message-sending functionality available in the Inspect-tool.
 
 ### Pages
-
-#### Landing page
-
-#### Configuration
-
-#### Management
-
 #### Monitor
 - Fix running commands with the "inspect" widget by fixing the definition of the `CONTROLLER_CMD` in the template (PR #194).
-
-#### Check
 
 ### Documentation
 - Update supported operating systems in Installation documentation (i.a. PR #191).
 
-### Third-party libraries
-
-### Packaging
-
 ### Known issues
+* Missing CSRF protection (#111).
+* Graph jumps around on "Add edge" (#148).
+* wrong error message for new bots with existing ID (#152).
+* `ALLOWED_PATH=` violates CSP (#183).
+* Monitor page: Automatic log refresh reset log page to first one (#190).
+
 
 2.1.0 (2019-10-15)
 ------------------

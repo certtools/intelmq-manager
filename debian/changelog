@@ -1,3 +1,10 @@
+intelmq-manager (2.1.1-1) stable; urgency=critical
+
+  * Update to version 2.1.1.
+   * Bernhard Herzog (Intevation) discovered that the backend incorrectly handled messages given by user-input in the "send" functionality of the Inspect-tool of the Monitor component. An attacker with access to the IntelMQ Manager could possibly use this issue to execute arbitrary code with the privileges of the webserver.
+
+ -- Sebastian Wagner <wagner@cert.at>  Mon, 27 Apr 2020 21:02:23 +0200
+
 intelmq-manager (2.1.0-1) stable; urgency=medium
 
   * Update to version 2.1.0
