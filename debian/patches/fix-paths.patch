@@ -1,11 +1,11 @@
 Description: Fix paths for LSB
 Author: Sebastian Wagner <wagner@cert.at>
-Last-Update: 2020-03-16
+Last-Update: 2020-04-27
 ---
 This patch header follows DEP-3: http://dep.debian.net/deps/dep3/
---- intelmq-manager/php/config.php	2020-03-16 16:50:54.716712759 +0100
-+++ intelmq-manager/php/config.php	2020-03-16 16:52:00.812537251 +0100
-@@ -1,6 +1,6 @@
+--- a/intelmq-manager/php/config.php	2020-04-27 17:37:51.310011401 +0200
++++ b/intelmq-manager/php/config.php	2020-04-27 21:28:30.432810932 +0200
+@@ -1,18 +1,18 @@
  <?php
      if(!($c = getenv("INTELMQ_MANGER_CONTROLLER_CMD"))) {
 -        $c = "sudo -u intelmq /usr/local/bin/intelmqctl";
@@ -32,5 +32,19 @@ This patch header follows DEP-3: http://dep.debian.net/deps/dep3/
 +        'system' 	=> '/etc/intelmq/system.conf',
 +        'positions' => '/etc/intelmq/manager/positions.conf',
      );
-     # get paths from intelmqctl directly if it works
-     $proc = proc_open($c . "--type json debug --get-paths", [
+     $backwardscompat = getenv("INTELMQ_MANGER_CONTROLLER_CMD");
+     $controller = getenv("INTELMQ_MANAGER_CONTROLLER_CMD");
+     if(!($c = $controller ? $controller : $backwardscompat)) {
+-        $c = "sudo -u intelmq /usr/local/bin/intelmqctl";
++        $c = "sudo -u intelmq /usr/bin/intelmqctl";
+     }
+ 
+     // to be displayed so that user can replicate
+@@ -26,6 +26,6 @@
+     $BOT_ID_REJECT_REGEX = '/[^A-Za-z0-9.-]/';
+     $VERSION = "2.2.0a1";
+ 
+-    $ALLOWED_PATH = "/opt/intelmq/var/lib/bots/"; // PHP is allowed to fetch the config files from the current location in order to display bot configurations.
++    $ALLOWED_PATH = "/var/lib/intelmq/bots/"; // PHP is allowed to fetch the config files from the current location in order to display bot configurations.
+     $FILESIZE_THRESHOLD = 2000; // config files under this size gets loaded automatically; otherwise a link is generated
+ ?>

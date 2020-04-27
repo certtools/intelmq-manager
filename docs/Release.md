@@ -9,7 +9,7 @@ Assumption: You are working on branch maintenance, the next version is a bug fix
 
  * CHANGELOG.MD and
  * NEWS.MD: Update the latest header, fix the order and remove empty sections if necessary.
- * `intelmq-manager/php/config.php`: Update the version.
+ * `intelmq-manager/php/config.php` and `debian/patches/fix-paths.patch`: Update the version.
  * `debian/changelog`: Insert a new section for the new version with the tool `dch`.
 
 ## Commit
