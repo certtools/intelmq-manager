@@ -1,4 +1,7 @@
 import os
+import json
+import re
+import string
 from pathlib import PurePath, Path
 from typing import Optional, Tuple, Union, Dict, Any, Iterable, TextIO
 
@@ -21,6 +24,9 @@ FILES.update(READONLY_FILES)
 
 
 ALLOWED_PATH = Path("/opt/intelmq/var/lib/bots/")
+
+BOT_CONFIG_CHARS = set(string.ascii_letters + string.digits + string.punctuation
+                       + " \n\r\t")
 
 
 def path_starts_with(path: PurePath, prefix: PurePath) -> bool:
@@ -82,3 +88,40 @@ def load_file_or_directory(unvalidated_filename: str, fetch: bool) \
             obj = {"size": stat.st_size, "path": str(path.resolve())}
         result["files"][path.name] = obj
     return (content_type, result)
+
+
+class SaveFileException(Exception):
+
+    """Exception thrown for errors/invalid input in save_file"""
+
+
+def save_file(unvalidated_filename: str, contents: str) -> None:
+    target_path = WRITABLE_FILES.get(unvalidated_filename)
+    if target_path is None:
+        raise SaveFileException("Invalid filename: {!r}"
+                                .format(unvalidated_filename))
+
+    try:
+        parsed = json.loads(contents)
+    except json.JSONDecodeError as e:
+        raise SaveFileException("File contents for {!r} are not JSON: {}"
+                                .format(unvalidated_filename, str(e)))
+    if not isinstance(parsed, dict):
+        raise SaveFileException("File must contain a JSON object.")
+
+    if unvalidated_filename not in ("defaults", "positions"):
+        for key in parsed.keys():
+            if key != "__default__" and re.search("[^A-Za-z0-9.-]", key):
+                raise SaveFileException("Invalid bot ID: {!r}".format(key))
+
+    if not set(contents) < BOT_CONFIG_CHARS:
+        raise SaveFileException("Config has invalid characters");
+
+
+    old_contents = target_path.read_text()
+    if contents != old_contents:
+        try:
+            target_path.write_text(contents, encoding="utf-8")
+        except IOError:
+            # TODO: log details of this error
+            raise SaveFileException("Could not write file.")

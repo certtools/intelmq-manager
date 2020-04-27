@@ -96,3 +96,12 @@ def config(response, file: str, fetch: bool=False):
     content_type, contents = result
     response.content_type = content_type
     return contents
+
+@hug.post("/save", parse_body=True,
+          inputs={"application/x-www-form-urlencoded": hug.input_format.text})
+def save(body, file: str):
+    try:
+        files.save_file(file, body)
+        return "success"
+    except files.SaveFileException as e:
+        return str(e)
