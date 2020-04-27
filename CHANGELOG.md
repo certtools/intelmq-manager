@@ -18,6 +18,7 @@ CHANGELOG
 #### Management
 
 #### Monitor
+- Fix running commands with the "inspect" widget by fixing the definition of the `CONTROLLER_CMD` in the template (PR #194).
 
 #### Check
 
