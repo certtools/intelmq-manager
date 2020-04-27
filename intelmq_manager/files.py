@@ -3,14 +3,21 @@ from pathlib import PurePath, Path
 from typing import Optional, Tuple, Union, Dict, Any, Iterable, TextIO
 
 
-FILES = {
-    'bots': Path('/opt/intelmq/etc/BOTS'),
+WRITABLE_FILES = {
     'defaults': Path('/opt/intelmq/etc/defaults.conf'),
-    'harmonization': Path('/opt/intelmq/etc/harmonization.conf'),
     'pipeline': Path('/opt/intelmq/etc/pipeline.conf'),
     'runtime': Path('/opt/intelmq/etc/runtime.conf'),
     'positions': Path('/opt/intelmq/etc/manager/positions.conf'),
     }
+
+READONLY_FILES = {
+    'bots': Path('/opt/intelmq/etc/BOTS'),
+    'harmonization': Path('/opt/intelmq/etc/harmonization.conf'),
+    }
+
+FILES = {}
+FILES.update(WRITABLE_FILES)
+FILES.update(READONLY_FILES)
 
 
 ALLOWED_PATH = Path("/opt/intelmq/var/lib/bots/")
