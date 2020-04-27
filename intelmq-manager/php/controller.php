@@ -104,7 +104,7 @@ if ($scope == 'botnet') {
             $arguments .= "message pop";
             break;
         case "send":
-            $arguments .= "message send '" . escapeshellarg(filter_input(INPUT_POST, "msg")) . "'";
+            $arguments .= "message send " . escapeshellarg(filter_input(INPUT_POST, "msg"));
             break;
         case "process":
             $arguments .= "process";

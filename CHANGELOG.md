@@ -4,10 +4,11 @@ CHANGELOG
 
 2.1.1 (unreleased)
 ------------------
-
+Bernhard Herzog (Intevation) discovered that the backend incorrectly handled messages given by user-input in the "send" functionality of the Inspect-tool of the Monitor component. An attacker with access to the IntelMQ Manager could possibly use this issue to execute arbitrary code with the privileges of the webserver.
 
 ### Backend
 - Fix mispelling of the environmental variable `INTELMQ_MANGER_CONTROLLER_CMD` to `INTELMQ_MANAGER_CONTROLLER_CMD` (an 'a' was missing).
+- Fix handling of POST variable `msg` of the message-sending functionality available in the Inspect-tool.
 
 ### Pages
 
