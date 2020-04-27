@@ -53,6 +53,7 @@ Bernhard Herzog (Intevation) discovered that the backend incorrectly handled mes
 #### Configuration
  - Node group Collector now may connect to Expert and Expert can connect to Parser, however you receive a warning that it is not very common.
 
+
 2.0.0 (2019-05-22)
 ------------------
 
@@ -87,7 +88,7 @@ Bernhard Herzog (Intevation) discovered that the backend incorrectly handled mes
 
 ### Known issues
 * Missing CSRF protection (#111).
-* Graph jumps around on "Add edge" bug component (#148).
+* Graph jumps around on "Add edge" (#148).
 * wrong error message for new bots with existing ID (#152).
 
 
@@ -142,7 +143,7 @@ Bernhard Herzog (Intevation) discovered that the backend incorrectly handled mes
 
 ### Known issues
 * Missing CSRF protection (#111).
-* Graph jumps around on "Add edge" bug component (#148).
+* Graph jumps around on "Add edge" (#148).
 * wrong error message for new bots with existing ID (#152).
 
 1.0.2 (2018-09-24)
@@ -170,7 +171,7 @@ Bernhard Herzog (Intevation) discovered that the backend incorrectly handled mes
 ### Known issues
 * Missing CSRF protection (#111).
 * Missing copyright notices (#140).
-* Graph jumps around on "Add edge" bug component (#148).
+* Graph jumps around on "Add edge" (#148).
 * wrong error message for new bots with existing ID (#152).
 * Queue size for deleted queue remains displayed (#158).
 
@@ -184,7 +185,7 @@ The version is compatible with intelmq >= 1.0.3
 ### Known issues
 * Missing CSRF protection (#111).
 * Missing copyright notices (#140).
-* Graph jumps around on "Add edge" bug component (#148).
+* Graph jumps around on "Add edge" (#148).
 * new runtime parameters with _ not possible (#153).
 * wrong error message for new bots with existing ID (#152).
 
@@ -226,7 +227,7 @@ The version is compatible with intelmq >= 1.0.3
 ### Known issues
 * Missing CSRF protection (#111).
 * Missing copyright notices (#140).
-* Graph jumps around on "Add edge" bug component (#148).
+* Graph jumps around on "Add edge" (#148).
 * new runtime parameters with _ not possible (#153).
 * wrong error message for new bots with existing ID (#152).
 

@@ -14,7 +14,7 @@ intelmq-manager (1.1.0-2) stable; urgency=medium
 
   * Really update the debian package to 1.1.0, the version 1.0.1 has been shipped previously.
 
- -- sebastianw <sebastianw@localhost>  Tue, 18 Dec 2018 12:41:37 +0100
+ -- Sebastian Wagner <wagner@cert.at>  Tue, 18 Dec 2018 12:41:37 +0100
 
 intelmq-manager (1.1.0-1) stable; urgency=medium
 

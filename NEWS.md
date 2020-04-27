@@ -18,6 +18,7 @@ Use IntelMQ Manager only from a browser that can only access internal, trusted s
 ------------------
 The environment variable name was corrected from `INTELMQ_MANGER_CONTROLER_CMD` to `INTELMQ_MANGER_CONTROLLER_CMD` you might need to adapt your configuration.
 
+
 2.0.0 (2019-05-22)
 ------------------
 
