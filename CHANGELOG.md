@@ -49,6 +49,7 @@ This IntelMQ Manager version requires IntelMQ >= 2.2.0.
 #### Management
 
 #### Monitor
+- Fix running commands with the "inspect" widget by fixing the definition of the `CONTROLLER_CMD` in the template (PR #194).
 
 #### Check
 
