@@ -3,6 +3,10 @@ NEWS
 
 See the changelog for a full list of changes.
 
+2.1.2 (unreleased)
+------------------
+
+
 2.1.1 (2020-04-27)
 ------------------
 
