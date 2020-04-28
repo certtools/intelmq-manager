@@ -39,7 +39,7 @@ For bigger releases, probably also at IHAP, Twitter, etc. Ask your favorite soci
 
 ## Prepare new version
 
-Increase the version in `intelmq-manager/php/config.php` and declare it as alpha version.
+`intelmq-manager/php/config.php` and `debian/patches/fix-paths.patch`: Update the version.
 
 Add a new empty changelog section:
 
