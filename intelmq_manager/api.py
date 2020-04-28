@@ -8,6 +8,7 @@ import hug  # type: ignore
 
 import intelmq_manager.runctl as runctl
 import intelmq_manager.files as files
+import intelmq_manager.config
 
 
 Levels = hug.types.OneOf(["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL",
@@ -27,64 +28,71 @@ def ID(value):
     return value
 
 
-def get_runner():
-    return runctl.RunIntelMQCtl(["sudo", "-u", "intelmq",
-                                 "/usr/local/bin/intelmqctl"])
+api_config : intelmq_manager.config.Config = intelmq_manager.config.Config()
+
+runner : runctl.RunIntelMQCtl = runctl.RunIntelMQCtl(api_config.intelmq_ctl_cmd)
+
+
+def load_api_config(filename : str) -> None:
+    global api_config, runner
+    api_config = intelmq_manager.config.load_config(filename)
+    runner = runctl.RunIntelMQCtl(api_config.intelmq_ctl_cmd)
+
 
 @hug.get("/botnet")
 @typing.no_type_check
 def botnet(action: Actions, group: Groups = None):
-    return get_runner().botnet(action, group)
+    return runner.botnet(action, group)
 
 
 @hug.get("/bot")
 @typing.no_type_check
 def bot(action: Actions, id: ID):
-    return get_runner().bot(action, id)
+    return runner.bot(action, id)
 
 
 @hug.get("/getlog")
 @typing.no_type_check
 def getlog(id: ID, lines: int, level: Levels = "DEBUG"):
-    return get_runner().log(id, lines, level)
+    return runner.log(id, lines, level)
 
 
 @hug.get("/queues")
 def queues():
-    return get_runner().list("queues")
+    return runner.list("queues")
 
 
 @hug.get("/queues-and-status")
 def queues_and_status():
-    return get_runner().list("queues-and-status")
+    return runner.list("queues-and-status")
 
 
 @hug.get("/version")
 def version():
-    return get_runner().version()
+    return runner.version()
 
 
 @hug.get("/check")
 def check():
-    return get_runner().check()
+    return runner.check()
 
 
 @hug.get("/clear")
 @typing.no_type_check
 def clear(id: ID):
-    return get_runner().clear(id)
+    return runner.clear(id)
 
 
 @hug.post("/run")
 @typing.no_type_check
 def run(bot: str, cmd: BotCmds, show: Bool = False, dry: Bool = False,
         msg: str = ""):
-    return get_runner().run(bot, cmd, show, dry, msg)
+    return runner.run(bot, cmd, show, dry, msg)
 
 
 @hug.get("/debug")
 def debug():
-    return get_runner().debug()
+    return runner.debug()
 
 
 @hug.get("/config")
