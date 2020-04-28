@@ -8,6 +8,7 @@ import hug  # type: ignore
 
 import intelmq_manager.runctl as runctl
 import intelmq_manager.files as files
+import intelmq_manager.pages as pages
 import intelmq_manager.config
 
 
@@ -18,6 +19,8 @@ Groups = hug.types.OneOf(["collectors", "parsers", "experts", "outputs",
                           "botnet"])
 BotCmds = hug.types.OneOf(["get", "pop", "send", "process"])
 Bool = hug.types.Mapping({"true": True, "false": False})
+Pages = hug.types.OneOf(["configs", "management", "monitor", "check", "about",
+                         "index"])
 
 
 ID_CHARS = set(string.ascii_letters + string.digits + "-")
@@ -113,3 +116,9 @@ def save(body, file: str):
         return "success"
     except files.SaveFileException as e:
         return str(e)
+
+
+@hug.get("/page", output=hug.output_format.html)
+@typing.no_type_check
+def page(response, page: Pages = "index"):
+    return pages.render_page(page, api_config)
