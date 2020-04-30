@@ -12,7 +12,7 @@ See the changelog for a full list of changes.
 
 ### Security
 * **Never ever run intelmq-manager on a public webserver without SSL and proper authentication**.
-* Bernhard Herzog (Intevation) discovered that the backend incorrectly handled messages given by user-input in the "send" functionality of the Inspect-tool of the Monitor component. An attacker with access to the IntelMQ Manager could possibly use this issue to execute arbitrary code with the privileges of the webserver.
+* Bernhard Herzog (Intevation) discovered that the backend incorrectly handled messages given by user-input in the "send" functionality of the Inspect-tool of the Monitor component. An attacker with access to the IntelMQ Manager could possibly use this issue to execute arbitrary code with the privileges of the webserver (CVE-2020-11016).
 * Use IntelMQ Manager only from a browser that can only access internal, trusted sites. (Because CSRF development is under way, see [#111](github.com/certtools/intelmq/issues/111)).
 
 ### Configuration

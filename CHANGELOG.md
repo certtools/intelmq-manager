@@ -30,7 +30,7 @@ CHANGELOG
 
 2.1.1 (2020-04-27)
 ------------------
-Bernhard Herzog (Intevation) discovered that the backend incorrectly handled messages given by user-input in the "send" functionality of the Inspect-tool of the Monitor component. An attacker with access to the IntelMQ Manager could possibly use this issue to execute arbitrary code with the privileges of the webserver.
+Bernhard Herzog (Intevation) discovered that the backend incorrectly handled messages given by user-input in the "send" functionality of the Inspect-tool of the Monitor component. An attacker with access to the IntelMQ Manager could possibly use this issue to execute arbitrary code with the privileges of the webserver (CVE-2020-11016).
 
 ### Backend
 - Fix misspelling of the environmental variable `INTELMQ_MANGER_CONTROLLER_CMD` to `INTELMQ_MANAGER_CONTROLLER_CMD` (an 'a' was missing).
