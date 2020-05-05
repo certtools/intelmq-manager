@@ -39,6 +39,12 @@ def load_api_config(filename : str) -> None:
     runner = runctl.RunIntelMQCtl(api_config.intelmq_ctl_cmd)
 
 
+def cache_get(*args, **kw):
+    """Route to use instead of hug.get that sets cache headers in the response.
+    """
+    return hug.get(*args, **kw).cache(max_age=3)
+
+
 @hug.exception(runctl.IntelMQCtlError)
 def crlerror_handler(response, exception):
     response.status = hug.HTTP_500
@@ -57,18 +63,18 @@ def bot(action: Actions, id: ID):
     return runner.bot(action, id)
 
 
-@hug.get("/getlog")
+@cache_get("/getlog")
 @typing.no_type_check
 def getlog(id: ID, lines: int, level: Levels = "DEBUG"):
     return runner.log(id, lines, level)
 
 
-@hug.get("/queues")
+@cache_get("/queues")
 def queues():
     return runner.list("queues")
 
 
-@hug.get("/queues-and-status")
+@cache_get("/queues-and-status")
 def queues_and_status():
     return runner.list("queues-and-status")
 
