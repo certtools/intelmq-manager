@@ -3,6 +3,8 @@ import subprocess
 from typing import List, Dict, Optional
 from .version import __version__
 
+from intelmq_manager.util import shell_command_for_errors
+
 
 #
 # Typing aliases for use with RunIntelMQCtl
@@ -15,15 +17,63 @@ Args = List[str]
 JSONFile = io.BytesIO
 
 
+class IntelMQCtlError(Exception):
+
+    def __init__(self, error_dict):
+        self.error_dict = error_dict
+
+    def __str__(self):
+        return self.error_dict["message"]
+
+
+failure_tips = [
+    ("sudo: no tty present and no askpass program specified",
+     "Is sudoers file or IntelMQ-Manager set up correctly?"),
+    ("Permission denied: '/opt/intelmq",
+     "Has the user accessing intelmq folder the read/write permissions?"
+     " This might be user intelmq or www-data, depending on your configuration,"
+     " ex: <code>sudo chown intelmq.intelmq /opt/intelmq -R"
+     " && sudo chmod u+rw /opt/intelmq -R</code>"),
+    ]
+
+
 class RunIntelMQCtl:
 
     def __init__(self, base_cmd: Args):
         self.base_cmd = base_cmd
 
     def _run_intelmq_ctl(self, args: Args) -> subprocess.CompletedProcess:
-        return subprocess.run(self.base_cmd + args,
-                              stdout=subprocess.PIPE,
-                              stderr=subprocess.PIPE)
+        command = self.base_cmd + args
+        result = subprocess.run(command,
+                                stdout=subprocess.PIPE,
+                                stderr=subprocess.PIPE)
+
+        # Detect errors
+        #
+        # The logic here follows the original PHP code but it differs in
+        # some respects. One difference is that intelmqctl can exit with
+        # an exit code != 0 even if it actually was successful, so we
+        # cannot actually use the exit code. The PHP code appears to use
+        # it, but the exit code it examines is not the exit code of
+        # intelmqctl but of a little shell script that basically ends up
+        # ignoring intelmqctl's exit code.
+        if not result.stdout or result.stderr:
+            message = str(result.stderr, errors="replace")
+
+            if not message:
+                message = "Failed to execute intelmqctl."
+
+            for msg_fragment, tip in failure_tips:
+                if msg_fragment in message:
+                    break
+            else:
+                tip = ""
+
+            raise IntelMQCtlError({"tip": tip,
+                                   "message": message,
+                                   "command": shell_command_for_errors(command),
+                                   })
+        return result
 
     def _run_json(self, args: Args) -> JSONFile:
         completed = self._run_intelmq_ctl(["--type", "json"] + args)

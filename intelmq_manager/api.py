@@ -42,6 +42,12 @@ def load_api_config(filename : str) -> None:
     runner = runctl.RunIntelMQCtl(api_config.intelmq_ctl_cmd)
 
 
+@hug.exception(runctl.IntelMQCtlError)
+def crlerror_handler(response, exception):
+    response.status = hug.HTTP_500
+    return exception.error_dict
+
+
 @hug.get("/botnet")
 @typing.no_type_check
 def botnet(action: Actions, group: Groups = None):
