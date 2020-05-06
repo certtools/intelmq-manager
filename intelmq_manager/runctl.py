@@ -1,5 +1,6 @@
 import io
 import subprocess
+import json
 from typing import List, Dict, Optional
 from .version import __version__
 
@@ -130,5 +131,11 @@ class RunIntelMQCtl:
             args.extend(["--msg", msg])
         return self._run_str(args)
 
-    def debug(self) -> JSONFile:
-        return self._run_json(["debug"])
+    def debug(self, get_paths: bool = False) -> JSONFile:
+        args = ["debug"]
+        if get_paths:
+            args.append("--get-paths")
+        return self._run_json(args)
+
+    def get_paths(self) -> Dict[str, str]:
+        return dict(json.load(self.debug(get_paths=True))["paths"])
