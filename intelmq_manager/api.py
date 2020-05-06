@@ -32,11 +32,14 @@ api_config : intelmq_manager.config.Config = intelmq_manager.config.Config()
 
 runner : runctl.RunIntelMQCtl = runctl.RunIntelMQCtl(api_config.intelmq_ctl_cmd)
 
+file_access : files.FileAccess = files.FileAccess(api_config)
+
 
 def load_api_config(filename : str) -> None:
     global api_config, runner
     api_config = intelmq_manager.config.load_config(filename)
     runner = runctl.RunIntelMQCtl(api_config.intelmq_ctl_cmd)
+    file_access.update_from_runctl(runner.get_paths())
 
 
 def cache_get(*args, **kw):
@@ -109,7 +112,7 @@ def debug():
 
 @hug.get("/config")
 def config(response, file: str, fetch: bool=False):
-    result = files.load_file_or_directory(file, fetch)
+    result = file_access.load_file_or_directory(file, fetch)
     if result is None:
         return ["Unknown resource"]
 
@@ -121,7 +124,7 @@ def config(response, file: str, fetch: bool=False):
           inputs={"application/x-www-form-urlencoded": hug.input_format.text})
 def save(body, file: str):
     try:
-        files.save_file(file, body)
+        file_access.save_file(file, body)
         return "success"
     except files.SaveFileException as e:
         return str(e)
