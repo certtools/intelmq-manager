@@ -1,3 +1,17 @@
+"""Direct access to IntelMQ files and directories
+
+SPDX-FileCopyrightText: 2020 Intevation GmbH <https://intevation.de>
+SPDX-License-Identifier: AGPL-3.0-or-later
+
+Funding: of initial version by SUNET
+Author(s):
+  * Bernhard Herzog <bernhard.herzog@intevation.de>
+
+This module implements the part of the IntelMQ-Manager backend that
+allows direct read and write access to some of the files used by
+IntelMQ.
+"""
+
 import json
 import re
 import string

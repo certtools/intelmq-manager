@@ -1,4 +1,12 @@
-"""Configuration for IntelMQ Manager"""
+"""Configuration for IntelMQ Manager
+
+SPDX-FileCopyrightText: 2020 Intevation GmbH <https://intevation.de>
+SPDX-License-Identifier: AGPL-3.0-or-later
+
+Funding: of initial version by SUNET
+Author(s):
+  * Bernhard Herzog <bernhard.herzog@intevation.de>
+"""
 
 from typing import List
 import json

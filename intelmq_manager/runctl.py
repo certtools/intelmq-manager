@@ -1,3 +1,16 @@
+"""Control IntelMQ with the intelmqctl command.
+
+SPDX-FileCopyrightText: 2020 Intevation GmbH <https://intevation.de>
+SPDX-License-Identifier: AGPL-3.0-or-later
+
+Funding: of initial version by SUNET
+Author(s):
+  * Bernhard Herzog <bernhard.herzog@intevation.de>
+
+This module contains code to run the intelmqctl command as needed by the
+manager's API backend.
+"""
+
 import io
 import subprocess
 import json

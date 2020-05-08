@@ -1,3 +1,17 @@
+"""HTTP-API backend of IntelMQ-Manager
+
+SPDX-FileCopyrightText: 2020 Intevation GmbH <https://intevation.de>
+SPDX-License-Identifier: AGPL-3.0-or-later
+
+Funding: of initial version by SUNET
+Author(s):
+  * Bernhard Herzog <bernhard.herzog@intevation.de>
+
+This module implements the HTTP part of the API backend of
+IntelMQ-Manager. The logic itself is in the runctl, files and pages
+modules.
+"""
+
 import string
 import typing
 
