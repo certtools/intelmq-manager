@@ -28,14 +28,14 @@ def ID(value):
     return value
 
 
-api_config : intelmq_manager.config.Config = intelmq_manager.config.Config()
+api_config: intelmq_manager.config.Config = intelmq_manager.config.Config()
 
-runner : runctl.RunIntelMQCtl = runctl.RunIntelMQCtl(api_config.intelmq_ctl_cmd)
+runner: runctl.RunIntelMQCtl = runctl.RunIntelMQCtl(api_config.intelmq_ctl_cmd)
 
-file_access : files.FileAccess = files.FileAccess(api_config)
+file_access: files.FileAccess = files.FileAccess(api_config)
 
 
-def load_api_config(filename : str) -> None:
+def load_api_config(filename: str) -> None:
     global api_config, runner
     api_config = intelmq_manager.config.load_config(filename)
     runner = runctl.RunIntelMQCtl(api_config.intelmq_ctl_cmd)
@@ -119,6 +119,7 @@ def config(response, file: str, fetch: bool=False):
     content_type, contents = result
     response.content_type = content_type
     return contents
+
 
 @hug.post("/save", parse_body=True,
           inputs={"application/x-www-form-urlencoded": hug.input_format.text})
