@@ -68,63 +68,63 @@ def crlerror_handler(response, exception):
     return exception.error_dict
 
 
-@hug.get("/botnet")
+@hug.get("/api/botnet")
 @typing.no_type_check
 def botnet(action: Actions, group: Groups = None):
     return runner.botnet(action, group)
 
 
-@hug.get("/bot")
+@hug.get("/api/bot")
 @typing.no_type_check
 def bot(action: Actions, id: ID):
     return runner.bot(action, id)
 
 
-@cache_get("/getlog")
+@cache_get("/api/getlog")
 @typing.no_type_check
 def getlog(id: ID, lines: int, level: Levels = "DEBUG"):
     return runner.log(id, lines, level)
 
 
-@cache_get("/queues")
+@cache_get("/api/queues")
 def queues():
     return runner.list("queues")
 
 
-@cache_get("/queues-and-status")
+@cache_get("/api/queues-and-status")
 def queues_and_status():
     return runner.list("queues-and-status")
 
 
-@hug.get("/version")
+@hug.get("/api/version")
 def version():
     return runner.version()
 
 
-@hug.get("/check")
+@hug.get("/api/check")
 def check():
     return runner.check()
 
 
-@hug.get("/clear")
+@hug.get("/api/clear")
 @typing.no_type_check
 def clear(id: ID):
     return runner.clear(id)
 
 
-@hug.post("/run")
+@hug.post("/api/run")
 @typing.no_type_check
 def run(bot: str, cmd: BotCmds, show: Bool = False, dry: Bool = False,
         msg: str = ""):
     return runner.run(bot, cmd, show, dry, msg)
 
 
-@hug.get("/debug")
+@hug.get("/api/debug")
 def debug():
     return runner.debug()
 
 
-@hug.get("/config")
+@hug.get("/api/config")
 def config(response, file: str, fetch: bool=False):
     result = file_access.load_file_or_directory(file, fetch)
     if result is None:
@@ -135,7 +135,7 @@ def config(response, file: str, fetch: bool=False):
     return contents
 
 
-@hug.post("/save", parse_body=True,
+@hug.post("/api/save", parse_body=True,
           inputs={"application/x-www-form-urlencoded": hug.input_format.text})
 def save(body, file: str):
     try:
