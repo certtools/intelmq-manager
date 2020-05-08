@@ -49,9 +49,24 @@ runner: runctl.RunIntelMQCtl = runctl.RunIntelMQCtl(api_config.intelmq_ctl_cmd)
 file_access: files.FileAccess = files.FileAccess(api_config)
 
 
-def load_api_config(filename: str) -> None:
+def initialize_api(filename: typing.Optional[str] = None) -> None:
+    """Initialize the API, optionally loading a configuration file.
+
+    If a filename is given, this function updates the configuration in
+    the module global variable api_config by loading a new configuration
+    and assigning it to the variable.
+
+    Then, regardless of whether a filename was given, it calls the
+    update_from_runctl method of the file_access object so that it uses
+    the files that IntelMQ actually uses.
+
+    Note: Because of that last step this function should always be
+    called when the server process starts even when no configuration
+    needs to be read from a file.
+    """
     global api_config, runner
-    api_config = intelmq_manager.config.load_config(filename)
+    if filename is not None:
+        api_config = intelmq_manager.config.load_config(filename)
     runner = runctl.RunIntelMQCtl(api_config.intelmq_ctl_cmd)
     file_access.update_from_runctl(runner.get_paths())
 
