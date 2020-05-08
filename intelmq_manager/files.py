@@ -2,7 +2,7 @@ import json
 import re
 import string
 from pathlib import PurePath, Path
-from typing import Optional, Tuple, Union, Dict, Any, Iterable, TextIO
+from typing import Optional, Tuple, Union, Dict, Any, Iterable, BinaryIO
 
 from intelmq_manager.config import Config
 
@@ -73,7 +73,7 @@ class FileAccess:
         return (False, resolved)
 
     def load_file_or_directory(self, unvalidated_filename: str, fetch: bool) \
-            -> Union[Tuple[str, Union[TextIO, Dict[str, Any]]], None]:
+            -> Union[Tuple[str, Union[BinaryIO, Dict[str, Any]]], None]:
         allowed = self.file_name_allowed(unvalidated_filename)
         if allowed is None:
             return None
@@ -84,7 +84,7 @@ class FileAccess:
         if predefined or fetch:
             if fetch:
                 content_type = "text/html"
-            return (content_type, open(normalized))
+            return (content_type, open(normalized, "rb"))
 
         result = {"files": {}} # type: Dict[str, Any]
         if normalized.is_dir():
