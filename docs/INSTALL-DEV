@@ -48,8 +48,12 @@ Starting the server with the configuration file:
 INTELMQ_MANAGER_CONFIG=devconfig.json hug -f intelmq_manager/serve.py -p8080
 ```
 
-The server should be running now and listening on port 8080.
+The server should be running now and listening on port 8080 and you
+should be able to access it from a browser with a URL like:
 
+```
+http://localhost:8080/
+```
 
 ## Typical problems
 
