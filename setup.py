@@ -12,6 +12,7 @@ setup(
     python_requires='>=3.5',
     install_requires=[
         "hug>=2.3.0",
+        "mako>=1.0.7",
         ],
     packages=find_packages(),
     url='https://github.com/certtools/intelmq-manager/',

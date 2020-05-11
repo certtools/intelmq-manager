@@ -3,13 +3,13 @@
 Either using OS packages, e.g. for Ubuntu:
 
 ```
-apt-get install python3-hug
+apt-get install python3-hug python3-mako
 ```
 
 Or using pip
 
 ```
-python3 -m pip install hug
+python3 -m pip install hug mako
 ```
 
 
