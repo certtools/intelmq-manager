@@ -160,7 +160,7 @@ def save(body, file: str):
         return str(e)
 
 
-@hug.get("/page", output=hug.output_format.html)
+@hug.get("/", output=hug.output_format.html)
 @typing.no_type_check
 def page(response, page: Pages = "index"):
     return pages.render_page(page, api_config)
