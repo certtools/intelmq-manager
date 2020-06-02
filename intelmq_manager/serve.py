@@ -29,8 +29,7 @@ def add_api():
 
 @hug.static("/")
 def static_dirs():
-    return [os.path.join(os.path.dirname(__file__),
-                         os.pardir, "intelmq-manager")]
+    return [os.path.join(os.path.dirname(__file__), "static")]
 
 
 @hug.startup()
