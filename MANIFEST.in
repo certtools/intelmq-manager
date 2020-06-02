@@ -1,0 +1,12 @@
+include CHANGELOG.md CONTRIBUTING.md CONTRIBUTORS.md
+include NEWS.md README.md SECURITY.md
+graft intelmq_manager/static
+graft intelmq_manager/templates
+graft LICENSES
+graft debian/
+graft docs/
+exclude .*
+global-exclude *~
+global-exclude *.py[co]
+global-exclude __pycache__
+include .travis.yml
