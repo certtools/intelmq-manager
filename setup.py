@@ -15,6 +15,7 @@ setup(
         "mako>=1.0.7",
         ],
     packages=find_packages(),
+    include_package_data=True,
     url='https://github.com/certtools/intelmq-manager/',
     description=("IntelMQ Manager is a graphical interface to manage"
                  " configurations for the IntelMQ framework."),
