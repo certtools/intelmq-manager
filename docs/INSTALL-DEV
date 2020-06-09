@@ -12,12 +12,14 @@ For the python3 packages pip can be used alternatively:
 python3 -m pip install hug mako
 ```
 
+(You will need a correctly configured `sudo` to serve this web app from
+a web server running under a different user id than your intelmq userid.)
 
 ## Running a development server
 
 Unless your development system is setup exactly like it would be for
 production use, with `intelmqctl` invoked via `sudo` and installed in
-the default location undeer `/opt/intelmq`, you will likely need to
+the default location under `/opt/intelmq`, you will likely need to
 create a configuration file, like this (`devconfig.json`):
 
 
