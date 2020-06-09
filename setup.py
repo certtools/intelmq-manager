@@ -1,6 +1,4 @@
 #!/usr/bin/python3
-# -*- coding: utf-8 -*-
-
 from setuptools import find_packages, setup
 
 from intelmq_manager.version import __version__
