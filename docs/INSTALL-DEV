@@ -3,10 +3,10 @@
 Either using OS packages, e.g. for Ubuntu:
 
 ```
-apt-get install python3-hug python3-mako
+apt-get install python3-hug python3-mako sudo
 ```
 
-Or using pip
+For the python3 packages pip can be used alternatively:
 
 ```
 python3 -m pip install hug mako
