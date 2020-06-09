@@ -68,3 +68,8 @@ intelmq_manager.runctl.IntelMQCtlError: <ERROR_MESSAGE>
 
 This means the intelmqctl command could not be executed as a subprocess.
 The `<ERROR_MESSAGE>` should indicate why.
+
+
+To save the positions of the bots in the configuration map, you need
+an existing writable `manager/positions.conf` file. If it's missing,
+just create an empty one.
