@@ -104,8 +104,7 @@
 
             ${next.body()}
 
-            <!-- jQuery Version 1.11.0 -->
-            <script src="plugins/jquery-1.11.0.js"></script>
+            <script src="plugins/jquery-3.5.1.min.js"></script>
 
             <!-- Bootstrap Core JavaScript -->
             <script src="plugins/bootstrap/bootstrap.min.js"></script>
