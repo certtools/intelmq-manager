@@ -82,7 +82,7 @@
             <!-- Navigation -->
             <nav class="navbar navbar-default navbar-static-top" role="navigation" style="margin-bottom: 0">
                 <div class="navbar-header">
-                    <a class="navbar-brand" href="?page=index"><img height="24px"  style="margin-right:10px" src="./images/logo2.png"><img height="20px" src="./images/logo_no_margin_6.png"/></a>
+                    <a class="navbar-brand" href="?page=index"><img height="24px"  style="margin-right:10px; display:inline" src="./images/logo2.png"><img height="20px" src="./images/logo_no_margin_6.png" style="display:inline"/></a>
                 </div>
                 <!-- /.navbar-header -->
 
