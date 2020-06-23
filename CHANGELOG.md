@@ -55,6 +55,7 @@ This IntelMQ Manager version requires IntelMQ >= 2.2.0.
 ### Third-party libraries
 
 ### Packaging
+- Update default `positions.conf` to the default runtime/pipeline configuration of intelmq >= 2.1.1.
 
 ### Known issues
 
