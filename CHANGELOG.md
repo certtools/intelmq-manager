@@ -25,6 +25,7 @@ This IntelMQ Manager version requires IntelMQ >= 2.2.0.
 - Show output of `intelmqctl debug`.
 
 ### Documentation
+- Update release from intelmq's release documentation.
 
 ### Third-party libraries
 
