@@ -2,6 +2,8 @@ NEWS
 ====
 
 See the changelog for a full list of changes.
+
+
 2.2.0 (unreleased)
 ------------------
 This IntelMQ Manager version requires IntelMQ >= 2.2.0.
@@ -9,10 +11,6 @@ This IntelMQ Manager version requires IntelMQ >= 2.2.0.
 ### Paths
 The paths for configuration files is not queried from the IntelMQ Core.
 The environment variables `INTELMQ_ROOT_DIR` and `INTELMQ_PATHS_NO_OPT`/`INTELMQ_PATHS_OPT` are now respected.
-
-
-2.1.2 (unreleased)
-------------------
 
 
 2.1.1 (2020-04-27)
