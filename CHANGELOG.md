@@ -26,6 +26,7 @@ This IntelMQ Manager version requires IntelMQ >= 2.2.0.
 
 ### Documentation
 - Update release from intelmq's release documentation.
+- Update Installation documentation: Fix & update dependencies and supported operating systems.
 
 ### Third-party libraries
 
