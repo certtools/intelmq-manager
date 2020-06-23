@@ -10,7 +10,7 @@ Package: intelmq-manager
 Architecture: all
 Depends: ${misc:Depends}, apache2, apache2-utils,
   libapache2-mod-php | libapache2-mod-php5, sudo,
-  adduser, intelmq (>= 1.0.1)
+  adduser, intelmq (>= 2.2.0)
 Description: Graphical interface to manage configurations for the IntelMQ framework.
  A IntelMQ configuration is a set of config files which describe which
  bots and processing steps should be run in which order. It is similar
