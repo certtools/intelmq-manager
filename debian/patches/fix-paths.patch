@@ -3,8 +3,8 @@ Author: Sebastian Wagner <wagner@cert.at>
 Last-Update: 2020-04-28
 ---
 This patch header follows DEP-3: http://dep.debian.net/deps/dep3/
---- intelmq-manager/php/config.php	2020-04-28 15:17:27.858979961 +0200
-+++ intelmq-manager/php/config1.php	2020-04-28 15:18:38.985712752 +0200
+--- a/intelmq-manager/php/config.php	2020-04-28 15:17:27.858979961 +0200
++++ b/intelmq-manager/php/config.php	2020-04-28 15:18:38.985712752 +0200
 @@ -2,7 +2,7 @@
      $backwardscompat = getenv("INTELMQ_MANGER_CONTROLLER_CMD");
      $controller = getenv("INTELMQ_MANAGER_CONTROLLER_CMD");
