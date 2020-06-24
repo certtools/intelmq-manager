@@ -1,12 +1,26 @@
 Description: Fix paths for LSB
 Author: Sebastian Wagner <wagner@cert.at>
-Last-Update: 2020-04-27
+Last-Update: 2020-04-28
 ---
 This patch header follows DEP-3: http://dep.debian.net/deps/dep3/
---- a/intelmq-manager/php/config.php	2020-04-27 17:37:51.310011401 +0200
-+++ b/intelmq-manager/php/config.php	2020-04-27 21:28:30.432810932 +0200
-@@ -1,18 +1,18 @@
- <?php
+--- a/intelmq-manager/php/config.php	2020-04-28 15:17:27.858979961 +0200
++++ b/intelmq-manager/php/config.php	2020-04-28 15:18:38.985712752 +0200
+@@ -2,7 +2,7 @@
+     $backwardscompat = getenv("INTELMQ_MANGER_CONTROLLER_CMD");
+     $controller = getenv("INTELMQ_MANAGER_CONTROLLER_CMD");
+     if(!($c = $controller ? $controller : $backwardscompat)) {
+-        $c = "sudo -u intelmq /usr/local/bin/intelmqctl";
++        $c = "sudo -u intelmq /usr/bin/intelmqctl";
+     }
+ 
+     // to be displayed so that user can replicate
+@@ -16,17 +16,17 @@
+     $BOT_ID_REJECT_REGEX = '/[^A-Za-z0-9.-]/';
+     $VERSION = "2.2.0";
+ 
+-    $ALLOWED_PATH = "/opt/intelmq/var/lib/bots/"; // PHP is allowed to fetch the config files from the current location in order to display bot configurations.
++    $ALLOWED_PATH = "/var/lib/intelmq/bots/"; // PHP is allowed to fetch the config files from the current location in order to display bot configurations.
+     $FILESIZE_THRESHOLD = 2000; // config files under this size gets loaded automatically; otherwise a link is generated
  
      $FILES = array(
 -        'bots' 		=> '/opt/intelmq/etc/BOTS',
@@ -24,19 +38,5 @@ This patch header follows DEP-3: http://dep.debian.net/deps/dep3/
 +        'system' 	=> '/etc/intelmq/system.conf',
 +        'positions' => '/etc/intelmq/manager/positions.conf',
      );
-     $backwardscompat = getenv("INTELMQ_MANGER_CONTROLLER_CMD");
-     $controller = getenv("INTELMQ_MANAGER_CONTROLLER_CMD");
-     if(!($c = $controller ? $controller : $backwardscompat)) {
--        $c = "sudo -u intelmq /usr/local/bin/intelmqctl";
-+        $c = "sudo -u intelmq /usr/bin/intelmqctl";
-     }
- 
-     // to be displayed so that user can replicate
-@@ -26,6 +26,6 @@
-     $BOT_ID_REJECT_REGEX = '/[^A-Za-z0-9.-]/';
-     $VERSION = "2.1.1";
- 
--    $ALLOWED_PATH = "/opt/intelmq/var/lib/bots/"; // PHP is allowed to fetch the config files from the current location in order to display bot configurations.
-+    $ALLOWED_PATH = "/var/lib/intelmq/bots/"; // PHP is allowed to fetch the config files from the current location in order to display bot configurations.
-     $FILESIZE_THRESHOLD = 2000; // config files under this size gets loaded automatically; otherwise a link is generated
- ?>
+     # get paths from intelmqctl directly if it works
+     $proc = proc_open($c . "--type json debug --get-paths", [

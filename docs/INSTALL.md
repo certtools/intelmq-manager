@@ -29,82 +29,67 @@ The following instructions assume the following requirements:
 * a supported operating system
 
 Supported and recommended operating systems are:
-* Debian 8, 9, 10
-* OpenSUSE Leap 42.2, 15
-* Ubuntu: 14.04, 16.04, 18.04 LTS
+* Debian 9, 10
+* Fedora 30, 31, 32
+* OpenSUSE Leap 15.1, 15.2
+* Ubuntu: 16.04, 18.04, 20.04
 
 Partly supported are:
-* RHEL 7
 * CentOS 7
+* RHEL 7
 See [Notes on CentOS / RHEL](#notes-on-centos--rhel)
 
 # Install Dependencies
 
 If you are using native packages, you can simply skip this section as all dependencies are installed automatically.
 
-## Ubuntu 14.04 / Debian 8
+
+## Debian / Ubuntu
 
 ```bash
-apt-get install git apache2 php5 libapache2-mod-php5
+apt-get install git libapache2-mod-php php-json
 ```
 
-## Ubuntu 16.04 / Debian 9
-
-```bash
-apt-get install git apache2 php libapache2-mod-php7.0
-```
-
-## Ubuntu 18.04
-
-```bash
-apt-get install git apache2 php libapache2-mod-php7.2
-```
-
-## Debian 10
-
-```bash
-apt install libapache2-mod-php7.3
-```
-
-## CentOS 7
+## CentOS / RHEL
 
 ```bash
 yum install epel-release
 yum install git httpd httpd-tools php
 ```
 
-## openSUSE Leap 15.1
+## Fedora
 
 ```bash
-zypper install git apache2 apache2-utils apache2-mod_php7
+dnf install git httpd php php-common php-json
+
+## openSUSE
+
+```bash
+zypper install git apache2 apache2-utils apache2-mod_php php-json
 ```
 
 # Installation
 
 ## Native packages
 
-Get the install instructions for your operating system here:
-https://software.opensuse.org/download.html?project=home%3Asebix%3Aintelmq&package=intelmq-manager
+This is only recommended if you also installed intelmq itself with packages.
+As you already have the repository configured, you can install the package called `intelmq-manager` using your operating system's package manager.
+Complete install instructions for your operating system can be found here:
+https://software.opensuse.org/download.html?project=home:sebix:intelmq&package=intelmq-manager
 
 Currently, these operating systems are supported by the packages:
 * CentOS 7, install `epel-release` first
 * RHEL 7, install `epel-release` first
-* Debian 8 and Debian 9 (install `php-json` too)
-* Fedora 25, 26 and Rawhide
-* openSUSE Leap 42.2 and Leap 42.3
+* Debian 9, 10
+* Fedora 30, 31, 32
+* openSUSE Leap 15.1, 15.2
 * openSUSE Tumbleweed
-* Ubuntu 16.04 and Ubuntu 17.04, install `php-json` too
+* Ubuntu 16.04, 18.04, 19.10, 20.04
 
-The package is always called `intelmq-manager`.
-
-For Debian and Ubuntu you need to make the configuration files writable by the group:
-```bash
-chmod 664 /etc/intelmq/*.conf /etc/intelmq/manager/positions.conf
-```
 
 ## Manually
 
-Clone the repository and copy the files in the subfolder `intelmq-manager` to the webserver directory (can also be `/srv/www/htdocs/` depending on the used system):
+Clone the repository using git and copy the files in the subfolder `intelmq-manager` to the webserver directory (can also be `/srv/www/htdocs/` depending on the used system):
 ```bash
 git clone https://github.com/certtools/intelmq-manager.git /tmp/intelmq-manager
 cp -R /tmp/intelmq-manager/intelmq-manager/* /var/www/html/
@@ -135,6 +120,8 @@ Also, stopping bots does currently not work, see also https://github.com/certtoo
 
 If you can help to fix these issues, please join us!
 
+For RHEL, the packages of CentOS may work better than those for RHEL as there are issues building the packages for RHEL. Help on RHEL is appreciated.
+
 # Security considerations
 
 **Never ever run intelmq-manager on a public webserver without SSL and proper authentication**.
@@ -143,7 +130,7 @@ The way the current version is written, anyone can send a POST request and chang
 
 Therefore you will need authentication and SSL.
 
-Use IntelMQ Manager only from a browser that can only access internal, trusted sites. (Because CSRF development is under way, see [#111](https://github.com/certtools/intelmq-manager/issues/111)).
+Use IntelMQ Manager **only from a browser that can only access internal, trusted sites** (Due to CSRF, development of a fix is under way, see [#111](https://github.com/certtools/intelmq-manager/issues/111)).
 
 In addition, intelmq currently stores plaintext passwords in its configuration files. These can be read via intelmq-manager.
 

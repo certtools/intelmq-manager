@@ -2,6 +2,32 @@ CHANGELOG
 =========
 
 
+2.2.0 (2020-06-23)
+------------------
+This IntelMQ Manager version requires IntelMQ >= 2.2.0.
+
+### Backend
+- `config`: Get file paths from `intelmctl debug --get-paths` if possible and fall back to hard-coded paths otherwise. Thereby environment variables influencing the paths are respected (#193).
+
+### Pages
+#### About
+- Show output of `intelmqctl debug`.
+
+### Documentation
+- Update release from intelmq's release documentation.
+- Update Installation documentation: Fix & update dependencies and supported operating systems.
+
+### Packaging
+- Update default `positions.conf` to the default runtime/pipeline configuration of intelmq >= 2.1.1.
+
+### Known issues
+* Missing CSRF protection (#111).
+* Graph jumps around on "Add edge" (#148).
+* wrong error message for new bots with existing ID (#152).
+* `ALLOWED_PATH=` violates CSP (#183).
+* Monitor page: Automatic log refresh reset log page to first one (#190).
+
+
 2.1.1 (2020-04-27)
 ------------------
 Bernhard Herzog (Intevation) discovered that the backend incorrectly handled messages given by user-input in the "send" functionality of the Inspect-tool of the Monitor component. An attacker with access to the IntelMQ Manager could possibly use this issue to execute arbitrary code with the privileges of the webserver.

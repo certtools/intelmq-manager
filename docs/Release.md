@@ -1,9 +1,22 @@
 # Release procedure
 
-Make sure the current state is really final ;)
-You can test most of the steps described here locally before doing it real.
+**Table of Contents:**
+- [Documentation](#documentation)
+- [Commit, push, review and merge](#commit-push-review-and-merge)
+- [Tag and release](#tag-and-release)
+- [Packages](#packages)
+- [Announcements](#announcements)
+- [Prepare new version](#prepare-new-version)
 
-Assumption: You are working on branch maintenance, the next version is a bug fix release. For feature releaese it is slightly different.
+
+General assumption: You are working on branch maintenance, the next version is a bug fix release. For feature releases it is slightly different.
+
+## Check before
+
+ * Make sure the current state is really final ;)
+   You can test most of the steps described here locally before doing it real.
+ * Close the milestone on GitHub and move any open issues to the next one.
+ * `docs/INSTALL.md`: Update supported operating systems.
 
 ## Documentation
 
@@ -12,14 +25,17 @@ Assumption: You are working on branch maintenance, the next version is a bug fix
  * `intelmq-manager/php/config.php` and `debian/patches/fix-paths.patch`: Update the version.
  * `debian/changelog`: Insert a new section for the new version with the tool `dch`.
 
-## Commit
-Commit your changes, the message should start with `REL: `. Push and create a pull request from maintenance to master. Someone else should review the changes. Eventually fix them, make sure the `REL: ` is the last commit, you can also push that one at last, after the reviews.
+## Commit, push, review and merge
+
+Commit your changes in a separate branch, the final commit's message should start with `REL: `. Push and create a pull request to maintenance and after that from maintenance to master. Someone else should review the changes. Eventually fix them, make sure the `REL: ` is the last commit, you can also push that one at last, after the reviews.
+
+Why a separate branch? Because if problems show up, you can still force-push to that one, keeping the release commit the latest one.
 
 ## Tag and release
 
 Tag the commit with `git tag -s version HEAD`, merge it into master, push the both branches *and* the tag. The tag is just `a.b.c`, not prefixed with `v` (that was necessary only with SVN a long time ago...).
 
-Go to https://github.com/certtools/intelmq-manager/tags and enter the release notes (changelog) for the new tag, then it's considered a release by github.
+Go to https://github.com/certtools/intelmq-manager/tags and enter the release notes (changelog) for the new tag, then it's considered a *release* by github.
 
 ## Packages
 We are currently using the public Open Build Service instance of openSUSE: http://build.opensuse.org/project/show/home:sebix:intelmq
@@ -39,7 +55,7 @@ For bigger releases, probably also at IHAP, Twitter, etc. Ask your favorite soci
 
 ## Prepare new version
 
-Increase the version in `intelmq-manager/php/config.php` and declare it as alpha version.
+`intelmq-manager/php/config.php` and `debian/patches/fix-paths.patch`: Update the version.
 
 Add a new empty changelog section:
 
