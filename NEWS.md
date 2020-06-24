@@ -4,6 +4,10 @@ NEWS
 See the changelog for a full list of changes.
 
 
+2.3.0 (unreleased)
+------------------
+
+
 2.2.1 (unreleased)
 ------------------
 
