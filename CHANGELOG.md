@@ -2,6 +2,32 @@ CHANGELOG
 =========
 
 
+2.2.1 (unreleased)
+------------------
+
+### Backend
+
+### Pages
+
+#### Landing page
+
+#### Configuration
+
+#### Management
+
+#### Monitor
+
+#### Check
+
+### Documentation
+
+### Third-party libraries
+
+### Packaging
+
+### Known issues
+
+
 2.2.0 (2020-06-23)
 ------------------
 This IntelMQ Manager version requires IntelMQ >= 2.2.0.
