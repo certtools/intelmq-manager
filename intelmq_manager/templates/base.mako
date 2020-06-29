@@ -1,3 +1,38 @@
+<%!
+    import collections
+
+    Page = collections.namedtuple("Page", ["name", "title", "icon", "libraries"])
+    pages = [Page("configs", "Configuration", "config.png",
+                  ["plugins/vis.js/vis.js",
+                   "js/runtime.js",
+                   "js/pipeline.js",
+                   "js/positions.js",
+                   "js/defaults.js",
+                   "js/network-configuration.js",
+                   "js/configs.js",
+                   ]),
+             Page("management", "Management", "botnet.png",
+                  ["js/runtime.js", "js/management.js"]),
+             Page("monitor", "Monitor", "monitor.png",
+                  ["js/runtime.js",
+                   "js/pipeline.js",
+                   "js/defaults.js",
+                   "js/monitor.js"]),
+             Page("check", "Check", "check.png", ["js/check.js"]),
+             Page("about", "About", "about.png", ["js/about.js"])]
+
+    common_libraries =  [
+        "js/static.js",
+        "js/sb-admin-2.js",
+        ## XX this don't have to be on every page:
+        "plugins/dataTables/jquery.dataTables.js",
+        "plugins/dataTables/dataTables.bootstrap.js",
+        ]
+
+    page_map = {page.name: page for page in pages}
+    page_map["index"] = Page("index", "", "", [])
+%>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -47,36 +82,18 @@
             <!-- Navigation -->
             <nav class="navbar navbar-default navbar-static-top" role="navigation" style="margin-bottom: 0">
                 <div class="navbar-header">
-                    <a class="navbar-brand" href="index.php"><img height="24px"  style="margin-right:10px" src="./images/logo2.png"><img height="20px" src="./images/logo_no_margin_6.png"/></a>
+                    <a class="navbar-brand" href="?page=index"><img height="24px"  style="margin-right:10px" src="./images/logo2.png"><img height="20px" src="./images/logo_no_margin_6.png"/></a>
                 </div>
                 <!-- /.navbar-header -->
 
                 <ul class="nav navbar-top-links navbar-left">
-                    <li <?= (($_GET["page"] === "configs") ? "class='active'" : "") ?>>
-                        <a href="?page=configs">
-                            <span class="top-menu-text"><img src="./images/config.png" width="24px" height="24px">&nbsp;Configuration</span>
+                    % for page in pages:
+                    <li class="${'active' if pagename == page.name else ''}">
+                        <a href="?page=${page.name}">
+                            <span class="top-menu-text"><img src="./images/${page.icon}" width="24px" height="24px">&nbsp;${page.title}</span>
                         </a>
                     </li>
-                    <li <?= (($_GET["page"] === "management") ? "class='active'" : "") ?>>
-                        <a href="?page=management">
-                            <span class="top-menu-text"><img src="./images/botnet.png" width="24px" height="24px">&nbsp;Management</span>
-                        </a>
-                    </li>
-                    <li <?= (($_GET["page"] === "monitor") ? "class='active'" : "") ?>>
-                        <a href="?page=monitor">
-                            <span class="top-menu-text"><img src="./images/monitor.png" width="24px" height="24px">&nbsp;Monitor</span>
-                        </a>
-                    </li>
-                    <li <?= (($_GET["page"] === "check") ? "class='active'" : "") ?>>
-                        <a href="?page=check">
-                            <span class="top-menu-text"><img src="./images/check.png" width="24px" height="24px">&nbsp;Check</span>
-                        </a>
-                    </li>
-                    <li <?= (($_GET["page"] === "about") ? "class='active'" : "") ?>>
-                        <a href="?page=about">
-                            <span class="top-menu-text"><img src="./images/about.png" width="24px" height="24px">&nbsp;About</span>
-                        </a>
-                    </li>
+                    % endfor
                 </ul>
                 <!-- /.navbar-top-links -->
                 <div title="Click to expand, then escape to minimize again." id='log-window'>
@@ -84,7 +101,8 @@
                     <div class="contents"></div>
                 </div>
             </nav>
-            <?php include("templates/$page.html"); ?>
+
+            ${next.body()}
 
             <!-- jQuery Version 1.11.0 -->
             <script src="plugins/jquery-1.11.0.js"></script>
@@ -96,14 +114,13 @@
             <script src="plugins/metisMenu/metisMenu.js"></script>
 
             <!-- Custom Application JavaScript -->
-            <?php
-            echo "<script>CONTROLLER_CMD=\"$CONTROLLER_CMD\";</script>";
-            if($ALLOWED_PATH):
-                echo "<script>ALLOWED_PATH=\"$ALLOWED_PATH\";</script>";
-            endif;
-            foreach ($libraries as $lib):
-                echo "<script src='$lib'></script>";
-            endforeach;            
+            <script>CONTROLLER_CMD="${controller_cmd}";</script>
+            % if allowed_path:
+                <script>ALLOWED_PATH="${allowed_path}";</script>
+            % endif
+            % for lib in common_libraries + page_map[pagename].libraries:
+                <script src="${lib}"></script>
+            % endfor
             ?>
 
         </div>

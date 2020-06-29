@@ -1,3 +1,4 @@
+<%inherit file="base.mako" />
 
 <!-- Page Content -->
 <div id="page-wrapper">

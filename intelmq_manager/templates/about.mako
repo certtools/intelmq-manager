@@ -1,3 +1,5 @@
+<%inherit file="base.mako" />
+
 <!-- Page Content -->
 <div id="page-wrapper">
     <div class="row" style="padding: 20px">
