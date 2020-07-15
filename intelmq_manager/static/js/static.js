@@ -360,7 +360,7 @@ $(document).on("click", ".control-buttons button", function () {
     callback_fn.call(this, bot || botnet, 0);
     $(this).siblings("[data-role=control-status]").trigger("update");
 
-    $.getJSON(url)
+    authenticatedGetJson(url)
         .done(function (data) {
             if (bot) { // only restarting action returns an array of two values, the latter is important; otherwise, this is a string
                 bot_status[bot] = Array.isArray(data) ? data.slice(-1)[0] : data;
@@ -453,4 +453,97 @@ function managementUrl(cmd, params) {
 	url += "?" + params;
     }
     return url;
+}
+
+
+/**
+ * Login/session handling
+ */
+
+
+function authenticatedGetJson(url) {
+    return authenticatedAjax({
+        dataType: "json",
+        url: url,
+    });
+}
+
+function authenticatedAjax(settings) {
+    token = sessionStorage.getItem("login_token");
+    if (token !== null) {
+        settings["headers"] = {
+            "Authorization": token
+        };
+    }
+    return $.ajax(settings);
+}
+
+
+
+// Intercept the login submit and send an Ajax request instead.
+$(document).ready(function() {
+    updateLoginStatus();
+
+    $('#loginForm').submit(function(e) {
+        e.preventDefault();
+        $.ajax({
+            type: 'POST',
+            url: managementUrl("login"),
+            // Specifies exactly which data is sent.
+            data: {
+                "username": $('#loginForm #username').val(),
+                "password": $('#loginForm #password').val(),
+            },
+            // Specifies which formart is expected as response.
+            dataType: "json",
+            // sets timeout to 3 seconds
+            timeout: 3000,
+            // Deletes the content of the password field when the request is
+            // finished. (after success and error callbacks are executed)
+            complete: function() {
+                $('#loginForm #password').val("");
+            }
+            // Executes this if the request was successful.
+        }).done(function(data) {
+            // Check if login_token and username came back and store them in
+            // sessionStorage.
+            if (typeof data.login_token !== 'undefined' &&
+                typeof data.username !== 'undefined') {
+                sessionStorage.setItem("login_token", data.login_token);
+                sessionStorage.setItem("username", data.username);
+
+                $('#loginErrorField').text("")
+                $('#modalLoginForm').modal('hide');
+                updateLoginStatus();
+            } else {
+                // If authentication failed, this error message is displayed.
+                $('#loginErrorField').text('Invalid username and/or password');
+            }
+        });
+    });
+
+    $('#logOut').click(logout);
+});
+
+function logout() {
+    sessionStorage.removeItem("login_token");
+    sessionStorage.removeItem("username");
+
+    updateLoginStatus();
+}
+
+function updateLoginStatus() {
+    var status = document.getElementById('login-status');
+    var loginButton = document.getElementById('signUp');
+    var logoutButton = document.getElementById('logOut');
+    var username = sessionStorage.getItem("username");
+    if (username !== null) {
+        status.textContent = "Logged in as: " + username;
+        loginButton.style.display = "none";
+        logoutButton.style.removeProperty("display");
+    } else {
+        status.textContent = "Not logged in";
+        loginButton.style.removeProperty("display");
+        logoutButton.style.display = "none";
+    }
 }

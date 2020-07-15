@@ -40,7 +40,7 @@ function read_runtime_conf(config) {
 }
 
 function load_file(url, callback) {
-    $.getJSON(url)
+    authenticatedGetJson(url)
             .done(function (json) {
                 try {
                     callback(json);

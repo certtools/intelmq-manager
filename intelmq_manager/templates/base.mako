@@ -95,12 +95,57 @@
                     </li>
                     % endfor
                 </ul>
+                <div id="login-status">Not logged in</div>
+                <div>
+                    <input type="button" value="Login" class="btn btn-primary" data-toggle="modal"
+                       data-target="#modalLoginForm" id="signUp" style="display: block;">
+                    <input type="button" value="Logout" id="logOut"
+                           class="btn btn-primary" style="display: none;">
+                </div>
                 <!-- /.navbar-top-links -->
                 <div title="Click to expand, then escape to minimize again." id='log-window'>
                     <i role="close" class="fa fa-times"></i>
                     <div class="contents"></div>
                 </div>
             </nav>
+
+            <div class="modal fade" id="modalLoginForm" tabindex="-1" role="dialog"
+                 aria-labelledby="myModalLabel" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header text-center">
+                            <h4 class="modal-title w-100 font-weight-bold">Sign in</h4>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <form method="POST" id="loginForm">
+                            <div class="modal-body mx-3">
+                                <!-- Field to show if the username or password is wrong -->
+                                <p class="text-danger" id="loginErrorField"> </p>
+                                <div class="md-form mb-2">
+                                    <input type="text" id="username" name="username"
+                                           class="form-control">
+                                    <label data-error="wrong" data-success="right" for="username">
+                                        Username
+                                    </label>
+                                </div>
+                                <div class="md-form mb-2">
+                                    <input type="password" id="password" name="password"
+                                           class="form-control">
+                                    <label data-error="wrong" data-success="right" for="password">
+                                        Password
+                                    </label>
+                                </div>
+
+                            </div>
+                            <div class="modal-footer d-flex justify-content-center">
+                                <button class="btn btn-primary">Login</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
 
             ${next.body()}
 
