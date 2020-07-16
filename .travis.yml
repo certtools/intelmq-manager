@@ -1,9 +1,5 @@
 language: python
-python:
-    - 3.5
-    - 3.6
-    - 3.7
-    - 3.8
+dist: bionic
 install:
   - sudo apt-get install dpkg-dev debhelper quilt fakeroot python3-setuptools python3-hug python3-mako
 script:
