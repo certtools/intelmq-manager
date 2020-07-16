@@ -1,4 +1,9 @@
-language: php
+language: python
+python:
+    - 3.5
+    - 3.6
+    - 3.7
+    - 3.8
 install:
   - sudo apt-get install dpkg-dev debhelper quilt fakeroot
 script:
