@@ -5,6 +5,6 @@ python:
     - 3.7
     - 3.8
 install:
-  - sudo apt-get install dpkg-dev debhelper quilt fakeroot
+  - sudo apt-get install dpkg-dev debhelper quilt fakeroot python3-setuptools python3-hug python3-mako
 script:
   - dpkg-buildpackage -b -us -uc
