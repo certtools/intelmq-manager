@@ -73,3 +73,14 @@ The `<ERROR_MESSAGE>` should indicate why.
 To save the positions of the bots in the configuration map, you need
 an existing writable `manager/positions.conf` file. If it's missing,
 just create an empty one.
+
+
+## Type checking
+
+Except for the parts that directly deal with `hug`, the code can be
+typechecked with `mypy`. To run the type checker, start with the module
+`serve`:
+
+```
+mypy intelmq_manager/serve.py
+```
