@@ -29,7 +29,7 @@
         'positions' => '/opt/intelmq/etc/manager/positions.conf',
     );
     # get paths from intelmqctl directly if it works
-    $proc = proc_open($c . "--type json debug --get-paths", [
+    $proc = proc_open($c . " --type json debug --get-paths", [
         1 => ['pipe','w'],
         2 => ['pipe','w'],
     ], $pipes);
