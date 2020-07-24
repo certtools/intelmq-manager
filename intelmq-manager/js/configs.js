@@ -537,7 +537,11 @@ function saveFormData() {
         var value = null;
 
         try {
-            value = JSON.parse(valueInput.value);
+            // In order '{"time.source":"\*"}' would be treated as an object,
+            // we have to translate it to '{"time.source":"\\*"}' first.
+            // In the runtime.conf, it will appear as '{"time.source":"\\*"}'
+            // which is identical to the raw string '{"time.source": r"\*"}'.
+            value = JSON.parse(valueInput.value.replace(/\\/g,'\\\\'));
         } catch (err) {
             value = valueInput.value;
         }
