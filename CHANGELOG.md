@@ -6,6 +6,7 @@ CHANGELOG
 ------------------
 
 ### Backend
+- Fix loading paths from `intelmqctl` executable (PR #205 by Einar Felipe Lanfranco).
 
 ### Pages
 
