@@ -22,6 +22,7 @@ This IntelMQ Manager version requires IntelMQ >= 2.2.1.
 #### Check
 
 ### Documentation
+- User Guide: Add section on paths.
 
 ### Third-party libraries
 
