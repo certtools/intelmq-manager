@@ -25,12 +25,12 @@ function get_debug() {
                 table = document.createElement("table");
                 tbody = document.createElement("table");
 
-                for (const element of data[section]) {
+                for (const [key, value] of Object.entries(data[section])) {
                     row = tbody.insertRow(-1);
                     cell0 = row.insertCell(0);
-                    cell0.innerHTML = "<pre>" + element[0] + "</pre>";
+                    cell0.innerHTML = "<pre>" + key + "</pre>";
                     cell1 = row.insertCell(1);
-                    cell1.innerHTML = "<pre>" + element[1] + "</pre>";
+                    cell1.innerHTML = "<pre>" + value + "</pre>";
                 }
                 table.appendChild(tbody);
                 section_element.appendChild(table);

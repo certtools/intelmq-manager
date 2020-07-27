@@ -25,7 +25,6 @@
         'harmonization' => '/opt/intelmq/etc/harmonization.conf',
         'pipeline' 	=> '/opt/intelmq/etc/pipeline.conf',
         'runtime' 	=> '/opt/intelmq/etc/runtime.conf',
-        'system' 	=> '/opt/intelmq/etc/system.conf',
         'positions' => '/opt/intelmq/etc/manager/positions.conf',
     );
     # get paths from intelmqctl directly if it works
@@ -39,10 +38,12 @@
     fclose($pipes[2]);
     $paths_status = proc_close($proc);
     if ($paths_status == 0) {
-	    $output = json_decode($paths_stdout);
-	    foreach($output->paths as $path){
-		    $FILES[$path[0]]=$path[1];
-	    }    
-        $FILES['positions'] = $FILES['CONFIG_DIR'] . "/manager/positions.conf";
-     }
+        $paths_output = json_decode($paths_stdout, true)['paths'];
+        $FILES['bots'] = $paths_output['BOTS_FILE'];
+        $FILES['defaults'] = $paths_output['DEFAULTS_CONF_FILE'];
+        $FILES['harmonization'] = $paths_output['HARMONIZATION_CONF_FILE'];
+        $FILES['pipeline'] = $paths_output['PIPELINE_CONF_FILE'];
+        $FILES['runtime'] = $paths_output['RUNTIME_CONF_FILE'];
+        $FILES['positions'] = $paths_output['CONFIG_DIR'] . "/manager/positions.conf";
+    }
 ?>
