@@ -1,12 +1,24 @@
 ### Contributors
 
-|Name|Email|Organization|
-|--------|---|-----------|
-|Mauro Silva|mauro.silva@cert.pt|CERT.PT|
-|Tomás Lima|tomas.lima@cert.pt|CERT.PT|
-|Aaron Kaplan|kaplan@cert.at|CERT.AT|
-|Sebastian Wagner|wagner@cert.at|CERT.AT|
-|Arno Esterhammer|esterhammer@cert.at|CERT.AT|
+We would like to thank the following contributors (sorted alphabetically):
+
+Aaron Kaplan
+Alexander J
+Arno Esterhammer
+Bernhard E. Reiter
+Bernhard Herzog
+Chema García
+Edvard Rejthar
+Filip Pokorny
+JesseBowling
+Mauro Silva
+Sascha Wilde
+Sebastian Wagner
+Tomás Lima
+Sybil Ehrensberger
+ondj
+sbilly
+
 
 ### Start contributing
 
