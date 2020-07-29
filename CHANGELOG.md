@@ -30,8 +30,10 @@ CHANGELOG
 
 2.2.1 (unreleased)
 ------------------
+This IntelMQ Manager version requires IntelMQ >= 2.2.1.
 
 ### Backend
+- Fix loading paths from `intelmqctl` executable (PR #205 by Einar Felipe Lanfranco).
 
 ### Pages
 
@@ -46,6 +48,11 @@ CHANGELOG
 #### Check
 
 ### Documentation
+- User Guide:
+  - Add section on configuration paths.
+  - Add section on named queues / paths.
+- Readme:
+  - Update screenshots (#201, PR#207 by Mladen Markovic).
 
 ### Third-party libraries
 
