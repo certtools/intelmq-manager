@@ -1,6 +1,6 @@
 Description: Fix paths for LSB
 Author: Sebastian Wagner <wagner@cert.at>
-Last-Update: 2020-04-28
+Last-Update: 2020-07-30
 ---
 This patch header follows DEP-3: http://dep.debian.net/deps/dep3/
 --- a/intelmq-manager/php/config.php	2020-04-28 15:17:27.858979961 +0200
@@ -14,9 +14,9 @@ This patch header follows DEP-3: http://dep.debian.net/deps/dep3/
      }
  
      // to be displayed so that user can replicate
-@@ -16,17 +16,17 @@
+@@ -16,16 +16,16 @@
      $BOT_ID_REJECT_REGEX = '/[^A-Za-z0-9.-]/';
-     $VERSION = "2.2.1a1";
+     $VERSION = "2.2.1";
  
 -    $ALLOWED_PATH = "/opt/intelmq/var/lib/bots/"; // PHP is allowed to fetch the config files from the current location in order to display bot configurations.
 +    $ALLOWED_PATH = "/var/lib/intelmq/bots/"; // PHP is allowed to fetch the config files from the current location in order to display bot configurations.
@@ -28,15 +28,13 @@ This patch header follows DEP-3: http://dep.debian.net/deps/dep3/
 -        'harmonization' => '/opt/intelmq/etc/harmonization.conf',
 -        'pipeline' 	=> '/opt/intelmq/etc/pipeline.conf',
 -        'runtime' 	=> '/opt/intelmq/etc/runtime.conf',
--        'system' 	=> '/opt/intelmq/etc/system.conf',
 -        'positions' => '/opt/intelmq/etc/manager/positions.conf',
 +        'bots' 		=> '/etc/intelmq/BOTS',
 +        'defaults' 	=> '/etc/intelmq/defaults.conf',
 +        'harmonization' => '/etc/intelmq/harmonization.conf',
 +        'pipeline' 	=> '/etc/intelmq/pipeline.conf',
 +        'runtime' 	=> '/etc/intelmq/runtime.conf',
-+        'system' 	=> '/etc/intelmq/system.conf',
 +        'positions' => '/etc/intelmq/manager/positions.conf',
      );
      # get paths from intelmqctl directly if it works
-     $proc = proc_open($c . "--type json debug --get-paths", [
+     $proc = proc_open(sprintf($CONTROLLER_JSON, "debug --get-paths"), [

@@ -2,24 +2,12 @@ CHANGELOG
 =========
 
 
-2.2.1 (unreleased)
+2.2.1 (2020-07-30)
 ------------------
 This IntelMQ Manager version requires IntelMQ >= 2.2.1.
 
 ### Backend
 - Fix loading paths from `intelmqctl` executable (PR #205 by Einar Felipe Lanfranco).
-
-### Pages
-
-#### Landing page
-
-#### Configuration
-
-#### Management
-
-#### Monitor
-
-#### Check
 
 ### Documentation
 - User Guide:
@@ -28,12 +16,10 @@ This IntelMQ Manager version requires IntelMQ >= 2.2.1.
 - Readme:
   - Update screenshots (#201, PR#207 by Mladen Markovic).
 
-### Third-party libraries
-
-### Packaging
-
 ### Known issues
-
+* Graph jumps around on "Add edge" (#148).
+* wrong error message for new bots with existing ID (#152).
+* Monitor page: Automatic log refresh reset log page to first one (#190).
 
 2.2.0 (2020-06-23)
 ------------------
