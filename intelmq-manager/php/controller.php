@@ -176,8 +176,8 @@ if (!$stdout or $stderr or $status!==0) {
     if(strpos($stderr, "sudo: no tty present and no askpass program specified") !== FALSE) {
         $tip = "Is sudoers file or the environmental variable `INTELMQ_MANGER_CONTROLLER_CMD` <a href='https://github.com/certtools/intelmq-manager/blob/master/docs/INSTALL.md#allow-access-to-intelmqctl'>set up correctly</a>?";
     }
-    else if(strpos($stderr, "Permission denied: '/opt/intelmq") !== FALSE) {
-        $tip = "Has the user accessing intelmq folder the read/write permissions? This might be user intelmq or www-data, depending on your configuration, ex: <code>sudo chown intelmq.intelmq /opt/intelmq -R && sudo chmod u+rw /opt/intelmq -R</code>";
+    else if(strpos($stderr, "Permission denied: ") !== FALSE) {
+        $tip = "Permission error! Has the user accessing the intelmq folder the necessary read/write permissions? This might be user <code>intelmq</code> or <code>www-data</code>, depending on your configuration, for example run <code>sudo chown -R intelmq:intelmq</code> and <code>sudo chmod -R u+rw</code> on the appropriate folders.";
     }
 
     echo json_encode(array(

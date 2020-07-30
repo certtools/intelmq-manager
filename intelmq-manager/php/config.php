@@ -14,7 +14,7 @@
 
     $BOT_CONFIGS_REJECT_REGEX = '/[^[:print:]\n\r\t]/';
     $BOT_ID_REJECT_REGEX = '/[^A-Za-z0-9.-]/';
-    $VERSION = "2.2.0";
+    $VERSION = "2.2.1";
 
     $ALLOWED_PATH = "/opt/intelmq/var/lib/bots/"; // PHP is allowed to fetch the config files from the current location in order to display bot configurations.
     $FILESIZE_THRESHOLD = 2000; // config files under this size gets loaded automatically; otherwise a link is generated
@@ -25,11 +25,10 @@
         'harmonization' => '/opt/intelmq/etc/harmonization.conf',
         'pipeline' 	=> '/opt/intelmq/etc/pipeline.conf',
         'runtime' 	=> '/opt/intelmq/etc/runtime.conf',
-        'system' 	=> '/opt/intelmq/etc/system.conf',
         'positions' => '/opt/intelmq/etc/manager/positions.conf',
     );
     # get paths from intelmqctl directly if it works
-    $proc = proc_open($c . "--type json debug --get-paths", [
+    $proc = proc_open(sprintf($CONTROLLER_JSON, "debug --get-paths"), [
         1 => ['pipe','w'],
         2 => ['pipe','w'],
     ], $pipes);
@@ -39,13 +38,12 @@
     fclose($pipes[2]);
     $paths_status = proc_close($proc);
     if ($paths_status == 0) {
-        $paths_output = json_decode($paths_stdout);
-        $FILES['bots'] = $output['BOTS_FILE'];
-        $FILES['defaults'] = $output['DEFAULTS_CONF_FILE'];
-        $FILES['harmonization'] = $output['HARMONIZATION_CONF_FILE'];
-        $FILES['pipeline'] = $output['PIPELINE_CONF_FILE'];
-        $FILES['runtime'] = $output['RUNTIME_CONF_FILE'];
-        $FILES['system'] = $output['SYSTEM_CONF_FILE'];
-        $FILES['positions'] = $output['CONFIG_DIR'] . "/manager/positions.conf";
+        $paths_output = json_decode($paths_stdout, true)['paths'];
+        $FILES['bots'] = $paths_output['BOTS_FILE'];
+        $FILES['defaults'] = $paths_output['DEFAULTS_CONF_FILE'];
+        $FILES['harmonization'] = $paths_output['HARMONIZATION_CONF_FILE'];
+        $FILES['pipeline'] = $paths_output['PIPELINE_CONF_FILE'];
+        $FILES['runtime'] = $paths_output['RUNTIME_CONF_FILE'];
+        $FILES['positions'] = $paths_output['CONFIG_DIR'] . "/manager/positions.conf";
     }
 ?>

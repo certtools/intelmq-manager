@@ -2,6 +2,25 @@ CHANGELOG
 =========
 
 
+2.2.1 (2020-07-30)
+------------------
+This IntelMQ Manager version requires IntelMQ >= 2.2.1.
+
+### Backend
+- Fix loading paths from `intelmqctl` executable (PR #205 by Einar Felipe Lanfranco).
+
+### Documentation
+- User Guide:
+  - Add section on configuration paths.
+  - Add section on named queues / paths.
+- Readme:
+  - Update screenshots (#201, PR#207 by Mladen Markovic).
+
+### Known issues
+* Graph jumps around on "Add edge" (#148).
+* wrong error message for new bots with existing ID (#152).
+* Monitor page: Automatic log refresh reset log page to first one (#190).
+
 2.2.0 (2020-06-23)
 ------------------
 This IntelMQ Manager version requires IntelMQ >= 2.2.0.
@@ -30,7 +49,7 @@ This IntelMQ Manager version requires IntelMQ >= 2.2.0.
 
 2.1.1 (2020-04-27)
 ------------------
-Bernhard Herzog (Intevation) discovered that the backend incorrectly handled messages given by user-input in the "send" functionality of the Inspect-tool of the Monitor component. An attacker with access to the IntelMQ Manager could possibly use this issue to execute arbitrary code with the privileges of the webserver.
+Bernhard Herzog (Intevation) discovered that the backend incorrectly handled messages given by user-input in the "send" functionality of the Inspect-tool of the Monitor component. An attacker with access to the IntelMQ Manager could possibly use this issue to execute arbitrary code with the privileges of the webserver (CVE-2020-11016).
 
 ### Backend
 - Fix misspelling of the environmental variable `INTELMQ_MANGER_CONTROLLER_CMD` to `INTELMQ_MANAGER_CONTROLLER_CMD` (an 'a' was missing).
