@@ -38,7 +38,9 @@
     fclose($pipes[2]);
     $paths_status = proc_close($proc);
     if ($paths_status == 0) {
-        $paths_output = json_decode($paths_stdout, true)['paths'];
+        foreach (json_decode($paths_stdout,true)["paths"] as $path) {
+                $paths_output[$path[0]]=$path[1];
+        }
         $FILES['bots'] = $paths_output['BOTS_FILE'];
         $FILES['defaults'] = $paths_output['DEFAULTS_CONF_FILE'];
         $FILES['harmonization'] = $paths_output['HARMONIZATION_CONF_FILE'];
