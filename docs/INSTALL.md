@@ -132,53 +132,13 @@ The way the current version is written, anyone can send a POST request and chang
 
 Therefore you will need authentication and SSL.
 
-Use IntelMQ Manager **only from a browser that can only access internal, trusted sites** (Due to CSRF, development of a fix is under way, see [#111](https://github.com/certtools/intelmq-manager/issues/111)).
-
 In addition, intelmq currently stores plaintext passwords in its configuration files. These can be read via intelmq-manager.
 
 **Never ever allow unencrypted, unauthenticated access to intelmq-manager**.
 
 # Configuration
 
-## Basic Authentication
-
-### Packages
-
-In DEB-based distributions you will be asked for the password during installation.
-
-In RPM-based distributions, the file will be placed under `/etc/intelmq-manager.htusers` automatically. To set a user-password combination do:
-```bash
-htpasswd /etc/intelmq-manager.htusers intelmqadmin
-```
-
-In both cases the webserver is already configured to use this file for authentication.
-
-### Manually
-
-To create the authentication file:
-
-```bash
-htpasswd -c <password file path> <username>
-```
-
-To edit an existing one do:
-
-```bash
-htpasswd <password file path> <username>
-```
-
-on IntelMQ Manager edit the httpd.conf and insert
-
-```javascript
-AuthType basic
-AuthName "IntelmMQ Manager"
-
-AuthBasicProvider file
-AuthUserFile <password file path>
-Require valid-user
-```
-
-After this is done you'll have to put the user/pass combination you have created with htpasswd to access the web pages of IntelMQ Manager. To use other authentication methods visit: http://httpd.apache.org/docs/2.4/howto/auth.html
+## Authentication (TODO)
 
 ## Content-Security-Policy Headers
 

@@ -793,7 +793,7 @@ function initNetwork(includePositions = true) {
         let bots = $.unique($(this).data("reloadables"));
         for (let bot_id of bots) {
             let url = managementUrl("bot", `action=reload&id=${bot_id}`);
-            promises.push($.getJSON(url));
+            promises.push(authenticatedGetJson(url));
         }
         if (promises.length) {
             Promise.all(promises).then(() => {
@@ -973,7 +973,7 @@ function refresh_color(bot) {
 
 function load_live_info() {
     $(".navbar").addClass('waiting');
-    return $.getJSON(managementUrl('queues-and-status'))
+    return authenticatedGetJson(managementUrl('queues-and-status'))
         .done(function (data) {
             [bot_queues, bot_status] = data;
 

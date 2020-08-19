@@ -228,7 +228,7 @@ function generateClearQueueButton(queue_id) {
 }
 
 function clearQueue(queue_id) {
-    $.getJSON(managementUrl('clear', 'id=' + queue_id))
+    authenticatedGetJson(managementUrl('clear', 'id=' + queue_id))
             .done(function (data) {
                 redraw_queues();
                 $('#queues-panel-title').removeClass('waiting');
@@ -251,7 +251,7 @@ function load_bot_log() {
     // reason, the client (at least the Firefox versions I tested) did
     // not even try to fetch the URL in the latter case. Switching from
     // "log" to "getlog" made it work.
-    $.getJSON(managementUrl('getlog', 'id=' + bot_id + '&lines=' + number_of_lines + '&level=' + level))
+    authenticatedGetJson(managementUrl('getlog', 'id=' + bot_id + '&lines=' + number_of_lines + '&level=' + level))
             .done(function (data) {
                 if(JSON.stringify(data) != JSON.stringify(bot_logs)) { // redraw only if content changed
                     bot_logs = data;
@@ -267,7 +267,7 @@ function load_bot_log() {
 
 function load_bot_queues() {
     $('#queues-panel-title').addClass('waiting');
-    $.getJSON(managementUrl('queues'))
+    authenticatedGetJson(managementUrl('queues'))
             .done(function (data) {
                 bot_queues = data;
                 redraw_queues();
@@ -408,7 +408,7 @@ function refresh_configuration_info(bot_id) {
         $el = $(`<li><b>${key}</b>: ${param}</li>`);
         if (param && param.indexOf && param.indexOf(ALLOWED_PATH) === 0) {
             let url = LOAD_CONFIG_SCRIPT + "?file=" + param;
-            $.getJSON(url, (data) => {
+            authenticatedGetJson(url, (data) => {
                 let html = "";
                 if (data.directory) {
                     html += "<h3>Directory {0}</h3>".format(data.directory);
@@ -450,7 +450,7 @@ function show_extended_message(index) {
     modal_body.innerHTML = message;
 }
 
-$.getJSON(managementUrl('botnet', 'action=status'))
+authenticatedGetJson(managementUrl('botnet', 'action=status'))
         .done(function (data) {
             var sidemenu = document.getElementById('side-menu');
 
@@ -545,7 +545,7 @@ function run_command(display_cmd, cmd, msg = "", dry = false, show = false) {
     $("#command-show").show().html("{0} run {1} {2} {3}".format(CONTROLLER_CMD, bot_id, display_cmd, msg ? "'" + msg.replace("'", "'\\''") + "'" : ""));//XX dry are not syntax-correct
     $("#run-log").val("loading...");
     $('#inspect-panel-title').addClass('waiting');
-    let call = $.ajax({
+    let call = authenticatedAjax({
         method: "post",
         data: {"msg": msg},
         url: managementUrl('run', 'bot={0}&cmd={1}&dry={2}&show={3}'.format(bot_id, cmd, dry, show)),

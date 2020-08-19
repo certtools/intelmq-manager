@@ -1,5 +1,10 @@
-language: php
+language: python
+dist: bionic
 install:
-  - sudo apt-get install dpkg-dev debhelper quilt fakeroot
+  - sudo apt-get install dpkg-dev debhelper quilt fakeroot python3-setuptools python3-hug python3-mako
 script:
   - dpkg-buildpackage -b -us -uc
+# to make sure that the system packages can be used from the virtualenv,
+# this is important to get the Debian setuptools
+virtualenv:
+  system_site_packages: true

@@ -5,7 +5,7 @@ statuses = {"success": "No error found.", "error": "Some issues have been found,
 function get_check_output() {
     var tableEl = document.getElementById('check-output-table');
 
-    $.getJSON(managementUrl('check'))
+    authenticatedGetJson(managementUrl('check'))
         .done(function (data) {
             //data = {"status": "error","lines": [["info", "Reading configuration files."], ["info", "Checking runtime configuration."], ["info", "Checking pipeline configuration."], ["warning", "Bot 'cert-bund-avalanche-parser' has no 'description'."], ["warning", "Bot 'mailsend-output-cz' has no 'name'."], ["error", "Misconfiguration: No source queue for 'mailsend-output-cz'."], ["error", "Misconfiguration: No pipeline configuration found for 'vxvault-collector'."], ["error", "Misconfiguration: No pipeline configuration found for 'vxvault-parser'."], ["info", "Checking harmoization configuration."], ["info", "Checking for bots."]]};
             tableEl.innerHTML = "<tr><td>Status<td><td>"+statuses[data["status"]]+"</td></tr>";

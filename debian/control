@@ -2,14 +2,17 @@ Source: intelmq-manager
 Maintainer: Sascha Wilde <wilde@intevation.de>
 Section: net
 Priority: optional
-Build-Depends: debhelper (>= 9), po-debconf, quilt, passwd
+Build-Depends: debhelper (>= 9), po-debconf, quilt, passwd, python3-setuptools, python3-hug, python3-mako
+X-Python3-Version: >= 3.5
 Standards-Version: 3.9.6
 Homepage: https://github.com/certtools/intelmq-manager/
 
 Package: intelmq-manager
 Architecture: all
-Depends: ${misc:Depends}, apache2, apache2-utils,
-  libapache2-mod-php | libapache2-mod-php5, sudo,
+Depends: ${misc:Depends}, ${python3:Depends},
+  python3-hug, python3-mako,
+  apache2, apache2-utils,
+  sudo,
   adduser, intelmq (>= 2.2.0)
 Description: Graphical interface to manage configurations for the IntelMQ framework.
  A IntelMQ configuration is a set of config files which describe which
