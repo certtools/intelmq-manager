@@ -88,10 +88,12 @@ Currently, these operating systems are supported by the packages:
 
 
 ## Manually
+**Note**: The backend of IntelMQ Manager is currently being changed from PHP to Python. For production, please use the PHP backend, available via packages and the branches `master` and `maintenance`, *not* `develop` (the default branch when cloning the repository).
 
 Clone the repository using git and copy the files in the subfolder `intelmq-manager` to the webserver directory (can also be `/srv/www/htdocs/` depending on the used system):
 ```bash
 git clone https://github.com/certtools/intelmq-manager.git /tmp/intelmq-manager
+git checkout master
 cp -R /tmp/intelmq-manager/intelmq-manager/* /var/www/html/
 chown -R www-data.www-data /var/www/html/
 ```
