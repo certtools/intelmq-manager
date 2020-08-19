@@ -1,4 +1,4 @@
-![IntelMQ](http://s28.postimg.org/r2av18a3x/Logo_Intel_MQ.png)
+![IntelMQ](https://raw.githubusercontent.com/certtools/intelmq/master/docs/images/Logo_Intel_MQ.png)
 
 **IntelMQ Manager** is a graphical interface to manage configurations for the [IntelMQ](https://github.com/certtools/intelmq) framework.
 A IntelMQ configuration is a set of config files which describe which bots and processing steps should be run in which order. It is similar to describing the dataflow in [dataflow oriented](https://en.wikipedia.org/wiki/Dataflow_programming) languages.
