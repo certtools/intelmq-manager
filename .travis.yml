@@ -6,6 +6,7 @@ install:
 script:
   - dpkg-buildpackage -b -us -uc
   - mypy --config-file=mypy.ini
+  - python3 -m unittest discover -s tests/
 # to make sure that the system packages can be used from the virtualenv,
 # this is important to get the Debian setuptools
 virtualenv:
