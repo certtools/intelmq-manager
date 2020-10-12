@@ -20,6 +20,7 @@ CHANGELOG
 #### Check
 
 ### Documentation
+- Add a link to the failure tips
 
 ### Third-party libraries
 
