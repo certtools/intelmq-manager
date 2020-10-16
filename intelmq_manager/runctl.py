@@ -12,13 +12,12 @@ manager's API backend.
 """
 
 import io
-import subprocess
 import json
+import subprocess
 from typing import List, Dict, Optional
-from .version import __version__
 
 from intelmq_manager.util import shell_command_for_errors
-
+from .version import __version__
 
 #
 # Typing aliases for use with RunIntelMQCtl
@@ -42,7 +41,9 @@ class IntelMQCtlError(Exception):
 
 failure_tips = [
     ("sudo: no tty present and no askpass program specified",
-     "Is sudoers file or IntelMQ-Manager set up correctly?"),
+     "Is sudoers file or IntelMQ-Manager "
+     "<a href='https://github.com/certtools/intelmq-manager/"
+     "blob/master/docs/INSTALL.md#allow-access-to-intelmqctl'>set up correctly</a>?"),
     ("Permission denied: '/opt/intelmq",
      "Has the user accessing intelmq folder the read/write permissions?"
      " This might be user intelmq or www-data, depending on your configuration,"
