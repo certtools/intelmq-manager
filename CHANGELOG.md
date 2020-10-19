@@ -21,6 +21,7 @@ CHANGELOG
 
 ### Documentation
 - Add a link to the failure tips
+- SQLite failure tip
 
 ### Third-party libraries
 

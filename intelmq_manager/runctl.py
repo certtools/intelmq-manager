@@ -49,7 +49,10 @@ failure_tips = [
      " This might be user intelmq or www-data, depending on your configuration,"
      " ex: <code>sudo chown intelmq.intelmq /opt/intelmq -R"
      " && sudo chmod u+rw /opt/intelmq -R</code>"),
-    ]
+    ("sqlite3.OperationalError: no such table",
+     "SQLite database may not have been"
+     " <a href='https://github.com/certtools/intelmq/blob/develop/docs/Bots.md#sqlite'>initialized</a>.")
+]
 
 
 class RunIntelMQCtl:
@@ -98,7 +101,6 @@ class RunIntelMQCtl:
         completed = self._run_intelmq_ctl(args)
         return str(completed.stdout, "ascii")
 
-
     def botnet(self, action: str, group: Optional[str]) -> JSONFile:
         args = [action]
         if group is not None and group != "botnet":
@@ -121,6 +123,7 @@ class RunIntelMQCtl:
         return {"intelmq": intelmq_version,
                 "intelmq-manager": __version__,
                 }
+
     def check(self) -> JSONFile:
         return self._run_json(["check"])
 
