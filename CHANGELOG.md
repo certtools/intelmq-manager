@@ -6,12 +6,15 @@ CHANGELOG
 ------------------
 
 ### Backend
+- The backend has been completely rewritten and changed from PHP to Python. Please refer to the Installation documentation for set-up guides (#8, PR#197 by Bernhard Herzog and Bernhard Reiter).
+- The backend now has user accounts and token based authentication which also prevent CSRF (#111, PR#202 by Bernhard Herzog and Bernhard Reiter).
 
 ### Pages
 
 #### Landing page
 
 #### Configuration
+- Remove the hover function which displayed the hovered bot's configuration (#213, PR#216 by Birger Schacht).
 
 #### Management
 
@@ -20,7 +23,7 @@ CHANGELOG
 #### Check
 
 ### Documentation
-- Add a link to the failure tips
+- Add a link to the failure tips (PR#215 by Edvard Rejthar).
 
 ### Third-party libraries
 
