@@ -310,7 +310,6 @@ function convert_nodes(nodes, includePositions) {
         new_node.id = nodes[index]['id'];
         new_node.label = nodes[index]['id'];
         new_node.group = nodes[index]['group'];
-        new_node.title = JSON.stringify(nodes[index], undefined, 2).replace(/\n/g, '\n<br>').replace(/ /g, "&nbsp;");
 
         if (includePositions === true) {
             try {
@@ -849,9 +848,6 @@ function initNetwork(includePositions = true) {
         // enable 'Edit defaults' button
         $EDIT_DEFAULT_BUTTON.prop('disabled', false);
 
-        // enable tooltip (if disabled earler)
-        app.network.interactionHandler.options.tooltipDelay = 1000;
-
         // clicking on 'Add Bot', 'Add Queues' etc buttons disables 'Edit defaults' button
         var fn = function () {
             $EDIT_DEFAULT_BUTTON.prop('disabled', true);
@@ -860,11 +856,6 @@ function initNetwork(includePositions = true) {
         if (($el = $(".vis-edit", $manipulation)).length) { // 'Edit Bot' button is visible only when there is a bot selected
             $el.on("pointerdown", fn);
         }
-        $(".vis-connect", $manipulation).on("pointerdown", function () {
-            app.network.interactionHandler.options.tooltipDelay = 999999; // tooltip are disabled as well
-            fn();
-            ;
-        });
 
         // 'Monitor' and 'Duplicate' buttons appear when there is a single node selected
         let nodes = app.network.getSelectedNodes();
