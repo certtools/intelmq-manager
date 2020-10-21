@@ -24,7 +24,7 @@ CHANGELOG
 
 ### Documentation
 - Add a link to the failure tips (PR#215 by Edvard Rejthar).
-- SQLite failure tip
+- SQLite failure tip (PR#217 by Edvard Rejthar).
 
 ### Third-party libraries
 
