@@ -8,7 +8,7 @@ Author(s):
   * Bernhard Herzog <bernhard.herzog@intevation.de>
 
 This module implements the HTTP part of the API backend of
-IntelMQ-Manager. The logic itself is in the runctl, files and pages
+IntelMQ-Manager. The logic itself is in the files and pages
 modules.
 """
 
@@ -20,7 +20,11 @@ import getpass
 
 import hug  # type: ignore
 
-import intelmq_manager.runctl as runctl
+from intelmq.bin import intelmqctl
+import pkg_resources
+import json
+from .version import __version__
+
 import intelmq_manager.files as files
 import intelmq_manager.pages as pages
 import intelmq_manager.config
@@ -37,7 +41,6 @@ Bool = hug.types.Mapping({"true": True, "false": False})
 Pages = hug.types.OneOf(["configs", "management", "monitor", "check", "about",
                          "index"])
 
-
 ID_CHARS = set(string.ascii_letters + string.digits + "-")
 @hug.type(extend=hug.types.Text)
 def ID(value):
@@ -47,8 +50,6 @@ def ID(value):
 
 
 api_config: intelmq_manager.config.Config = intelmq_manager.config.Config()
-
-runner: runctl.RunIntelMQCtl = runctl.RunIntelMQCtl(api_config.intelmq_ctl_cmd)
 
 file_access: files.FileAccess = files.FileAccess(api_config)
 
@@ -71,11 +72,12 @@ def initialize_api(filename: typing.Optional[str] = None) -> None:
     called when the server process starts even when no configuration
     needs to be read from a file.
     """
-    global api_config, runner, session_store
+    global api_config, session_store, imqc
+
+    imqc = intelmqctl.IntelMQController(return_type="json")
+
     if filename is not None:
         api_config = intelmq_manager.config.load_config(filename)
-    runner = runctl.RunIntelMQCtl(api_config.intelmq_ctl_cmd)
-    file_access.update_from_runctl(runner.get_paths())
 
     session_file = api_config.session_store
     if session_file is not None:
@@ -87,12 +89,6 @@ def cache_get(*args, **kw):
     """Route to use instead of hug.get that sets cache headers in the response.
     """
     return hug.get(*args, **kw).cache(max_age=3)
-
-
-@hug.exception(runctl.IntelMQCtlError)
-def crlerror_handler(response, exception):
-    response.status = hug.HTTP_500
-    return exception.error_dict
 
 
 def verify_token(token):
@@ -113,57 +109,96 @@ def token_authentication(*args, **kw):
 @hug.get("/api/botnet", requires=token_authentication)
 @typing.no_type_check
 def botnet(action: Actions, group: Groups = None):
-    return runner.botnet(action, group)
+    if group == 'botnet':
+        group = None
+    if action == 'status':
+        retval, botnet_status = imqc.botnet_status(group = group)
+    if action == 'start':
+        retval, botnet_status = imqc.botnet_start(group = group)
+    if action == 'stop':
+        retval, botnet_status = imqc.botnet_stop(group = group)
+    if action == 'restart':
+        retval, botnet_status = imqc.botnet_restart(group = group)
+    if action == 'reload':
+        retval, botnet_status = imqc.botnet_reload(group = group)
+    return botnet_status
 
 
 @hug.get("/api/bot", requires=token_authentication)
 @typing.no_type_check
 def bot(action: Actions, id: ID):
-    return runner.bot(action, id)
+    if action == 'status':
+        retval, botnet_status = imqc.bot_status(id)
+    if action == 'start':
+        retval, botnet_status = imqc.bot_start(id)
+    if action == 'stop':
+        retval, botnet_status = imqc.bot_stop(id)
+    if action == 'restart':
+        retval, botnet_status = imqc.bot_restart(id)
+    if action == 'reload':
+        retval, botnet_status = imqc.bot_reload(id)
+    return botnet_status
 
 
 @cache_get("/api/getlog", requires=token_authentication)
 @typing.no_type_check
 def getlog(id: ID, lines: int, level: Levels = "DEBUG"):
-    return runner.log(id, lines, level)
+    if level == "ALL":
+        level = "DEBUG"
+    retval, logs = imqc.read_bot_log(id, level, lines)
+    return logs
 
 
 @cache_get("/api/queues", requires=token_authentication)
 def queues():
-    return runner.list("queues")
+    retval, queues = imqc.list_queues()
+    return queues
 
 
 @cache_get("/api/queues-and-status", requires=token_authentication)
 def queues_and_status():
-    return runner.list("queues-and-status")
+    retval, queues = imqc.list("queues-and-status")
+    return queues
 
 
 @hug.get("/api/version", requires=token_authentication)
 def version(request):
-    return runner.version()
+    intelmq_version = pkg_resources.get_distribution("intelmq").version
+    return {"intelmq": intelmq_version,
+            "intelmq-manager": __version__,
+            }
 
 
 @hug.get("/api/check", requires=token_authentication)
 def check():
-    return runner.check()
+    retval, status = imqc.check()
+    return status
 
 
 @hug.get("/api/clear", requires=token_authentication)
 @typing.no_type_check
 def clear(id: ID):
-    return runner.clear(id)
+    retval, status = imqc.clear(id)
+    return status
 
 
 @hug.post("/api/run", requires=token_authentication)
 @typing.no_type_check
 def run(bot: str, cmd: BotCmds, show: Bool = False, dry: Bool = False,
         msg: str = ""):
-    return runner.run(bot, cmd, show, dry, msg)
+    run_subcommand = "message"
+    if cmd == "process":
+        run_subcommand = "process"
+        cmd = None
+
+    retval, output = imqc.bot_process_manager.bot_run(bot_id=bot, run_subcommand=run_subcommand, message_action_kind=cmd, dryrun=dry, msg=msg, show_sent=show)
+    return output
 
 
 @hug.get("/api/debug", requires=token_authentication)
 def debug():
-    return runner.debug()
+    retval, output = imqc.debug()
+    return output
 
 
 @hug.get("/api/config", requires=token_authentication)
