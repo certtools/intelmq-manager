@@ -47,8 +47,6 @@ var STARTUP_KEYS = ['group', 'name', 'module', 'description', 'enabled', 'run_mo
 var BOT_ID_REGEX = /^[0-9a-zA-Z.-]+$/;
 var PARAM_KEY_REGEX = /^[0-9a-zA-Z._-]+$/;
 
-var ROOT = window.location.href.substring(0, window.location.href.lastIndexOf('/') + 1);
-
 var MANAGEMENT_BASE_URL = ROOT + "api/";
 var LOAD_CONFIG_SCRIPT = MANAGEMENT_BASE_URL + "config";
 var MANAGEMENT_SCRIPT = MANAGEMENT_BASE_URL + "controller";

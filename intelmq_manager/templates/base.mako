@@ -22,6 +22,7 @@
              Page("about", "About", "about.png", ["js/about.js"])]
 
     common_libraries =  [
+        "js/var.js",
         "js/static.js",
         "js/sb-admin-2.js",
         ## XX this don't have to be on every page:
