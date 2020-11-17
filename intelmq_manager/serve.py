@@ -20,7 +20,12 @@ import os
 import hug # type: ignore
 
 import intelmq_manager.api
+import intelmq_manager.config
 
+api_config: intelmq_manager.config.Config = intelmq_manager.config.Config(os.environ.get("INTELMQ_MANAGER_CONFIG"))
+
+api = hug.API(__name__)
+api.http.add_middleware(hug.middleware.CORSMiddleware(api, allow_origins=api_config.allow_origins))
 
 @hug.extend_api()
 def add_api():
@@ -40,4 +45,4 @@ def setup(api):
     environment variable INTELMQ_MANAGER_CONFIG as the name of the
     configuration file.
     """
-    intelmq_manager.api.initialize_api(os.environ.get("INTELMQ_MANAGER_CONFIG"))
+    intelmq_manager.api.initialize_api(api_config)

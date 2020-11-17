@@ -46,17 +46,17 @@ def ID(value):
     return value
 
 
-api_config: intelmq_manager.config.Config = intelmq_manager.config.Config()
+api_config: intelmq_manager.config.Config
 
-runner: runctl.RunIntelMQCtl = runctl.RunIntelMQCtl(api_config.intelmq_ctl_cmd)
+runner: runctl.RunIntelMQCtl
 
-file_access: files.FileAccess = files.FileAccess(api_config)
+file_access: files.FileAccess
 
 
 session_store = None
 
 
-def initialize_api(filename: typing.Optional[str] = None) -> None:
+def initialize_api(config: intelmq_manager.config.Config) -> None:
     """Initialize the API, optionally loading a configuration file.
 
     If a filename is given, this function updates the configuration in
@@ -71,10 +71,11 @@ def initialize_api(filename: typing.Optional[str] = None) -> None:
     called when the server process starts even when no configuration
     needs to be read from a file.
     """
-    global api_config, runner, session_store
-    if filename is not None:
-        api_config = intelmq_manager.config.load_config(filename)
+    global api_config, file_access, runner, session_store
+    api_config = config
+
     runner = runctl.RunIntelMQCtl(api_config.intelmq_ctl_cmd)
+    file_access = files.FileAccess(api_config)
     file_access.update_from_runctl(runner.get_paths())
 
     session_file = api_config.session_store

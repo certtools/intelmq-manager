@@ -26,24 +26,28 @@ class Config:
 
     session_duration: int = 24 * 3600
 
+    allow_origins: List[str] = ['*']
 
-def load_config(filename: str) -> Config:
-    """Load configuration from JSON file"""
-    with open(filename) as f:
-        raw = json.load(f)
 
-    config = Config()
+    def __init__(self, filename: str):
+        """Load configuration from JSON file"""
+        raw = []
 
-    if "intelmq_ctl_cmd" in raw:
-        config.intelmq_ctl_cmd = raw["intelmq_ctl_cmd"]
+        if filename:
+            with open(filename) as f:
+                raw = json.load(f)
 
-    if "allowed_path" in raw:
-        config.allowed_path = Path(raw["allowed_path"])
+        if "intelmq_ctl_cmd" in raw:
+            self.intelmq_ctl_cmd = raw["intelmq_ctl_cmd"]
 
-    if "session_store" in raw:
-        config.session_store = Path(raw["session_store"])
+        if "allowed_path" in raw:
+            self.allowed_path = Path(raw["allowed_path"])
 
-    if "session_duration" in raw:
-        config.session_duration = int(raw["session_duration"])
+        if "session_store" in raw:
+            self.session_store = Path(raw["session_store"])
 
-    return config
+        if "session_duration" in raw:
+            self.session_duration = int(raw["session_duration"])
+
+        if "allow_origins" in raw:
+            self.allow_origins = raw['allow_origins']
