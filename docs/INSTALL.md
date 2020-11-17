@@ -1,25 +1,3 @@
-**Table of Contents**
-
-1. [Requirements](#requirements)
-2. [Install Dependencies](#install-dependencies)
-   * [Ubuntu 14.04 / Debian 8](#ubuntu-1404--debian-8)
-   * [Ubuntu 16.04](#ubuntu-1604)
-   * [Ubuntu 18.04](#ubuntu-1804)
-   * [Debian 10](#debian-10)
-   * [CentOS 7](#centos-7)
-   * [openSUSE Leap 15.1](#opensuse-leap-151)
-3. [Installation](#installation)
-   * [Native packages](#native-packages)
-   * [Manually](#manually)
-     * [Notes on CentOS / RHEL](#notes-on-centos--rhel)
-4. [Security considerations](#security-considerations)
-5. [Configuration](#configuration)
-   * [Basic Authentication](#basic-authentication)
-     * [Packages](#packages)
-     * [Manually](#manually-1)
-
-Please report any errors you encounter at https://github.com/certtools/intelmq/issues
-
 # Requirements
 
 The following instructions assume the following requirements:
@@ -39,34 +17,31 @@ Partly supported are:
 * RHEL 7
 See [Notes on CentOS / RHEL](#notes-on-centos--rhel)
 
-# Install Dependencies
+## Install dependencies
 
-If you are using native packages, you can simply skip this section as all dependencies are installed automatically.
+Either using OS packages, e.g. for Debian, Ubuntu:
 
-
-## Debian / Ubuntu
-
-```bash
-apt-get install git libapache2-mod-php php-json
+```
+apt-get install python3-hug python3-mako sudo
 ```
 
-## CentOS / RHEL
+For CentOS / RHEL 
+#TODO
 
-```bash
-yum install epel-release
-yum install git httpd httpd-tools php
+For Fedora
+#TODO
+
+For OpenSUSE
+#TODO
+
+For the python3 packages pip can be used alternatively:
+
+```
+python3 -m pip install hug mako
 ```
 
-## Fedora
-
-```bash
-dnf install git httpd php php-common php-json
-
-## openSUSE
-
-```bash
-zypper install git apache2 apache2-utils apache2-mod_php php-json
-```
+(You will need a correctly configured `sudo` to serve this web app from
+a web server running under a different user id than your intelmq userid.)
 
 # Installation
 
@@ -88,19 +63,19 @@ Currently, these operating systems are supported by the packages:
 
 
 ## Manually
-**Note**: The backend of IntelMQ Manager is currently being changed from PHP to Python. For production, please use the PHP backend, available via packages and the branches `master` and `maintenance`, *not* `develop` (the default branch when cloning the repository).
 
 Clone the repository using git and copy the files in the subfolder `intelmq-manager` to the webserver directory (can also be `/srv/www/htdocs/` depending on the used system):
 ```bash
-git clone https://github.com/certtools/intelmq-manager.git /tmp/intelmq-manager
-git checkout master
-cp -R /tmp/intelmq-manager/intelmq-manager/* /var/www/html/
-chown -R www-data.www-data /var/www/html/
+git clone -b master https://github.com/certtools/intelmq-manager.git /tmp/intelmq-manager
 ```
+#TODO: setup up hug with or without webserver
 
-Add the webserver user (www-data, wwwrun, apache or nginx) to the intelmq group and give write permissions for the configuration files:
+`intelma-manager` tries to remember the positions of the bots in the network. For that to work, it stores them in a file `positions.conf`. You can set the path to this file
+using a configuration file- the default is to use the `manager/positions.conf` file in the `intelmq` configuration directory.
+
+Add the user the intelmq-manager api runs as to the intelmq group and give write permissions for the configuration files:
+#TODO: add functionality to create file if it does not exist
 ```bash
-usermod -a -G intelmq www-data
 mkdir /opt/intelmq/etc/manager/
 touch /opt/intelmq/etc/manager/positions.conf
 chgrp www-data /opt/intelmq/etc/*.conf /opt/intelmq/etc/manager/positions.conf
@@ -108,12 +83,10 @@ chmod g+w /opt/intelmq/etc/*.conf /opt/intelmq/etc/manager/positions.conf
 ```
 
 ### Allow access to intelmqctl
-Give webserver user (www-data, wwwrun, apache or nginx) permissions to execute intelmqctl as intelmq user. Edit the `/etc/sudoers` file and add the adapted following line:
+Give the user the intelmq-manage api runs as permissions to execute intelmqctl as intelmq user. Edit the `/etc/sudoers` file and add the adapted following line:
 ```javascript
-www-data ALL=(intelmq) NOPASSWD: /usr/local/bin/intelmqctl
+intelmq-manager ALL=(intelmq) NOPASSWD: /usr/local/bin/intelmqctl
 ```
-
-The default way of accessing `intelmqctl` program is by command `sudo -u intelmq /usr/local/bin/intelmqctl`. If that does not suit you, you may set an environmental variable `INTELMQ_MANGER_CONTROLLER_CMD` to I.E. `~/.local/bin/intelmqctl` or `PATH=~/.local/bin intelmqctl` or `sudo -u intelmq ~/.local/bin/intelmqctl` or whatever you need.
 
 ### Notes on CentOS / RHEL
 
@@ -126,21 +99,13 @@ For RHEL, the packages of CentOS may work better than those for RHEL as there ar
 
 # Security considerations
 
-**Never ever run intelmq-manager on a public webserver without SSL and proper authentication**.
+Never ever run intelmq-manager on a public webserver without SSL and proper authentication!
 
-The way the current version is written, anyone can send a POST request and change intelmq's configuration files via sending a HTTP POST request to ``save.php``. Intelmq-manager will reject non JSON data but nevertheless, we don't want anyone to be able to reconfigure an intelmq installation.
-
-Therefore you will need authentication and SSL.
-
-In addition, intelmq currently stores plaintext passwords in its configuration files. These can be read via intelmq-manager.
-
-**Never ever allow unencrypted, unauthenticated access to intelmq-manager**.
+Never ever allow unencrypted, unauthenticated access to intelmq-manager!.
 
 # Configuration
 
-## Authentication (TODO)
-
-## Content-Security-Policy Headers
+#TODO: configuration file
 
 ### Manually
 
@@ -149,4 +114,74 @@ It is recommended to set these two headers for all requests:
 ```
 Content-Security-Policy: script-src 'self'
 X-Content-Security-Policy: script-src 'self'
+```
+
+## Running a development server
+
+Unless your development system is setup exactly like it would be for
+production use, with `intelmqctl` invoked via `sudo` and installed in
+the default location under `/opt/intelmq`, you will likely need to
+create a configuration file, like this (`devconfig.json`):
+
+
+```
+{
+    "intelmq_ctl_cmd": ["/usr/local/bin/intelmqctl"],
+    "allowed_path": "/opt/intelmq/var/lib/"
+}
+```
+
+The option `"intelmq_ctl_cmd"` is a list of strings so that we can avoid
+shell-injection vulnerabilities because no shell is involved when
+running the command. This means that if the command you want to use
+needs parameters, they have to be separate strings. For instance the
+default command using `sudo` would be
+
+
+```
+{
+    "intelmq_ctl_cmd": ["sudo", "-u", "intelmq", "/usr/local/bin/intelmqctl"],
+    "allowed_path": "/opt/intelmq/var/lib/"
+}
+```
+
+Starting the server with the configuration file:
+
+```
+INTELMQ_MANAGER_CONFIG=devconfig.json hug -f intelmq_manager/serve.py -p8080
+```
+
+The server should be running now and listening on port 8080 and you
+should be able to access it from a browser with a URL like:
+
+```
+http://localhost:8080/
+```
+
+## Typical problems
+
+If the command is not configured correctly, you'll see exceptions on
+startup like this:
+
+```
+intelmq_manager.runctl.IntelMQCtlError: <ERROR_MESSAGE>
+```
+
+This means the intelmqctl command could not be executed as a subprocess.
+The `<ERROR_MESSAGE>` should indicate why.
+
+
+To save the positions of the bots in the configuration map, you need
+an existing writable `manager/positions.conf` file. If it's missing,
+just create an empty one.
+
+
+## Type checking
+
+Except for the parts that directly deal with `hug`, the code can be
+typechecked with `mypy`. To run the type checker, start with the module
+`serve`:
+
+```
+mypy intelmq_manager/serve.py
 ```
