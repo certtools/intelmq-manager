@@ -32,7 +32,7 @@ def add_api():
     return [intelmq_manager.api]
 
 
-@hug.static("/")
+@hug.static("/frontend/")
 def static_dirs():
     return [api_config.html_dir]
 
