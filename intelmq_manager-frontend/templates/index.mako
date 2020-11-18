@@ -17,7 +17,7 @@
         <div class="row center-row">
             <div class="col-md-9 col-sm-12 center-row-content">
                 <div class="col-md-4 col-sm-12">
-                    <a class="index-link" href="?page=configs">
+                    <a class="index-link" href="configs.html">
                         <div class="thumbnail">
                             <img src="./images/config.png" alt="" width="100%" height="100%">
                             <div class="caption">
@@ -29,7 +29,7 @@
                 </div>
 
                 <div class="col-md-4 col-sm-12">
-                    <a class="index-link" href="?page=management">
+                    <a class="index-link" href="management.html">
                         <div class="thumbnail">
                             <img src="./images/botnet.png" alt="">
                             <div class="caption">
@@ -41,7 +41,7 @@
                 </div>
 
                 <div class="col-md-4 col-sm-12">
-                    <a class="index-link" href="?page=monitor">
+                    <a class="index-link" href="monitor.html">
                         <div class="thumbnail">
                             <img src="./images/monitor.png" alt="" >
                             <div class="caption">
@@ -57,7 +57,7 @@
         <div class="row center-row">
             <div class="col-md-9 col-sm-12 center-row-content">
                 <div class="col-md-6 col-sm-12">
-                    <a class="index-link" href="?page=check">
+                    <a class="index-link" href="check.html">
                         <div class="thumbnail">
                             <img src="./images/check.png" alt="" >
                             <div class="caption">
@@ -69,7 +69,7 @@
                 </div>
 
                 <div class="col-md-6 col-sm-12">
-                    <a class="index-link" href="?page=about">
+                    <a class="index-link" href="about.html">
                         <div class="thumbnail">
                             <img src="./images/about.png" alt="" >
                             <div class="caption">
