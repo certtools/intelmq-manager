@@ -28,10 +28,19 @@ class Config:
 
     allow_origins: List[str] = ['*']
 
+    html_dir: Path = Path("/usr/share/intelmq-manager-frontend/html/")
+
 
     def __init__(self, filename: str):
         """Load configuration from JSON file"""
         raw = []
+
+        # this is just for development:
+        # if we are in the source directory, we are going to use
+        # the html files from the source directory
+        source_html = Path(__file__).parent.parent.joinpath("intelmq_manager-frontend/html/index.html")
+        if source_html.exists():
+            self.html_dir = source_html.parent
 
         if filename:
             with open(filename) as f:
@@ -51,3 +60,8 @@ class Config:
 
         if "allow_origins" in raw:
             self.allow_origins = raw['allow_origins']
+
+        if "html_dir" in raw:
+            self.html_dir = Path(raw["html_dir"])
+
+        print("Serving html from {}".format(self.html_dir))

@@ -34,7 +34,7 @@ def add_api():
 
 @hug.static("/")
 def static_dirs():
-    return [os.path.join(os.path.dirname(__file__), "static")]
+    return [api_config.html_dir]
 
 
 @hug.startup()

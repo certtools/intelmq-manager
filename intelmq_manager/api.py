@@ -8,8 +8,7 @@ Author(s):
   * Bernhard Herzog <bernhard.herzog@intevation.de>
 
 This module implements the HTTP part of the API backend of
-IntelMQ-Manager. The logic itself is in the runctl, files and pages
-modules.
+IntelMQ-Manager. The logic itself is in the runctl & files modules.
 """
 
 import sys
@@ -22,7 +21,6 @@ import hug  # type: ignore
 
 import intelmq_manager.runctl as runctl
 import intelmq_manager.files as files
-import intelmq_manager.pages as pages
 import intelmq_manager.config
 import intelmq_manager.session as session
 
@@ -187,13 +185,6 @@ def save(body, file: str):
         return "success"
     except files.SaveFileException as e:
         return str(e)
-
-
-@hug.get("/", output=hug.output_format.html)
-@typing.no_type_check
-def page(response, page: Pages = "index"):
-    return pages.render_page(page, api_config)
-
 
 
 @hug.post("/api/login")
