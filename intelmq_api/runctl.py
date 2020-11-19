@@ -16,7 +16,7 @@ import json
 import subprocess
 from typing import List, Dict, Optional
 
-from intelmq_manager.util import shell_command_for_errors
+from intelmq_api.util import shell_command_for_errors
 from .version import __version__
 
 #

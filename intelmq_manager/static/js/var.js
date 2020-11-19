@@ -4,4 +4,4 @@
  * If this is not set it is by default the same service asthe intelmq-manager.
  */
 var ROOT;
-var ROOT = ROOT ?? window.location.href.substring(0, window.location.href.lastIndexOf('/frontend') + 1);
+var ROOT = ROOT ?? window.location.href.substring(0, window.location.href.lastIndexOf('/manager') + 1);

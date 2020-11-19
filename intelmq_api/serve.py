@@ -8,34 +8,37 @@ Author(s):
   * Bernhard Herzog <bernhard.herzog@intevation.de>
 
 This is the main entry point when serving all of the IntelMQ-Manager via
-hug. In addition to the backend implemented in intelmq_manager.api, this
+hug. In addition to the backend implemented in intelmq_api.api, this
 module also serves the static files (JS, CSS, etc.).
 
 Run with hug from the shell as:
-   hug -f intelmq_manager/serve.py
+   hug -f intelmq_api/serve.py
 """
 
 import os
 
 import hug # type: ignore
 
-import intelmq_manager.api
-import intelmq_manager.config
+import intelmq_api.api
+import intelmq_api.config
 
-api_config: intelmq_manager.config.Config = intelmq_manager.config.Config(os.environ.get("INTELMQ_MANAGER_CONFIG"))
+api_config: intelmq_api.config.Config = intelmq_api.config.Config(os.environ.get("INTELMQ_MANAGER_CONFIG"))
 
 api = hug.API(__name__)
 api.http.add_middleware(hug.middleware.CORSMiddleware(api, allow_origins=api_config.allow_origins))
 
 @hug.extend_api()
 def add_api():
-    return [intelmq_manager.api]
+    return [intelmq_api.api]
 
 
-@hug.static("/frontend/")
+@hug.static("/manager/")
 def static_dirs():
     return [api_config.html_dir]
 
+@hug.get("/manager")
+def manager(request):
+    hug.redirect.to(request.path + '/index.html')
 
 @hug.startup()
 def setup(api):
@@ -45,4 +48,4 @@ def setup(api):
     environment variable INTELMQ_MANAGER_CONFIG as the name of the
     configuration file.
     """
-    intelmq_manager.api.initialize_api(api_config)
+    intelmq_api.api.initialize_api(api_config)

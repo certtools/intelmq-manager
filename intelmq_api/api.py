@@ -19,10 +19,10 @@ import getpass
 
 import hug  # type: ignore
 
-import intelmq_manager.runctl as runctl
-import intelmq_manager.files as files
-import intelmq_manager.config
-import intelmq_manager.session as session
+import intelmq_api.runctl as runctl
+import intelmq_api.files as files
+import intelmq_api.config
+import intelmq_api.session as session
 
 
 Levels = hug.types.OneOf(["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL",
@@ -44,7 +44,7 @@ def ID(value):
     return value
 
 
-api_config: intelmq_manager.config.Config
+api_config: intelmq_api.config.Config
 
 runner: runctl.RunIntelMQCtl
 
@@ -54,7 +54,7 @@ file_access: files.FileAccess
 session_store = None
 
 
-def initialize_api(config: intelmq_manager.config.Config) -> None:
+def initialize_api(config: intelmq_api.config.Config) -> None:
     """Initialize the API, optionally loading a configuration file.
 
     If a filename is given, this function updates the configuration in

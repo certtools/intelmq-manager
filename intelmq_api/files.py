@@ -18,7 +18,7 @@ import string
 from pathlib import PurePath, Path
 from typing import Optional, Tuple, Union, Dict, Any, Iterable, BinaryIO
 
-from intelmq_manager.config import Config
+from intelmq_api.config import Config
 
 
 BOT_CONFIG_CHARS = set(string.ascii_letters + string.digits + string.punctuation

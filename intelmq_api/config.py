@@ -28,7 +28,7 @@ class Config:
 
     allow_origins: List[str] = ['*']
 
-    html_dir: Path = Path("/usr/share/intelmq-manager-frontend/html/")
+    html_dir: Path = Path("/usr/share/intelmq-manager/html/")
 
 
     def __init__(self, filename: str):
@@ -38,7 +38,7 @@ class Config:
         # this is just for development:
         # if we are in the source directory, we are going to use
         # the html files from the source directory
-        source_html = Path(__file__).parent.parent.joinpath("intelmq_manager-frontend/html/index.html")
+        source_html = Path(__file__).parent.parent.joinpath("intelmq_manager/html/index.html")
         if source_html.exists():
             self.html_dir = source_html.parent
 
