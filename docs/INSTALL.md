@@ -1,144 +1,35 @@
-**Table of Contents**
-
-1. [Requirements](#requirements)
-2. [Install Dependencies](#install-dependencies)
-   * [Ubuntu 14.04 / Debian 8](#ubuntu-1404--debian-8)
-   * [Ubuntu 16.04](#ubuntu-1604)
-   * [Ubuntu 18.04](#ubuntu-1804)
-   * [Debian 10](#debian-10)
-   * [CentOS 7](#centos-7)
-   * [openSUSE Leap 15.1](#opensuse-leap-151)
-3. [Installation](#installation)
-   * [Native packages](#native-packages)
-   * [Manually](#manually)
-     * [Notes on CentOS / RHEL](#notes-on-centos--rhel)
-4. [Security considerations](#security-considerations)
-5. [Configuration](#configuration)
-   * [Basic Authentication](#basic-authentication)
-     * [Packages](#packages)
-     * [Manually](#manually-1)
-
-Please report any errors you encounter at https://github.com/certtools/intelmq/issues
+Please report any errors you encounter at https://github.com/certtools/intelmq-manager/issues
 
 # Requirements
 
-The following instructions assume the following requirements:
-
-* IntelMQ is already installed
-* IntelMQ and IntelMQ Manager will be installed on same machine
-* a supported operating system
-
-Supported and recommended operating systems are:
-* Debian 9, 10
-* Fedora 30, 31, 32
-* OpenSUSE Leap 15.1, 15.2
-* Ubuntu: 16.04, 18.04, 20.04
-
-Partly supported are:
-* CentOS 7
-* RHEL 7
-See [Notes on CentOS / RHEL](#notes-on-centos--rhel)
-
-# Install Dependencies
-
-If you are using native packages, you can simply skip this section as all dependencies are installed automatically.
-
-
-## Debian / Ubuntu
-
-```bash
-apt-get install git libapache2-mod-php php-json
-```
-
-## CentOS / RHEL
-
-```bash
-yum install epel-release
-yum install git httpd httpd-tools php
-```
-
-## Fedora
-
-```bash
-dnf install git httpd php php-common php-json
-
-## openSUSE
-
-```bash
-zypper install git apache2 apache2-utils apache2-mod_php php-json
-```
+The ``intelmq-manager`` only contains the webinterface since version 2.3. To use the webinterface, you have to have a working ``intelmq``
+installation wich provides access to the ``intelmq-api``. For the webinterface any operating system that can run a webserver and serve
+html pages is supported, for ``intelmq-manager`` and ``intelmq-api`` please refer to their documentation.
 
 # Installation
 
-## Native packages
+`pip install intelmq-manager` installs the python module together with the html files. There is a helper variable to find its path
 
-This is only recommended if you also installed intelmq itself with packages.
-As you already have the repository configured, you can install the package called `intelmq-manager` using your operating system's package manager.
-Complete install instructions for your operating system can be found here:
-https://software.opensuse.org/download.html?project=home:sebix:intelmq&package=intelmq-manager
-
-Currently, these operating systems are supported by the packages:
-* CentOS 7, install `epel-release` first
-* RHEL 7, install `epel-release` first
-* Debian 9, 10
-* Fedora 30, 31, 32
-* openSUSE Leap 15.1, 15.2
-* openSUSE Tumbleweed
-* Ubuntu 16.04, 18.04, 19.10, 20.04
-
-
-## Manually
-**Note**: The backend of IntelMQ Manager is currently being changed from PHP to Python. For production, please use the PHP backend, available via packages and the branches `master` and `maintenance`, *not* `develop` (the default branch when cloning the repository).
-
-Clone the repository using git and copy the files in the subfolder `intelmq-manager` to the webserver directory (can also be `/srv/www/htdocs/` depending on the used system):
-```bash
-git clone https://github.com/certtools/intelmq-manager.git /tmp/intelmq-manager
-git checkout master
-cp -R /tmp/intelmq-manager/intelmq-manager/* /var/www/html/
-chown -R www-data.www-data /var/www/html/
 ```
-
-Add the webserver user (www-data, wwwrun, apache or nginx) to the intelmq group and give write permissions for the configuration files:
-```bash
-usermod -a -G intelmq www-data
-mkdir /opt/intelmq/etc/manager/
-touch /opt/intelmq/etc/manager/positions.conf
-chgrp www-data /opt/intelmq/etc/*.conf /opt/intelmq/etc/manager/positions.conf
-chmod g+w /opt/intelmq/etc/*.conf /opt/intelmq/etc/manager/positions.conf
+python3 -c 'import intelmq_manager; print(intelmq_manager.path)'
 ```
-
-### Allow access to intelmqctl
-Give webserver user (www-data, wwwrun, apache or nginx) permissions to execute intelmqctl as intelmq user. Edit the `/etc/sudoers` file and add the adapted following line:
-```javascript
-www-data ALL=(intelmq) NOPASSWD: /usr/local/bin/intelmqctl
-```
-
-The default way of accessing `intelmqctl` program is by command `sudo -u intelmq /usr/local/bin/intelmqctl`. If that does not suit you, you may set an environmental variable `INTELMQ_MANGER_CONTROLLER_CMD` to I.E. `~/.local/bin/intelmqctl` or `PATH=~/.local/bin intelmqctl` or `sudo -u intelmq ~/.local/bin/intelmqctl` or whatever you need.
-
-### Notes on CentOS / RHEL
-
-The manager does currently not work with selinux enabled, you need to deactivate it.
-Also, stopping bots does currently not work, see also https://github.com/certtools/intelmq-manager/issues/103
-
-If you can help to fix these issues, please join us!
-
-For RHEL, the packages of CentOS may work better than those for RHEL as there are issues building the packages for RHEL. Help on RHEL is appreciated.
 
 # Security considerations
 
 **Never ever run intelmq-manager on a public webserver without SSL and proper authentication**.
 
-The way the current version is written, anyone can send a POST request and change intelmq's configuration files via sending a HTTP POST request to ``save.php``. Intelmq-manager will reject non JSON data but nevertheless, we don't want anyone to be able to reconfigure an intelmq installation.
+The way the current version is written, anyone can send a POST request and change intelmq's configuration files via sending HTTP POST requests.
+Intelmq-manager will reject non JSON data but nevertheless, we don't want anyone to be able to reconfigure an intelmq installation.
 
-Therefore you will need authentication and SSL.
-
-In addition, intelmq currently stores plaintext passwords in its configuration files. These can be read via intelmq-manager.
+Therefore you will need authentication and SSL. Authentication is handled by the ``intelmq-api``. Please refer to its documentation on how to
+enable authentication and setup accounts.
 
 **Never ever allow unencrypted, unauthenticated access to intelmq-manager**.
 
 # Configuration
 
-## Authentication (TODO)
+In the file ``html/js/vars.js`` set ``ROOT`` to the URL of your intelmq API, i.e. ``https://intelmq-api.example.org/``. By default this points
+to the URL of the host ``intelmq-manager`` is accesed on.
 
 ## Content-Security-Policy Headers
 

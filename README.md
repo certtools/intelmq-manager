@@ -6,8 +6,6 @@ A IntelMQ configuration is a set of config files which describe which bots and p
 
 ## How to Install
 
-**Note**: The backend of IntelMQ Manager is currently being changed from PHP to Python. For production, please use the PHP backend, available via packages and the branches `master` and `maintenance`, *not* `develop` (the default branch when cloning the repository).
-
 See [INSTALL](https://github.com/certtools/intelmq-manager/blob/master/docs/INSTALL.md).
 Read the security considerations in this document carefully.
 
