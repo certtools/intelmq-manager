@@ -6,10 +6,14 @@ CHANGELOG
 ------------------
 
 ### Backend
-- The backend has been completely rewritten and changed from PHP to Python. Please refer to the Installation documentation for set-up guides (#8, PR#197 by Bernhard Herzog and Bernhard Reiter).
-- The backend now has user accounts and token based authentication which also prevent CSRF (#111, PR#202 by Bernhard Herzog and Bernhard Reiter).
+- The backend has been rewritten and changed from PHP to Python (PR#197 by Bernhard Herzog and Bernhard Reiter, #80)
+- The backend has then been moved to a seperate repository and is now called `intelmq-api`: https://github.com/certtools/intelmq-api (PR#226)
+- The name `intelmq-manager` now refers to the web frontend only
 
-### Pages
+### intelmq-manager
+
+- The `intelmq-manager` html files are now being distributed as an archive of static files. They are still built using `mako`, but
+  this is done during the build of the source distribution.
 
 #### Landing page
 
