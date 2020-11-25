@@ -1,0 +1,37 @@
+#Github Workflow CodeQL analysis for intelmq-api
+#
+#SPDX-FileCopyrightText: 2020 IntelMQ Team <intelmq-team@cert.at>
+#SPDX-License-Identifier: AGPL-3.0-or-later
+
+name: "CodeQL Analysis"
+
+# The CodeQL Analysis is a running a couple of
+# minutes, therefore we enable it only for relevant
+# branches:
+on:
+  push:
+    branches: [develop, maintenance, master]
+  pull_request:
+    branches: [ develop ]
+  schedule:
+    - cron: '0 4 * * 5'
+
+jobs:
+  analyze:
+    name: Analyze
+    runs-on: ubuntu-latest
+
+    strategy:
+      fail-fast: false
+      matrix:
+        language: ['javascript', 'python']
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+    - name: Initialize CodeQL
+      uses: github/codeql-action/init@v1
+      with:
+        languages: ${{ matrix.language }}
+    - name: Perform CodeQL Analysis
+      uses: github/codeql-action/analyze@v1
