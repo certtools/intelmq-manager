@@ -6,10 +6,12 @@ htpw=/etc/intelmq-manager.htusers
 if [ "$1" = "configure" ] ; then
     . /usr/share/debconf/confmodule
 
-    adduser www-data intelmq
-    a2enmod -m headers
-    . /usr/share/apache2/apache2-maintscript-helper
-    apache2_invoke ensite intelmq
+    [ ! -s /usr/share/apache2/apache2-maintscript-helper ] || (
+      echo "enabling Apache2 config..."
+      . /usr/share/apache2/apache2-maintscript-helper
+      a2enmod -m headers
+      apache2_invoke ensite intelmq
+    )
 
     db_get intelmq-manager/password
     passwd="$RET"

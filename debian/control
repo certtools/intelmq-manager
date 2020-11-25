@@ -1,22 +1,25 @@
 Source: intelmq-manager
-Maintainer: Sascha Wilde <wilde@intevation.de>
+Maintainer: IntelMQ Team <intelmq-team@cert.at>
+Uploaders: Birger Schacht <schacht@cert.at>,
+           Sebastian Wagner <wagner@cert.at>
 Section: net
 Priority: optional
-Build-Depends: debhelper (>= 9), po-debconf, quilt, passwd, python3-setuptools, python3-hug, python3-mako
-X-Python3-Version: >= 3.5
-Standards-Version: 3.9.6
+Build-Depends: debhelper-compat (= 13),
+               dh-python,
+               python3-all,
+               python3-setuptools,
+               po-debconf,
+               python3-mako
+Standards-Version: 4.5.0
 Homepage: https://github.com/certtools/intelmq-manager/
 
 Package: intelmq-manager
 Architecture: all
-Depends: ${misc:Depends}, ${python3:Depends},
-  python3-hug, python3-mako,
-  apache2, apache2-utils,
-  sudo,
-  adduser, intelmq (>= 2.2.0)
+Depends: ${misc:Depends}, ${python3:Depends}, python3-mako
+Suggests: intelmq-api
 Description: Graphical interface to manage configurations for the IntelMQ framework.
  A IntelMQ configuration is a set of config files which describe which
  bots and processing steps should be run in which order. It is similar
- to describing the dataflow in dataflow oriented languages. IntelMQ
- Manager is therefore an intuitive tool to allow non-programmers to
- specify the data flow in IntelMQ.
+ to describing the dataflow in dataflow oriented languages.
+ IntelMQ Manager provides an intuitive interface for specifying the data flow
+ in IntelMQ.

@@ -1,9 +1,3 @@
 #!/usr/bin/make -f
 %:
-	dh $@
-
-override_dh_fixperms:
-	dh_fixperms
-
-override_dh_install:
-	dh_install
+	dh $@ --with python3 --buildsystem=pybuild

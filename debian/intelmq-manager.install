@@ -1,4 +1,1 @@
-intelmq-manager/* usr/share/intelmq-manager/html/
-debian/01_intelmq-manager etc/sudoers.d/
-debian/intelmq.conf etc/apache2/sites-available/
-debian/positions.conf etc/intelmq/manager/
+contrib/intelmq-manager-apache.conf etc/apache2/sites-available/

@@ -1,6 +1,6 @@
 # SOME DESCRIPTIVE TITLE.
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
-# This file is distributed under the same license as the PACKAGE package.
+# This file is distributed under the same license as the intelmq-manager package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
 #
 #, fuzzy
@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: intelmq-manager\n"
 "Report-Msgid-Bugs-To: intelmq-manager@packages.debian.org\n"
-"POT-Creation-Date: 2016-05-23 10:38+0000\n"
+"POT-Creation-Date: 2020-11-25 10:15+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -35,7 +35,7 @@ msgstr ""
 #: ../intelmq-manager.templates:1001
 msgid ""
 "This is the username you will use to log in to the IntelMQ web interface "
-"after configuration is complete.  Users can late be added and modified by "
+"after configuration is complete.  Users can later be added and modified by "
 "editing \"/etc/intelmq-manager.htusers\" using the standard \"htpasswd\" "
 "tool."
 msgstr ""
