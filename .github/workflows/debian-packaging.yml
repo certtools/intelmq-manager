@@ -1,0 +1,33 @@
+#Github Workflow for intelmq-manager
+#
+#SPDX-FileCopyrightText: 2020 Birger Schacht
+#SPDX-License-Identifier: AGPL-3.0-or-later
+
+name: "Test intelmq-manager Debian build" 
+
+on:
+  push:
+  pull_request:
+    branches: [ develop ]
+
+jobs:
+  test:
+    name: Test Debian package build
+    runs-on: ubuntu-20.04
+
+    strategy:
+      fail-fast: false
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+    - name: Install dependencies
+      run: |
+        sudo apt-get install dpkg-dev lintian -y
+        sudo apt-get build-dep -y .
+    - name: Run build
+      run: |
+        dpkg-buildpackage -b -us -uc
+    - name: Lint build
+      run: |
+        lintian --profile debian ../*.changes
