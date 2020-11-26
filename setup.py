@@ -1,4 +1,8 @@
-#!/usr/bin/python3
+""" Setup file for intelmq-manager
+
+SPDX-FileCopyrightText: 2020 IntelMQ Team <intelmq-team@cert.at>
+SPDX-License-Identifier: AGPL-3.0-or-later
+"""
 from setuptools import find_packages, setup
 
 import pathlib

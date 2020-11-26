@@ -1,5 +1,11 @@
+# SPDX-FileCopyrightText: 2020 IntelMQ Team
+#
+# SPDX-License-Identifier: CC0-1.0
+*.pyc
+build
+dist
+*.egg-info
+intelmq_manager/html
 *~
 .idea/
 nbproject
-*.pyc
-intelmq_manager/html

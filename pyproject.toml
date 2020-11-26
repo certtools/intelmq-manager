@@ -1,2 +1,7 @@
+# Pyproject for intelmq-manager
+#
+# SPDX-FileCopyrightText: 2020 IntelMQ Team <intelmq-team@cert.at>
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
 [build-system]
 requires = ["setuptools", "wheel", "mako>=1.0.7"]
