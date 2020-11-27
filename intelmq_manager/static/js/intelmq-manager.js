@@ -14,3 +14,13 @@
  * If this is not set it is by default the same service as the intelmq-manager.
  */
 var ROOT = ROOT ?? window.location.href.substring(0, window.location.href.lastIndexOf('/') + 1);
+
+/*
+ * API points to the generic API path, which is always the latest version of the API
+ */
+var API = ROOT + '/api/'
+
+/*
+ * If there are multiple versions of the API, they can be defined here
+ */
+var API_V1 = API + '/v1/'

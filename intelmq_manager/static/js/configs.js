@@ -244,22 +244,22 @@ function save_data_on_files() {
     }
 
     Promise.all([
-        $.post(ROOT + '/api/save?file=runtime', generate_runtime_conf(app.nodes))
+        $.post(API + '/save?file=runtime', generate_runtime_conf(app.nodes))
             .done(saveSucceeded)
             .fail(() => {
                 alert_error('runtime', ...arguments)
             }),
-        $.post(ROOT + '/api/save?file=pipeline', generate_pipeline_conf(app.edges))
+        $.post(API + '/save?file=pipeline', generate_pipeline_conf(app.edges))
             .done(saveSucceeded)
             .fail(() => {
                 alert_error('pipeline', ...arguments)
             }),
-        $.post(ROOT + '/api/save?file=positions', generate_positions_conf())
+        $.post(API + '/save?file=positions', generate_positions_conf())
             .done(saveSucceeded)
             .fail(() => {
                 alert_error('positions', ...arguments)
             }),
-        $.post(ROOT + '/api/save?file=defaults', generate_defaults_conf(app.defaults))
+        $.post(API + '/save?file=defaults', generate_defaults_conf(app.defaults))
             .done(saveSucceeded)
             .fail(() => {
                 alert_error('defaults', ...arguments)

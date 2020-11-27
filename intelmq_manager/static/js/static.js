@@ -47,9 +47,8 @@ var STARTUP_KEYS = ['group', 'name', 'module', 'description', 'enabled', 'run_mo
 var BOT_ID_REGEX = /^[0-9a-zA-Z.-]+$/;
 var PARAM_KEY_REGEX = /^[0-9a-zA-Z._-]+$/;
 
-var MANAGEMENT_BASE_URL = ROOT + "api/";
-var LOAD_CONFIG_SCRIPT = MANAGEMENT_BASE_URL + "config";
-var MANAGEMENT_SCRIPT = MANAGEMENT_BASE_URL + "controller";
+var LOAD_CONFIG_SCRIPT = API + "config";
+var MANAGEMENT_SCRIPT = API + "controller";
 
 var BOTS_FILE = LOAD_CONFIG_SCRIPT + "?file=bots";
 var DEFAULTS_FILE = LOAD_CONFIG_SCRIPT + "?file=defaults";
@@ -446,7 +445,7 @@ function accesskeyfie() {
  * Determine the URL for management commands.
  */
 function managementUrl(cmd, params) {
-    var url = MANAGEMENT_BASE_URL + cmd;
+    var url = API + cmd;
     if (params !== undefined) {
 	url += "?" + params;
     }
