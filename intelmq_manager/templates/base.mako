@@ -83,14 +83,14 @@
             <!-- Navigation -->
             <nav class="navbar navbar-default navbar-static-top" role="navigation" style="margin-bottom: 0">
                 <div class="navbar-header">
-                    <a class="navbar-brand" href="?page=index"><img height="24px"  style="margin-right:10px; display:inline" src="./images/logo2.png"><img height="20px" src="./images/logo_no_margin_6.png" style="display:inline"/></a>
+                    <a class="navbar-brand" href="index.html"><img height="24px"  style="margin-right:10px; display:inline" src="./images/logo2.png"><img height="20px" src="./images/logo_no_margin_6.png" style="display:inline"/></a>
                 </div>
                 <!-- /.navbar-header -->
 
                 <ul class="nav navbar-top-links navbar-left">
                     % for page in pages:
                     <li class="${'active' if pagename == page.name else ''}">
-                        <a href="?page=${page.name}">
+                        <a href="${page.name}.html">
                             <span class="top-menu-text"><img src="./images/${page.icon}" width="24px" height="24px">&nbsp;${page.title}</span>
                         </a>
                     </li>
