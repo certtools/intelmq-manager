@@ -1,5 +1,5 @@
 include CHANGELOG.md CONTRIBUTING.md CONTRIBUTORS.md
 include NEWS.md README.md SECURITY.md
-include intelmq_manager/html
-include LICENSES
-include docs
+include LICENSES/*
+recursive-include intelmq_manager/html *
+recursive-include docs *
