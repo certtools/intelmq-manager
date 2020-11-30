@@ -1,0 +1,7 @@
+Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
+Upstream-Name: intelmq-api
+Source: https://github.com/certtools/intelmq-api
+
+Files:     debian/*
+Copyright: 2020 IntelMQ Team
+License:   AGPL-3.0-or-later

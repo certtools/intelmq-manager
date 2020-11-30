@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: 2020 IntelMQ Team
+#
+# SPDX-License-Identifier: CC0-1.0
 include CHANGELOG.md CONTRIBUTING.md CONTRIBUTORS.md
 include NEWS.md README.md SECURITY.md
 include LICENSES/*

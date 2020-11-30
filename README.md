@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2020 IntelMQ Team
+
+SPDX-License-Identifier: AGPL-3.0-or-later
+-->
+
 ![IntelMQ](https://raw.githubusercontent.com/certtools/intelmq/master/docs/images/Logo_Intel_MQ.png)
 
 **IntelMQ Manager** is a graphical interface to manage configurations for the [IntelMQ](https://github.com/certtools/intelmq) framework.

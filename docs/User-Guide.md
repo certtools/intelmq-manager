@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2020 IntelMQ Team
+
+SPDX-License-Identifier: AGPL-3.0-or-later
+-->
+
 ## Keyboard Shortcuts
 
 Any underscored letter denotes access key shortcut. The needed shortcut-keyboard is different per Browser:

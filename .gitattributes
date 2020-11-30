@@ -5,3 +5,4 @@ debian	export-ignore
 .github export-ignore
 .gitattributes export-ignore
 .gitignore export-ignore
+.reuse export-ignore
