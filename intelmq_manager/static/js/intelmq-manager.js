@@ -16,11 +16,11 @@
 var ROOT = ROOT ?? window.location.href.substring(0, window.location.href.lastIndexOf('/') + 1);
 
 /*
- * API points to the generic API path, which is always the latest version of the API
- */
-var API = ROOT + '/api/'
-
-/*
  * If there are multiple versions of the API, they can be defined here
  */
-var API_V1 = API + '/v1/'
+var API_V1 = ROOT + '/v1/api/'
+
+/*
+ * use a specific version when accessing the API variable
+ */
+var API = API_V1
