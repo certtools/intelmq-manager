@@ -5,3 +5,33 @@ Source: https://github.com/certtools/intelmq-api
 Files:     debian/*
 Copyright: 2020 IntelMQ Team
 License:   AGPL-3.0-or-later
+
+Files:     intelmq_manager/static/plugins/vis.js/*
+Copyright: 2011-2017 Almende B.V, http://almende.com
+License:   Apache-2.0
+
+Files:     intelmq_manager/static/plugins/font-awesome-4.1.0/css/*
+           intelmq_manager/static/plugins/font-awesome-4.1.0/less/*
+           intelmq_manager/static/plugins/font-awesome-4.1.0/scss/*
+Copyright: Dave Gandy <drgandy@alum.mit.edu>
+License:   MIT
+
+Files:     intelmq_manager/static/plugins/font-awesome-4.1.0/fonts/*
+Copyright: Dave Gandy <drgandy@alum.mit.edu>
+License:   CC-BY-3.0
+
+Files:     intelmq_manager/static/plugins/metisMenu/*
+Copyright: Osman Nuri Okumuş
+License:   MIT
+
+Files:     intelmq_manager/static/plugins/jquery*
+Copyright: JS Foundation and other contributors
+License:   MIT
+
+Files:     intelmq_manager/static/plugins/dataTables/*
+Copyright: 2008-2017 SpryMedia Ltd.
+License:   MIT
+
+Files:     intelmq_manager/static/plugins/bootstrap/*
+Copyright: Copyright 2011-2019 Twitter, Inc.
+License:   MIT
