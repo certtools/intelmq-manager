@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2020 IntelMQ Team <intelmq-team@cert.at>
+//
+// SPDX-License-Identifier: AGPL-3.0-or-later
+
 app = {}; // will be later redefined as a VisModel object or any other object (used in Configuration and Monitor tab)
 
 function generate_runtime_conf(nodes) {

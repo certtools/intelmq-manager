@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2020 IntelMQ Team <intelmq-team@cert.at>
+//
+// SPDX-License-Identifier: AGPL-3.0-or-later
+
 function generate_defaults_conf(defaults) {
     defaults = sortObjectByPropertyName(defaults);
     return JSON.stringify(defaults, undefined, 4);

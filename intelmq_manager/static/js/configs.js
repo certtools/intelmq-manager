@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2020 IntelMQ Team <intelmq-team@cert.at>
+//
+// SPDX-License-Identifier: AGPL-3.0-or-later
+
 var NETWORK_OPTIONS = NETWORK_OPTIONS || {};
 
 class VisModel {

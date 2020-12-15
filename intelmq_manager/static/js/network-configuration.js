@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2020 IntelMQ Team <intelmq-team@cert.at>
+//
+// SPDX-License-Identifier: AGPL-3.0-or-later
+
 /**
  * Big variable options, passed to vis library.
  * There are also all the manipulation methods.

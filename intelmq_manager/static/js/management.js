@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2020 IntelMQ Team <intelmq-team@cert.at>
+//
+// SPDX-License-Identifier: AGPL-3.0-or-later
+
 var BOT_STATUS_DEFINITION = BOT_STATUS_DEFINITION || {};
 var BOT_CLASS_DEFINITION = BOT_CLASS_DEFINITION || {};
 var bot_status = bot_status || {};
