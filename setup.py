@@ -50,6 +50,9 @@ setup(
     version=__version__,
     python_requires='>=3.5',
     packages=find_packages(),
+    install_requires=[
+        "intelmq-api",
+    ],
     include_package_data=True,
     url='https://github.com/certtools/intelmq-manager/',
     description=("IntelMQ Manager is a graphical interface to manage"
