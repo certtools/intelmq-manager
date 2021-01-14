@@ -23,7 +23,7 @@ def render_page(pagename: str) -> str:
             allowed_path=allowed_path)
 
 def buildhtml():
-    outputdir = pathlib.Path('intelmq_manager/html')
+    outputdir = pathlib.Path('html')
     outputdir.mkdir(parents=True, exist_ok=True)
 
     htmlfiles = ["configs", "management", "monitor", "check", "about", "index"]
@@ -45,6 +45,10 @@ def buildhtml():
 # Before running setup, we build the html files in any case
 buildhtml()
 
+htmlsubdirs = [directory for directory in pathlib.Path('html').iterdir() if directory.is_dir()]
+data_files = [('share/intelmq_manager/{}'.format(directory), [str(x) for x in directory.glob('*') if x.is_file()]) for directory in htmlsubdirs]
+data_files = data_files + [('share/intelmq_manager/html', [str(x) for x in pathlib.Path('html').iterdir() if x.is_file()])]
+
 setup(
     name="intelmq-manager",
     version=__version__,
@@ -57,4 +61,5 @@ setup(
     url='https://github.com/certtools/intelmq-manager/',
     description=("IntelMQ Manager is a graphical interface to manage"
                  " configurations for the IntelMQ framework."),
+    data_files=data_files
 )
