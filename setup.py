@@ -11,7 +11,6 @@ from mako.lookup import TemplateLookup
 
 from intelmq_manager.version import __version__
 
-
 def render_page(pagename: str) -> str:
     template_dir = pathlib.Path("intelmq_manager/templates")
     template_lookup = TemplateLookup(directories=[template_dir], default_filters=["h"])
@@ -45,7 +44,7 @@ def buildhtml():
 # Before running setup, we build the html files in any case
 buildhtml()
 
-htmlsubdirs = [directory for directory in pathlib.Path('html').iterdir() if directory.is_dir()]
+htmlsubdirs = [directory for directory in pathlib.Path('html').glob('**') if directory.is_dir()]
 data_files = [('share/intelmq_manager/{}'.format(directory), [str(x) for x in directory.glob('*') if x.is_file()]) for directory in htmlsubdirs]
 data_files = data_files + [('share/intelmq_manager/html', [str(x) for x in pathlib.Path('html').iterdir() if x.is_file()])]
 
