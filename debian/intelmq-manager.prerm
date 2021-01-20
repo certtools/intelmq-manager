@@ -2,8 +2,10 @@
 set -e
 
 if [ "$1" = "remove" ] ; then
-    . /usr/share/apache2/apache2-maintscript-helper
-    apache2_invoke dissite intelmq
+    if [ -e /usr/share/apache2/apache2-maintscript-helper ] ; then
+      . /usr/share/apache2/apache2-maintscript-helper
+      apache2_invoke dissite intelmq
+    fi
 fi
 
 #DEBHELPER#

@@ -1,34 +1,12 @@
 #!/bin/sh
 set -e
 
-htpw=/etc/intelmq-manager.htusers
-
 if [ "$1" = "configure" ] ; then
-    . /usr/share/debconf/confmodule
-
-    [ ! -s /usr/share/apache2/apache2-maintscript-helper ] || (
-      echo "enabling Apache2 config..."
+    if [ -e /usr/share/apache2/apache2-maintscript-helper ] ; then
       . /usr/share/apache2/apache2-maintscript-helper
       a2enmod -m headers
-      apache2_invoke ensite intelmq
-    )
-
-    db_get intelmq-manager/password
-    passwd="$RET"
-    db_get intelmq-manager/user
-    user="$RET"
-    
-    if [ -n "$passwd" ]; then
-	touch "$htpw"
-	htpasswd -i "$htpw" "$user" <<EOF
-$passwd
-EOF
-        db_set intelmq-manager/password ""
-        db_set intelmq-manager/password-repeat ""
+      apache2_invoke enconf intelmq-manager
     fi
-    db_stop
-    chgrp www-data /etc/intelmq/*.conf /etc/intelmq/manager/positions.conf
-    chmod g+w /etc/intelmq/*.conf /etc/intelmq/manager/positions.conf
 fi
 
 #DEBHELPER#
