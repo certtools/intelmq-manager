@@ -11,9 +11,10 @@
 /*
  * ROOT points to the URI of the API service.
  * Set this for example to `https://intelmq.organization.tld/`
- * If this is not set it is by default the same service as the intelmq-manager.
+ * By default ROOT points to the host the manager runs on, but the path '/intelmq'
  */
-var ROOT = ROOT ?? window.location.href.substring(0, window.location.href.lastIndexOf('/') + 1);
+var arr = window.location.href.split('/');
+var ROOT = ROOT ?? arr[0] + '//' + arr[2] + '/intelmq';
 
 /*
  * If there are multiple versions of the API, they can be defined here
