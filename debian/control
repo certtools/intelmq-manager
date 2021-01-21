@@ -4,7 +4,7 @@ Uploaders: Birger Schacht <schacht@cert.at>,
            Sebastian Wagner <wagner@cert.at>
 Section: net
 Priority: optional
-Build-Depends: debhelper-compat (= 12),
+Build-Depends: debhelper-compat (= 11),
                dh-python,
                python3-all,
                python3-setuptools,
