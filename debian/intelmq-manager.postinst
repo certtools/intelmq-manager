@@ -4,7 +4,7 @@ set -e
 if [ "$1" = "configure" ] ; then
     if [ -e /usr/share/apache2/apache2-maintscript-helper ] ; then
       . /usr/share/apache2/apache2-maintscript-helper
-      a2enmod -m headers
+      apache2_invoke enmod headers
       apache2_invoke enconf intelmq-manager
     fi
 fi
