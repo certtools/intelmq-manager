@@ -45,8 +45,8 @@ def buildhtml():
 buildhtml()
 
 htmlsubdirs = [directory for directory in pathlib.Path('html').glob('**') if directory.is_dir()]
-data_files = [('share/intelmq_manager/{}'.format(directory), [str(x) for x in directory.glob('*') if x.is_file()]) for directory in htmlsubdirs]
-data_files = data_files + [('share/intelmq_manager/html', [str(x) for x in pathlib.Path('html').iterdir() if x.is_file()])]
+data_files = [('/usr/share/intelmq_manager/{}'.format(directory), [str(x) for x in directory.glob('*') if x.is_file()]) for directory in htmlsubdirs]
+data_files = data_files + [('/usr/share/intelmq_manager/html', [str(x) for x in pathlib.Path('html').iterdir() if x.is_file()])]
 data_files = data_files + [('/etc/intelmq', ['contrib/manager-apache.conf'])]
 
 setup(
