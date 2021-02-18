@@ -1,0 +1,1 @@
+rm_conffile /etc/apache2/sites-available/intelmq.conf 2.3.0-1~ intelmq-manager
