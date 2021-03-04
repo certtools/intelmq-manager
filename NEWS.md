@@ -10,6 +10,10 @@ NEWS
 See the changelog for a full list of changes.
 
 
+3.0.0 (unreleased)
+------------------
+
+
 2.3.1 (unreleased)
 ------------------
 

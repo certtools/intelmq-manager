@@ -8,6 +8,32 @@ CHANGELOG
 =========
 
 
+3.0.0 (unreleased)
+------------------
+
+### Backend
+
+### Pages
+
+#### Landing page
+
+#### Configuration
+
+#### Management
+
+#### Monitor
+
+#### Check
+
+### Documentation
+
+### Third-party libraries
+
+### Packaging
+
+### Known issues
+
+
 2.3.1 (unreleased)
 ------------------
 
