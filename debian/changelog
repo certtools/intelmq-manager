@@ -1,3 +1,9 @@
+intelmq-manager (2.3.1~alpha1-1) UNRELEASED; urgency=medium
+
+  * Start 2.3.1 development.
+
+ -- Sebastian Wagner <wagner@cert.at>  Thu, 04 Mar 2021 13:59:55 +0100
+
 intelmq-manager (2.3.0-1) stable; urgency=medium
 
   * Update to 2.3.0.
