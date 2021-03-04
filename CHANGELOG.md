@@ -8,6 +8,32 @@ CHANGELOG
 =========
 
 
+2.3.1 (unreleased)
+------------------
+
+### Backend
+
+### Pages
+
+#### Landing page
+
+#### Configuration
+
+#### Management
+
+#### Monitor
+
+#### Check
+
+### Documentation
+
+### Third-party libraries
+
+### Packaging
+
+### Known issues
+
+
 2.3.0 (2021-03-04)
 ------------------
 
@@ -26,21 +52,15 @@ CHANGELOG
 #### Configuration
 - Remove the hover function which displayed the hovered bot's configuration (#213, PR#216 by Birger Schacht).
 
-#### Management
-
-#### Monitor
-
-#### Check
-
 ### Documentation
 - Add a link to the failure tips (PR#215 by Edvard Rejthar).
 - SQLite failure tip (PR#217 by Edvard Rejthar).
 
-### Third-party libraries
-
-### Packaging
-
 ### Known issues
+- Graph jumps around on "Add edge" (#148).
+- wrong error message for new bots with existing ID (#152).
+- Monitor page: Automatic log refresh reset log page to first one (#190).
+- Load error if a bot has not optional `parameters` field in runtime configuration (#237).
 
 
 2.2.1 (2020-07-30)
