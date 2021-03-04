@@ -10,6 +10,10 @@ NEWS
 See the changelog for a full list of changes.
 
 
+2.3.1 (unreleased)
+------------------
+
+
 2.3.0 (2021-03-04)
 ------------------
 The IntelMQ Manager backend has been rewritten in Python and split off to the IntelMQ API.
