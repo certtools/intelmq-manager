@@ -10,8 +10,14 @@ NEWS
 See the changelog for a full list of changes.
 
 
-2.3.0 (unreleased)
+2.3.0 (2021-03-04)
 ------------------
+The IntelMQ Manager backend has been rewritten in Python and split off to the IntelMQ API.
+An installation of intelmq-api is now required to run the IntelMQ Manager.
+For deb/rpm-installations, you only need to upgrade the packages. Additional requirements are automatically pulled in.
+For manual installations, please follow the installation instructions:
+- for [intelmq-api](https://intelmq.readthedocs.io/en/maintenance/user/intelmq-api.html)
+- for [intelmq-manager](https://intelmq.readthedocs.io/en/maintenance/user/intelmq-manager.html)
 
 
 2.2.1 (2020-07-30)

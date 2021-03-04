@@ -1,3 +1,9 @@
+intelmq-manager (2.3.0-1) stable; urgency=medium
+
+  * Update to 2.3.0.
+
+ -- Sebastian Wagner <wagner@cert.at>  Thu, 04 Mar 2021 12:50:19 +0100
+
 intelmq-manager (2.3.0~alpha2-1) stable; urgency=medium
 
   * Update to 2.3.0 alpha 2 (dev1).
