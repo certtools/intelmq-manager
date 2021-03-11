@@ -247,6 +247,16 @@ function save_data_on_files() {
         }
     }
 
+    let token = sessionStorage.getItem("login_token");
+    if (token !== null) {
+        $.ajaxSetup({
+           beforeSend: function (xhr)
+           {
+             xhr.setRequestHeader("Authorization", token);        
+           }
+        });
+    }
+
     Promise.all([
         $.post(API + '/save?file=runtime', generate_runtime_conf(app.nodes))
             .done(saveSucceeded)
