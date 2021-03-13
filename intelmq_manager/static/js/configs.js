@@ -248,22 +248,22 @@ function save_data_on_files() {
     }
     
     Promise.all([
-        $.authenticatedAjax({"url": API + '/save?file=runtime', "data": generate_runtime_conf(app.nodes)})
+        authenticatedAjax({"type": "POST", "url": API + '/save?file=runtime', "data": generate_runtime_conf(app.nodes)})
             .done(saveSucceeded)
             .fail(() => {
                 alert_error('runtime', ...arguments)
             }),
-        $.authenticatedAjax({"url": API + '/save?file=pipeline', "data": generate_pipeline_conf(app.edges)})
+        authenticatedAjax({"type": "POST", "url": API + '/save?file=pipeline', "data": generate_pipeline_conf(app.edges)})
             .done(saveSucceeded)
             .fail(() => {
                 alert_error('pipeline', ...arguments)
             }),
-        $.authenticatedAjax({"url": API + '/save?file=positions', "data": generate_positions_conf()})
+        authenticatedAjax({"type": "POST", "url": API + '/save?file=positions', "data": generate_positions_conf()})
             .done(saveSucceeded)
             .fail(() => {
                 alert_error('positions', ...arguments)
             }),
-        $.authenticatedAjax({"url": API + '/save?file=defaults', "data": generate_defaults_conf(app.defaults)})
+        authenticatedAjax({"type": "POST", "url": API + '/save?file=defaults', "data": generate_defaults_conf(app.defaults)})
             .done(saveSucceeded)
             .fail(() => {
                 alert_error('defaults', ...arguments)
