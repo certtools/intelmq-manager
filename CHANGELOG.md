@@ -44,6 +44,7 @@ CHANGELOG
 #### Landing page
 
 #### Configuration
+- Add authentication token in save-data request (PR#245 by Marcos Gonzalez, fixes #244).
 
 #### Management
 
