@@ -320,7 +320,7 @@ function select_bot(bot_id, history_push = false) {
         $("#inspect-panel .panel-heading").prepend(generate_control_buttons(bot_id, false, load_bot_log, true));
 
         // connect to configuration panel
-        $('#monitor-target').append(' <a title="show in configuration" href="?page=configs#{0}"><img src="./images/config.png" width="24" height="24" /></a>'.format(bot_id));
+        $('#monitor-target').append(' <a title="show in configuration" href="configs.html#{0}"><img src="./images/config.png" width="24" height="24" /></a>'.format(bot_id));
 
     } else {
         $("#logs-panel, #inspect-panel, #parameters-panel").css('display', 'none');
