@@ -830,7 +830,7 @@ function initNetwork(includePositions = true) {
 
     // 'Clear Configuration' button
     $("#vis-clear").children().on('click', function (event) {
-        window.location.assign('?page=configs&configuration=new');
+        window.location.assign('configs.html?configuration=new');
     });
 
     // 'Redraw Botnet' button

@@ -45,10 +45,12 @@ CHANGELOG
 
 #### Configuration
 - Add authentication token in save-data request (PR#245 by Marcos Gonzalez, fixes #244).
+- Fix "Clear Configuration" link destination (PR#249 by Sebastian Wagner, fixes #248).
 
 #### Management
 
 #### Monitor
+- Fix link to configuration page of bot (PR#249 by Sebastian Wagner, fixes #248).
 
 #### Check
 
