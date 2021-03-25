@@ -8,33 +8,24 @@ CHANGELOG
 =========
 
 
-2.3.1 (unreleased)
+2.3.1 (2021-03-25)
 ------------------
-
-### Backend
-
-### Pages
-
-#### Landing page
 
 #### Configuration
 - Add authentication token in save-data request (PR#245 by Marcos Gonzalez, fixes #244).
 - Fix "Clear Configuration" link destination (PR#249 by Sebastian Wagner, fixes #248).
 
-#### Management
-
 #### Monitor
 - Fix link to configuration page of bot (PR#249 by Sebastian Wagner, fixes #248).
 
-#### Check
-
-### Documentation
-
-### Third-party libraries
-
-### Packaging
-
 ### Known issues
+- Graph jumps around on "Add edge" (#148).
+- wrong error message for new bots with existing ID (#152).
+- Monitor page: Automatic log refresh reset log page to first one (#190).
+- Load error if a bot has not optional `parameters` field in runtime configuration (#237).
+- Better error messag for missing authentication (#238).
+- Reload page after login (#243).
+- Debian packages usability: webserver not required, causing missing webserver configuration (#246).
 
 
 2.3.0 (2021-03-04)
