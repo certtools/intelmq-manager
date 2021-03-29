@@ -54,7 +54,7 @@ var PARAM_KEY_REGEX = /^[0-9a-zA-Z._-]+$/;
 var LOAD_CONFIG_SCRIPT = API + "config";
 var MANAGEMENT_SCRIPT = API + "controller";
 
-var BOTS_FILE = LOAD_CONFIG_SCRIPT + "?file=bots";
+var BOTS_FILE = API + "bots";
 var DEFAULTS_FILE = LOAD_CONFIG_SCRIPT + "?file=defaults";
 var HARMONIZATION_FILE = LOAD_CONFIG_SCRIPT + "?file=harmonization";
 var PIPELINE_FILE = LOAD_CONFIG_SCRIPT + "?file=pipeline";
