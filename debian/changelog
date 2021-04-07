@@ -1,3 +1,10 @@
+intelmq-manager (2.3.1-2) stable; urgency=medium
+
+  * Add apache2 to recommendations and fix intelmq-api package name in
+    recommendations.
+
+ -- Birger Schacht <schacht@cert.at>  Wed, 07 Apr 2021 08:58:44 +0200
+
 intelmq-manager (2.3.1-1) stable; urgency=medium
 
   * Update to 2.3.1.
