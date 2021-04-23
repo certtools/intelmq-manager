@@ -14,8 +14,10 @@ See the changelog for a full list of changes.
 ------------------
 
 
-2.3.1 (unreleased)
+2.3.1 (2021-03-25)
 ------------------
+
+No changes are required by administrators.
 
 
 2.3.0 (2021-03-04)
