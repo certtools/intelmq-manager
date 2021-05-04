@@ -87,7 +87,6 @@ function load_html_elements() {
 
 function load_bots(config) {
     // Build side menu
-    console.log(config);
     for (let bot_group of Object.keys(config).reverse()) {
         let $bot_group = $("#templates > ul.side-menu > li").clone().prependTo("#side-menu").css("border-bottom-color", GROUP_COLORS[bot_group][0]);
         $bot_group.find("> a").prepend(bot_group);
@@ -184,10 +183,11 @@ function load_bots(config) {
 
 function fill_editDefault(data) {
     table.innerHTML = '';
-
+    insertBorder(BORDER_TYPES.DEFAULT);
     for (let key in data) {
-        insertKeyValue(key, data[key], 'defaultConfig', false);
+        insertKeyValue(key, data[key], BORDER_TYPES.DEFAULT, true);
     }
+
     // to enable scroll bar
     popup.setAttribute('class', "with-bot");
 }
@@ -250,29 +250,18 @@ function save_data_on_files() {
     }
     
     Promise.all([
-        authenticatedAjax({"type": "POST", "url": API + '/save?file=runtime', "data": generate_runtime_conf(app.nodes)})
+        authenticatedAjax({"type": "POST", "url": API + '/runtime', "contentType": "application/json", "data": generate_runtime_conf(app.nodes, app.defaults)})
             .done(saveSucceeded)
             .fail(() => {
                 alert_error('runtime', ...arguments)
             }),
-        authenticatedAjax({"type": "POST", "url": API + '/save?file=pipeline', "data": generate_pipeline_conf(app.edges)})
-            .done(saveSucceeded)
-            .fail(() => {
-                alert_error('pipeline', ...arguments)
-            }),
-        authenticatedAjax({"type": "POST", "url": API + '/save?file=positions', "data": generate_positions_conf()})
+        authenticatedAjax({"type": "POST", "url": API + '/positions', "contentType": "application/json", "data": generate_positions_conf()})
             .done(saveSucceeded)
             .fail(() => {
                 alert_error('positions', ...arguments)
-            }),
-        authenticatedAjax({"type": "POST", "url": API + '/save?file=defaults', "data": generate_defaults_conf(app.defaults)})
-            .done(saveSucceeded)
-            .fail(() => {
-                alert_error('defaults', ...arguments)
-            }),])
+            })])
         .then(function () {
             // all files were correctly saved
-            app.nodes = add_defaults_to_nodes(app.nodes, app.defaults);
             $saveButton.unblinking();
         });
 }
@@ -312,8 +301,8 @@ function convert_nodes(nodes, includePositions) {
 
     for (index in nodes) {
         var new_node = {};
-        new_node.id = nodes[index]['id'];
-        new_node.label = nodes[index]['id'];
+        new_node.id = nodes[index]['bot_id'];
+        new_node.label = nodes[index]['bot_id'];
         new_node.group = nodes[index]['group'];
 
         if (includePositions === true) {
@@ -359,7 +348,7 @@ function fill_bot(id, group, name) {
 
     app.bot_before_altering = bot;
 
-    insertKeyValue('id', bot['id'], 'id', false);
+    insertKeyValue('id', bot['bot_id'], 'id', false);
     insertBorder(BORDER_TYPES.GENERIC);
     for (let key in bot) {
         if (STARTUP_KEYS.includes(key)) {
@@ -369,10 +358,6 @@ function fill_bot(id, group, name) {
     insertBorder(BORDER_TYPES.RUNTIME);
     for (let key in bot.parameters) {
         insertKeyValue(key, bot.parameters[key], BORDER_TYPES.RUNTIME, true);
-    }
-    insertBorder(BORDER_TYPES.DEFAULT);
-    for (let key in bot.defaults) {
-        insertKeyValue(key, bot.defaults[key], BORDER_TYPES.DEFAULT, false);
     }
 
     const periodpos = bot['module'].lastIndexOf('.');
@@ -403,6 +388,8 @@ function insertBorder(border_type) {
             break;
         case BORDER_TYPES.DEFAULT:
             new_row.setAttribute('class', BORDER_TYPE_CLASSES.DEFAULT);
+            $(addButtonCell).append($("#templates > .new-key-btn").clone().click(addNewDefaultKey));
+            new_row.setAttribute('id', border_type);
             break;
         default:
             new_row.setAttribute('class', BORDER_TYPE_CLASSES.OTHERS);
@@ -441,25 +428,14 @@ function insertKeyValue(key, value, section, allowXButtons, insertAt) {
     if (allowXButtons === true) {
         var xButton = document.createElement('button');
         var xButtonSpan = document.createElement('span');
-        if (key in app.defaults) {
-            xButtonSpan.setAttribute('class', 'glyphicon glyphicon-refresh');
-            xButton.setAttribute('class', 'btn btn-default');
-            xButton.setAttribute('title', 'reset to default');
-            xButton.addEventListener('click', function (resetToDefault, key) {
-                return function () {
-                    parameter_func(resetToDefault, key)
-                }
-            }(resetToDefault, key))
-        } else {
-            xButtonSpan.setAttribute('class', 'glyphicon glyphicon-remove-circle');
-            xButton.setAttribute('class', 'btn btn-danger');
-            xButton.setAttribute('title', 'delete parameter');
-            xButton.addEventListener('click', function (deleteParameter, key) {
-                return function () {
-                    parameter_func(deleteParameter, key)
-                }
-            }(deleteParameter, key))
-        }
+        xButtonSpan.setAttribute('class', 'glyphicon glyphicon-remove-circle');
+        xButton.setAttribute('class', 'btn btn-danger');
+        xButton.setAttribute('title', 'delete parameter');
+        xButton.addEventListener('click', function (deleteParameter, key) {
+            return function () {
+                parameter_func(deleteParameter, key)
+            }
+        }(deleteParameter, key))
 
         xButton.appendChild(xButtonSpan);
         xButtonCell.appendChild(xButton);
@@ -471,7 +447,9 @@ function insertKeyValue(key, value, section, allowXButtons, insertAt) {
     if (value !== null && typeof value === "object") {
         value = JSON.stringify(value);
     }
-    valueInput.setAttribute('value', value);
+    if (value !== null) {
+        valueInput.setAttribute('value', value);
+    }
 }
 
 function resetToDefault(input_id) {
@@ -497,6 +475,28 @@ function addNewKey() {
         } else {
             // inserts new value and focus the field
             insertKeyValue($key.val(), val, BORDER_TYPES.RUNTIME, true, current_index + 1);
+            // a bootstrap guru or somebody might want to rewrite this line without setTimeout
+            setTimeout(() => {
+                $('#network-popUp .new-key-btn').closest("tr").next("tr").find("input").focus()
+            }, 300);
+        }
+    });
+}
+// same as above, with another border type
+function addNewDefaultKey() {
+    let $el = $("#templates .modal-add-new-key").clone();
+    popupModal("Add key", $el, () => {
+        var current_index = $('#' + BORDER_TYPES.RUNTIME).index();
+        var $key = $el.find("[name=newKeyInput]");
+        var val = $el.find("[name=newValueInput]").val();
+
+        if (!PARAM_KEY_REGEX.test($key.val())) {
+            show_error("Parameter names can only be composed of numbers, letters, hiphens and underscores");
+            $key.focus();
+            return false;
+        } else {
+            // inserts new value and focus the field
+            insertKeyValue($key.val(), val, BORDER_TYPES.DEFAULT, true, current_index + 1);
             // a bootstrap guru or somebody might want to rewrite this line without setTimeout
             setTimeout(() => {
                 $('#network-popUp .new-key-btn').closest("tr").next("tr").find("input").focus()
@@ -551,7 +551,7 @@ function saveFormData() {
 
         switch (keyCell.id) {
             case 'id':
-                node[key] = value;
+                node['bot_id'] = value;
                 break;
             case 'generic':
                 node[key] = value;
@@ -561,7 +561,7 @@ function saveFormData() {
                 break;
             case 'border':
                 break;
-            case 'defaultConfig':
+            case 'default':
                 app.defaults[key] = value;
                 break;
             default:
@@ -578,18 +578,18 @@ function saveData(data, callback) {
     saveFormData();
 
     // check inputs beeing valid
-    if (node.id == '' && node.group == '') {
+    if (node.bot_id == '' && node.group == '') {
         show_error('fields id and group must not be empty!');
         return;
     }
 
-    if (node.id != app.bot_before_altering.id) {
+    if (node.bot_id != app.bot_before_altering.bot_id) {
         if (!confirm("When you edit an ID what you are doing in fact is to create a clone of the current bot. You will have to delete the old one manually. Proceed with the operation?")) {
             return;
         }
     }
 
-    if (!BOT_ID_REGEX.test(node.id)) {
+    if (!BOT_ID_REGEX.test(node.bot_id)) {
         show_error("Bot ID's can only be composed of numbers, letters and hiphens");
         return;
     }
@@ -616,13 +616,13 @@ function saveData(data, callback) {
         }
     }
 
-    data.id = node.id;
-    data.label = node.id
+    data.bot_id = node.bot_id;
+    data.label = node.bot_id
     data.group = node.group;
     data.level = GROUP_LEVELS[data.group];
     data.title = JSON.stringify(node, undefined, 2).replace(/\n/g, '\n<br>').replace(/ /g, "&nbsp;");
 
-    app.nodes[node.id] = node;
+    app.nodes[node.bot_id] = node;
 
     $saveButton.blinking();
     clearPopUp(data, callback);

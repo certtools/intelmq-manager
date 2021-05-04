@@ -108,32 +108,34 @@ function generate_pipeline_conf(edges) {
     return JSON.stringify(new_edges, undefined, 4);
 }
 
-function read_pipeline_conf(config, nodes) {
+function read_pipeline_conf(config) {
     var edges = {};
     var i = 0;
 
     for (let from in config) {
-        if (config[from]['destination-queues'] !== undefined) {
-            let queues = (new DestinationQueues(config[from]['destination-queues'])).getFullForm();
-            for (let path in queues) {
-                for (let queue of queues[path]) {
-                    var to_node = queue.replace(/-queue$/, "");
-                    if (nodes[from] !== undefined && nodes[to_node] !== undefined) {
-                        var edge_id = 'edge' + i++;
-                        var new_edge = {
-                            'id': edge_id,
-                            'from': from,
-                            'to': to_node
-                        };
-                        if (path !== "_default") {
-                            new_edge["path"] = path;
-                        }
+	if (config[from]['parameters'] != undefined) {
+            if (config[from]['parameters']['destination_queues'] !== undefined) {
+                let queues = (new DestinationQueues(config[from]['parameters']['destination_queues'])).getFullForm();
+                for (let path in queues) {
+                    for (let queue of queues[path]) {
+                        var to_node = queue.replace(/-queue$/, "");
+                        if (config[from] !== undefined && config[to_node] !== undefined) {
+                            var edge_id = 'edge' + i++;
+                            var new_edge = {
+                                'id': edge_id,
+                                'from': from,
+                                'to': to_node
+                            };
+                            if (path !== "_default") {
+                                new_edge["path"] = path;
+                            }
 
-                        edges[edge_id] = new_edge;
+                            edges[edge_id] = new_edge;
+                        }
                     }
                 }
             }
-        }
+	}
     }
 
     return edges;

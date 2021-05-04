@@ -8,40 +8,22 @@ function generate_defaults_conf(defaults) {
 }
 
 function read_defaults_conf(config) {
+    global = {};
 
-    for (key in config) {
+    for (key in config['global']) {
         try {
-            config[key] = JSON.parse(config[key]);
+            global[key] = JSON.parse(config['global'][key]);
         } catch (err) {
-            config[key] = config[key];
+            global[key] = config['global'][key];
         }
     }
 
-    return config
+    return global
 }
 
 function remove_defaults(nodes) {
     for (id in nodes) {
         delete nodes[id].defaults;
-    }
-
-    return nodes;
-}
-
-function add_defaults_to_nodes(nodes, defaultConfig) {
-    var defaults = 'defaults';
-    for (id in nodes) {
-        var node=nodes[id];
-        node.id = id;
-        node.defaults = {};
-
-        for (key in defaultConfig) {
-            if (key in node.parameters) {
-                continue;
-            } else {
-                node.defaults[key] = defaultConfig[key];
-            }
-        }
     }
 
     return nodes;

@@ -55,11 +55,9 @@ var LOAD_CONFIG_SCRIPT = API + "config";
 var MANAGEMENT_SCRIPT = API + "controller";
 
 var BOTS_FILE = API + "bots";
-var DEFAULTS_FILE = LOAD_CONFIG_SCRIPT + "?file=defaults";
-var HARMONIZATION_FILE = LOAD_CONFIG_SCRIPT + "?file=harmonization";
-var PIPELINE_FILE = LOAD_CONFIG_SCRIPT + "?file=pipeline";
-var RUNTIME_FILE = LOAD_CONFIG_SCRIPT + "?file=runtime";
-var POSITIONS_FILE = LOAD_CONFIG_SCRIPT + "?file=positions";
+var HARMONIZATION_FILE = API + "harmonization";
+var RUNTIME_FILE = API + "runtime";
+var POSITIONS_FILE = API + "positions";
 
 var RELOAD_QUEUES_EVERY = 1; /* 1 seconds */
 var RELOAD_LOGS_EVERY = 3; /* 3 seconds */
