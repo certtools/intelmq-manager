@@ -26,6 +26,7 @@ class VisModel {
 var app = new VisModel();
 
 var popup = null;
+var documentation = null;
 var span = null;
 var table = null;
 var disabledKeys = ['group', 'name', 'module'];
@@ -78,6 +79,7 @@ function load_html_elements() {
         allowDrop(event);
     });
     popup = document.getElementById("network-popUp");
+    documentation = document.getElementById("documentationButton");
     span = document.getElementById('network-popUp-title');
     table = document.getElementById("network-popUp-fields");
 }
@@ -373,6 +375,9 @@ function fill_bot(id, group, name) {
         insertKeyValue(key, bot.defaults[key], BORDER_TYPES.DEFAULT, false);
     }
 
+    const periodpos = bot['module'].lastIndexOf('.');
+    modulename = bot['module'].substring(0, periodpos).replace(/\./g, "-").replace(/_/g, "-");
+    documentation.href = "https://intelmq.readthedocs.org/en/maintenance/user/bots.html#" + modulename;
     popup.setAttribute('class', "with-bot");
 }
 

@@ -18,6 +18,7 @@ CHANGELOG
 #### Landing page
 
 #### Configuration
+- Add a link pointing to the module documentation to the settings overlay of every bot (PR#256)
 
 #### Management
 
