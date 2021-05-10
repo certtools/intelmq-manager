@@ -22,7 +22,10 @@
 </div>
 
 <div id="network-popUp" class="without-bot">
-    <span id="network-popUp-title">node</span> <br>
+    <span id="network-popUp-title">node</span>
+    <a id="documentationButton" class="btn btn-default" title="open documentation" href="">
+	<span class="glyphicon glyphicon-question-sign"></span>
+    </a>
     <table id="network-popUp-fields" class="table table-striped" style="margin:auto;">
         <tr>
             <td>id</td><td><input id="node-id" value="new value"></td>
