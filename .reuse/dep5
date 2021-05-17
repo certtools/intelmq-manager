@@ -35,3 +35,23 @@ License:   MIT
 Files:     intelmq_manager/static/plugins/bootstrap/*
 Copyright: Copyright 2011-2019 Twitter, Inc.
 License:   MIT
+
+Files:     intelmq_manager/static/plugins/fonts/*
+Copyright: 2011-2014 Twitter, Inc.
+License:   MIT
+
+Files:     intelmq_manager/static/images/check*
+Copyright: 2018 Sebastian Wagner
+License:   CC-BY-3.0
+
+Files:     intelmq_manager/static/images/*
+Copyright: 2014-2016 Mauro Silva, Tomás Lima, Aaron Kaplan
+License:   AGPL-3.0-or-later
+
+Files:     intelmq_manager/static/css/*
+Copyright: 2014-2016 Mauro Silva, Tomás Lima, Aaron Kaplan
+License:   AGPL-3.0-or-later
+
+Files:     intelmq_manager/static/less/*
+Copyright: 2014-2016 Mauro Silva, Tomás Lima, Aaron Kaplan
+License:   AGPL-3.0-or-later
