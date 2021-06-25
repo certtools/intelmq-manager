@@ -1,5 +1,5 @@
 <!--
-SPDX-FileCopyrightText: 2020 IntelMQ Team
+SPDX-FileCopyrightText: 2020-2021 IntelMQ Team
 
 SPDX-License-Identifier: AGPL-3.0-or-later
 -->
@@ -11,28 +11,34 @@ CHANGELOG
 3.0.0 (unreleased)
 ------------------
 
-### Backend
-
 ### Pages
-
-#### Landing page
+- Adapt the manager for the new API (PR#259 by Birger Schacht):
+  IntelMQ changed the way it handles the configuration of bots, queues and
+  default values. IntelMQ-API followed this change and now only provides
+  endpoints for the runtime and the position.
+  This commit implements this change in the JavaScript code and also
+  updates various functions to reflect other minor changes (i.e. the bot
+  id is now called bot_id instead of id).
 
 #### Configuration
-- Add a link pointing to the module documentation to the settings overlay of every bot (PR#256)
-
-#### Management
-
-#### Monitor
-
-#### Check
+- Add a link pointing to the module documentation to the settings overlay of every bot (PR#256 by Birger Schacht).
+- BOTS file uses now correct API endpoint (PR#252 by Sebastian Waldbauer).
 
 ### Documentation
-
-### Third-party libraries
-
-### Packaging
+- Make project reuse compliant (PR#258 by Birger Schacht, fixes #218):
+  Add missing license entries to .reuse/dep5 and delete the license files
+  reuse interprets as `bad` (the copyright is listedn in the dep5 file, so
+  there is no need for having a separate license file for every
+  copyright).
 
 ### Known issues
+- Graph jumps around on "Add edge" (#148).
+- wrong error message for new bots with existing ID (#152).
+- Monitor page: Automatic log refresh reset log page to first one (#190).
+- Load error if a bot has not optional `parameters` field in runtime configuration (#237).
+- Better error message for missing authentication (#238).
+- Reload page after login (#243).
+- Configuration page: Connecting bots broken bug component: configuration (#260).
 
 
 2.3.1 (2021-03-25)

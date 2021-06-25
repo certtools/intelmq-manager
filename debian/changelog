@@ -1,8 +1,8 @@
-intelmq-manager (3.0.0~alpha1-1) UNRELEASED; urgency=medium
+intelmq-manager (3.0.0~rc1-1) unstable; urgency=low
 
-  * Start 3.0.0 development.
+  * Update to 3.0.0 Release candidate 1.
 
- -- Sebastian Wagner <wagner@cert.at>  Thu, 04 Mar 2021 14:03:07 +0100
+ -- Sebastian Wagner <wagner@cert.at>  Fri, 25 Jun 2021 12:19:45 +0200
 
 intelmq-manager (2.3.1-2) stable; urgency=medium
 
