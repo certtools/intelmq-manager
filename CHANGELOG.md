@@ -24,6 +24,9 @@ CHANGELOG
 - Add a link pointing to the module documentation to the settings overlay of every bot (PR#256 by Birger Schacht).
 - BOTS file uses now correct API endpoint (PR#252 by Sebastian Waldbauer).
 
+### About
+- The versions-section now lists IntelMQ, IntelMQ API and IntelMQ Manager.
+
 ### Documentation
 - Make project reuse compliant (PR#258 by Birger Schacht, fixes #218):
   Add missing license entries to .reuse/dep5 and delete the license files

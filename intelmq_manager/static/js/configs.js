@@ -248,7 +248,7 @@ function save_data_on_files() {
             return false;
         }
     }
-    
+
     Promise.all([
         authenticatedAjax({"type": "POST", "url": API + '/runtime', "contentType": "application/json", "data": generate_runtime_conf(app.nodes, app.defaults)})
             .done(saveSucceeded)

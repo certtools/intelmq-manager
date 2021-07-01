@@ -51,6 +51,7 @@
             <h2>Version</h2>
             <table class="table">
                 <tr><td>IntelMQ<td><td id="intelmq-version"></td></tr>
+                <tr><td>IntelMQ API<td><td id="intelmq-api-version"></td></tr>
                 <tr><td>IntelMQ Manager<td><td id="intelmq-manager-version"></td></tr>
             </table>
         </div>
