@@ -360,8 +360,7 @@ function fill_bot(id, group, name) {
         insertKeyValue(key, bot.parameters[key], BORDER_TYPES.RUNTIME, true);
     }
 
-    const periodpos = bot['module'].lastIndexOf('.');
-    modulename = bot['module'].substring(0, periodpos).replace(/\./g, "-").replace(/_/g, "-");
+    const modulename = bot['module'].replace(/\./g, "-").replace(/_/g, "-");
     documentation.href = "https://intelmq.readthedocs.org/en/maintenance/user/bots.html#" + modulename;
     popup.setAttribute('class', "with-bot");
 }
