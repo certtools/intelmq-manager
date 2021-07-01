@@ -13,7 +13,7 @@ See the changelog for a full list of changes.
 3.0.0 (unreleased)
 ------------------
 
-No changes are required by administrators.
+Clear the browser cache for your IntelMQ instance (in Firefox: Ctrl+Shift+R).
 
 
 2.3.1 (2021-03-25)

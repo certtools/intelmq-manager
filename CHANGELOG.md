@@ -25,12 +25,12 @@ CHANGELOG
 - BOTS file uses now correct API endpoint (PR#252 by Sebastian Waldbauer).
 
 ### About
-- The versions-section now lists IntelMQ, IntelMQ API and IntelMQ Manager.
+- The versions-section now lists IntelMQ, IntelMQ API and IntelMQ Manager (by Sebastian Wagner, fixes #251).
 
 ### Documentation
 - Make project reuse compliant (PR#258 by Birger Schacht, fixes #218):
   Add missing license entries to .reuse/dep5 and delete the license files
-  reuse interprets as `bad` (the copyright is listedn in the dep5 file, so
+  reuse interprets as `bad` (the copyright is listed in the dep5 file, so
   there is no need for having a separate license file for every
   copyright).
 
@@ -41,7 +41,7 @@ CHANGELOG
 - Load error if a bot has not optional `parameters` field in runtime configuration (#237).
 - Better error message for missing authentication (#238).
 - Reload page after login (#243).
-- Configuration page: Connecting bots broken bug component: configuration (#260).
+- Configuration page: Keyboard shortcut for adding queues crashes Firefox (#260).
 
 
 2.3.1 (2021-03-25)
