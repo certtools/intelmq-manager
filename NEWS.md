@@ -1,5 +1,5 @@
 <!--
-SPDX-FileCopyrightText: 2020 IntelMQ Team
+SPDX-FileCopyrightText: 2020-2021 IntelMQ Team
 
 SPDX-License-Identifier: AGPL-3.0-or-later
 -->
@@ -10,7 +10,7 @@ NEWS
 See the changelog for a full list of changes.
 
 
-3.0.0 (unreleased)
+3.0.0 (2021-07-02)
 ------------------
 
 Clear the browser cache for your IntelMQ instance (in Firefox: Ctrl+Shift+R).

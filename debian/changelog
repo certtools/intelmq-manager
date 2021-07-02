@@ -1,3 +1,9 @@
+intelmq-manager (3.0.0-1) stable; urgency=medium
+
+  * Update to 3.0.0.
+
+ -- Sebastian Wagner <wagner@cert.at>  Fri, 02 Jul 2021 19:02:14 +0200
+
 intelmq-manager (3.0.0~rc1-1) unstable; urgency=low
 
   * Update to 3.0.0 Release candidate 1.
