@@ -332,7 +332,7 @@ function fill_bot(id, group, name) {
         name = bot['name'].replace(/\ /g, '-').replace(/[^A-Za-z0-9-]/g, '');
         group = bot['group'].replace(/\ /g, '-');
         default_id = name + "-" + group;
-        bot['id'] = default_id;
+        bot['bot_id'] = default_id;
         bot['defaults'] = {};
 
         for (key in app.defaults) {
