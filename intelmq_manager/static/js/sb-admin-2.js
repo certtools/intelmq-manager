@@ -1,10 +1,9 @@
 // SPDX-FileCopyrightText: 2020 IntelMQ Team <intelmq-team@cert.at>
 //
 // SPDX-License-Identifier: AGPL-3.0-or-later
+'use strict';
 
-$(function() {
-    $('#side-menu').metisMenu();
-});
+$(() => $('#side-menu').metisMenu());
 
 //Loads the correct sidebar on window load,
 //collapses the sidebar on window resize.
@@ -29,8 +28,8 @@ function resize_handler() {
     $('.page-header-text').css('font-size', title_height + "px");
     $('.page-header-text').css('line-height', (title_height * 2) + "px");
 
-    topOffset = 50;
-    width = window_width;
+    let topOffset = 50;
+    let width = window_width;
     if (width < 768) {
         $('div.navbar-collapse').addClass('collapse')
         topOffset = 100; // 2-row-menu
@@ -38,8 +37,7 @@ function resize_handler() {
         $('div.navbar-collapse').removeClass('collapse')
     }
 
-    height = window_height;
-    height = height - topOffset;
+    let height = window_height - topOffset;
     if (height < 1) height = 1;
     if (height > topOffset) {
         $("#page-wrapper").css("min-height", (height) + "px");

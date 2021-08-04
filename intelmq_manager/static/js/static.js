@@ -1,49 +1,50 @@
 // SPDX-FileCopyrightText: 2020 IntelMQ Team <intelmq-team@cert.at>
 //
 // SPDX-License-Identifier: AGPL-3.0-or-later
+'use strict';
 
 var CORE_FIELDS = 5;
 
 var ACCEPTED_NEIGHBORS = {
-    'Collector': ['Parser', 'Expert', 'Output'],
-    'Parser': ['Expert', 'Output'],
-    'Expert': ['Parser', 'Expert', 'Output'],
-    'Output': []
+    Collector: ['Parser', 'Expert', 'Output'],
+    Parser: ['Expert', 'Output'],
+    Expert: ['Parser', 'Expert', 'Output'],
+    Output: []
 }
 var CAUTIOUS_NEIGHBORS = {
-    'Collector': ['Expert'],
-    'Expert': ['Parser']
+    Collector: ['Expert'],
+    Expert: ['Parser']
 }
 
 var GROUP_LEVELS = {
-    'Collector': 0,
-    'Parser': 1,
-    'Expert': 2,
-    'Output': 3
+    Collector: 0,
+    Parser: 1,
+    Expert: 2,
+    Output: 3
 };
 var GROUPNAME_TO_GROUP = {
-    'Collector': "collectors",
-    'Parser': "parsers",
-    'Expert': "experts",
-    'Output': "outputs"
+    Collector: "collectors",
+    Parser: "parsers",
+    Expert: "experts",
+    Output: "outputs"
 };
 
 /**
  * 1st value is default color of running bot, latter of a stopped bot
  */
 var GROUP_COLORS = {
-    'Collector': ['#ff6666', '#cc6666'],
-    'Parser': ['#66ff66', '#66cc66'],
-    'Expert': ['#66a3ff', '#66a3aa'],
-    'Output': ['#ffff66', '#cccc66']
+    Collector: ['#ff6666', '#cc6666'],
+    Parser: ['#66ff66', '#66cc66'],
+    Expert: ['#66a3ff', '#66a3aa'],
+    Output: ['#ffff66', '#cccc66']
 }
 
 var LEVEL_CLASS = {
-    'DEBUG': 'success',
-    'INFO': 'info',
-    'WARNING': 'warning',
-    'ERROR': 'danger',
-    'CRITICAL': 'danger'
+    DEBUG: 'success',
+    INFO: 'info',
+    WARNING: 'warning',
+    ERROR: 'danger',
+    CRITICAL: 'danger'
 }
 
 var STARTUP_KEYS = ['group', 'name', 'module', 'description', 'enabled', 'run_mode'];
@@ -75,10 +76,7 @@ var settings = {
     live: true, // by default on
 };
 
-$(window).on('unload', function () {
-    page_is_exiting = true;
-});
-
+$(window).on('unload', () => page_is_exiting = true);
 
 function sortObjectByPropertyName(obj) {
     return Object.keys(obj).sort().reduce((c, d) => (c[d] = obj[d], c), {});
@@ -87,13 +85,8 @@ function sortObjectByPropertyName(obj) {
 // String formatting function usage "string {0}".format("1") => "string 1"
 if (!String.prototype.format) {
     String.prototype.format = function () {
-        var args = arguments;
-        return this.replace(/{(\d+)}/g, function (match, number) {
-            return typeof args[number] !== 'undefined'
-                ? args[number]
-                : match
-                ;
-        });
+        let args = arguments;
+        return this.replace(/{(\d+)}/g, (match, number) => typeof args[number] === 'undefined' ? match : args[number]);
     };
 }
 
@@ -132,8 +125,8 @@ function show_error(string) {
     let d = new Date();
     let time = new Date().toLocaleTimeString().replace(/:\d+ /, ' ');
     let $lwc = $("#log-window .contents");
-    let $el = $("<p><span>{0}</span> <span></span> <span>{1}</span></p>".format(time, string));
-    var found = false;
+    let $el = $(`<p><span>${time}</span> <span></span> <span>${string}</span></p>`);
+    let found = false;
     $("p", $lwc).each(function () {
         if ($("span:eq(2)", $(this)).text() === $("span:eq(2)", $el).text()) {
             // we've seen this message before
@@ -177,11 +170,11 @@ function ajax_fail_callback(str) {
         try {
             let data = JSON.parse(jqXHR.responseText);
             report = data.message.replace(/(?:\r\n|\r|\n)/g, '<br>');
-            command = " <span class='command'>{0}</span>".format(data.command);
+            command = ` <span class='command'>${data.command}</span>`;
             if (data.tip && !lw_tips.has(data.tip)) {
                 // display the tip if not yet displayed on the screen
                 lw_tips.add(data.tip);
-                tip = " <div class='alert alert-info'>TIP: {0}</div>".format(data.tip);
+                tip = ` <div class='alert alert-info'>TIP: ${data.ip}</div>`;
             }
             if (message === "Internal Server Error") {
                 message = ""; // this is expected since we generated this in PHP when an error was spot, ignore
@@ -194,7 +187,7 @@ function ajax_fail_callback(str) {
             // (since '.' is not matching newline characters, we're using '[\s\S]' so that even multiline string is shortened)
             report = " <b>{0}</b>".format(report.replace(/^(.{2000})[\s\S]+/, "$1..."));
         }
-        show_error("{0}:{1}{2}{3} {4}".format(str, report, command, tip, message));
+        show_error(`${str}:${report}${command}${tip} ${message}`);
     };
 }
 
@@ -293,7 +286,7 @@ class Interval {
  */
 function click_link(url, event) {
     if (event && event.ctrlKey) { // we want open a new tab
-        var win = window.open(url, '_blank');
+        let win = window.open(url, '_blank');
         if (win) {
             win.focus();
         } else { // popups disabled
@@ -310,27 +303,27 @@ function click_link(url, event) {
  * Control buttons to start/stop/... a bot, group or whole botnet
  */
 var BOT_CLASS_DEFINITION = {
-    'starting': 'warning',
-    'running': 'success',
-    'stopping': 'warning',
-    'stopped': 'danger',
-    'reloading': 'warning',
-    'restarting': 'warning',
-    'incomplete': 'warning',
-    'error': 'danger',
-    'disabled': 'ligth',
-    'unknown': 'warning'
+    starting: 'warning',
+    running: 'success',
+    stopping: 'warning',
+    stopped: 'danger',
+    reloading: 'warning',
+    restarting: 'warning',
+    incomplete: 'warning',
+    error: 'danger',
+    disabled: 'ligth',
+    unknown: 'warning'
 };
 var BOT_STATUS_DEFINITION = {
-    'starting': 'starting',
-    'running': 'running',
-    'stopping': 'stopping',
-    'stopped': 'stopped',
-    'reloading': 'reloading',
-    'restarting': 'restarting',
-    'incomplete': 'incomplete',
-    'error': 'error',
-    'unknown': 'unknown'
+    starting: 'starting',
+    running: 'running',
+    stopping: 'stopping',
+    stopped: 'stopped',
+    reloading: 'reloading',
+    restarting: 'restarting',
+    incomplete: 'incomplete',
+    error: 'error',
+    unknown: 'unknown'
 };
 
 var botnet_status = {}; // {group | true (for whole botnet) : BOT_STATUS_DEFINITION}
@@ -345,10 +338,10 @@ $(document).on("click", ".control-buttons button", function () {
     let url;
     if (bot) {
         bot_status[bot] = $(this).attr("data-status-definition");
-        url = managementUrl("bot", 'action={0}&id={1}'.format($(this).attr("data-url"), bot));
+        url = managementUrl("bot", `action=${$(this).attr("data-url")}&id=${bot}`);
     } else {
         botnet_status[botnet] = $(this).attr("data-status-definition");
-        url = managementUrl('botnet', 'action={0}&group={1}'.format($(this).attr("data-url"), botnet));
+        url = managementUrl('botnet', `action=${$(this).attr("data-url")}&group=${botnet}`);
         for (let bot_d of Object.values(bot_definition)) {
             if (bot_d.groupname === botnet) {
                 bot_status[bot_d.bot_id] = $(this).attr("data-status-definition");
@@ -400,7 +393,7 @@ function generate_control_buttons(bot = null, botnet = null, callback_fn = null,
             let bot = $(this).closest(".control-buttons").attr("data-bot-id");
             let botnet = $(this).closest(".control-buttons").attr("data-botnet-group");
             let status = bot ? bot_status[bot] : botnet_status[botnet];
-            $(this).text(status).removeClass().addClass("bg-{0}".format(BOT_CLASS_DEFINITION[status]));
+            $(this).text(status).removeClass().addClass(`bg-${BOT_CLASS_DEFINITION[status]}`);
         }).prependTo($el).trigger("update");
     }
     return $el;
@@ -410,7 +403,7 @@ function generate_control_buttons(bot = null, botnet = null, callback_fn = null,
  * Reads the parameter from URL
  */
 function getUrlParameter(sParam) {
-    var sPageURL = decodeURIComponent(window.location.search.substring(1)), sURLVariables = sPageURL.split('&'), sParameterName, i;
+    let sPageURL = decodeURIComponent(window.location.search.substring(1)), sURLVariables = sPageURL.split('&'), sParameterName, i;
     for (i = 0; i < sURLVariables.length; i++) {
         sParameterName = sURLVariables[i].split('=');
         if (sParameterName[0] === sParam) {
@@ -447,7 +440,7 @@ function accesskeyfie() {
  * Determine the URL for management commands.
  */
 function managementUrl(cmd, params) {
-    var url = API + cmd;
+    let url = API + cmd;
     if (params !== undefined) {
 	url += "?" + params;
     }
@@ -468,9 +461,9 @@ function authenticatedGetJson(url) {
 }
 
 function authenticatedAjax(settings) {
-    token = sessionStorage.getItem("login_token");
+    let token = sessionStorage.getItem("login_token");
     if (token !== null) {
-        settings["headers"] = {
+        settings.headers = {
             "Authorization": token
         };
     }
@@ -499,9 +492,7 @@ $(document).ready(function() {
             timeout: 3000,
             // Deletes the content of the password field when the request is
             // finished. (after success and error callbacks are executed)
-            complete: function() {
-                $('#loginForm #password').val("");
-            }
+            complete: () => $('#loginForm #password').val(""),
             // Executes this if the request was successful.
         }).done(function(data) {
             // Check if login_token and username came back and store them in
@@ -532,10 +523,10 @@ function logout() {
 }
 
 function updateLoginStatus() {
-    var status = document.getElementById('login-status');
-    var loginButton = document.getElementById('signUp');
-    var logoutButton = document.getElementById('logOut');
-    var username = sessionStorage.getItem("username");
+    let status = document.getElementById('login-status');
+    let loginButton = document.getElementById('signUp');
+    let logoutButton = document.getElementById('logOut');
+    let username = sessionStorage.getItem("username");
     if (username !== null) {
         status.textContent = "Logged in as: " + username;
         loginButton.style.display = "none";
