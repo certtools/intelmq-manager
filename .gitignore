@@ -10,3 +10,4 @@ intelmq_manager/html
 .idea/
 nbproject
 /html/
+*.swp

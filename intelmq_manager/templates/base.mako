@@ -8,7 +8,6 @@
     pages = [Page("configs", "Configuration", "config.png",
                   ["plugins/vis.js/vis.js",
                    "js/runtime.js",
-                   "js/pipeline.js",
                    "js/positions.js",
                    "js/defaults.js",
                    "js/network-configuration.js",
@@ -18,13 +17,13 @@
                   ["js/runtime.js", "js/management.js"]),
              Page("monitor", "Monitor", "monitor.png",
                   ["js/runtime.js",
-                   "js/pipeline.js",
                    "js/defaults.js",
                    "js/monitor.js"]),
              Page("check", "Check", "check.png", ["js/check.js"]),
              Page("about", "About", "about.png", ["js/about.js"])]
 
     common_libraries =  [
+        "js/dynvar.js",
         "js/var.js",
         "js/intelmq-manager.js",
         "js/static.js",
@@ -163,10 +162,6 @@
             <script src="plugins/metisMenu/metisMenu.js"></script>
 
             <!-- Custom Application JavaScript -->
-            <script>CONTROLLER_CMD="${controller_cmd}";</script>
-            % if allowed_path:
-                <script>ALLOWED_PATH="${allowed_path}";</script>
-            % endif
             % for lib in common_libraries + page_map[pagename].libraries:
                 <script src="${lib}"></script>
             % endfor
