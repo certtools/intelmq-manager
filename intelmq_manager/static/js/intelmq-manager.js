@@ -13,6 +13,8 @@
  * Set this for example to `https://intelmq.organization.tld/`
  * By default ROOT points to the host the manager runs on, but the path '/intelmq'
  */
+'use strict';
+
 var arr = window.location.href.split('/');
 var ROOT = ROOT ?? arr[0] + '//' + arr[2] + '/intelmq';
 

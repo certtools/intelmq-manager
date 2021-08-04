@@ -1,12 +1,13 @@
 // SPDX-FileCopyrightText: 2020 IntelMQ Team <intelmq-team@cert.at>
 //
 // SPDX-License-Identifier: AGPL-3.0-or-later
+'use strict';
 
 var BOT_STATUS_DEFINITION = BOT_STATUS_DEFINITION || {};
 var BOT_CLASS_DEFINITION = BOT_CLASS_DEFINITION || {};
 var bot_status = bot_status || {};
 var botnet_status = botnet_status || {};
-let reload_interval;
+var reload_interval;
 
 $('#bot-table').dataTable({
     lengthMenu: [[5, 10, 25, -1], [5, 10, 25, "All"]],
@@ -16,9 +17,8 @@ $('#bot-table').dataTable({
         {"data": "bot_status"},
         {"data": "actions"}
     ],
-    createdRow: function (row, data) {
-        $("td:eq(2)", row).append(generate_control_buttons(data["bot_id"], false, refresh_status));
-    }
+    createdRow: (row, data) => $("td:eq(2)", row).append(generate_control_buttons(data.bot_id, false, refresh_status)),
+
 });
 
 window.onresize = function () {
@@ -28,9 +28,7 @@ window.onresize = function () {
 
 var $bt = $('#bot-table');
 $(function () {
-    load_file(RUNTIME_FILE, (config) => {
-        read_runtime_conf(config);
-    });
+    load_file(RUNTIME_FILE, config => read_runtime_conf(config));
 
     $bt.dataTable().fnClearTable();
 
@@ -46,9 +44,7 @@ $(function () {
     }, RELOAD_STATE_EVERY * 1000, true).call_now();
 
     //
-    $bt.on("click", 'tr td:first-child', function (event) {
-        return click_link(MONITOR_BOT_URL.format(event.target.innerText), event);
-    });
+    $bt.on("click", 'tr td:first-child', event => click_link(MONITOR_BOT_URL.format(event.target.innerText), event));
 });
 
 
@@ -63,7 +59,7 @@ function refresh_status(bot, finished) {
     for (let bot_id in bot_status) {
         let class_ = BOT_CLASS_DEFINITION[bot_status[bot_id]];
         let status = bot_status[bot_id];
-        let $bot = $("tr[data-bot-id={0}]".format(bot_id), $bt);
+        let $bot = $(`tr[data-bot-id=${bot_id}]`, $bt);
         if ($bot.length) {
             // row exist, just update the status
             if (!$bot.text() !== status) {// class of this bot changes (note that multiple statuses may share the same class ".warning")
@@ -111,9 +107,9 @@ function refresh_status(bot, finished) {
     let atLeastOneRunning = {};
     for (let bot_id in bot_status) { // analyze all bots status
         if (bot_status[bot_id] === BOT_STATUS_DEFINITION.stopped || bot_status[bot_id] === BOT_STATUS_DEFINITION.unknown) {
-            atLeastOneStopped["botnet"] = atLeastOneStopped[bot_definition[bot_id].groupname] = true;
+            atLeastOneStopped.botnet = atLeastOneStopped[bot_definition[bot_id].groupname] = true;
         } else if (bot_status[bot_id] === BOT_STATUS_DEFINITION.running) {
-            atLeastOneRunning["botnet"] = atLeastOneRunning[bot_definition[bot_id].groupname] = true;
+            atLeastOneRunning.botnet = atLeastOneRunning[bot_definition[bot_id].groupname] = true;
         }
     }
     let get_group_status = function (stopped, running) {

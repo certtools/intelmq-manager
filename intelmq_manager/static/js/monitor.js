@@ -516,7 +516,7 @@ document.addEventListener('DOMContentLoaded', function () {
     });
     $("button[data-role=get]",  $insp).click(() => run_command("message get", "get"));
     $("button[data-role=pop]",  $insp).click(() => run_command("message pop", "pop"));
-    $("button[data-role=send]", $insp).click(() => run_command("message send", "send", $("#message-playground").val());
+    $("button[data-role=send]", $insp).click(() => run_command("message send", "send", $("#message-playground").val()));
     $("button[data-role=process]", $insp).click(function () {
         let msg;
         if ($("[data-role=inject]", $insp).prop("checked")) {
