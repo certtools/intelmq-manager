@@ -10,6 +10,10 @@ var reload_queues = null;
 var reload_logs = null;
 var app = app || {};
 var buffered_bot = null;
+
+var queue_overview = {}; // one-time queue overview to allow traversing
+var $dq = $("#destination-queues");
+
 load_configuration(() => {
     // refresh parameters panel when ready
     if (buffered_bot) {
@@ -19,7 +23,6 @@ load_configuration(() => {
 
 
 
-var $dq = $("#destination-queues");
 $('#log-table').dataTable({
     lengthMenu: [[5, 10, 25, -1], [5, 10, 25, "All"]],
     pageLength: 10,
@@ -34,9 +37,7 @@ $('#log-table').dataTable({
     ]
 });
 
-window.onresize = function () {
-    redraw();
-};
+window.onresize = redraw;
 
 $(document).keydown(function (event) {
     if ($("#message-playground").is(":focus")) {
@@ -66,33 +67,31 @@ function redraw_logs() {
     }
 
     for (let index in bot_logs) {
-        var log_row = $.extend(true, {}, bot_logs[index]);
-        var has_button = false;
+        let log_row = $.extend(true, {}, bot_logs[index]);
+        let has_button = false;
 
-        if (log_row['extended_message']) {
+        if (log_row.extended_message) {
             buttons_cell = '' +
                     '<button type="submit" class="btn btn-default btn-xs" data-toggle="modal" data-target="#extended-message-modal" id="button-extended-message-' + index + '"><span class="glyphicon glyphicon-plus"></span></button>';
             has_button = true;
-            log_row['actions'] = buttons_cell;
-        } else if (log_row['message'].length > MESSAGE_LENGTH) {
-            log_row['message'] = log_row['message'].slice(0, MESSAGE_LENGTH) + '<strong>...</strong>';
+            log_row.actions = buttons_cell;
+        } else if (log_row.message.length > MESSAGE_LENGTH) {
+            log_row.message = log_row.message.slice(0, MESSAGE_LENGTH) + '<strong>...</strong>';
             buttons_cell = '' +
                     '<button type="submit" class="btn btn-default btn-xs" data-toggle="modal" data-target="#extended-message-modal" id="button-extended-message-' + index + '"><span class="glyphicon glyphicon-plus"></span></button>';
             has_button = true;
-            log_row['actions'] = buttons_cell;
+            log_row.actions = buttons_cell;
         } else {
-            log_row['actions'] = '';
+            log_row.actions = '';
         }
 
 
-        log_row['DT_RowClass'] = LEVEL_CLASS[log_row['log_level']];
+        log_row.DT_RowClass = LEVEL_CLASS[log_row.log_level];
 
 
         $('#log-table').dataTable().fnAddData(log_row);
         if (has_button) {
-            extended_message_func = function (message_index) {
-                show_extended_message(message_index);
-            }
+            extended_message_func = message_index => show_extended_message(message_index);
             document.getElementById('button-extended-message-' + index).addEventListener('click', function (index) {
                 return function () {
                     extended_message_func(index)
@@ -105,38 +104,37 @@ function redraw_logs() {
     $('#log-table').dataTable().fnDraw();
 }
 
-var queue_overview = {}; // one-time queue overview to allow traversing
 function redraw_queues() {
-    var bot_id = getUrlParameter('bot_id') || ALL_BOTS;
+    let bot_id = getUrlParameter('bot_id') || ALL_BOTS;
 
-    var source_queue_element = document.getElementById('source-queue');
-    var internal_queue_element = document.getElementById('internal-queue');
-    //var destination_queues_element = document.getElementById('destination-queues');
+    let source_queue_element = document.getElementById('source-queue');
+    let internal_queue_element = document.getElementById('internal-queue');
+    //let destination_queues_element = document.getElementById('destination-queues');
 
     source_queue_element.innerHTML = '';
     internal_queue_element.innerHTML = '';
     //destination_queues_element.innerHTML = '';
 
-    var bot_info = {};
+    let bot_info = {};
     if (bot_id === ALL_BOTS || !queue_overview.length) {
-        bot_info['source_queues'] = {};
-        bot_info['destination_queues'] = {};
+        bot_info.source_queues = {};
+        bot_info.destination_queues = {};
 
         for (let bot in bot_queues) {
-            var source_queue = bot_queues[bot]['source_queue'];
-            var destination_queues = bot_queues[bot]['destination_queues'];
-            var internal_queue = bot_queues[bot]['internal_queue'];
-            var parentName = bot;
+            let source_queue = bot_queues[bot].source_queue;
+            let destination_queues = bot_queues[bot].destination_queues;
+            let internal_queue = bot_queues[bot].internal_queue;
+            let parentName = bot;
 
             if (source_queue) {
-                bot_info['destination_queues'][source_queue[0]] = source_queue;
-                bot_info['destination_queues'][source_queue[0]]['parent'] = parentName;
+                bot_info.destination_queues[source_queue[0]] = source_queue;
+                bot_info.destination_queues[source_queue[0]].parent = parentName;
             }
 
             if (internal_queue !== undefined) {
-                var queue_name = bot + '-queue-internal';
-                bot_info['destination_queues'][queue_name] = [queue_name, internal_queue];
-                bot_info['destination_queues'][queue_name]['parent'] = parentName;
+                let queue_name = bot + '-queue-internal';
+                bot_info.destination_queues[queue_name] = [queue_name, internal_queue];
+                bot_info.destination_queues[queue_name].parent = parentName;
             }
         }
         if (!queue_overview.length) {
@@ -145,58 +143,51 @@ function redraw_queues() {
         }
     }
     if (bot_id !== ALL_BOTS) {
-        var bot_info = bot_queues[bot_id];
+        bot_info = bot_queues[bot_id];
     }
     if (bot_info) {
-        if (bot_info['source_queue']) {
-            var source_queue = source_queue_element.insertRow();
-            var cell0 = source_queue.insertCell(0);
-            cell0.innerHTML = bot_info['source_queue'][0];
+        if (bot_info.source_queue) {
+            let source_queue = source_queue_element.insertRow();
+            let cell0 = source_queue.insertCell(0);
+            cell0.innerText = bot_info.source_queue[0];
 
-            var cell1 = source_queue.insertCell(1);
-            cell1.innerHTML = bot_info['source_queue'][1];
+            let cell1 = source_queue.insertCell(1);
+            cell1.innerText = bot_info.source_queue[1];
 
-            buttons_cell = source_queue.insertCell(2);
-            buttons_cell.appendChild(generateClearQueueButton(bot_info['source_queue'][0]));
+            let buttons_cell = source_queue.insertCell(2);
+            buttons_cell.appendChild(generateClearQueueButton(bot_info.source_queue[0]));
         }
 
-        if (bot_info['internal_queue'] !== undefined) {
-            var internal_queue = internal_queue_element.insertRow();
-            var cell0 = internal_queue.insertCell(0);
-            cell0.innerHTML = 'internal-queue';
+        if (bot_info.internal_queue !== undefined) {
+            let internal_queue = internal_queue_element.insertRow();
+            let cell0 = internal_queue.insertCell(0);
+            cell0.innerText = 'internal-queue';
 
-            var cell1 = internal_queue.insertCell(1);
-            cell1.innerHTML = bot_info['internal_queue'];
+            let cell1 = internal_queue.insertCell(1);
+            cell1.innerText = bot_info.internal_queue;
 
-            buttons_cell = internal_queue.insertCell(2);
+            let buttons_cell = internal_queue.insertCell(2);
             buttons_cell.appendChild(generateClearQueueButton(bot_id + '-queue-internal'));
         }
 
-        var dst_queues = [];
-        for (let bot in bot_info['destination_queues']) {
-            dst_queues.push(bot_info['destination_queues'][bot]);
-        }
+        let dst_queues = Object.values(bot_info.destination_queues).sort();
 
-        dst_queues.sort();
-        for (let bot in dst_queues) {
-
-            let queue = dst_queues[bot][0];
-            let count = dst_queues[bot][1];
-
-            if ($("tr:eq({0}) td:eq(0)".format(bot), $dq).text() === queue) {
+        for (let bot of dst_queues) {
+            let [queue, count] = bot;
+            if ($(`tr:eq(${bot}) td:eq(0)`, $dq).text() === queue) {
                 // row exist, just update the count
-                $("tr:eq({0}) td:eq(2)".format(bot), $dq).text(count);
+                $(`tr:eq(${bot}) td:eq(2)`, $dq).text(count);
             } else {
                 // for some reason, dst_queues from server changed from the table
                 // let's find the table row
-                o = $("tr td:first-child", $dq).filter(function () {
+                let o = $("tr td:first-child", $dq).filter(function () {
                     return $(this).text() === queue;
                 });
                 if (o.length) { // successfully found
                     o.next().text(count);
                 } else { // not present in the table
                     // make unknown queue a new row
-                    $tr = $("<tr/>").data("bot-id", queue_overview['destination_queues'][queue]["parent"]).appendTo($dq);
+                    let $tr = $("<tr/>").data("bot-id", queue_overview.destination_queues[queue].parent).appendTo($dq);
                     $("<td/>").appendTo($tr).text(queue).click(function () {
                         let selectBot = $(this).closest("tr").data("bot-id");
                         if (selectBot) {
@@ -214,10 +205,10 @@ function redraw_queues() {
 }
 
 function generateClearQueueButton(queue_id) {
-    var spanHolder = document.createElement('span');
+    let spanHolder = document.createElement('span');
     spanHolder.className = 'fa fa-trash-o';
 
-    var clearQueueButton = document.createElement('button');
+    let clearQueueButton = document.createElement('button');
     clearQueueButton.queue = queue_id;
     clearQueueButton.type = 'submit';
     clearQueueButton.class = 'btn btn-default';
@@ -320,7 +311,7 @@ function select_bot(bot_id, history_push = false) {
         $("#inspect-panel .panel-heading").prepend(generate_control_buttons(bot_id, false, load_bot_log, true));
 
         // connect to configuration panel
-        $('#monitor-target').append(' <a title="show in configuration" href="configs.html#{0}"><img src="./images/config.png" width="24" height="24" /></a>'.format(bot_id));
+        $('#monitor-target').append(` <a title="show in configuration" href="configs.html#${bot_id}"><img src="./images/config.png" width="24" height="24" /></a>`);
 
     } else {
         $("#logs-panel, #inspect-panel, #parameters-panel").css('display', 'none');
@@ -380,7 +371,7 @@ function refresh_path_names() {
  * @returns {undefined}
  */
 function refresh_configuration_info(bot_id) {
-    if (!app.nodes || !app.edges) {
+    if (!app.nodes) {
         // we're not yet ready, buffer the bot for later
         buffered_bot = bot_id;
         return;
@@ -388,11 +379,25 @@ function refresh_configuration_info(bot_id) {
 
     // search for named queue paths
     path_names = {};
-    for (let edge of Object.values(app.edges)) {
-        if (edge.from === bot_id && edge.path) {
-            path_names[edge.to + "-queue"] = edge.path;
+
+    if (bot_id === ALL_BOTS) {
+        for (let node of Object.values(app.nodes)) {
+            for (let path in node.parameters.destination_queues) {
+                if (path !== '_default') {
+                    for (let to of node.parameters.destination_queues[path]) {
+                        path_names[`${to}-queue`] = path;
+                    }
+                }
+            }
+        }
+    } else {
+        for (let path in app.nodes[bot_id].parameters.destination_queues) {
+            if (path !== '_default') {
+                path_names[`${to}-queue`] = path;
+            }
         }
     }
+
     refresh_path_names();
 
     // refresh parameters panel
@@ -402,26 +407,26 @@ function refresh_configuration_info(bot_id) {
         $panel.text("Failed to fetch the information.");
         return;
     }
-    var params = app.nodes[bot_id].parameters;
+    let params = app.nodes[bot_id].parameters;
     for (let key in params) {
         let param = params[key];
         if (param !== null && typeof value === "object") { // display json/list instead of "[Object object]"
             param = JSON.stringify(param);
         }
-        $el = $(`<li><b>${key}</b>: ${param}</li>`);
+        let $el = $(`<li><b>${key}</b>: ${param}</li>`);
         if (param && param.indexOf && param.indexOf(ALLOWED_PATH) === 0) {
             let url = LOAD_CONFIG_SCRIPT + "?file=" + param;
             authenticatedGetJson(url, (data) => {
                 let html = "";
                 if (data.directory) {
-                    html += "<h3>Directory {0}</h3>".format(data.directory);
+                    html += `<h3>Directory ${data.directory}</h3>`;
                 }
 
                 for (let file in data.files) {
-                    let size = data.files[file].size ? "<a data-role=fetchlink href='{0}?fetch=1&file={1}'>fetch {2} B</a>".format(LOAD_CONFIG_SCRIPT, data.files[file].path, data.files[file].size) : "";
-                    html += "<h4>File {0}</h4>{1}".format(file, size);
+                    let size = data.files[file].size ? `<a data-role=fetchlink href='${LOAD_CONFIG_SCRIPT}?fetch=1&file=${data.files[file].path}'>fetch ${data.files[file].size} B</a>` : "";
+                    html += `<h4>File ${file}</h4>${size}`;
                     if (data.files[file].contents) {
-                        html += "<pre>" + data.files[file].contents + "</pre>";
+                        html += `<pre>${data.files[file].contents}</pre>`;
                     }
                 }
                 $("<div/>", {html: html}).appendTo($el);
@@ -441,13 +446,13 @@ $("#parameters-panel").on("click", "a[data-role=fetchlink]", function () {
 });
 
 function show_extended_message(index) {
-    var modal_body = document.getElementById('modal-body');
+    let modal_body = document.getElementById('modal-body');
 
-    var message = bot_logs[index]['message'];
+    let message = bot_logs[index].message;
 
-    if (bot_logs[index]['extended_message']) {
+    if (bot_logs[index].extended_message) {
         message += '<br>\n' +
-                bot_logs[index]['extended_message'].replace(/\n/g, '<br>\n').replace(/ /g, '&nbsp;');
+                bot_logs[index].extended_message.replace(/\n/g, '<br>\n').replace(/ /g, '&nbsp;');
     }
 
     modal_body.innerHTML = message;
@@ -455,9 +460,9 @@ function show_extended_message(index) {
 
 authenticatedGetJson(managementUrl('botnet', 'action=status'))
         .done(function (data) {
-            var sidemenu = document.getElementById('side-menu');
+            let sidemenu = document.getElementById('side-menu');
 
-            select_bot_func = function (bot_id) {
+            let select_bot_func = function (bot_id) {
                 return function (event) {
                     event.preventDefault();
                     select_bot(bot_id, true);
@@ -466,9 +471,9 @@ authenticatedGetJson(managementUrl('botnet', 'action=status'))
             };
 
             // Insert link for special item 'All Bots'
-            var li_element = document.createElement('li');
-            var link_element = document.createElement('a');
-            link_element.innerHTML = ALL_BOTS;
+            let li_element = document.createElement('li');
+            let link_element = document.createElement('a');
+            link_element.innerText = ALL_BOTS;
             link_element.setAttribute('href', "#" + MONITOR_BOT_URL.format(ALL_BOTS));
             link_element.addEventListener('click', select_bot_func(ALL_BOTS));
 
@@ -478,15 +483,15 @@ authenticatedGetJson(managementUrl('botnet', 'action=status'))
             // Insert link for every bot
             bot_status = data;
             $(".control-buttons [data-role=control-status]").trigger("update");
-            var bots_ids = Object.keys(data);
+            let bots_ids = Object.keys(data);
             bots_ids.sort();
 
             for (let index in bots_ids) {
-                var bot_id = bots_ids[index];
+                let bot_id = bots_ids[index];
                 li_element = document.createElement('li');
                 link_element = document.createElement('a');
 
-                link_element.innerHTML = bot_id;
+                link_element.innerText = bot_id;
                 link_element.setAttribute('href', "#" + MONITOR_BOT_URL.format(bot_id));
                 link_element.addEventListener('click', select_bot_func(bot_id));
 
@@ -504,20 +509,14 @@ document.addEventListener('DOMContentLoaded', function () {
     document.getElementById('log-level-indicator').addEventListener('change', load_bot_log);
 
     // Inspect panel functionality
-    $insp = $("#inspect-panel");
+    let $insp = $("#inspect-panel");
     $("button[data-role=clear]", $insp).click(function () {
         $("#message-playground").val("");
         $("#run-log").attr("rows", 3).val("");
     });
-    $("button[data-role=get]", $insp).click(function () {
-        run_command("message get", "get");
-    });
-    $("button[data-role=pop]", $insp).click(function () {
-        run_command("message pop", "pop");
-    });
-    $("button[data-role=send]", $insp).click(function () {
-        run_command("message send", "send", $("#message-playground").val());
-    });
+    $("button[data-role=get]",  $insp).click(() => run_command("message get", "get"));
+    $("button[data-role=pop]",  $insp).click(() => run_command("message pop", "pop"));
+    $("button[data-role=send]", $insp).click(() => run_command("message send", "send", $("#message-playground").val());
     $("button[data-role=process]", $insp).click(function () {
         let msg;
         if ($("[data-role=inject]", $insp).prop("checked")) {
@@ -544,14 +543,15 @@ document.addEventListener('DOMContentLoaded', function () {
  * @returns {undefined}
  */
 function run_command(display_cmd, cmd, msg = "", dry = false, show = false) {
-    var bot_id = getUrlParameter('bot_id') || ALL_BOTS;
-    $("#command-show").show().html("{0} run {1} {2} {3}".format(CONTROLLER_CMD, bot_id, display_cmd, msg ? "'" + msg.replace("'", "'\\''") + "'" : ""));//XX dry are not syntax-correct
+    let bot_id = getUrlParameter('bot_id') || ALL_BOTS;
+    let tmp = msg ? "'" + msg.replace("'", "'\\''") + "'" : "";
+    $("#command-show").show().html(`${CONTROLLER_CMD} run {bot_id} {display_cmd} {tmp}`); //XX dry are not syntax-correct
     $("#run-log").val("loading...");
     $('#inspect-panel-title').addClass('waiting');
     let call = authenticatedAjax({
         method: "post",
-        data: {"msg": msg},
-        url: managementUrl('run', 'bot={0}&cmd={1}&dry={2}&show={3}'.format(bot_id, cmd, dry, show)),
+        data: {msg},
+        url: managementUrl('run', `bot=${bot_id}&cmd=${cmd}&dry=${dry}&show=${show}`),
     }).done(function (data) {
         // Parses the received data to message part and to log-only part
         let logs = [];
@@ -597,7 +597,7 @@ function run_command(display_cmd, cmd, msg = "", dry = false, show = false) {
  */
 function popState() {
     $("#run-log").val("");
-    var bot_id = getUrlParameter('bot_id') || ALL_BOTS;
+    let bot_id = getUrlParameter('bot_id') || ALL_BOTS;
     if (typeof (bot_id) !== 'undefined') {
         //window.history.replaceState(null, null, MONITOR_BOT_URL.format(bot_id));
         select_bot(bot_id);

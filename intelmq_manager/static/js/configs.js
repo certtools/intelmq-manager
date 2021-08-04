@@ -10,7 +10,6 @@ class VisModel {
 
         this.defaults = {};
         this.nodes = {};
-        this.edges = {};
         this.bots = {};
 
         this.network = null;
@@ -31,33 +30,30 @@ var span = null;
 var table = null;
 var disabledKeys = ['group', 'name', 'module'];
 var $manipulation, $saveButton; // jQuery of Vis control panel; elements reseted with network
+var node = null;
 
 var $EDIT_DEFAULT_BUTTON = $("#editDefaults");
 var BORDER_TYPE_CLASSES = {
-    'DEFAULT': 'info',
-    'GENERIC': 'success',
-    'RUNTIME': 'warning',
+    DEFAULT: 'info',
+    GENERIC: 'success',
+    RUNTIME: 'warning',
 }
 var BORDER_TYPES = {
-    'DEFAULT': 'default',
-    'GENERIC': 'generic',
-    'RUNTIME': 'runtime',
-    'OTHERS': 'default',
+    DEFAULT: 'default',
+    GENERIC: 'generic',
+    RUNTIME: 'runtime',
+    OTHERS: 'default',
 }
 
 var draggedElement = null;
 
-$(window).on('hashchange', function () {
-    location.reload();
-});
+$(window).on('hashchange', location.reload);
 
-$(window).on('unload', function () {
-    return "If you have not saved your work you'll loose the changes you have made. Do you want to continue?";
-});
+$(window).on('unload', () => "If you have not saved your work you'll loose the changes you have made. Do you want to continue?");
 
 function resize() {
     // Resize body
-    var network_container = document.getElementById('network-container');
+    let network_container = document.getElementById('network-container');
     network_container.style.height = (window.innerHeight - network_container.offsetTop) + "px";
     network_container.style.overflowX = "auto";
     network_container.style.overflowY = "auto";
@@ -72,12 +68,8 @@ function resize() {
 function load_html_elements() {
     // Load popup, span and table
     app.network_container = document.getElementById('network-container');
-    app.network_container.addEventListener('drop', function (event) {
-        handleDrop(event);
-    });
-    app.network_container.addEventListener('dragover', function (event) {
-        allowDrop(event);
-    });
+    app.network_container.addEventListener('drop', handleDrop);
+    app.network_container.addEventListener('dragover', allowDrop);
     popup = document.getElementById("network-popUp");
     documentation = document.getElementById("documentationButton");
     span = document.getElementById('network-popUp-title');
@@ -94,7 +86,7 @@ function load_bots(config) {
         for (let bot_name in group) {
             let bot = group[bot_name];
             let $bot = $bot_group.find("ul > li:first").clone().appendTo($("ul", $bot_group))
-                .attr("title", bot['description'])
+                .attr("title", bot.description)
                 .attr("data-name", bot_name)
                 .attr("data-group", bot_group)
                 .click(() => {
@@ -110,7 +102,7 @@ function load_bots(config) {
                     }
                     let found = null;
                     for (let bot_node of Object.values(app.nodes)) {
-                        if (bot_node.module === bot["module"]) {
+                        if (bot_node.module === bot.module) {
                             if ($.inArray(bot_node.id, $bot.data("cycled")) !== -1) {
                                 continue;
                             } else {
@@ -132,7 +124,7 @@ function load_bots(config) {
                     }
                     return false;
                 })
-                .on('dragstart', (event) => { // drag to create a new bot instance
+                .on('dragstart', event => { // drag to create a new bot instance
                     app.network.addNodeMode();
                     draggedElement = {
                         bot_name: bot_name,
@@ -149,21 +141,20 @@ function load_bots(config) {
             }
 
             app.bots[bot_group][bot_name] = {
-                'name': bot_name,
-                'group': bot_group,
-                'module': bot['module'],
-                'description': bot['description'],
-                'enabled': true,
-                'parameters': bot['parameters'],
-                'run_mode': 'continuous'
+                name: bot_name,
+                group: bot_group,
+                module: bot.module,
+                description: bot.description,
+                enabled: true,
+                parameters: bot.parameters,
+                run_mode: 'continuous'
             };
 
-            for (let parameter in bot['parameters']) {
-                var value = bot['parameters'][parameter];
-                app.bots[bot_group][bot_name]['parameters'][parameter] = value;
+            for (let [parameter, value] of Object.entries(bot.parameters)) {
+                app.bots[bot_group][bot_name].parameters[parameter] = value;
             }
         }
-        $bot_group.find("ul li").first().remove();// get rid of the HTML template
+        $bot_group.find("ul li").first().remove(); // get rid of the HTML template
     }
 
     $('#side-menu').metisMenu({'restart': true});
@@ -202,10 +193,10 @@ function handleDrop(event) {
     }
     // ---
 
-    var domPointer = app.network.interactionHandler.getPointer({x: event.clientX, y: event.clientY});
-    var canvasPointer = app.network.manipulation.canvas.DOMtoCanvas(domPointer);
+    let domPointer = app.network.interactionHandler.getPointer({x: event.clientX, y: event.clientY});
+    let canvasPointer = app.network.manipulation.canvas.DOMtoCanvas(domPointer);
 
-    var clickData = {
+    let clickData = {
         pointer: {
             canvas: {
                 x: canvasPointer.x,
@@ -235,7 +226,7 @@ function save_data_on_files() {
 
     let reloadable = 0;
     let alert_error = (file, jqxhr, textStatus, error) => {
-        show_error('There was an error saving ' + file + ':\nStatus: ' + textStatus + '\nError: ' + error);
+        show_error(`There was an error saving ${file}:\nStatus: ${textStatus}\nError: ${error}`);
     };
     let saveSucceeded = (response) => {
         if (++reloadable === 4) {
@@ -249,68 +240,71 @@ function save_data_on_files() {
         }
     }
 
-    Promise.all([
-        authenticatedAjax({"type": "POST", "url": API + '/runtime', "contentType": "application/json", "data": generate_runtime_conf(app.nodes, app.defaults)})
+    // can't parallelize these due to a race condition from them both touching runtime.yaml; TODO lock file in backend?
+    authenticatedAjax({type: "POST", url: API + '/runtime', contentType: "application/json", data: generate_runtime_conf(app.nodes, app.defaults)})
+    .done(saveSucceeded)
+    .fail(() => alert_error('runtime', ...arguments))
+    .then(() =>
+            authenticatedAjax({type: "POST", url: API + '/positions', contentType: "application/json", data: generate_positions_conf()})
             .done(saveSucceeded)
-            .fail(() => {
-                alert_error('runtime', ...arguments)
-            }),
-        authenticatedAjax({"type": "POST", "url": API + '/positions', "contentType": "application/json", "data": generate_positions_conf()})
-            .done(saveSucceeded)
-            .fail(() => {
-                alert_error('positions', ...arguments)
-            })])
-        .then(function () {
-            // all files were correctly saved
-            $saveButton.unblinking();
-        });
+            .fail(() => alert_error('positions', ...arguments) )
+    )
+    // all files were correctly saved
+    .then(() => $saveButton.unblinking());
 }
 
 
 // Prepare data from configuration files to be used in Vis
 
-function convert_edges(edges) {
-    let new_edges = [];
-    let roundness = {};
-    for (let index in edges) {
-        let new_edge = {};
-        new_edge.id = edges[index]['id'];
-        new_edge.from = edges[index]['from'];
-        new_edge.to = edges[index]['to'];
-        new_edge.label = edges[index]['path'];
+function convert_edges(nodes) {
+    let new_edges = [], roundness = {};
+    for (let node of Object.values(nodes)) {
+        let from = node.bot_id;
+        let edge_map = node.parameters.destination_queues;
+        for (let path in edge_map) {
+            for (let to of edge_map[path]) {
+                let id = to_edge_id(from, to, path);
+                let new_edge = {
+                    id,
+                    from,
+                    to: to.replace(/-queue$/, ''),
+                    label: path === '_default' ? undefined : path,
+                };
 
-        // if there is multiple edges between nodes we have to distinguish them manually, see https://github.com/almende/vis/issues/1957
-        let hash = new_edge.from + new_edge.to;
-        if (hash in roundness) {
-            roundness[hash] += 0.3;
-        } else {
-            roundness[hash] = 0;
-        }
-        if (roundness[hash]) {
-            new_edge.smooth = {type: "curvedCCW", "roundness": roundness[hash]};
-        }
+                // if there is multiple edges between nodes we have to distinguish them manually, see https://github.com/almende/vis/issues/1957
+                let hash = new_edge.from + new_edge.to;
+                if (hash in roundness) {
+                    roundness[hash] += 0.3;
+                } else {
+                    roundness[hash] = 0;
+                }
+                if (roundness[hash]) {
+                    new_edge.smooth = {type: "curvedCCW", roundness: roundness[hash]};
+                }
 
-        new_edges.push(new_edge);
+                new_edges.push(new_edge);
+            }
+        }
     }
 
     return new_edges;
 }
 
 function convert_nodes(nodes, includePositions) {
-    var new_nodes = [];
+    let new_nodes = [];
 
-    for (index in nodes) {
-        var new_node = {};
-        new_node.id = nodes[index]['bot_id'];
-        new_node.label = nodes[index]['bot_id'];
-        new_node.group = nodes[index]['group'];
+    for (let index in nodes) {
+        let new_node = {};
+        new_node.id = nodes[index].bot_id;
+        new_node.label = nodes[index].bot_id;
+        new_node.group = nodes[index].group;
 
         if (includePositions === true) {
             try {
                 new_node.x = app.positions[index].x;
                 new_node.y = app.positions[index].y;
             } catch (err) {
-                console.error('positions in file are ignored:', err);
+                console.error('positions in file are ignored:', err, index);
                 show_error('Saved positions are not valid or not complete. The configuration has possibly been modified outside of the IntelMQ-Manager.');
                 includePositions = false;
             }
@@ -323,23 +317,21 @@ function convert_nodes(nodes, includePositions) {
 }
 
 function fill_bot(id, group, name) {
-    var bot = {};
+    let bot = {};
     table.innerHTML = '';
 
     if (id === undefined) {
         bot = app.bots[group][name];
 
-        name = bot['name'].replace(/\ /g, '-').replace(/[^A-Za-z0-9-]/g, '');
-        group = bot['group'].replace(/\ /g, '-');
-        default_id = name + "-" + group;
-        bot['bot_id'] = default_id;
-        bot['defaults'] = {};
+        name = bot.name.replace(/\ /g, '-').replace(/[^A-Za-z0-9-]/g, '');
+        group = bot.group.replace(/\ /g, '-');
+        default_id = `${name}-${group}`;
+        bot.bot_id = bot.id = default_id;
+        bot.defaults = {};
 
-        for (key in app.defaults) {
-            if (key in bot.parameters) {
-                continue;
-            } else {
-                bot['defaults'][key] = app.defaults[key];
+        for (let [key, value] of Object.entries(app.defaults)) {
+            if (!(key in bot.parameters)) {
+                bot.defaults[key] = value;
             }
         }
     } else {
@@ -348,7 +340,7 @@ function fill_bot(id, group, name) {
 
     app.bot_before_altering = bot;
 
-    insertKeyValue('id', bot['bot_id'], 'id', false);
+    insertKeyValue('id', bot.bot_id, 'id', false);
     insertBorder(BORDER_TYPES.GENERIC);
     for (let key in bot) {
         if (STARTUP_KEYS.includes(key)) {
@@ -357,19 +349,21 @@ function fill_bot(id, group, name) {
     }
     insertBorder(BORDER_TYPES.RUNTIME);
     for (let key in bot.parameters) {
-        insertKeyValue(key, bot.parameters[key], BORDER_TYPES.RUNTIME, true);
+        if (key !== 'destination_queues') {
+            insertKeyValue(key, bot.parameters[key], BORDER_TYPES.RUNTIME, true);
+        }
     }
 
-    const modulename = bot['module'].replace(/\./g, "-").replace(/_/g, "-");
-    documentation.href = "https://intelmq.readthedocs.org/en/maintenance/user/bots.html#" + modulename;
+    const modulename = bot.module.replace(/\./g, "-").replace(/_/g, "-");
+    documentation.href = `https://intelmq.readthedocs.org/en/maintenance/user/bots.html#${modulename}`;
     popup.setAttribute('class', "with-bot");
 }
 
 function insertBorder(border_type) {
-    var new_row = table.insertRow(-1);
-    var sectionCell1 = new_row.insertCell(0);
-    var sectionCell2 = new_row.insertCell(1);
-    var addButtonCell = new_row.insertCell(2);
+    let new_row = table.insertRow(-1);
+    let sectionCell1 = new_row.insertCell(0);
+    let sectionCell2 = new_row.insertCell(1);
+    let addButtonCell = new_row.insertCell(2);
 
     sectionCell1.setAttribute('id', 'border');
     sectionCell2.setAttribute('id', 'border');
@@ -396,8 +390,7 @@ function insertBorder(border_type) {
 }
 
 function insertKeyValue(key, value, section, allowXButtons, insertAt) {
-
-    var new_row = null;
+    let new_row = null;
 
     if (insertAt === undefined) {
         new_row = table.insertRow(-1);
@@ -405,10 +398,10 @@ function insertKeyValue(key, value, section, allowXButtons, insertAt) {
         new_row = table.insertRow(insertAt);
     }
 
-    var keyCell = new_row.insertCell(0);
-    var valueCell = new_row.insertCell(1);
-    var xButtonCell = new_row.insertCell(2);
-    var valueInput = document.createElement("input");
+    let keyCell = new_row.insertCell(0);
+    let valueCell = new_row.insertCell(1);
+    let xButtonCell = new_row.insertCell(2);
+    let valueInput = document.createElement("input");
 
     keyCell.setAttribute('class', 'node-key');
     keyCell.setAttribute('id', section)
@@ -416,25 +409,19 @@ function insertKeyValue(key, value, section, allowXButtons, insertAt) {
     valueInput.setAttribute('type', 'text');
     valueInput.setAttribute('id', key);
 
-    if (section == 'generic' && disabledKeys.includes(key) === true) {
+    if (section === 'generic' && disabledKeys.includes(key) === true) {
         valueInput.setAttribute('disabled', "true");
     }
 
-    parameter_func = function (action_function, argument) {
-        action_function(argument);
-    }
+    let parameter_func = (action_function, argument) => action_function(argument);
 
     if (allowXButtons === true) {
-        var xButton = document.createElement('button');
-        var xButtonSpan = document.createElement('span');
+        let xButton = document.createElement('button');
+        let xButtonSpan = document.createElement('span');
         xButtonSpan.setAttribute('class', 'glyphicon glyphicon-remove-circle');
         xButton.setAttribute('class', 'btn btn-danger');
         xButton.setAttribute('title', 'delete parameter');
-        xButton.addEventListener('click', function (deleteParameter, key) {
-            return function () {
-                parameter_func(deleteParameter, key)
-            }
-        }(deleteParameter, key))
+        xButton.addEventListener('click', (deleteParameter, key) => () => parameter_func(deleteParameter, key));
 
         xButton.appendChild(xButtonSpan);
         xButtonCell.appendChild(xButton);
@@ -456,16 +443,16 @@ function resetToDefault(input_id) {
 }
 
 function deleteParameter(input_id) {
-    var current_index = $('#' + input_id).closest('tr').index();
+    let current_index = $('#' + input_id).closest('tr').index();
     table.deleteRow(current_index);
 }
 
 function addNewKey() {
     let $el = $("#templates .modal-add-new-key").clone();
     popupModal("Add key", $el, () => {
-        var current_index = $('#' + BORDER_TYPES.RUNTIME).index();
-        var $key = $el.find("[name=newKeyInput]");
-        var val = $el.find("[name=newValueInput]").val();
+        let current_index = $('#' + BORDER_TYPES.RUNTIME).index();
+        let $key = $el.find("[name=newKeyInput]");
+        let val = $el.find("[name=newValueInput]").val();
 
         if (!PARAM_KEY_REGEX.test($key.val())) {
             show_error("Parameter names can only be composed of numbers, letters, hiphens and underscores");
@@ -475,9 +462,7 @@ function addNewKey() {
             // inserts new value and focus the field
             insertKeyValue($key.val(), val, BORDER_TYPES.RUNTIME, true, current_index + 1);
             // a bootstrap guru or somebody might want to rewrite this line without setTimeout
-            setTimeout(() => {
-                $('#network-popUp .new-key-btn').closest("tr").next("tr").find("input").focus()
-            }, 300);
+            setTimeout(() => $('#network-popUp .new-key-btn').closest("tr").next("tr").find("input").focus(), 300);
         }
     });
 }
@@ -485,9 +470,9 @@ function addNewKey() {
 function addNewDefaultKey() {
     let $el = $("#templates .modal-add-new-key").clone();
     popupModal("Add key", $el, () => {
-        var current_index = $('#' + BORDER_TYPES.RUNTIME).index();
-        var $key = $el.find("[name=newKeyInput]");
-        var val = $el.find("[name=newValueInput]").val();
+        let current_index = $('#' + BORDER_TYPES.RUNTIME).index();
+        let $key = $el.find("[name=newKeyInput]");
+        let val = $el.find("[name=newValueInput]").val();
 
         if (!PARAM_KEY_REGEX.test($key.val())) {
             show_error("Parameter names can only be composed of numbers, letters, hiphens and underscores");
@@ -497,9 +482,7 @@ function addNewDefaultKey() {
             // inserts new value and focus the field
             insertKeyValue($key.val(), val, BORDER_TYPES.DEFAULT, true, current_index + 1);
             // a bootstrap guru or somebody might want to rewrite this line without setTimeout
-            setTimeout(() => {
-                $('#network-popUp .new-key-btn').closest("tr").next("tr").find("input").focus()
-            }, 300);
+            setTimeout(() => $('#network-popUp .new-key-btn').closest("tr").next("tr").find("input").focus(), 300);
         }
     });
 }
@@ -509,9 +492,7 @@ $(document).keydown(function (event) {
         if (($el = $("body > .modal:not([data-hiding])")).length) {
             // close the most recent modal
             $el.last().attr("data-hiding", true).modal('hide');
-            setTimeout(() => {
-                $("body > .modal[data-hiding]").first().remove();
-            }, 300);
+            setTimeout(() => $("body > .modal[data-hiding]").first().remove(), 300);
         } else if ($('#network-popUp').is(':visible')) {
             $('#network-popUp-cancel').click();
         }
@@ -531,16 +512,16 @@ function saveDefaults_tmp(data, callback) {
 }
 
 function saveFormData() {
-    for (var i = 0; i < table.rows.length; i++) {
-        var keyCell = table.rows[i].cells[0];
-        var valueCell = table.rows[i].cells[1];
-        var valueInput = valueCell.getElementsByTagName('input')[0];
+    for (let i = 0; i < table.rows.length; i++) {
+        let keyCell = table.rows[i].cells[0];
+        let valueCell = table.rows[i].cells[1];
+        let valueInput = valueCell.getElementsByTagName('input')[0];
 
         if (valueInput === undefined)
             continue;
 
-        var key = keyCell.innerText;
-        var value = null;
+        let key = keyCell.innerText;
+        let value = null;
 
         try {
             value = JSON.parse(valueInput.value);
@@ -550,13 +531,13 @@ function saveFormData() {
 
         switch (keyCell.id) {
             case 'id':
-                node['bot_id'] = value;
+                node.bot_id = value;
                 break;
             case 'generic':
                 node[key] = value;
                 break;
             case 'runtime':
-                node['parameters'][key] = value;
+                node.parameters[key] = value;
                 break;
             case 'border':
                 break;
@@ -564,59 +545,73 @@ function saveFormData() {
                 app.defaults[key] = value;
                 break;
             default:
-                node['defaults'][key] = value;
+                node.defaults[key] = value;
         }
     }
 }
 
 function saveData(data, callback) {
-    node = {};
-    node['parameters'] = {};
-    node['defaults'] = {};
+    node = {parameters: {}, defaults: {}};
 
     saveFormData();
 
     // check inputs beeing valid
-    if (node.bot_id == '' && node.group == '') {
+    if (node.bot_id === '' && node.group === '') {
         show_error('fields id and group must not be empty!');
         return;
     }
 
-    if (node.bot_id != app.bot_before_altering.bot_id) {
-        if (!confirm("When you edit an ID what you are doing in fact is to create a clone of the current bot. You will have to delete the old one manually. Proceed with the operation?")) {
-            return;
-        }
-    }
-
     if (!BOT_ID_REGEX.test(node.bot_id)) {
-        show_error("Bot ID's can only be composed of numbers, letters and hiphens");
+        show_error("Bot ID's can only be composed of numbers, letters and hyphens");
         return;
     }
 
+    let current_id = node.bot_id, old_id = app.bot_before_altering.bot_id;
+    if (current_id !== old_id) {
+        if (!confirm("When you edit an ID what you are doing in fact is to create a clone of the current bot. You will have to delete the old one manually. Proceed with the operation?")) {
+            return;
+        }
+        let old_bot = app.nodes[old_id], new_bot = app.nodes[current_id];
 
-    // switch paremters and defaults
-    for (let key in node) {
-        if (key === 'parameters') {
-            for (parameterKey in node.parameters) {
-                if (node.parameters[parameterKey] !== app.bot_before_altering.parameters[parameterKey]) {
-                    if (parameterKey in app.defaults) {
-                        if (node.parameters[parameterKey] === app.defaults[parameterKey]) {
-                            swapToDefaults(node, parameterKey);
-                        }
-                    }
-                }
+        app.positions[current_id] = app.positions[old_id];
+        delete app.positions[old_id];
+
+        for (let bot of get_reverse_connections(old_id)) {
+            for (let list in Object.values(bot.parameters.destination_queues)) {
+                let to_index = list.indexOf(old_id);
+                if (to_index !== -1)
+                    list[to_index] = current_id;
             }
-        } else if (key === 'defaults') {
-            for (defaultsKey in node.defaults) {
-                if (node.defaults[defaultsKey] !== app.defaults[defaultsKey]) {
-                    swapToParameters(node, defaultsKey);
-                }
+        }
+
+        delete app.nodes[old_id];
+    }
+
+
+    // switch parameters and defaults
+    if ('parameters' in node) {
+        for (parameterKey in node.parameters) {
+            if (
+                node.parameters[parameterKey] !== app.bot_before_altering.parameters[parameterKey]
+                && parameterKey in app.defaults
+                && node.parameters[parameterKey] === app.defaults[parameterKey]
+            ) {
+                swapToDefaults(node, parameterKey);
+            }
+        }
+    }
+
+    if ('defaults' in node) {
+        for (defaultsKey in node.defaults) {
+            if (node.defaults[defaultsKey] !== app.defaults[defaultsKey]) {
+                swapToParameters(node, defaultsKey);
             }
         }
     }
 
     data.bot_id = node.bot_id;
-    data.label = node.bot_id
+    data.id = node.bot_id;
+    data.label = node.bot_id;
     data.group = node.group;
     data.level = GROUP_LEVELS[data.group];
     data.title = JSON.stringify(node, undefined, 2).replace(/\n/g, '\n<br>').replace(/ /g, "&nbsp;");
@@ -662,8 +657,8 @@ function popupModal(title, body, callback) {
 function create_form(title, data, callback) {
     span.innerHTML = title;
 
-    var okButton = document.getElementById('network-popUp-ok');
-    var cancelButton = document.getElementById('network-popUp-cancel');
+    let okButton = document.getElementById('network-popUp-ok');
+    let cancelButton = document.getElementById('network-popUp-cancel');
 
     if (data === $EDIT_DEFAULT_BUTTON.attr("id")) {
         okButton.onclick = saveDefaults_tmp.bind(this, data, callback);
@@ -679,8 +674,8 @@ function create_form(title, data, callback) {
 }
 
 function clearPopUp(data, callback) {
-    var okButton = document.getElementById('network-popUp-ok');
-    var cancelButton = document.getElementById('network-popUp-cancel');
+    let okButton = document.getElementById('network-popUp-ok');
+    let cancelButton = document.getElementById('network-popUp-cancel');
     okButton.onclick = null;
     cancelButton.onclick = null;
 
@@ -688,7 +683,7 @@ function clearPopUp(data, callback) {
     span.innerHTML = "";
 
     for (i = table.rows.length - 1; i >= 0; i--) {
-        var position = table.rows[i].rowIndex;
+        let position = table.rows[i].rowIndex;
 
         if (position >= CORE_FIELDS) {
             table.deleteRow(position);
@@ -698,7 +693,7 @@ function clearPopUp(data, callback) {
     }
 
     popup.setAttribute('class', "without-bot");
-    if ((callback !== undefined) && (data['label'] != 'new')) {
+    if ((callback !== undefined) && (data.label !== 'new')) {
         callback(data);
     }
 }
@@ -716,7 +711,6 @@ function draw() {
 
     if (getUrlParameter("configuration") === "new") {
         app.nodes = {};
-        app.edges = {};
     }
     initNetwork();
     if (window.location.hash) {
@@ -725,7 +719,7 @@ function draw() {
             try {
                 fitNode(node);
             } catch (e) {
-                show_error("Bot instance {0} not found in the current configuration.".format(node));
+                show_error(`Bot instance ${node} not found in the current configuration.`);
             }
         }, 100);
 
@@ -742,7 +736,7 @@ function fitNode(nodeId) {
 function initNetwork(includePositions = true) {
     app.network_data = {
         nodes: new vis.DataSet(convert_nodes(app.nodes, includePositions)),
-        edges: new vis.DataSet(convert_edges(app.edges))
+        edges: new vis.DataSet(convert_edges(app.nodes))
     };
 
     app.network = new vis.Network(app.network_container, app.network_data, app.options);
@@ -764,7 +758,7 @@ function initNetwork(includePositions = true) {
     //
 
     $("#templates .network-right-menu").clone().insertAfter($manipulation);
-    $nc = $("#network-container");
+    let $nc = $("#network-container");
     $(".vis-live-toggle", $nc).click(function () {
         $(this).toggleClass("running", !reload_queues.running);
         reload_queues.toggle(!reload_queues.running);
@@ -777,15 +771,11 @@ function initNetwork(includePositions = true) {
 
     // 'Save Configuration' button blinks and lists all the bots that should be reloaded after successful save.
     $saveButton = $("#vis-save", $nc);
-    $saveButton.children().on('click', function (event) {
-        save_data_on_files();
-    });
+    $saveButton.children().on('click', save_data_on_files);
     $saveButton.data("reloadables", []);
     $saveButton.blinkOnce = function() {
         $(this).addClass('blinking-once');
-        setTimeout(() => {
-            $(this).removeClass('blinking-once')
-        }, 2000);
+        setTimeout(() => $(this).removeClass('blinking-once'), 2000);
     }
     $saveButton.blinking = function (bot_id = null) {
         $(this).addClass('vis-save-blinking')
@@ -833,14 +823,10 @@ function initNetwork(includePositions = true) {
     allow_blinking_once = true;
 
     // 'Clear Configuration' button
-    $("#vis-clear").children().on('click', function (event) {
-        window.location.assign('configs.html?configuration=new');
-    });
+    $("#vis-clear").children().on('click', event => window.location.assign('configs.html?configuration=new'));
 
     // 'Redraw Botnet' button
-    $("#vis-redraw").children().on('click', function (event) {
-        redrawNetwork();
-    });
+    $("#vis-redraw").children().on('click', event => redrawNetwork());
 
     //
     // add custom menu buttons
@@ -856,18 +842,17 @@ function initNetwork(includePositions = true) {
         $EDIT_DEFAULT_BUTTON.prop('disabled', false);
 
         // clicking on 'Add Bot', 'Add Queues' etc buttons disables 'Edit defaults' button
-        var fn = function () {
-            $EDIT_DEFAULT_BUTTON.prop('disabled', true);
-        };
+        let fn = () => $EDIT_DEFAULT_BUTTON.prop('disabled', true);
         $(".vis-add", $manipulation).on("pointerdown", fn);
-        if (($el = $(".vis-edit", $manipulation)).length) { // 'Edit Bot' button is visible only when there is a bot selected
+        let $el = $(".vis-edit", $manipulation);
+        if ($el.length) { // 'Edit Bot' button is visible only when there is a bot selected
             $el.on("pointerdown", fn);
         }
 
         // 'Monitor' and 'Duplicate' buttons appear when there is a single node selected
         let nodes = app.network.getSelectedNodes();
         if (nodes.length === 1) { // a bot is focused
-            var bot = nodes[0];
+            let bot = nodes[0];
             $("#templates .network-node-menu").clone().appendTo($manipulation);
             $(".monitor-button", $manipulation).click((event) => {
                 return click_link(MONITOR_BOT_URL.format(bot), event);
@@ -878,34 +863,33 @@ function initNetwork(includePositions = true) {
 
             // insert start/stop buttons
             $(".monitor-button", $manipulation).before(generate_control_buttons(bot, false, refresh_color, true));
-        } else if ((edges = app.network.getSelectedEdges()).length === 1) {
-            $("#templates .network-edge-menu").clone().appendTo($manipulation);
-            $(".vis-edit", $manipulation).click(() => {
-                editPath(app, edges[0]);
-            }).insertBefore($(".vis-delete"));
+        } else {
+            let edges = app.network.getSelectedEdges();
+            if (edges.length === 1) {
+                $("#templates .network-edge-menu").clone().appendTo($manipulation);
+                $(".vis-edit", $manipulation).click(() => {
+                    editPath(app, edges[0]);
+                }).insertBefore($(".vis-delete"));
+            }
         }
         // refresh shortcuts
         // (it is so hard to click on the 'Add Node' button we rather register click event)
-        $(".vis-add .vis-label", $manipulation).attr("data-accesskey", "t").click(function () {
-            // We use 't' for 'Add bot' and 'Duplicate' because that's a common letter.
-            app.network.addNodeMode();
-        });
-        $(".vis-connect .vis-label", $manipulation).attr("data-accesskey", "q").click(function () {
-            app.network.addEdgeMode();
-        })
-        $(".vis-delete .vis-label", $manipulation).attr("data-accesskey", "d").click(function () {
-            app.network.deleteSelected();
-        });
-        $(".vis-edit .vis-label", $manipulation).attr("data-accesskey", "e").click(function () {
-            app.network.editNode();
-        });
+        // We use 't' for 'Add bot' and 'Duplicate' because that's a common letter.
+        $(".vis-add .vis-label", $manipulation).attr("data-accesskey", "t").click(app.network.addNodeMode);
+
+        $(".vis-connect .vis-label", $manipulation).attr("data-accesskey", "q").click(app.network.addEdgeMode);
+
+        $(".vis-delete .vis-label", $manipulation).attr("data-accesskey", "d").click(app.network.deleteSelected);
+
+        $(".vis-edit .vis-label", $manipulation).attr("data-accesskey", "e").click(app.network.editNode);
+
         accesskeyfie();
     };
     // redraw immediately so that even the first click on the network is aware of that new monkeypatched function
     app.network.manipulation.showManipulatorToolbar();
 
     // double click action trigger editation
-    app.network.on("doubleClick", (active) => {
+    app.network.on("doubleClick", active => {
         if (active.nodes.length === 1) {
             let ev = document.createEvent('MouseEvent');// vis-js button need to be clicked this hard way
             ev.initEvent("pointerdown", true, true);
@@ -953,16 +937,16 @@ function refresh_color(bot) {
 
         // change bot color if needed
         if (app.network_data.nodes.get([bot])[0].color !== col) {
-            app.network_data.nodes.update({"id": bot, "color": col});
+            app.network_data.nodes.update({id: bot, color: col});
         }
 
         // we dash the border if the status has to be changed (not running or stopping) or is faulty (error, incomplete)
         if ([BOT_STATUS_DEFINITION.running, BOT_STATUS_DEFINITION.stopped].indexOf(bot_status[bot]) === -1) {
-            app.network_data.nodes.update({"id": bot, shapeProperties: {borderDashes: [5, 5]}})
+            app.network_data.nodes.update({id: bot, shapeProperties: {borderDashes: [5, 5]}})
         } else if ([BOT_STATUS_DEFINITION.running, BOT_STATUS_DEFINITION.stopped, undefined].indexOf(bot_status_previous[bot]) === -1) {
             // we remove dash border since bot has been in a dash-border state and is no more
             // (that means that bot wasn't either in a running, stopped or initially undefined state)
-            app.network_data.nodes.update({"id": bot, shapeProperties: {"borderDashes": false}});
+            app.network_data.nodes.update({id: bot, shapeProperties: {borderDashes: false}});
         }
 
         bot_status_previous[bot] = bot_status[bot];
@@ -973,15 +957,17 @@ function load_live_info() {
     $(".navbar").addClass('waiting');
     return authenticatedGetJson(managementUrl('queues-and-status'))
         .done(function (data) {
+            let bot_queues;
             [bot_queues, bot_status] = data;
 
             for (let bot in bot_queues) {
                 if ("source_queue" in bot_queues[bot]) {
                     // we skip bots without source queue (collectors)
                     // Assume an empty internal queue if no data is given (The AMQP pipeline does not have/need internal queues)
-                    let c = bot_queues[bot]['source_queue'][1] + (bot_queues[bot]['internal_queue'] || 0);
+                    let c = bot_queues[bot].source_queue[1] + (bot_queues[bot].internal_queue || 0);
                     let label = (c > 0) ? "{0}\n{1}✉".format(bot, c) : bot;
-                    if ((appbot = app.network_data.nodes.get(bot)) === null) {
+                    let appbot = app.network_data.nodes.get(bot);
+                    if (appbot === null) {
                         show_error("Non-existent bot {0} in pipelines.".format(bot));
                     } else if (label !== appbot.label) {
                         // update queue count on bot label

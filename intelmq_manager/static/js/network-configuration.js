@@ -6,6 +6,7 @@
  * Big variable options, passed to vis library.
  * There are also all the manipulation methods.
  */
+'use strict';
 
 var NETWORK_OPTIONS = {
     physics: {
@@ -76,45 +77,53 @@ var NETWORK_OPTIONS = {
         initiallyActive: true,
         editEdge: false,
 
-        addNode: function (data, callback) {
-            create_form("Add Node", data, callback);
-        },
+        addNode: (data, callback) => create_form("Add Node", data, callback),
         editNode: function (data, callback) {
             create_form("Edit Node", data, callback);
             fill_bot(data.id, undefined, undefined);
         },
         deleteNode: function (data, callback) {
             callback(data);
+            let node_set = new Set(data.nodes);
 
-            for (index in data.edges) {
-                delete app.edges[data.edges[index]];
+            for (let edge_index of data.edges) {
+                let [from, to, path] = from_edge_id(edge_index);
+                if (!node_set.has(from)) { // otherwise handled by node deletion below
+                    remove_edge(from, to, path);
+                }
             }
 
-            for (index in data.nodes) {
-                delete app.nodes[data.nodes[index]];
+            for (let node_name of data.nodes) {
+                delete app.nodes[node_name];
             }
             $saveButton.blinking();
         },
         addEdge: function (data, callback) {
-            if (data.from == data.to) {
+            if (data.from === data.to) {
                 show_error('This action would cause an infinite loop');
                 return;
             }
 
+            if (data.path === undefined)
+                data.path = '_default';
+
             let edit_needed = false; // there is path name clash
             let occupied_values = new Set(); // prevent edges from overlapping
             let roundness = 0;
-            for (let index in app.edges) {
-                if (app.edges[index].from == data.from && app.edges[index].to == data.to) {
-                    let smooth = app.network_data.edges.get(index).smooth;
-                    occupied_values.add(smooth? smooth.roundness : 0);
 
-                    if (app.edges[index].path == data.path) {
+            let source_paths = app.nodes[data.from].parameters.destination_queues;
+            for (let path_id in source_paths) {
+                if (source_paths[path_id].includes(`${data.to}-queue`)) {
+                    let smooth = app.network_data.edges.get(index).smooth;
+                    occupied_values.add(smooth ? smooth.roundness : 0);
+
+                    if(path_id === data.path) {
                         show_error('There is already a link between those bots with the same path, rename.');
                         edit_needed = true;
                     }
                 }
             }
+
             if (occupied_values) {
                 while(occupied_values.has(roundness)) {
                     roundness += 0.3;
@@ -126,18 +135,19 @@ var NETWORK_OPTIONS = {
             let group_to = app.nodes[data.to].group;
             let neighbors = ACCEPTED_NEIGHBORS[group_from];
             let available_neighbor = false;
-            for (let index in neighbors) {
-                if (group_to == neighbors[index]) {
-                    callback(data);
-                    available_neighbor = true;
-                    if(CAUTIOUS_NEIGHBORS[group_from] && CAUTIOUS_NEIGHBORS[group_from].indexOf(group_to) !== -1) {
-                        show_error('Node type ' + group_from + ' can connect to the ' + group_to + ', however it\'s not so common.');
-                    }
+
+            if (neighbors.includes(group_to)) {
+                data.id = to_edge_id(data.from, data.to, data.path);
+                callback(data);
+                available_neighbor = true;
+                let cautious = CAUTIOUS_NEIGHBORS[group_from] ?? [];
+                if (cautious.includes(group_to)) {
+                    show_error(`Node type ${group_from} can connect to the ${group_to}, however it's not so common.`);
                 }
             }
 
             if (!available_neighbor) {
-                if (neighbors.length == 0) {
+                if (neighbors.length === 0) {
                     show_error("Node type " + group_from + " can't connect to other nodes");
                 } else {
                     show_error('Node type ' + group_from + ' can only connect to nodes of types: ' + neighbors.join());
@@ -145,19 +155,19 @@ var NETWORK_OPTIONS = {
                 return;
             }
 
+            add_edge(data.from, data.to, data.path);
 
-            if (app.edges[data.id] === undefined) {
-                app.edges[data.id] = {};
-            }
-            app.edges[data.id] = {'from': data.from, 'to': data.to};
             $saveButton.blinking(data.from);
             if (edit_needed) {
                 editPath(app, data.id, true);
             }
         },
         deleteEdge: function (data, callback) {
-            $saveButton.blinking(app.edges[data["edges"][0]].from);
-            delete app.edges[data["edges"][0]];
+            let [from, to, path] = from_edge_id(data.edges[0]);
+            let queue = app.nodes[from].parameters.destination_queues[path];
+            remove_edge(from, to.replace(/-queue$/, ''), path);
+
+            $saveButton.blinking(from);
             callback(data);
         }
     },
@@ -178,47 +188,45 @@ var NETWORK_OPTIONS = {
  */
 function editPath(app, edge, adding=false) {
     let ok_clicked = false;
-    let data = app.edges[edge];
-    data.original_path = data.original_path  || data.path || true;
-    console.log('169: "orig path"(): ', "orig path", data);
-    let $input = $("<input/>", {"placeholder": "_default", "val": data.path});
+    let [from, to, original_path] = from_edge_id(edge);
+    let nondefault_path = original_path === '_default' ? undefined : original_path;
+    let new_path, nondefault_new_path;
+
+    let $input = $("<input/>", {"placeholder": "_default", "val": nondefault_path});
     popupModal("Set the edge name", $input, () => {
-        ok_clicked = true;
-        console.log('161: 1, data["path"], $input.val()(): ', 1, data.path, $input.val());
-        if (data.path === $input.val()) {
-            console.log('163: 2(): ', 2);
+        let in_val = $input.val();
+        [new_path, nondefault_new_path] = (in_val && in_val !== '_default') ? [in_val, in_val] : ['_default', undefined];
+        if (original_path === new_path) {
             return;
         }
-        console.log('166: 3(): ', 3);
-        data.path = $input.val();
-        if (!data.path) {
-            delete data.path;
-        }
-        app.network_data.edges.update({"id": edge, "label": $input.val()});
+
+        ok_clicked = true;
         $saveButton.blinking();
     }).on("hide.bs.modal", () => {
-        for (let index in app.edges) {
-            if (index !== edge &&
-                app.edges[index].from == data.from &&
-                app.edges[index].to == data.to &&
-                app.edges[index].path == data.path) {
-                let path_name = data.path || "_default";
-                if (ok_clicked) {
-                    show_error(`Could not add the queue ${path_name}, there already is such queue.`);
-                    return editPath(app, edge, adding);
-                } else if(adding) {
-                    show_error(`Removing duplicate edge ${path_name}.`);
-                    app.network_data.edges.remove({"id": edge});
-                    delete app.edges[edge];
-                } else {
-                    data.path = (data.original_path === true)?undefined:data.original_path;
-                    show_error(`Restoring original path name.`);
-                    app.network_data.edges.update({"id": edge, "label": data.path});
-                }
-            }
+        let from_queues = app.nodes[from].parameters.destination_queues[new_path] ?? [];
+        let duplicate_edge = from_queues.includes(`${to}-queue`);
 
+        if (duplicate_edge) {
+            if (ok_clicked) {
+                show_error(`Could not add the queue ${new_path}, there already is such queue.`);
+                return editPath(app, edge, adding);
+            } else if(adding) {
+                show_error(`Removing duplicate edge ${new_path}.`);
+            } else {
+                show_error("Keeping original path name.");
+                return;
+            }
         }
-    delete data.original_path;
+
+        if (ok_clicked) {
+            let new_id = to_edge_id(from, to, new_path);
+
+            remove_edge(from, to, original_path);
+            app.network_data.edges.remove({"id": edge});
+
+            add_edge(from, to, new_path);
+            app.network_data.edges.add({"id": new_id, "from": from, "to": to, "label": nondefault_new_path});
+        }
     });
 }
 
@@ -234,17 +242,17 @@ function duplicateNode(app, bot) {
     }
     // deep copy old bot information
     app.nodes[newbie] = $.extend(true, {}, app.nodes[bot]);
-    app.nodes[newbie]["id"] = newbie;
+    app.nodes[newbie].id = newbie;
     // add to the Vis and focus
     app.network_data.nodes.add(convert_nodes([app.nodes[newbie]]));
     for (let id of app.network.getConnectedEdges(bot)) {
         let edge = app.network_data.edges.get(id);
-        delete edge["id"];
-        if (edge["from"] === bot) {
-            edge["from"] = newbie;
+        delete edge.id;
+        if (edge.from === bot) {
+            edge.from = newbie;
         }
-        if (edge["to"] === bot) {
-            edge["to"] = newbie;
+        if (edge.to === bot) {
+            edge.to = newbie;
         }
         app.network_data.edges.add(edge);
     }
@@ -252,4 +260,21 @@ function duplicateNode(app, bot) {
     app.network.selectNodes([newbie]);
     app.network.focus(newbie);
     $saveButton.blinking();
+}
+
+function remove_edge(from, to, path) {
+    let queues = app.nodes[from].parameters.destination_queues;
+    let queue = queues[path];
+    let to_index = queue.indexOf(`${to}-queue`);
+    if (to_index !== -1)
+        queue.splice(to_index, 1);
+
+    if (queue.length === 0)
+        delete queues[path];
+}
+
+function add_edge(from, to, path) {
+    let queues = app.nodes[from].parameters.destination_queues;
+    let queue = path in queues ? queues[path] : (queues[path] = []);
+    queue.push(`${to}-queue`);
 }
