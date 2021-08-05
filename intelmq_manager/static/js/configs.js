@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2020 IntelMQ Team <intelmq-team@cert.at>
+// SPDX-FileCopyrightText: 2020 IntelMQ Team <intelmq-team@cert.at>, 2020 Edvard Rejthar <github@edvard.cz>, 2021 Mikk Margus Möll <mikk@cert.ee>
 //
 // SPDX-License-Identifier: AGPL-3.0-or-later
 

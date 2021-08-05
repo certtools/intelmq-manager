@@ -38,12 +38,21 @@ CHANGELOG
 ### Pages
 
 #### Landing page
-
 #### Configuration
+  - Fix working with edges between bots, by transmitting new edges to the server with the new API (PR#264 by Mikk Margus Möll).
+  - Correctly hide the `destination_queues` parameter in the bot editor (PR#264 by Mikk Margus Möll).
+  - Restore sane default bot IDs (PR#264 by Mikk Margus Möll, fixes #263).
+  - Removed redundant `pipeline.js` file (PR#264 by Mikk Margus Möll).
+  - Fix a race condition trying to call both the `/runtime` and `/positions` API endpoints at the same time, when `/runtime` is updating `runtime.yaml` at the same time that `/positions` is trying to parse it (PR#264 by Mikk Margus Möll).
+  - internal improvements (PR#264 by Mikk Margus Möll):
+    - edge IDs are now `${source_node}|${destination_node}|${edge_name}`.
+    - some loops which previously iterated over every single edge should be a bit faster now.
+    - various tweaks, like reducing the scope of variables and using string templates instead of string concatenation.
 
 #### Management
 
 #### Monitor
+- `ALLOWED_PATH` and `CONTROLLER_CMD` are defined in a separate JavaScript file, rather than being templated into the HTML, fixing Content-Security-Policy issues (PR#264 by Mikk Margus Möll, fixes #183).
 
 #### Check
 
