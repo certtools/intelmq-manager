@@ -107,33 +107,36 @@ function redraw_queues() {
     internal_queue_element.innerHTML = '';
     //destination_queues_element.innerHTML = '';
 
-    let bot_info = {};
-    if (bot_id === ALL_BOTS || !queue_overview.length) {
-        bot_info.source_queues = {};
-        bot_info.destination_queues = {};
+    let bot_info = {
+        source_queues: {},
+        destination_queues: {},
+        fetched: true
+    };
 
-        for (let bot in bot_queues) {
-            let source_queue = bot_queues[bot].source_queue;
-            let destination_queues = bot_queues[bot].destination_queues;
-            let internal_queue = bot_queues[bot].internal_queue;
-            let parentName = bot;
+    if (bot_id === ALL_BOTS || !queue_overview.fetched) {
+        for (let [bot_name, bot] of Object.entries(bot_queues)) {
+            let source_queue = bot.source_queue;
+            let destination_queues = bot.destination_queues;
+            let internal_queue = bot.internal_queue;
 
             if (source_queue) {
                 bot_info.destination_queues[source_queue[0]] = source_queue;
-                bot_info.destination_queues[source_queue[0]].parent = parentName;
+                bot_info.destination_queues[source_queue[0]].parent = bot_name;
             }
 
             if (internal_queue !== undefined) {
-                let queue_name = bot + '-queue-internal';
+                let queue_name = `${bot_name}-queue-internal`;
                 bot_info.destination_queues[queue_name] = [queue_name, internal_queue];
-                bot_info.destination_queues[queue_name].parent = parentName;
+                bot_info.destination_queues[queue_name].parent = bot_name;
             }
         }
-        if (!queue_overview.length) {
-            // we build queue_overview only once; on bot detail, we spare this block
-            queue_overview = bot_info;
-        }
     }
+
+    if (!queue_overview.fetched) {
+        // we build queue_overview only once; on bot detail, we spare this block
+        queue_overview = bot_info;
+    }
+
     if (bot_id !== ALL_BOTS) {
         bot_info = bot_queues[bot_id];
     }
@@ -378,7 +381,7 @@ function refresh_configuration_info(bot_id) {
         for (let path in node.parameters.destination_queues) {
             if (path !== '_default') {
                 for (let to of node.parameters.destination_queues[path]) {
-                    path_names[`${to}-queue`] = path;
+                    path_names[to] = path;
                 }
             }
         }
