@@ -372,20 +372,14 @@ function refresh_configuration_info(bot_id) {
     // search for named queue paths
     path_names = {};
 
-    if (bot_id === ALL_BOTS) {
-        for (let node of Object.values(app.nodes)) {
-            for (let path in node.parameters.destination_queues) {
-                if (path !== '_default') {
-                    for (let to of node.parameters.destination_queues[path]) {
-                        path_names[`${to}-queue`] = path;
-                    }
-                }
-            }
-        }
-    } else {
-        for (let path in app.nodes[bot_id].parameters.destination_queues) {
+    let bots = bot_id === ALL_BOTS ? Object.values(app.nodes) : [app.nodes[bot_id]];
+
+    for (let node of bots) {
+        for (let path in node.parameters.destination_queues) {
             if (path !== '_default') {
-                path_names[`${to}-queue`] = path;
+                for (let to of node.parameters.destination_queues[path]) {
+                    path_names[`${to}-queue`] = path;
+                }
             }
         }
     }
