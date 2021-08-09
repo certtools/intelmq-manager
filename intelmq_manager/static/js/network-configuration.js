@@ -125,7 +125,7 @@ var NETWORK_OPTIONS = {
                 }
             }
 
-            if (occupied_values) {
+            if (occupied_values.size) {
                 while(occupied_values.has(roundness)) {
                     roundness += 0.3;
                 }
@@ -138,7 +138,7 @@ var NETWORK_OPTIONS = {
             let available_neighbor = false;
 
             if (neighbors.includes(group_to)) {
-                data.id = to_edge_id(data.from, data.to, data.path);
+                data.id = edge_id;
                 callback(data);
                 available_neighbor = true;
                 let cautious = CAUTIOUS_NEIGHBORS[group_from] ?? [];
@@ -275,6 +275,9 @@ function remove_edge(from, to, path) {
 }
 
 function add_edge(from, to, path) {
+    if (!to.endsWith('-queue')) {
+        to += '-queue';
+    }
     let queues = app.nodes[from].parameters.destination_queues;
     let queue = path in queues ? queues[path] : (queues[path] = []);
     queue.push(to);
