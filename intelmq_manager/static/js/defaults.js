@@ -33,6 +33,10 @@ function get_reverse_connections(dest_bot_id) {
     let out = [];
 
     let dest_bot = app.nodes[dest_bot_id];
+    if (dest_bot === undefined) {
+        // for example for newly configured bots
+        return out;
+    }
     let reverse_allowed_neighbors = Object.entries(ACCEPTED_NEIGHBORS).filter(pair => pair[1].includes(dest_bot.group)).map(pair => pair[0]);
 
     for (let src_bot of Object.values(app.nodes)) {
