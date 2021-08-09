@@ -111,10 +111,11 @@ var NETWORK_OPTIONS = {
             let occupied_values = new Set(); // prevent edges from overlapping
             let roundness = 0;
 
+            let edge_id = to_edge_id(data.from, data.to, data.path);
             let source_paths = app.nodes[data.from].parameters.destination_queues;
             for (let path_id in source_paths) {
                 if (source_paths[path_id].includes(`${data.to}-queue`)) {
-                    let smooth = app.network_data.edges.get(index).smooth;
+                    let smooth = app.network_data.edges.get(edge_id).smooth;
                     occupied_values.add(smooth ? smooth.roundness : 0);
 
                     if(path_id === data.path) {
@@ -165,7 +166,7 @@ var NETWORK_OPTIONS = {
         deleteEdge: function (data, callback) {
             let [from, to, path] = from_edge_id(data.edges[0]);
             let queue = app.nodes[from].parameters.destination_queues[path];
-            remove_edge(from, to.replace(/-queue$/, ''), path);
+            remove_edge(from, to, path);
 
             $saveButton.blinking(from);
             callback(data);
@@ -204,7 +205,7 @@ function editPath(app, edge, adding=false) {
         $saveButton.blinking();
     }).on("hide.bs.modal", () => {
         let from_queues = app.nodes[from].parameters.destination_queues[new_path] ?? [];
-        let duplicate_edge = from_queues.includes(`${to}-queue`);
+        let duplicate_edge = from_queues.includes(to);
 
         if (duplicate_edge) {
             if (ok_clicked) {
@@ -222,10 +223,10 @@ function editPath(app, edge, adding=false) {
             let new_id = to_edge_id(from, to, new_path);
 
             remove_edge(from, to, original_path);
-            app.network_data.edges.remove({"id": edge});
+            app.network_data.edges.remove({id: edge});
 
             add_edge(from, to, new_path);
-            app.network_data.edges.add({"id": new_id, "from": from, "to": to, "label": nondefault_new_path});
+            app.network_data.edges.add({id: new_id, from, to: to.replace(/-queue$/, ''), label: nondefault_new_path});
         }
     });
 }
@@ -265,7 +266,7 @@ function duplicateNode(app, bot) {
 function remove_edge(from, to, path) {
     let queues = app.nodes[from].parameters.destination_queues;
     let queue = queues[path];
-    let to_index = queue.indexOf(`${to}-queue`);
+    let to_index = queue.indexOf(to);
     if (to_index !== -1)
         queue.splice(to_index, 1);
 
@@ -276,5 +277,5 @@ function remove_edge(from, to, path) {
 function add_edge(from, to, path) {
     let queues = app.nodes[from].parameters.destination_queues;
     let queue = path in queues ? queues[path] : (queues[path] = []);
-    queue.push(`${to}-queue`);
+    queue.push(to);
 }
