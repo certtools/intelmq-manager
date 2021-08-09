@@ -11,25 +11,12 @@ from mako.lookup import TemplateLookup
 
 from intelmq_manager.version import __version__
 
-def render_page(pagename: str) -> str:
-    template_dir = pathlib.Path("intelmq_manager/templates")
-    template_lookup = TemplateLookup(directories=[template_dir], default_filters=["h"])
-    template = template_lookup.get_template(f'{pagename}.mako')
-    controller_cmd = "intelmq"
-    allowed_path = "/opt/intelmq/var/lib/bots/"
-    return template.render(pagename=pagename,
-            controller_cmd=controller_cmd,
-            allowed_path=allowed_path)
-
-def render_dynvar(allowed_path: str) -> str:
+def render_page(pagename:str, **template_args) -> str:
     template_dir = pathlib.Path('intelmq_manager/templates')
-    template_lookup = TemplateLookup(directories=[template_dir], default_filters=["h"])
-    template = template_lookup.get_template('dynvar.mako')
+    template_lookup = TemplateLookup(directories=[template_dir], default_filters=["h"], input_encoding='utf8')
+    template = template_lookup.get_template(f'{pagename}.mako')
 
-    return template.render(
-        allowed_path='/opt/intelmq/var/lib/bots/',
-        controller_cmd='intelmq',
-    )
+    return template.render(pagename=pagename, **template_args)
 
 def buildhtml():
     outputdir = pathlib.Path('html')
@@ -51,7 +38,7 @@ def buildhtml():
         shutil.copytree(src, dst)
 
     print('rendering dynvar.js')
-    rendered = render_dynvar('/opt/intelmq/var/lib/bots/')
+    rendered = render_page('dynvar', allowed_path='/opt/intelmq/var/lib/bots/', controller_cmd='intelmq')
     outputdir.joinpath('js/dynvar.js').write_text(rendered)
 
 # Before running setup, we build the html files in any case
