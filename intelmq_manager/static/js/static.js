@@ -121,7 +121,11 @@ $(function () {
     $("#log-window [role=close]").click(closeFn);
 });
 
-function show_error(string) {
+function show_error(string, permit_html=false) {
+    if (!permit_html) {
+        string = escape_html(string);
+    }
+
     let d = new Date();
     let time = new Date().toLocaleTimeString().replace(/:\d+ /, ' ');
     let $lwc = $("#log-window .contents");
@@ -169,12 +173,12 @@ function ajax_fail_callback(str) {
         let command = "", tip = "", report = "";
         try {
             let data = JSON.parse(jqXHR.responseText);
-            report = data.message.replace(/(?:\r\n|\r|\n)/g, '<br>');
-            command = ` <span class='command'>${data.command}</span>`;
+            report = data.message;
+            command = ` <span class='command'>${escape_html(data.command)}</span>`;
             if (data.tip && !lw_tips.has(data.tip)) {
                 // display the tip if not yet displayed on the screen
                 lw_tips.add(data.tip);
-                tip = ` <div class='alert alert-info'>TIP: ${data.ip}</div>`;
+                tip = ` <div class='alert alert-info'>TIP: ${escape_html(data.ip)}</div>`;
             }
             if (message === "Internal Server Error") {
                 message = ""; // this is expected since we generated this in PHP when an error was spot, ignore
@@ -185,9 +189,11 @@ function ajax_fail_callback(str) {
         if (report) {
             // include full report but truncate the length to 2000 chars
             // (since '.' is not matching newline characters, we're using '[\s\S]' so that even multiline string is shortened)
-            report = " <b>{0}</b>".format(report.replace(/^(.{2000})[\s\S]+/, "$1..."));
+            let report_text = escape_html(report.replace(/^(.{2000})[\s\S]+/, "$1..."));
+            report_text = report_text.replace(/(?:\r\n|\r|\n)/g, '<br>');
+            report = ` <b>${report_text}</b>`;
         }
-        show_error(`${str}:${report}${command}${tip} ${message}`);
+        show_error(`${str}:${report}${command}${tip} ${escape_html(message)}`, true);
     };
 }
 
@@ -427,8 +433,8 @@ function accesskeyfie() {
         seen.add(key);
         $(this).attr("accesskey", key);
         // add underscore to the accesskeyed letter if possible (can work badly with elements having nested DOM children)
-        let t1 = $(this).text()
-        let t2 = t1.replace(new RegExp(key, "i"), (match) => `<u>${match}</u>`)
+        let t1 = $(this).text();
+        let t2 = t1.replace(new RegExp(key, "i"), match => `<u>${escape_html(match)}</u>`);
         if (t1 != t2) {
             $(this).html(t2);
         }
@@ -536,4 +542,20 @@ function updateLoginStatus() {
         loginButton.style.removeProperty("display");
         logoutButton.style.display = "none";
     }
+}
+
+var html_characters = [
+        ['&', '&amp;'],
+        ['<', '&lt;'],
+        ['>', '&gt;'],
+        ['"', '&quot;'],
+        ["'", "&#39;"],
+];
+
+function escape_html(text) {
+    for (let [character, replacement] of html_characters) {
+        text = text.replaceAll(character, replacement);
+    }
+
+    return text;
 }

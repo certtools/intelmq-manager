@@ -28,13 +28,7 @@ $('#log-table').dataTable({
     pageLength: 10,
     order: [0, 'desc'],
     autoWidth: false,
-    columns: [
-        {"data": "date"},
-        {"data": "bot_id"},
-        {"data": "log_level"},
-        {"data": "message"},
-        {"data": "actions"}
-    ]
+    columns: ['date', 'bot_id', 'log_level', 'message', 'actions'].map(data => { return {data};})
 });
 
 window.onresize = redraw;
@@ -71,14 +65,12 @@ function redraw_logs() {
         let has_button = false;
 
         if (log_row.extended_message) {
-            buttons_cell = '' +
-                    '<button type="submit" class="btn btn-default btn-xs" data-toggle="modal" data-target="#extended-message-modal" id="button-extended-message-' + index + '"><span class="glyphicon glyphicon-plus"></span></button>';
+            buttons_cell = `<button type="submit" class="btn btn-default btn-xs" data-toggle="modal" data-target="#extended-message-modal" id="button-extended-message-${index}"><span class="glyphicon glyphicon-plus"></span></button>`;
             has_button = true;
             log_row.actions = buttons_cell;
         } else if (log_row.message.length > MESSAGE_LENGTH) {
             log_row.message = log_row.message.slice(0, MESSAGE_LENGTH) + '<strong>...</strong>';
-            buttons_cell = '' +
-                    '<button type="submit" class="btn btn-default btn-xs" data-toggle="modal" data-target="#extended-message-modal" id="button-extended-message-' + index + '"><span class="glyphicon glyphicon-plus"></span></button>';
+            buttons_cell = `<button type="submit" class="btn btn-default btn-xs" data-toggle="modal" data-target="#extended-message-modal" id="button-extended-message-${index}"><span class="glyphicon glyphicon-plus"></span></button>`;
             has_button = true;
             log_row.actions = buttons_cell;
         } else {
@@ -288,7 +280,7 @@ function select_bot(bot_id, history_push = false) {
         reload_logs.stop();
     }
 
-    $('#monitor-target').html(bot_id);
+    $('#monitor-target').text(bot_id);
 
     load_bot_queues();
 
@@ -301,7 +293,7 @@ function select_bot(bot_id, history_push = false) {
         $("#internal-queue-table-div").css('display', 'block');
         //$("#destination-queues-table").removeClass('highlightHovering');
         $("#destination-queues-table-div").removeClass().addClass('col-md-4'); // however, will be reset in refresh_path_names
-        $("#destination-queue-header").html("Destination Queues");
+        $("#destination-queue-header").text("Destination Queues");
 
         load_bot_log();
         reload_logs = new Interval(load_bot_log, RELOAD_LOGS_EVERY * 1000, true);
@@ -311,7 +303,7 @@ function select_bot(bot_id, history_push = false) {
         $("#inspect-panel .panel-heading").prepend(generate_control_buttons(bot_id, false, load_bot_log, true));
 
         // connect to configuration panel
-        $('#monitor-target').append(` <a title="show in configuration" href="configs.html#${bot_id}"><img src="./images/config.png" width="24" height="24" /></a>`);
+        $('#monitor-target').append(` <a title="show in configuration" href="configs.html#${escape(bot_id)}"><img src="./images/config.png" width="24" height="24" /></a>`);
 
     } else {
         $("#logs-panel, #inspect-panel, #parameters-panel").css('display', 'none');
@@ -319,7 +311,7 @@ function select_bot(bot_id, history_push = false) {
         $("#internal-queue-table-div").css('display', 'none');
         //$("#destination-queues-table").addClass('highlightHovering');
         $("#destination-queues-table-div").removeClass().addClass('col-md-12');
-        $("#destination-queue-header").html("Queue");
+        $("#destination-queue-header").text("Queue");
     }
     // refresh additional information
     refresh_configuration_info(bot_id);
@@ -357,7 +349,7 @@ function refresh_path_names() {
     $("tr td:first-child", $dq).each(function () {
         let path = path_names[$(this).text()] || null;
         let $el = $(this).next("td");
-        $el.html(path || "_default");
+        $el.text(path || "_default");
         if (!path) {
             $el.css({"color": "gray", "font-style": "italic"});
         }
@@ -408,25 +400,24 @@ function refresh_configuration_info(bot_id) {
         return;
     }
     let params = app.nodes[bot_id].parameters;
-    for (let key in params) {
-        let param = params[key];
-        if (param !== null && typeof value === "object") { // display json/list instead of "[Object object]"
+    for (let [key, param] of Object.entries(params)) {
+        if (typeof param !== 'string') { // display json/list instead of "[Object object]"
             param = JSON.stringify(param);
         }
-        let $el = $(`<li><b>${key}</b>: ${param}</li>`);
+        let $el = $(`<li><b>${escape_html(key)}</b>: ${escape_html(param)}</li>`);
         if (param && param.indexOf && param.indexOf(ALLOWED_PATH) === 0) {
             let url = LOAD_CONFIG_SCRIPT + "?file=" + param;
             authenticatedGetJson(url, (data) => {
                 let html = "";
                 if (data.directory) {
-                    html += `<h3>Directory ${data.directory}</h3>`;
+                    html += `<h3>Directory ${escape_html(data.directory)}</h3>`;
                 }
 
                 for (let file in data.files) {
-                    let size = data.files[file].size ? `<a data-role=fetchlink href='${LOAD_CONFIG_SCRIPT}?fetch=1&file=${data.files[file].path}'>fetch ${data.files[file].size} B</a>` : "";
+                    let size = data.files[file].size ? `<a data-role=fetchlink href='${LOAD_CONFIG_SCRIPT}?fetch=1&file=${escape_html(data.files[file].path)}'>fetch ${escape_html(data.files[file].size)} B</a>` : "";
                     html += `<h4>File ${file}</h4>${size}`;
                     if (data.files[file].contents) {
-                        html += `<pre>${data.files[file].contents}</pre>`;
+                        html += `<pre>${escape_html(data.files[file].contents)}</pre>`;
                     }
                 }
                 $("<div/>", {html: html}).appendTo($el);
@@ -435,7 +426,7 @@ function refresh_configuration_info(bot_id) {
         $el.appendTo($panel);
     }
     if (!Object.keys(params).length) {
-        $panel.html("No parameters.");
+        $panel.text("No parameters.");
     }
 }
 $("#parameters-panel").on("click", "a[data-role=fetchlink]", function () {
@@ -544,8 +535,8 @@ document.addEventListener('DOMContentLoaded', function () {
  */
 function run_command(display_cmd, cmd, msg = "", dry = false, show = false) {
     let bot_id = getUrlParameter('bot_id') || ALL_BOTS;
-    let tmp = msg ? "'" + msg.replace("'", "'\\''") + "'" : "";
-    $("#command-show").show().html(`${CONTROLLER_CMD} run {bot_id} {display_cmd} {tmp}`); //XX dry are not syntax-correct
+    let tmp = msg ? "'" + msg.replaceAll("'", "'\\''") + "'" : "";
+    $("#command-show").show().text(`${CONTROLLER_CMD} run ${bot_id} ${display_cmd} ${tmp}`); //XX dry are not syntax-correct
     $("#run-log").val("loading...");
     $('#inspect-panel-title').addClass('waiting');
     let call = authenticatedAjax({

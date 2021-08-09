@@ -120,7 +120,7 @@ function load_bots(config) {
                     if (found) {
                         fitNode(found);
                     } else {
-                        show_error("No instance of the {0} found. Drag the label to the plan to create one.".format(bot_name));
+                        show_error(`No instance of the ${bot_name} found. Drag the label to the plan to create one.`);
                     }
                     return false;
                 })
@@ -639,7 +639,7 @@ function swapToDefaults(node, key) {
  */
 function popupModal(title, body, callback) {
     $el = $("#templates > .modal").clone().appendTo("body");
-    $(".modal-title", $el).html(title);
+    $(".modal-title", $el).text(title);
     $(".modal-body", $el).html(body);
     $el.modal({"keyboard": false}).on('shown.bs.modal', function () {
         if (($ee = $('input,textarea,button', $(".modal-body", this)).first())) {
@@ -968,7 +968,7 @@ function load_live_info() {
                     let label = (c > 0) ? "{0}\n{1}✉".format(bot, c) : bot;
                     let appbot = app.network_data.nodes.get(bot);
                     if (appbot === null) {
-                        show_error("Non-existent bot {0} in pipelines.".format(bot));
+                        show_error(`Non-existent bot ${bot} in pipelines.`);
                     } else if (label !== appbot.label) {
                         // update queue count on bot label
                         app.network_data.nodes.update({"id": bot, "label": label});
