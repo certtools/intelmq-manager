@@ -129,7 +129,7 @@ var NETWORK_OPTIONS = {
                 while(occupied_values.has(roundness)) {
                     roundness += 0.3;
                 }
-                data.smooth = {'type': 'curvedCCW', 'roundness': roundness};
+                data.smooth = {type: 'curvedCCW', roundness};
             }
 
             let group_from = app.nodes[data.from].group;
@@ -149,9 +149,9 @@ var NETWORK_OPTIONS = {
 
             if (!available_neighbor) {
                 if (neighbors.length === 0) {
-                    show_error("Node type " + group_from + " can't connect to other nodes");
+                    show_error(`Node type ${group_from} can't connect to other nodes`);
                 } else {
-                    show_error('Node type ' + group_from + ' can only connect to nodes of types: ' + neighbors.join());
+                    show_error(`Node type ${group_from} can only connect to nodes of types: ${neighbors.join()}`);
                 }
                 return;
             }
@@ -193,7 +193,7 @@ function editPath(app, edge, adding=false) {
     let nondefault_path = original_path === '_default' ? undefined : original_path;
     let new_path, nondefault_new_path;
 
-    let $input = $("<input/>", {"placeholder": "_default", "val": nondefault_path});
+    let $input = $("<input/>", {placeholder: "_default", val: nondefault_path});
     popupModal("Set the edge name", $input, () => {
         let in_val = $input.val();
         [new_path, nondefault_new_path] = (in_val && in_val !== '_default') ? [in_val, in_val] : ['_default', undefined];
@@ -235,31 +235,28 @@ function editPath(app, edge, adding=false) {
  * As this is not a standard-vis function, it has to be a separate method.
  */
 function duplicateNode(app, bot) {
-    let i = 2;
-    //reserve a new unique name
-    let newbie = "{0}-{1}".format(bot, i);
-    while (newbie in app.nodes) {
-        newbie = "{0}-{1}".format(bot, ++i);
-    }
+    let new_id = gen_new_id(bot);
+
     // deep copy old bot information
-    app.nodes[newbie] = $.extend(true, {}, app.nodes[bot]);
-    app.nodes[newbie].id = newbie;
+    let node = $.extend(true, {}, app.nodes[bot]);
+    node.id = new_id;
+    node.bot_id = new_id;
+    app.nodes[new_id] = node;
     // add to the Vis and focus
-    app.network_data.nodes.add(convert_nodes([app.nodes[newbie]]));
-    for (let id of app.network.getConnectedEdges(bot)) {
-        let edge = app.network_data.edges.get(id);
+    app.network_data.nodes.add(convert_nodes([node]));
+    for (let edge of app.network.getConnectedEdges(bot).map(edge => app.network_data.edges.get(edge))) {
         delete edge.id;
         if (edge.from === bot) {
-            edge.from = newbie;
+            edge.from = new_id;
         }
         if (edge.to === bot) {
-            edge.to = newbie;
+            edge.to = new_id;
         }
         app.network_data.edges.add(edge);
     }
 
-    app.network.selectNodes([newbie]);
-    app.network.focus(newbie);
+    app.network.selectNodes([new_id]);
+    app.network.focus(new_id);
     $saveButton.blinking();
 }
 

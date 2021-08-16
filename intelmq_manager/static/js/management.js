@@ -12,11 +12,7 @@ var reload_interval;
 $('#bot-table').dataTable({
     lengthMenu: [[5, 10, 25, -1], [5, 10, 25, "All"]],
     pageLength: -1,
-    columns: [
-        {"data": "bot_id"},
-        {"data": "bot_status"},
-        {"data": "actions"}
-    ],
+    columns: ['bot_id', 'bot_status', 'actions'].map(data => {return {data}}),
     createdRow: (row, data) => $("td:eq(2)", row).append(generate_control_buttons(data.bot_id, false, refresh_status)),
 
 });
@@ -71,11 +67,11 @@ function refresh_status(bot, finished) {
             }
         } else {
             $bt.dataTable().api().row.add({
-                'bot_id': bot_id,
-                'bot_status': status,
-                'actions': "",
-                'DT_RowClass': class_,
-                "DT_RowAttr": {"data-bot-id": bot_id}
+                bot_id,
+                bot_status: status,
+                actions: "",
+                DT_RowClass: class_,
+                DT_RowAttr: {"data-bot-id": bot_id}
             });
             redraw_table = true;
         }

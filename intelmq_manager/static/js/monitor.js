@@ -69,7 +69,7 @@ function redraw_logs() {
             has_button = true;
             log_row.actions = buttons_cell;
         } else if (log_row.message.length > MESSAGE_LENGTH) {
-            log_row.message = log_row.message.slice(0, MESSAGE_LENGTH) + '<strong>...</strong>';
+            log_row.message = `${escape_html(log_row.message.slice(0, MESSAGE_LENGTH))}<strong>...</strong>`;
             buttons_cell = `<button type="submit" class="btn btn-default btn-xs" data-toggle="modal" data-target="#extended-message-modal" id="button-extended-message-${index}"><span class="glyphicon glyphicon-plus"></span></button>`;
             has_button = true;
             log_row.actions = buttons_cell;
@@ -84,7 +84,7 @@ function redraw_logs() {
         $('#log-table').dataTable().fnAddData(log_row);
         if (has_button) {
             extended_message_func = message_index => show_extended_message(message_index);
-            document.getElementById('button-extended-message-' + index).addEventListener('click', function (index) {
+            document.getElementById(`button-extended-message-${index}`).addEventListener('click', function (index) {
                 return function () {
                     extended_message_func(index)
                 }
@@ -162,7 +162,7 @@ function redraw_queues() {
             cell1.innerText = bot_info.internal_queue;
 
             let buttons_cell = internal_queue.insertCell(2);
-            buttons_cell.appendChild(generateClearQueueButton(bot_id + '-queue-internal'));
+            buttons_cell.appendChild(generateClearQueueButton(`${bot_id}-queue-internal`));
         }
 
         let dst_queues = Object.values(bot_info.destination_queues).sort();
@@ -217,12 +217,12 @@ function generateClearQueueButton(queue_id) {
 }
 
 function clearQueue(queue_id) {
-    authenticatedGetJson(managementUrl('clear', 'id=' + queue_id))
+    authenticatedGetJson(managementUrl('clear', `id=${queue_id}`))
             .done(function (data) {
                 redraw_queues();
                 $('#queues-panel-title').removeClass('waiting');
             })
-            .fail(ajax_fail_callback('Error clearing queue ' + queue_id));
+            .fail(ajax_fail_callback(`Error clearing queue ${queue_id}`));
 }
 
 function load_bot_log() {
@@ -240,7 +240,7 @@ function load_bot_log() {
     // reason, the client (at least the Firefox versions I tested) did
     // not even try to fetch the URL in the latter case. Switching from
     // "log" to "getlog" made it work.
-    authenticatedGetJson(managementUrl('getlog', 'id=' + bot_id + '&lines=' + number_of_lines + '&level=' + level))
+    authenticatedGetJson(managementUrl('getlog', `id=${bot_id}&lines=${number_of_lines}&level=${level}`))
             .done(function (data) {
                 if(JSON.stringify(data) != JSON.stringify(bot_logs)) { // redraw only if content changed
                     bot_logs = data;
@@ -354,7 +354,7 @@ function refresh_path_names() {
         let $el = $(this).next("td");
         $el.text(path || "_default");
         if (!path) {
-            $el.css({"color": "gray", "font-style": "italic"});
+            $el.css({color: "gray", "font-style": "italic"});
         }
     });
 }
@@ -403,8 +403,8 @@ function refresh_configuration_info(bot_id) {
         }
         let $el = $(`<li><b>${escape_html(key)}</b>: ${escape_html(param)}</li>`);
         if (param && param.indexOf && param.indexOf(ALLOWED_PATH) === 0) {
-            let url = LOAD_CONFIG_SCRIPT + "?file=" + param;
-            authenticatedGetJson(url, (data) => {
+            let url = `${LOAD_CONFIG_SCRIPT}?file=${param}`;
+            authenticatedGetJson(url, data => {
                 let html = "";
                 if (data.directory) {
                     html += `<h3>Directory ${escape_html(data.directory)}</h3>`;
@@ -427,8 +427,8 @@ function refresh_configuration_info(bot_id) {
     }
 }
 $("#parameters-panel").on("click", "a[data-role=fetchlink]", function () {
-    $.get($(this).attr("href"), (data) => {
-        $(this).after("<pre>" + data + "</pre>").remove();
+    $.get($(this).attr("href"), data => {
+        $(this).after(`<pre>${escape_html(data)}</pre>`).remove();
     });
     return false;
 });
@@ -462,7 +462,7 @@ authenticatedGetJson(managementUrl('botnet', 'action=status'))
             let li_element = document.createElement('li');
             let link_element = document.createElement('a');
             link_element.innerText = ALL_BOTS;
-            link_element.setAttribute('href', "#" + MONITOR_BOT_URL.format(ALL_BOTS));
+            link_element.setAttribute('href', `#${MONITOR_BOT_URL.format(ALL_BOTS)}`);
             link_element.addEventListener('click', select_bot_func(ALL_BOTS));
 
             li_element.appendChild(link_element);
@@ -480,7 +480,7 @@ authenticatedGetJson(managementUrl('botnet', 'action=status'))
                 link_element = document.createElement('a');
 
                 link_element.innerText = bot_id;
-                link_element.setAttribute('href', "#" + MONITOR_BOT_URL.format(bot_id));
+                link_element.setAttribute('href', `#${MONITOR_BOT_URL.format(bot_id)}`);
                 link_element.addEventListener('click', select_bot_func(bot_id));
 
                 li_element.appendChild(link_element);
@@ -532,7 +532,7 @@ document.addEventListener('DOMContentLoaded', function () {
  */
 function run_command(display_cmd, cmd, msg = "", dry = false, show = false) {
     let bot_id = getUrlParameter('bot_id') || ALL_BOTS;
-    let tmp = msg ? "'" + msg.replaceAll("'", "'\\''") + "'" : "";
+    let tmp = msg ? `'${msg.replaceAll("'", "'\\''")}'` : "";
     $("#command-show").show().text(`${CONTROLLER_CMD} run ${bot_id} ${display_cmd} ${tmp}`); //XX dry are not syntax-correct
     $("#run-log").val("loading...");
     $('#inspect-panel-title').addClass('waiting');

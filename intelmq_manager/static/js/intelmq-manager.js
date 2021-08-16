@@ -16,7 +16,7 @@
 'use strict';
 
 var arr = window.location.href.split('/');
-var ROOT = ROOT ?? arr[0] + '//' + arr[2] + '/intelmq';
+var ROOT = ROOT ?? `${arr[0]}//${arr[2]}/intelmq`;
 
 /*
  * If there are multiple versions of the API, they can be defined here
