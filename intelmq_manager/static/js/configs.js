@@ -412,7 +412,7 @@ function insertKeyValue(key, value, section, allowXButtons, insertAt) {
         xButtonSpan.setAttribute('class', 'glyphicon glyphicon-remove-circle');
         xButton.setAttribute('class', 'btn btn-danger');
         xButton.setAttribute('title', 'delete parameter');
-        xButton.addEventListener('click', (deleteParameter, key) => () => parameter_func(deleteParameter, key));
+        xButton.addEventListener('click', () => parameter_func(deleteParameter, key));
 
         xButton.appendChild(xButtonSpan);
         xButtonCell.appendChild(xButton);
