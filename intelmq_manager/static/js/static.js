@@ -11,6 +11,15 @@ var ACCEPTED_NEIGHBORS = {
     Expert: ['Parser', 'Expert', 'Output'],
     Output: []
 }
+
+var REVERSE_ACCEPTED_NEIGHBORS = Object.fromEntries(Object.keys(ACCEPTED_NEIGHBORS).map(key => [key, []]));
+
+for (let [from, to_list] of Object.entries(ACCEPTED_NEIGHBORS)) {
+    for (let to of to_list) {
+        REVERSE_ACCEPTED_NEIGHBORS[to].push(from);
+    }
+}
+
 var CAUTIOUS_NEIGHBORS = {
     Collector: ['Expert'],
     Expert: ['Parser']
@@ -146,7 +155,7 @@ function show_error(string, permit_html=false) {
             });
             // increment 'seen' counter
             let counter = parseInt($("span:eq(1)", $(this)).text()) || 1;
-            $("span:eq(1)", $(this)).text(counter + 1 + "×");
+            $("span:eq(1)", $(this)).text(`${counter + 1}×`);
             return false;
         }
     });
@@ -163,7 +172,7 @@ function ajax_fail_callback(str) {
     return function (jqXHR, textStatus, message) {
         if (textStatus === "timeout") {
             // this is just a timeout, no other info needed
-            show_error(str + " timeout");
+            show_error(`${str} timeout`);
             return;
         }
         if (jqXHR.status === 0) { // page refreshed before ajax finished
@@ -410,8 +419,8 @@ function generate_control_buttons(bot = null, botnet = null, callback_fn = null,
  */
 function getUrlParameter(sParam) {
     let sPageURL = decodeURIComponent(window.location.search.substring(1)), sURLVariables = sPageURL.split('&'), sParameterName, i;
-    for (i = 0; i < sURLVariables.length; i++) {
-        sParameterName = sURLVariables[i].split('=');
+    for (let i = 0; i < sURLVariables.length; i++) {
+        let sParameterName = sURLVariables[i].split('=');
         if (sParameterName[0] === sParam) {
             return sParameterName[1] === undefined ? true : sParameterName[1];
         }
@@ -425,7 +434,7 @@ function getUrlParameter(sParam) {
 function accesskeyfie() {
     let seen = new Set();
     $("[data-accesskey]").attr("accesskey", ""); // reset all accesskeys. In Chrome, there might be only one accesskey 'e' on page.
-    $("[data-accesskey]:visible").each(function () {
+    $("[data-accesskey]:visible").each(() => {
         let key = $(this).attr("data-accesskey");
         if (seen.has(key)) {
             return false; // already defined at current page state
@@ -462,7 +471,7 @@ function managementUrl(cmd, params) {
 function authenticatedGetJson(url) {
     return authenticatedAjax({
         dataType: "json",
-        url: url,
+        url,
     });
 }
 
@@ -470,7 +479,7 @@ function authenticatedAjax(settings) {
     let token = sessionStorage.getItem("login_token");
     if (token !== null) {
         settings.headers = {
-            "Authorization": token
+            Authorization: token
         };
     }
     return $.ajax(settings);
@@ -489,8 +498,8 @@ $(document).ready(function() {
             url: managementUrl("login"),
             // Specifies exactly which data is sent.
             data: {
-                "username": $('#loginForm #username').val(),
-                "password": $('#loginForm #password').val(),
+                username: $('#loginForm #username').val(),
+                password: $('#loginForm #password').val(),
             },
             // Specifies which formart is expected as response.
             dataType: "json",
@@ -534,7 +543,7 @@ function updateLoginStatus() {
     let logoutButton = document.getElementById('logOut');
     let username = sessionStorage.getItem("username");
     if (username !== null) {
-        status.textContent = "Logged in as: " + username;
+        status.textContent = `Logged in as: ${username}`;
         loginButton.style.display = "none";
         logoutButton.style.removeProperty("display");
     } else {
@@ -553,9 +562,5 @@ var html_characters = [
 ];
 
 function escape_html(text) {
-    for (let [character, replacement] of html_characters) {
-        text = text.replaceAll(character, replacement);
-    }
-
-    return text;
+    return html_characters.reduce((s, [character, replacement]) => s.replaceAll(character, replacement), text);
 }
