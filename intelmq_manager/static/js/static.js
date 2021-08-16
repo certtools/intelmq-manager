@@ -202,6 +202,11 @@ function ajax_fail_callback(str) {
             report_text = report_text.replace(/(?:\r\n|\r|\n)/g, '<br>');
             report = ` <b>${report_text}</b>`;
         }
+
+        if (typeof message === 'object') {
+            message = JSON.stringify(message);
+        }
+
         show_error(`${str}:${report}${command}${tip} ${escape_html(message)}`, true);
     };
 }
