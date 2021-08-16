@@ -23,7 +23,7 @@
 
 <div id="network-popUp" class="without-bot">
     <span id="network-popUp-title">node</span>
-    <a id="documentationButton" class="btn btn-default" title="open documentation" href="">
+    <a id="documentationButton" class="btn btn-default" title="open documentation" href="" target="_blank">
 	<span class="glyphicon glyphicon-question-sign"></span>
     </a>
     <table id="network-popUp-fields" class="table table-striped" style="margin:auto;">
