@@ -22,11 +22,3 @@ function read_positions_conf(config) {
     }
     return config;
 }
-
-function getNodeData(data) {
-    var networkNodes = [];
-
-    data.forEach((elem, index, array) => networkNodes.push({id: elem.id, label: elem.id, x: elem.x, y: elem.y}));
-
-    return networkNodes;
-}

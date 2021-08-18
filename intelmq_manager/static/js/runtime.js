@@ -53,6 +53,7 @@ function read_runtime_conf(config) {
 }
 
 function load_file(url, callback) {
+    let escaped_url = escape_html(url);
     authenticatedGetJson(url)
             .done(function (json) {
                 try {
@@ -61,12 +62,12 @@ function load_file(url, callback) {
                 catch(e) {
                     // don't bother to display error, I think the problem will be clearly seen with the resource itself, not within the processing
                     console.log(e);
-                    show_error('Failed to load config file properly <a class="command" href="{0}">{1}</a>.'.format(url, url));
+                    show_error(`Failed to load config file properly <a class="command" href="${escaped_url}">${escaped_url}</a>.`, true);
                 }
             })
             .fail(function (jqxhr, textStatus, error) {
-                let err = `${textStatus}, ${error}`;
-                show_error('Get an error <b>{0}</b> when trying to obtain config file properly <a class="command" href="{1}">{2}</a>.'.format(err, url, url));
+                let err = escape_html(`${textStatus}, ${error}`);
+                show_error(`Get an error <b>${err}</b> when trying to obtain config file properly <a class="command" href="${escaped_url}">${escaped_url}</a>.`, true);
                 callback({});
             });
 }

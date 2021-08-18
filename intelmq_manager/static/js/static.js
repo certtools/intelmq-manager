@@ -11,6 +11,15 @@ var ACCEPTED_NEIGHBORS = {
     Expert: ['Parser', 'Expert', 'Output'],
     Output: []
 }
+
+var REVERSE_ACCEPTED_NEIGHBORS = Object.fromEntries(Object.keys(ACCEPTED_NEIGHBORS).map(key => [key, []]));
+
+for (let [from, to_list] of Object.entries(ACCEPTED_NEIGHBORS)) {
+    for (let to of to_list) {
+        REVERSE_ACCEPTED_NEIGHBORS[to].push(from);
+    }
+}
+
 var CAUTIOUS_NEIGHBORS = {
     Collector: ['Expert'],
     Expert: ['Parser']
@@ -121,7 +130,11 @@ $(function () {
     $("#log-window [role=close]").click(closeFn);
 });
 
-function show_error(string) {
+function show_error(string, permit_html=false) {
+    if (!permit_html) {
+        string = escape_html(string);
+    }
+
     let d = new Date();
     let time = new Date().toLocaleTimeString().replace(/:\d+ /, ' ');
     let $lwc = $("#log-window .contents");
@@ -142,7 +155,7 @@ function show_error(string) {
             });
             // increment 'seen' counter
             let counter = parseInt($("span:eq(1)", $(this)).text()) || 1;
-            $("span:eq(1)", $(this)).text(counter + 1 + "×");
+            $("span:eq(1)", $(this)).text(`${counter + 1}×`);
             return false;
         }
     });
@@ -159,7 +172,7 @@ function ajax_fail_callback(str) {
     return function (jqXHR, textStatus, message) {
         if (textStatus === "timeout") {
             // this is just a timeout, no other info needed
-            show_error(str + " timeout");
+            show_error(`${str} timeout`);
             return;
         }
         if (jqXHR.status === 0) { // page refreshed before ajax finished
@@ -169,12 +182,12 @@ function ajax_fail_callback(str) {
         let command = "", tip = "", report = "";
         try {
             let data = JSON.parse(jqXHR.responseText);
-            report = data.message.replace(/(?:\r\n|\r|\n)/g, '<br>');
-            command = ` <span class='command'>${data.command}</span>`;
+            report = data.message;
+            command = ` <span class='command'>${escape_html(data.command)}</span>`;
             if (data.tip && !lw_tips.has(data.tip)) {
                 // display the tip if not yet displayed on the screen
                 lw_tips.add(data.tip);
-                tip = ` <div class='alert alert-info'>TIP: ${data.ip}</div>`;
+                tip = ` <div class='alert alert-info'>TIP: ${escape_html(data.ip)}</div>`;
             }
             if (message === "Internal Server Error") {
                 message = ""; // this is expected since we generated this in PHP when an error was spot, ignore
@@ -185,9 +198,16 @@ function ajax_fail_callback(str) {
         if (report) {
             // include full report but truncate the length to 2000 chars
             // (since '.' is not matching newline characters, we're using '[\s\S]' so that even multiline string is shortened)
-            report = " <b>{0}</b>".format(report.replace(/^(.{2000})[\s\S]+/, "$1..."));
+            let report_text = escape_html(report.replace(/^(.{2000})[\s\S]+/, "$1..."));
+            report_text = report_text.replace(/(?:\r\n|\r|\n)/g, '<br>');
+            report = ` <b>${report_text}</b>`;
         }
-        show_error(`${str}:${report}${command}${tip} ${message}`);
+
+        if (typeof message === 'object') {
+            message = JSON.stringify(message);
+        }
+
+        show_error(`${str}:${report}${command}${tip} ${escape_html(message)}`, true);
     };
 }
 
@@ -404,8 +424,8 @@ function generate_control_buttons(bot = null, botnet = null, callback_fn = null,
  */
 function getUrlParameter(sParam) {
     let sPageURL = decodeURIComponent(window.location.search.substring(1)), sURLVariables = sPageURL.split('&'), sParameterName, i;
-    for (i = 0; i < sURLVariables.length; i++) {
-        sParameterName = sURLVariables[i].split('=');
+    for (let i = 0; i < sURLVariables.length; i++) {
+        let sParameterName = sURLVariables[i].split('=');
         if (sParameterName[0] === sParam) {
             return sParameterName[1] === undefined ? true : sParameterName[1];
         }
@@ -419,7 +439,7 @@ function getUrlParameter(sParam) {
 function accesskeyfie() {
     let seen = new Set();
     $("[data-accesskey]").attr("accesskey", ""); // reset all accesskeys. In Chrome, there might be only one accesskey 'e' on page.
-    $("[data-accesskey]:visible").each(function () {
+    $("[data-accesskey]:visible").each(() => {
         let key = $(this).attr("data-accesskey");
         if (seen.has(key)) {
             return false; // already defined at current page state
@@ -427,8 +447,8 @@ function accesskeyfie() {
         seen.add(key);
         $(this).attr("accesskey", key);
         // add underscore to the accesskeyed letter if possible (can work badly with elements having nested DOM children)
-        let t1 = $(this).text()
-        let t2 = t1.replace(new RegExp(key, "i"), (match) => `<u>${match}</u>`)
+        let t1 = $(this).text();
+        let t2 = t1.replace(new RegExp(key, "i"), match => `<u>${escape_html(match)}</u>`);
         if (t1 != t2) {
             $(this).html(t2);
         }
@@ -456,7 +476,7 @@ function managementUrl(cmd, params) {
 function authenticatedGetJson(url) {
     return authenticatedAjax({
         dataType: "json",
-        url: url,
+        url,
     });
 }
 
@@ -464,7 +484,7 @@ function authenticatedAjax(settings) {
     let token = sessionStorage.getItem("login_token");
     if (token !== null) {
         settings.headers = {
-            "Authorization": token
+            Authorization: token
         };
     }
     return $.ajax(settings);
@@ -483,8 +503,8 @@ $(document).ready(function() {
             url: managementUrl("login"),
             // Specifies exactly which data is sent.
             data: {
-                "username": $('#loginForm #username').val(),
-                "password": $('#loginForm #password').val(),
+                username: $('#loginForm #username').val(),
+                password: $('#loginForm #password').val(),
             },
             // Specifies which formart is expected as response.
             dataType: "json",
@@ -528,7 +548,7 @@ function updateLoginStatus() {
     let logoutButton = document.getElementById('logOut');
     let username = sessionStorage.getItem("username");
     if (username !== null) {
-        status.textContent = "Logged in as: " + username;
+        status.textContent = `Logged in as: ${username}`;
         loginButton.style.display = "none";
         logoutButton.style.removeProperty("display");
     } else {
@@ -536,4 +556,16 @@ function updateLoginStatus() {
         loginButton.style.removeProperty("display");
         logoutButton.style.display = "none";
     }
+}
+
+var html_characters = [
+        ['&', '&amp;'],
+        ['<', '&lt;'],
+        ['>', '&gt;'],
+        ['"', '&quot;'],
+        ["'", "&#39;"],
+];
+
+function escape_html(text) {
+    return html_characters.reduce((s, [character, replacement]) => s.replaceAll(character, replacement), text);
 }

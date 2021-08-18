@@ -54,7 +54,7 @@ $(window).on('unload', () => "If you have not saved your work you'll loose the c
 function resize() {
     // Resize body
     let network_container = document.getElementById('network-container');
-    network_container.style.height = (window.innerHeight - network_container.offsetTop) + "px";
+    network_container.style.height = `${window.innerHeight - network_container.offsetTop}px`;
     network_container.style.overflowX = "auto";
     network_container.style.overflowY = "auto";
 
@@ -102,14 +102,10 @@ function load_bots(config) {
                     }
                     let found = null;
                     for (let bot_node of Object.values(app.nodes)) {
-                        if (bot_node.module === bot.module) {
-                            if ($.inArray(bot_node.id, $bot.data("cycled")) !== -1) {
-                                continue;
-                            } else {
-                                $bot.data("cycled").push(bot_node.id);
-                                found = bot_node.id;
-                                break;
-                            }
+                        if (bot_node.module === bot.module && $.inArray(bot_node.id, $bot.data("cycled")) === -1) {
+                            $bot.data("cycled").push(bot_node.id);
+                            found = bot_node.id;
+                            break;
                         }
                     }
                     // not found or all bots cycled
@@ -120,7 +116,7 @@ function load_bots(config) {
                     if (found) {
                         fitNode(found);
                     } else {
-                        show_error("No instance of the {0} found. Drag the label to the plan to create one.".format(bot_name));
+                        show_error(`No instance of the ${bot_name} found. Drag the label to the plan to create one.`);
                     }
                     return false;
                 })
@@ -157,7 +153,7 @@ function load_bots(config) {
         $bot_group.find("ul li").first().remove(); // get rid of the HTML template
     }
 
-    $('#side-menu').metisMenu({'restart': true});
+    $('#side-menu').metisMenu({restart: true});
     $EDIT_DEFAULT_BUTTON.click(function () {
         create_form('Edit Defaults', $(this).attr("id"), undefined);
         fill_editDefault(app.defaults);
@@ -175,8 +171,8 @@ function load_bots(config) {
 function fill_editDefault(data) {
     table.innerHTML = '';
     insertBorder(BORDER_TYPES.DEFAULT);
-    for (let key in data) {
-        insertKeyValue(key, data[key], BORDER_TYPES.DEFAULT, true);
+    for (let [key, value] in Object.entries(data)) {
+        insertKeyValue(key, value, BORDER_TYPES.DEFAULT, true);
     }
 
     // to enable scroll bar
@@ -241,11 +237,11 @@ function save_data_on_files() {
     }
 
     // can't parallelize these due to a race condition from them both touching runtime.yaml; TODO lock file in backend?
-    authenticatedAjax({type: "POST", url: API + '/runtime', contentType: "application/json", data: generate_runtime_conf(app.nodes, app.defaults)})
+    authenticatedAjax({type: "POST", url: `${API}/runtime`, contentType: "application/json", data: generate_runtime_conf(app.nodes, app.defaults)})
     .done(saveSucceeded)
     .fail(() => alert_error('runtime', ...arguments))
     .then(() =>
-            authenticatedAjax({type: "POST", url: API + '/positions', contentType: "application/json", data: generate_positions_conf()})
+            authenticatedAjax({type: "POST", url: `${API}/positions`, contentType: "application/json", data: generate_positions_conf()})
             .done(saveSucceeded)
             .fail(() => alert_error('positions', ...arguments) )
     )
@@ -293,16 +289,17 @@ function convert_edges(nodes) {
 function convert_nodes(nodes, includePositions) {
     let new_nodes = [];
 
-    for (let index in nodes) {
+    for (let node of nodes) {
         let new_node = {};
-        new_node.id = nodes[index].bot_id;
-        new_node.label = nodes[index].bot_id;
-        new_node.group = nodes[index].group;
+        new_node.id = node.bot_id;
+        new_node.label = node.bot_id;
+        new_node.group = node.group;
 
         if (includePositions === true) {
             try {
-                new_node.x = app.positions[index].x;
-                new_node.y = app.positions[index].y;
+                let {x, y} = app.positions[node.bot_id];
+                new_node.x = x;
+                new_node.y = y;
             } catch (err) {
                 console.error('positions in file are ignored:', err, index);
                 show_error('Saved positions are not valid or not complete. The configuration has possibly been modified outside of the IntelMQ-Manager.');
@@ -325,14 +322,12 @@ function fill_bot(id, group, name) {
 
         name = bot.name.replace(/\ /g, '-').replace(/[^A-Za-z0-9-]/g, '');
         group = bot.group.replace(/\ /g, '-');
-        default_id = `${name}-${group}`;
+        default_id = gen_new_id(`${name}-${group}`);
         bot.bot_id = bot.id = default_id;
         bot.defaults = {};
 
-        for (let [key, value] of Object.entries(app.defaults)) {
-            if (!(key in bot.parameters)) {
-                bot.defaults[key] = value;
-            }
+        for (let [key, value] of Object.entries(app.defaults).filter(([key, value]) => !(key in bot.parameters))) {
+            bot.defaults[key] = value;
         }
     } else {
         bot = app.nodes[id];
@@ -342,16 +337,12 @@ function fill_bot(id, group, name) {
 
     insertKeyValue('id', bot.bot_id, 'id', false);
     insertBorder(BORDER_TYPES.GENERIC);
-    for (let key in bot) {
-        if (STARTUP_KEYS.includes(key)) {
-            insertKeyValue(key, bot[key], BORDER_TYPES.GENERIC, false);
-        }
+    for (let [key, value] of Object.entries(bot).filter(([key, value]) => STARTUP_KEYS.includes(key))) {
+        insertKeyValue(key, value, BORDER_TYPES.GENERIC, false);
     }
     insertBorder(BORDER_TYPES.RUNTIME);
-    for (let key in bot.parameters) {
-        if (key !== 'destination_queues') {
-            insertKeyValue(key, bot.parameters[key], BORDER_TYPES.RUNTIME, true);
-        }
+    for (let [key, value] of Object.entries(bot.parameters).filter(([key, value]) => key !== 'destination_queues')) {
+        insertKeyValue(key, value, BORDER_TYPES.RUNTIME, true);
     }
 
     const modulename = bot.module.replace(/\./g, "-").replace(/_/g, "-");
@@ -421,7 +412,7 @@ function insertKeyValue(key, value, section, allowXButtons, insertAt) {
         xButtonSpan.setAttribute('class', 'glyphicon glyphicon-remove-circle');
         xButton.setAttribute('class', 'btn btn-danger');
         xButton.setAttribute('title', 'delete parameter');
-        xButton.addEventListener('click', (deleteParameter, key) => () => parameter_func(deleteParameter, key));
+        xButton.addEventListener('click', () => parameter_func(deleteParameter, key));
 
         xButton.appendChild(xButtonSpan);
         xButtonCell.appendChild(xButton);
@@ -439,18 +430,18 @@ function insertKeyValue(key, value, section, allowXButtons, insertAt) {
 }
 
 function resetToDefault(input_id) {
-    $('#' + input_id)[0].value = app.defaults[input_id];
+    $(`#${input_id}`)[0].value = app.defaults[input_id];
 }
 
 function deleteParameter(input_id) {
-    let current_index = $('#' + input_id).closest('tr').index();
+    let current_index = $(`#${input_id}`).closest('tr').index();
     table.deleteRow(current_index);
 }
 
 function addNewKey() {
     let $el = $("#templates .modal-add-new-key").clone();
     popupModal("Add key", $el, () => {
-        let current_index = $('#' + BORDER_TYPES.RUNTIME).index();
+        let current_index = $(`#${BORDER_TYPES.RUNTIME}`).index();
         let $key = $el.find("[name=newKeyInput]");
         let val = $el.find("[name=newValueInput]").val();
 
@@ -470,7 +461,7 @@ function addNewKey() {
 function addNewDefaultKey() {
     let $el = $("#templates .modal-add-new-key").clone();
     popupModal("Add key", $el, () => {
-        let current_index = $('#' + BORDER_TYPES.RUNTIME).index();
+        let current_index = $(`#${BORDER_TYPES.RUNTIME}`).index();
         let $key = $el.find("[name=newKeyInput]");
         let val = $el.find("[name=newValueInput]").val();
 
@@ -567,24 +558,51 @@ function saveData(data, callback) {
     }
 
     let current_id = node.bot_id, old_id = app.bot_before_altering.bot_id;
-    if (current_id !== old_id) {
-        if (!confirm("When you edit an ID what you are doing in fact is to create a clone of the current bot. You will have to delete the old one manually. Proceed with the operation?")) {
+    if (current_id !== old_id && old_id in app.nodes) {
+        if (!confirm("You have edited the bot's ID. Proceed with the operation?")) {
             return;
         }
-        let old_bot = app.nodes[old_id], new_bot = app.nodes[current_id];
+
+        let old_bot = app.nodes[old_id];
+        node.parameters.destination_queues = old_bot.parameters.destination_queues;
 
         app.positions[current_id] = app.positions[old_id];
+        app.nodes[current_id] = node;
         delete app.positions[old_id];
 
-        for (let bot of get_reverse_connections(old_id)) {
-            for (let list in Object.values(bot.parameters.destination_queues)) {
-                let to_index = list.indexOf(old_id);
-                if (to_index !== -1)
-                    list[to_index] = current_id;
+        app.network_data.nodes.add(convert_nodes([node], true));
+
+        // recreate reverse edges
+        for (let edge_id of get_reverse_edges(old_id)) {
+            let [from, to, path] = from_edge_id(edge_id);
+            let list = app.nodes[from].parameters.destination_queues[path];
+            let to_index = list.indexOf(`${old_id}-queue`);
+
+            list[to_index] = `${current_id}-queue`;
+
+            let new_edge_id = to_edge_id(from, current_id, path);
+            if (path === '_default') {
+                path = undefined;
+            }
+
+            app.network_data.edges.remove({id: edge_id});
+            app.network_data.edges.add({id: new_edge_id, from, to: current_id, label: path});
+        }
+
+        // recreate forward edges
+        for (let [path, path_l] of Object.entries(node.parameters.destination_queues)) {
+            for (let to of path_l) {
+                app.network_data.edges.add({
+                    id: to_edge_id(current_id, to, path),
+                    from: current_id,
+                    to: to.replace(/-queue$/, ''),
+                    label: path === '_default' ? undefined : path
+                });
             }
         }
 
         delete app.nodes[old_id];
+        app.network_data.nodes.remove(old_id);
     }
 
 
@@ -639,9 +657,9 @@ function swapToDefaults(node, key) {
  */
 function popupModal(title, body, callback) {
     $el = $("#templates > .modal").clone().appendTo("body");
-    $(".modal-title", $el).html(title);
+    $(".modal-title", $el).text(title);
     $(".modal-body", $el).html(body);
-    $el.modal({"keyboard": false}).on('shown.bs.modal', function () {
+    $el.modal({keyboard: false}).on('shown.bs.modal', function () {
         if (($ee = $('input,textarea,button', $(".modal-body", this)).first())) {
             $ee.focus();
         }
@@ -728,14 +746,14 @@ function draw() {
 }
 
 function fitNode(nodeId) {
-    app.network.fit({"nodes": [nodeId]});
+    app.network.fit({nodes: [nodeId]});
     app.network.selectNodes([nodeId], true);
     app.network.manipulation.showManipulatorToolbar();
 }
 
 function initNetwork(includePositions = true) {
     app.network_data = {
-        nodes: new vis.DataSet(convert_nodes(app.nodes, includePositions)),
+        nodes: new vis.DataSet(convert_nodes(Object.values(app.nodes), includePositions)),
         edges: new vis.DataSet(convert_edges(app.nodes))
     };
 
@@ -793,7 +811,7 @@ function initNetwork(includePositions = true) {
         }
         if (promises.length) {
             Promise.all(promises).then(() => {
-                show_error("Reloaded bots: " + bots.join(", "));
+                show_error(`Reloaded bots: ${bots.join(", ")}`);
                 bots.length = 0;
             });
         }
@@ -928,12 +946,12 @@ function refresh_color(bot) {
 
         // we use light colour if we expect bot will be running
         // (when reloading from stopped state bot will not be running)
-        let col = GROUP_COLORS[app.nodes[bot].group][([
+        let col = GROUP_COLORS[app.nodes[bot].group][[
             BOT_STATUS_DEFINITION.running,
             BOT_STATUS_DEFINITION.starting,
             BOT_STATUS_DEFINITION.restarting,
             bot_status_previous[bot] === BOT_STATUS_DEFINITION.running ? BOT_STATUS_DEFINITION.reloading : 0
-        ].indexOf(bot_status[bot]) > -1) ? 0 : 1];
+        ].includes(bot_status[bot]) ? 0 : 1];
 
         // change bot color if needed
         if (app.network_data.nodes.get([bot])[0].color !== col) {
@@ -960,22 +978,22 @@ function load_live_info() {
             let bot_queues;
             [bot_queues, bot_status] = data;
 
-            for (let bot in bot_queues) {
-                if ("source_queue" in bot_queues[bot]) {
+            for (let [bot, bot_data] of Object.entries(bot_queues)) {
+                if ("source_queue" in bot_data) {
                     // we skip bots without source queue (collectors)
                     // Assume an empty internal queue if no data is given (The AMQP pipeline does not have/need internal queues)
-                    let c = bot_queues[bot].source_queue[1] + (bot_queues[bot].internal_queue || 0);
-                    let label = (c > 0) ? "{0}\n{1}✉".format(bot, c) : bot;
+                    let c = bot_data.source_queue[1] + (bot_data.internal_queue || 0);
+                    let label = (c > 0) ? `${bot}\n${c}✉` : bot;
                     let appbot = app.network_data.nodes.get(bot);
                     if (appbot === null) {
-                        show_error("Non-existent bot {0} in pipelines.".format(bot));
+                        show_error(`Non-existent bot ${bot} in pipelines.`);
                     } else if (label !== appbot.label) {
                         // update queue count on bot label
-                        app.network_data.nodes.update({"id": bot, "label": label});
+                        app.network_data.nodes.update({id: bot, label});
                     }
                 } else {
                     // https://github.com/certtools/intelmq-manager/issues/158
-                    app.network_data.nodes.update({"id": bot, "label": bot});
+                    app.network_data.nodes.update({id: bot, label: bot});
                 }
             }
             for (let bot in bot_status) {

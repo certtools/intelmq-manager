@@ -15,18 +15,18 @@ function resize_handler() {
 
     // Resize body
     var body = document.getElementsByTagName('body')[0];
-    body.style.height = window_height + "px";
-    body.style.width = window_width + "px";
+    body.style.height = `${window_height}px`;
+    body.style.width = `${window_width}px`;
 
     var container = document.getElementById('page-wrapper-with-sidebar') || document.getElementById('page-wrapper');
-    container.style.height = (window_height - container.offsetTop) + "px";
-    container.style.width = (window_width - container.offsetLeft) + "px";
+    container.style.height = `${window_height - container.offsetTop}px`;
+    container.style.width = `${window_width - container.offsetLeft}px`;
     container.style.overflowX = "auto";
     container.style.overflowY = "auto";
 
     var title_height = (window_height * 0.10);
-    $('.page-header-text').css('font-size', title_height + "px");
-    $('.page-header-text').css('line-height', (title_height * 2) + "px");
+    $('.page-header-text').css('font-size', `${title_height}px`);
+    $('.page-header-text').css('line-height', `${title_height * 2}px`);
 
     let topOffset = 50;
     let width = window_width;
@@ -40,10 +40,10 @@ function resize_handler() {
     let height = window_height - topOffset;
     if (height < 1) height = 1;
     if (height > topOffset) {
-        $("#page-wrapper").css("min-height", (height) + "px");
+        $("#page-wrapper").css("min-height", `${height}px`);
     }
 
-    $('#side-menu').css('max-height', height + 'px');
+    $('#side-menu').css('max-height', `${height}px`);
     $('#side-menu').css('overflow', 'auto');
 }
 
