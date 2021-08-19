@@ -558,51 +558,58 @@ function saveData(data, callback) {
     }
 
     let current_id = node.bot_id, old_id = app.bot_before_altering.bot_id;
-    if (current_id !== old_id && old_id in app.nodes) {
-        if (!confirm("You have edited the bot's ID. Proceed with the operation?")) {
+    if (current_id !== old_id) {
+        if (current_id in app.nodes) {
+            alert("A bot with this ID already exists, please select a different ID");
             return;
         }
 
-        let old_bot = app.nodes[old_id];
-        node.parameters.destination_queues = old_bot.parameters.destination_queues;
-
-        app.positions[current_id] = app.positions[old_id];
-        app.nodes[current_id] = node;
-        delete app.positions[old_id];
-
-        app.network_data.nodes.add(convert_nodes([node], true));
-
-        // recreate reverse edges
-        for (let edge_id of get_reverse_edges(old_id)) {
-            let [from, to, path] = from_edge_id(edge_id);
-            let list = app.nodes[from].parameters.destination_queues[path];
-            let to_index = list.indexOf(`${old_id}-queue`);
-
-            list[to_index] = `${current_id}-queue`;
-
-            let new_edge_id = to_edge_id(from, current_id, path);
-            if (path === '_default') {
-                path = undefined;
+        if (old_id in app.nodes) {
+            if (!confirm("You have edited the bot's ID. Proceed with the operation?")) {
+                return;
             }
 
-            app.network_data.edges.remove({id: edge_id});
-            app.network_data.edges.add({id: new_edge_id, from, to: current_id, label: path});
-        }
+            let old_bot = app.nodes[old_id];
+            node.parameters.destination_queues = old_bot.parameters.destination_queues;
 
-        // recreate forward edges
-        for (let [path, path_l] of Object.entries(node.parameters.destination_queues)) {
-            for (let to of path_l) {
-                app.network_data.edges.add({
-                    id: to_edge_id(current_id, to, path),
-                    from: current_id,
-                    to: to.replace(/-queue$/, ''),
-                    label: path === '_default' ? undefined : path
-                });
+            app.positions[current_id] = app.positions[old_id];
+            app.nodes[current_id] = node;
+            delete app.positions[old_id];
+
+            app.network_data.nodes.add(convert_nodes([node], true));
+
+            // recreate reverse edges
+            for (let edge_id of get_reverse_edges(old_id)) {
+                let [from, to, path] = from_edge_id(edge_id);
+                let list = app.nodes[from].parameters.destination_queues[path];
+                let to_index = list.indexOf(`${old_id}-queue`);
+
+                list[to_index] = `${current_id}-queue`;
+
+                let new_edge_id = to_edge_id(from, current_id, path);
+                if (path === '_default') {
+                    path = undefined;
+                }
+
+                app.network_data.edges.remove({id: edge_id});
+                app.network_data.edges.add({id: new_edge_id, from, to: current_id, label: path});
             }
-        }
 
-        delete app.nodes[old_id];
-        app.network_data.nodes.remove(old_id);
+            // recreate forward edges
+            for (let [path, path_l] of Object.entries(node.parameters.destination_queues)) {
+                for (let to of path_l) {
+                    app.network_data.edges.add({
+                        id: to_edge_id(current_id, to, path),
+                        from: current_id,
+                        to: to.replace(/-queue$/, ''),
+                        label: path === '_default' ? undefined : path
+                    });
+                }
+            }
+
+            delete app.nodes[old_id];
+            app.network_data.nodes.remove(old_id);
+        }
     }
 
 
