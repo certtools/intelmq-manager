@@ -439,18 +439,19 @@ function getUrlParameter(sParam) {
 function accesskeyfie() {
     let seen = new Set();
     $("[data-accesskey]").attr("accesskey", ""); // reset all accesskeys. In Chrome, there might be only one accesskey 'e' on page.
-    $("[data-accesskey]:visible").each(() => {
-        let key = $(this).attr("data-accesskey");
+    $("[data-accesskey]:visible").each((i, v) => {
+        let btn = $(v);
+        let key = btn.attr("data-accesskey");
         if (seen.has(key)) {
             return false; // already defined at current page state
         }
         seen.add(key);
-        $(this).attr("accesskey", key);
+        btn.attr("accesskey", key);
         // add underscore to the accesskeyed letter if possible (can work badly with elements having nested DOM children)
-        let t1 = $(this).text();
-        let t2 = t1.replace(new RegExp(key, "i"), match => `<u>${escape_html(match)}</u>`);
-        if (t1 != t2) {
-            $(this).html(t2);
+        let t1 = escape_html(btn.text());
+        let t2 = t1.replace(new RegExp(key, "i"), match => `<u>${match}</u>`);
+        if (t1 !== t2) {
+            btn.html(t2);
         }
     });
 }
