@@ -1,6 +1,7 @@
 // SPDX-FileCopyrightText: 2020 IntelMQ Team <intelmq-team@cert.at>, 2020 Edvard Rejthar <github@edvard.cz>, 2021 Mikk Margus Möll <mikk@cert.ee>
 //
 // SPDX-License-Identifier: AGPL-3.0-or-later
+'use strict';
 
 var NETWORK_OPTIONS = NETWORK_OPTIONS || {};
 
@@ -156,8 +157,8 @@ function load_bots(config) {
     }
 
     $('#side-menu').metisMenu({restart: true});
-    $EDIT_DEFAULT_BUTTON.click(function () {
-        create_form('Edit Defaults', $(this).attr("id"), undefined);
+    $EDIT_DEFAULT_BUTTON.click(e => {
+        create_form('Edit Defaults', $(e.target).attr("id"), undefined);
         fill_editDefault(app.defaults);
     });
 
@@ -482,6 +483,7 @@ function addNewDefaultKey() {
 
 $(document).keydown(function (event) {
     if (event.keyCode === 27) {
+        let $el;
         if (($el = $("body > .modal:not([data-hiding])")).length) {
             // close the most recent modal
             $el.last().attr("data-hiding", true).modal('hide');
@@ -665,17 +667,18 @@ function swapToDefaults(node, key) {
  * @example popupModal("Title", $input, () => {$input.val();})
  */
 function popupModal(title, body, callback) {
-    $el = $("#templates > .modal").clone().appendTo("body");
+    let $el = $("#templates > .modal").clone().appendTo("body");
     $(".modal-title", $el).text(title);
     $(".modal-body", $el).html(body);
-    $el.modal({keyboard: false}).on('shown.bs.modal', function () {
-        if (($ee = $('input,textarea,button', $(".modal-body", this)).first())) {
+    $el.modal({keyboard: false}).on('shown.bs.modal', e => {
+        let $ee;
+        if (($ee = $('input,textarea,button', $(".modal-body", e.target)).first())) {
             $ee.focus();
         }
     });
-    return $el.on('submit', 'form', function () {
+    return $el.on('submit', 'form', e => {
         if (callback() !== false) {
-            $(this).closest(".modal").modal('hide');
+            $(e.target).closest(".modal").modal('hide');
         }
         return false;
     });
@@ -688,12 +691,12 @@ function create_form(title, data, callback) {
     let cancelButton = document.getElementById('network-popUp-cancel');
 
     if (data === $EDIT_DEFAULT_BUTTON.attr("id")) {
-        okButton.onclick = saveDefaults_tmp.bind(this, data, callback);
+        okButton.onclick = saveDefaults_tmp.bind(window, data, callback);
     } else {
-        okButton.onclick = saveData.bind(this, data, callback);
+        okButton.onclick = saveData.bind(window, data, callback);
     }
 
-    cancelButton.onclick = clearPopUp.bind(this, data, callback);
+    cancelButton.onclick = clearPopUp.bind(window, data, callback);
 
     table.innerHTML = "<p>Please select one of the bots on the left</p>";
     popup.style.display = 'block';
@@ -709,7 +712,7 @@ function clearPopUp(data, callback) {
     popup.style.display = 'none';
     span.innerHTML = "";
 
-    for (i = table.rows.length - 1; i >= 0; i--) {
+    for (let i = table.rows.length - 1; i >= 0; i--) {
         let position = table.rows[i].rowIndex;
 
         if (position >= CORE_FIELDS) {
@@ -786,13 +789,13 @@ function initNetwork(includePositions = true) {
 
     $("#templates .network-right-menu").clone().insertAfter($manipulation);
     let $nc = $("#network-container");
-    $(".vis-live-toggle", $nc).click(function () {
-        $(this).toggleClass("running", !reload_queues.running);
+    $(".vis-live-toggle", $nc).click(e => {
+        $(e.target).toggleClass("running", !reload_queues.running);
         reload_queues.toggle(!reload_queues.running);
     }).click();
     let physics_running = true;
-    $(".vis-physics-toggle", $nc).click(function () {
-        $(this).toggleClass("running");
+    $(".vis-physics-toggle", $nc).click(e => {
+        $(e.target).toggleClass("running");
         app.network.setOptions({physics: (physics_running = !physics_running)});
     });
 
@@ -801,19 +804,19 @@ function initNetwork(includePositions = true) {
     $saveButton.children().on('click', save_data_on_files);
     $saveButton.data("reloadables", []);
     $saveButton.blinkOnce = function() {
-        $(this).addClass('blinking-once');
-        setTimeout(() => $(this).removeClass('blinking-once'), 2000);
+        $($saveButton).addClass('blinking-once');
+        setTimeout(() => $($saveButton).removeClass('blinking-once'), 2000);
     }
     $saveButton.blinking = function (bot_id = null) {
-        $(this).addClass('vis-save-blinking')
+        $($saveButton).addClass('vis-save-blinking')
         if (bot_id) {
-            $(this).data("reloadables").push(bot_id);
+            $($saveButton).data("reloadables").push(bot_id);
         }
     };
     $saveButton.unblinking = function () {
-        $(this).removeClass('vis-save-blinking');
+        $($saveButton).removeClass('vis-save-blinking');
         let promises = [];
-        let bots = $.unique($(this).data("reloadables"));
+        let bots = $.unique($($saveButton).data("reloadables"));
         for (let bot_id of bots) {
             let url = managementUrl("bot", `action=reload&id=${bot_id}`);
             promises.push(authenticatedGetJson(url));
@@ -834,10 +837,10 @@ function initNetwork(includePositions = true) {
         app.network.setOptions({physics: val});
     }]];
     for (let [name, fn] of callbacks) {
-        let $el = $(`.vis-${name}-toggle`, $nc).click(function () {
+        let $el = $(`.vis-${name}-toggle`, $nc).click(e => {
             // button click will callback and blinks Save Configuration button few times
             fn(settings[name] = !settings[name]);
-            $(this).toggleClass("running", settings[name]);
+            $(e.target).toggleClass("running", settings[name]);
 
             if (allow_blinking_once) {
                 $saveButton.blinkOnce();
@@ -863,7 +866,7 @@ function initNetwork(includePositions = true) {
     app.network.manipulation._showManipulatorToolbar = app.network.manipulation.showManipulatorToolbar;
     app.network.manipulation.showManipulatorToolbar = function () {
         // call the parent function that builds the default menu
-        app.network.manipulation._showManipulatorToolbar.call(this);
+        app.network.manipulation._showManipulatorToolbar.call(app.network.manipulation);
 
         // enable 'Edit defaults' button
         $EDIT_DEFAULT_BUTTON.prop('disabled', false);
@@ -918,7 +921,7 @@ function initNetwork(includePositions = true) {
     // double click action trigger editation
     app.network.on("doubleClick", active => {
         if (active.nodes.length === 1) {
-            let ev = document.createEvent('MouseEvent');// vis-js button need to be clicked this hard way
+            let ev = document.createEvent('MouseEvent'); // vis-js button need to be clicked this hard way
             ev.initEvent("pointerdown", true, true);
             $(".vis-edit", $manipulation).get()[0].dispatchEvent(ev);
         }
@@ -983,7 +986,7 @@ function refresh_color(bot) {
 function load_live_info() {
     $(".navbar").addClass('waiting');
     return authenticatedGetJson(managementUrl('queues-and-status'))
-        .done(function (data) {
+        .done(data => {
             let bot_queues;
             [bot_queues, bot_status] = data;
 

@@ -105,28 +105,28 @@ if (!String.prototype.format) {
 let lw_tips = new Set();
 $(function () {
     let $lw = $("#log-window");
-    let closeFn = function () {
+    let closeFn = () => {
         $lw.hide();
         $(".contents", $lw).html("");
         lw_tips.clear(); // no tips displayed
         return false;
     };
 
-    $lw
-        .on("click", function () { // clicking enlarges but not shrinks so that we may copy the text
-            if (!$(this).hasClass("extended")) {
-                $(this).toggleClass("extended");
+    $lw.on("click", e => { // clicking enlarges but not shrinks so that we may copy the text
+        let btn = $(e.target);
+        if (!btn.hasClass("extended")) {
+            btn.toggleClass("extended");
 
-                //$(".alert", this).prependTo($(this));
+            //$(".alert", this).prependTo(btn);
 
-                $(document).on('keydown.close-log-window', function (event) {
-                    if (event.key == "Escape") {
-                        $(document).off('keydown.close-log-window');
-                        $lw.removeClass("extended");
-                    }
-                });
-            }
-        });
+            $(document).on('keydown.close-log-window', event => {
+                if (event.key == "Escape") {
+                    $(document).off('keydown.close-log-window');
+                    $lw.removeClass("extended");
+                }
+            });
+        }
+    });
     $("#log-window [role=close]").click(closeFn);
 });
 
@@ -140,22 +140,23 @@ function show_error(string, permit_html=false) {
     let $lwc = $("#log-window .contents");
     let $el = $(`<p><span>${time}</span> <span></span> <span>${string}</span></p>`);
     let found = false;
-    $("p", $lwc).each(function () {
-        if ($("span:eq(2)", $(this)).text() === $("span:eq(2)", $el).text()) {
+    $("p", $lwc).each((i, v) => {
+        if ($("span:eq(2)", $(v)).text() === $("span:eq(2)", $el).text()) {
             // we've seen this message before
             found = true;
             // put it in front of the other errors
             // only if the error window is not expanded (so that it does not shuffle when the user read the details)
-            if (!$(this).closest("#log-window").hasClass("extended")) {
-                $(this).prependTo($lwc);
+            if (!$(v).closest("#log-window").hasClass("extended")) {
+                $(v).prependTo($lwc);
             }
             //blink
-            $("span:eq(0)", $(this)).text(time).stop().animate({opacity: 0.1}, 100, function () {
-                $(this).animate({opacity: 1}, 100);
+            let blink_e = v.children[0];
+            $(blink_e, $(v)).text(time).stop().animate({opacity: 0.1}, 100, () => {
+                $(blink_e).animate({opacity: 1}, 100);
             });
             // increment 'seen' counter
-            let counter = parseInt($("span:eq(1)", $(this)).text()) || 1;
-            $("span:eq(1)", $(this)).text(`${counter + 1}×`);
+            let counter = parseInt($("span:eq(1)", $(v)).text()) || 1;
+            $("span:eq(1)", $(v)).text(`${counter + 1}×`);
             return false;
         }
     });
@@ -349,43 +350,45 @@ var BOT_STATUS_DEFINITION = {
 var botnet_status = {}; // {group | true (for whole botnet) : BOT_STATUS_DEFINITION}
 var bot_status = {}; // {bot-id : BOT_STATUS_DEFINITION}
 var bot_status_previous = {}; // we need a shallow copy of bot_status, it's too slow to ask `app` every time
-var bot_definition = {};// {bot-id : runtime information (group, ...)}; only management.js uses this in time
+var bot_definition = {}; // {bot-id : runtime information (group, ...)}; only management.js uses this in time
 
-$(document).on("click", ".control-buttons button", function () {
-    let bot = $(this).parent().attr("data-bot-id");
-    let botnet = $(this).parent().attr("data-botnet-group");
-    let callback_fn = $(this).parent().data("callback_fn");
+$(document).on("click", ".control-buttons button", e => {
+    let btn = $(e.target);
+    let bot = btn.parent().attr("data-bot-id");
+    let botnet = btn.parent().attr("data-botnet-group");
+    let callback_fn = btn.parent().data("callback_fn");
     let url;
     if (bot) {
-        bot_status[bot] = $(this).attr("data-status-definition");
-        url = managementUrl("bot", `action=${$(this).attr("data-url")}&id=${bot}`);
+        bot_status[bot] = btn.attr("data-status-definition");
+        url = managementUrl("bot", `action=${btn.attr("data-url")}&id=${bot}`);
     } else {
-        botnet_status[botnet] = $(this).attr("data-status-definition");
-        url = managementUrl('botnet', `action=${$(this).attr("data-url")}&group=${botnet}`);
+        botnet_status[botnet] = btn.attr("data-status-definition");
+        url = managementUrl('botnet', `action=${btn.attr("data-url")}&group=${botnet}`);
         for (let bot_d of Object.values(bot_definition)) {
             if (bot_d.groupname === botnet) {
-                bot_status[bot_d.bot_id] = $(this).attr("data-status-definition");
+                bot_status[bot_d.bot_id] = btn.attr("data-status-definition");
             }
         }
 
     }
-    callback_fn.call(this, bot || botnet, 0);
-    $(this).siblings("[data-role=control-status]").trigger("update");
+
+    callback_fn.call(e.target, bot || botnet, 0);
+    btn.siblings("[data-role=control-status]").trigger("update");
 
     authenticatedGetJson(url)
-        .done(function (data) {
+        .done(data => {
             if (bot) { // only restarting action returns an array of two values, the latter is important; otherwise, this is a string
                 bot_status[bot] = Array.isArray(data) ? data.slice(-1)[0] : data;
             } else { // we received a {bot => status} object
                 Object.assign(bot_status, data); // merge to current list
             }
         })
-        .fail(function () {
-            ajax_fail_callback('Error {0} bot{1}'.format(bot_status[bot] || botnet_status[botnet], (!bot ? "net" : ""))).apply(null, arguments);
+        .fail(() => {
+            ajax_fail_callback(`Error ${bot_status[bot] || botnet_status[botnet]} bot${!bot ? "net" : ""}`).apply(null, arguments);
             bot_status[bot] = BOT_STATUS_DEFINITION.error;
         }).always(() => {
-        $(this).siblings("[data-role=control-status]").trigger("update");
-        callback_fn.call(this, bot || botnet, 1);
+        btn.siblings("[data-role=control-status]").trigger("update");
+        callback_fn.call(e.target, bot || botnet, 1);
     });
 });
 
@@ -409,11 +412,12 @@ function generate_control_buttons(bot = null, botnet = null, callback_fn = null,
         $el.attr("data-botnet-group", botnet);
     }
     if (status_info) {
-        $("<span/>", {"data-role": "control-status"}).bind("update", function () {
-            let bot = $(this).closest(".control-buttons").attr("data-bot-id");
-            let botnet = $(this).closest(".control-buttons").attr("data-botnet-group");
+        $("<span/>", {"data-role": "control-status"}).bind("update", e => {
+            let btn = $(e.target);
+            let bot = btn.closest(".control-buttons").attr("data-bot-id");
+            let botnet = btn.closest(".control-buttons").attr("data-botnet-group");
             let status = bot ? bot_status[bot] : botnet_status[botnet];
-            $(this).text(status).removeClass().addClass(`bg-${BOT_CLASS_DEFINITION[status]}`);
+            btn.text(status).removeClass().addClass(`bg-${BOT_CLASS_DEFINITION[status]}`);
         }).prependTo($el).trigger("update");
     }
     return $el;
@@ -515,7 +519,7 @@ $(document).ready(function() {
             // finished. (after success and error callbacks are executed)
             complete: () => $('#loginForm #password').val(""),
             // Executes this if the request was successful.
-        }).done(function(data) {
+        }).done(data => {
             // Check if login_token and username came back and store them in
             // sessionStorage.
             if (typeof data.login_token !== 'undefined' &&
