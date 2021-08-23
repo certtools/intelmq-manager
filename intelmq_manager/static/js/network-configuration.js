@@ -96,7 +96,7 @@ var NETWORK_OPTIONS = {
             for (let node_name of data.nodes) {
                 delete app.nodes[node_name];
             }
-            $saveButton.blinking();
+            set_pending_change();
         },
         addEdge: function (data, callback) {
             if (data.from === data.to) {
@@ -158,7 +158,7 @@ var NETWORK_OPTIONS = {
 
             add_edge(data.from, data.to, data.path);
 
-            $saveButton.blinking(data.from);
+            set_pending_change(data.from);
             if (edit_needed) {
                 editPath(app, data.id, true);
             }
@@ -168,7 +168,7 @@ var NETWORK_OPTIONS = {
             let queue = app.nodes[from].parameters.destination_queues[path];
             remove_edge(from, to, path);
 
-            $saveButton.blinking(from);
+            set_pending_change(from);
             callback(data);
         }
     },
@@ -202,7 +202,7 @@ function editPath(app, edge, adding=false) {
         }
 
         ok_clicked = true;
-        $saveButton.blinking();
+        set_pending_change();
     }).on("hide.bs.modal", () => {
         let from_queues = app.nodes[from].parameters.destination_queues[new_path] ?? [];
         let duplicate_edge = from_queues.includes(to);
@@ -257,7 +257,7 @@ function duplicateNode(app, bot) {
 
     app.network.selectNodes([new_id]);
     app.network.focus(new_id);
-    $saveButton.blinking();
+    set_pending_change();
 }
 
 function remove_edge(from, to, path) {

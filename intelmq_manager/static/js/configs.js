@@ -47,9 +47,11 @@ var BORDER_TYPES = {
 
 var draggedElement = null;
 
+var warn_on_close_tab = false;
+
 $(window).on('hashchange', location.reload);
 
-$(window).on('unload', () => "If you have not saved your work you'll loose the changes you have made. Do you want to continue?");
+$(window).on('beforeunload', () => warn_on_close_tab ? "If you have not saved your work you'll lose the changes you have made. Do you want to continue?" : undefined);
 
 function resize() {
     // Resize body
@@ -164,7 +166,7 @@ function load_bots(config) {
     } else {
         draw();
         resize();
-        $saveButton.blinking();
+        set_pending_change();
     }
 }
 
@@ -246,7 +248,7 @@ function save_data_on_files() {
             .fail(() => alert_error('positions', ...arguments) )
     )
     // all files were correctly saved
-    .then(() => $saveButton.unblinking());
+    .then(unset_pending_change);
 }
 
 
@@ -498,7 +500,7 @@ $(document).keydown(function (event) {
 function saveDefaults_tmp(data, callback) {
     app.defaults = {};
     saveFormData();
-    $saveButton.blinking();
+    set_pending_change();
     clearPopUp(data, callback);
 }
 
@@ -643,7 +645,7 @@ function saveData(data, callback) {
 
     app.nodes[node.bot_id] = node;
 
-    $saveButton.blinking();
+    set_pending_change();
     clearPopUp(data, callback);
 }
 
@@ -728,7 +730,7 @@ function redrawNetwork() {
     app.network.destroy();
     app.network = null;
     initNetwork(false);
-    $saveButton.blinking();
+    set_pending_change();
 }
 
 function draw() {
@@ -1013,4 +1015,14 @@ function load_live_info() {
             $(".navbar").removeClass('waiting');
             this.blocking = false;
         });
+}
+
+function set_pending_change(bot_id = null) {
+    $saveButton.blinking(bot_id);
+    warn_on_close_tab = true;
+}
+
+function unset_pending_change() {
+    $saveButton.unblinking();
+    warn_on_close_tab = false;
 }
