@@ -173,7 +173,7 @@ function load_bots(config) {
 function fill_editDefault(data) {
     table.innerHTML = '';
     insertBorder(BORDER_TYPES.DEFAULT);
-    for (let [key, value] in Object.entries(data)) {
+    for (let [key, value] of Object.entries(data)) {
         insertKeyValue(key, value, BORDER_TYPES.DEFAULT, true);
     }
 
