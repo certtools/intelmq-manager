@@ -1,6 +1,7 @@
 // SPDX-FileCopyrightText: 2020 IntelMQ Team <intelmq-team@cert.at>, 2020 Edvard Rejthar <github@edvard.cz>, 2021 Mikk Margus Möll <mikk@cert.ee>
 //
 // SPDX-License-Identifier: AGPL-3.0-or-later
+'use strict';
 
 var ALL_BOTS = 'All Bots';
 var bot_logs = {};
@@ -250,7 +251,9 @@ function load_bot_log() {
             .fail(ajax_fail_callback('Error loading bot log information'))
             .always(() => {
                 $('#logs-panel-title').removeClass('waiting');
-                this.blocking = false;
+                if (this instanceof Interval) {
+                    this.blocking = false;
+                }
             });
 }
 
@@ -264,7 +267,9 @@ function load_bot_queues() {
             })
             .fail(ajax_fail_callback('Error loading bot queues information'))
             .always(() => {
-                this.blocking = false;
+                if (this instanceof Interval) {
+                    this.blocking = false;
+                }
             });
 }
 
