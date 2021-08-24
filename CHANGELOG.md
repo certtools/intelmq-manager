@@ -12,6 +12,7 @@ CHANGELOG
 ------------------
 
 ### Pages
+- Login: Show error messages as returned from the API instead of a constant string (PR#277 by Sebastian Wagner, fixes intelmq-api#35).
 
 #### Landing page
 #### Configuration
