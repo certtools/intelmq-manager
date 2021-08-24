@@ -49,6 +49,7 @@ CHANGELOG
     - some loops which previously iterated over every single edge should be a bit faster now.
     - various tweaks, like reducing the scope of variables and using string templates instead of string concatenation.
   - Fix saving new bots, led to an JS exception (PR#273 by Sebastian Wagner, fixes #272).
+  - Open bot documentation in a new page (PR#274 by Birger Schacht, fixes #262).
 
 #### Management
 
