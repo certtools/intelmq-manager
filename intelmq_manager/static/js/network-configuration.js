@@ -246,13 +246,14 @@ function duplicateNode(app, bot) {
     // add to the Vis and focus
     app.network_data.nodes.add(convert_nodes([node], true));
     for (let edge of app.network.getConnectedEdges(bot).map(edge => app.network_data.edges.get(edge))) {
-        delete edge.id;
+        let [old_from, old_to, path] = from_edge_id(edge.id);
         if (edge.from === bot) {
             edge.from = new_id;
         }
-        if (edge.to === bot) {
+        else if (edge.to === bot) {
             edge.to = new_id;
         }
+        edge.id = to_edge_id(edge.from, edge.to, path);
         app.network_data.edges.add(edge);
     }
 
