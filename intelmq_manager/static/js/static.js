@@ -354,9 +354,16 @@ var bot_definition = {}; // {bot-id : runtime information (group, ...)}; only ma
 
 $(document).on("click", ".control-buttons button", e => {
     let btn = $(e.target);
-    let bot = btn.parent().attr("data-bot-id");
-    let botnet = btn.parent().attr("data-botnet-group");
-    let callback_fn = btn.parent().data("callback_fn");
+
+    let parent = btn.parent();
+    if (parent.hasClass('btn')) { // clicked on glyphicon, shift up by one level
+        btn = parent;
+        parent = parent.parent();
+    }
+
+    let bot = parent.attr("data-bot-id");
+    let botnet = parent.attr("data-botnet-group");
+    let callback_fn = parent.data("callback_fn");
     let url;
     if (bot) {
         bot_status[bot] = btn.attr("data-status-definition");

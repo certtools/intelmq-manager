@@ -326,14 +326,15 @@ function select_bot(bot_id, history_push = false) {
 }
 
 function refresh_path_names() {
+    let parent = $dq.parent();
     if ($.isEmptyObject(path_names)) {
         // expand the columns
-        //$dq.parent().find("col:eq(1)").css("visibility", "collapse");
-        $dq.parent().find("col:eq(1)").css("display", "none");
-        $("td:nth-child(2), th:nth-child(2)", $dq.parent()).css("display", "none");
+        //parent.find("col:eq(1)").css("visibility", "collapse");
+        parent.find("col:eq(1)").css("display", "none");
+        $("td:nth-child(2), th:nth-child(2)", parent).css("display", "none");
 
-        $dq.parent().find("th:eq(0)").removeClass().addClass("width-80");
-        $dq.parent().find("th:eq(1)").removeClass();
+        parent.find("th:eq(0)").removeClass().addClass("width-80");
+        parent.find("th:eq(1)").removeClass();
         if ($("#destination-queues-table-div").hasClass('col-md-12')) {
             // in full width display of all bots, there is no need of another hassling
             return;
@@ -344,13 +345,13 @@ function refresh_path_names() {
     }
 
     // fold the columns to make more space on the line due to the Path column
-    //$dq.parent().find("col:eq(1)").css("visibility", "inherit");
-    //$dq.parent().find("col:eq(1)").css("display", "inherit");
-    $("td:nth-child(2), th:nth-child(2)", $dq.parent()).css("display", "revert");
+    //parent.find("col:eq(1)").css("visibility", "inherit");
+    //parent.find("col:eq(1)").css("display", "inherit");
+    $("td:nth-child(2), th:nth-child(2)", parent).css("display", "revert");
 
 
-    $dq.parent().find("th:eq(0)").removeClass().addClass("width-60");
-    $dq.parent().find("th:eq(1)").addClass("width-20");
+    parent.find("th:eq(0)").removeClass().addClass("width-60");
+    parent.find("th:eq(1)").addClass("width-20");
     $("#destination-queues-table-div").removeClass("col-md-4").addClass("col-md-5");
     $("#internal-queue-table-div").removeClass("col-md-4").addClass("col-md-3");
 
