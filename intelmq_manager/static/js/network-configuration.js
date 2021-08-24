@@ -239,11 +239,12 @@ function duplicateNode(app, bot) {
 
     // deep copy old bot information
     let node = $.extend(true, {}, app.nodes[bot]);
+    app.positions[new_id] = app.positions[bot];
     node.id = new_id;
     node.bot_id = new_id;
     app.nodes[new_id] = node;
     // add to the Vis and focus
-    app.network_data.nodes.add(convert_nodes([node]));
+    app.network_data.nodes.add(convert_nodes([node], true));
     for (let edge of app.network.getConnectedEdges(bot).map(edge => app.network_data.edges.get(edge))) {
         delete edge.id;
         if (edge.from === bot) {
