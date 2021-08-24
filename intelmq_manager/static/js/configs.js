@@ -317,7 +317,7 @@ function convert_nodes(nodes, includePositions) {
 }
 
 function fill_bot(id, group, name) {
-    let bot = {};
+    let bot;
     table.innerHTML = '';
 
     if (id === undefined) {
@@ -325,7 +325,7 @@ function fill_bot(id, group, name) {
 
         name = bot.name.replace(/\ /g, '-').replace(/[^A-Za-z0-9-]/g, '');
         group = bot.group.replace(/\ /g, '-');
-        default_id = gen_new_id(`${name}-${group}`);
+        let default_id = gen_new_id(`${name}-${group}`);
         bot.bot_id = bot.id = default_id;
         bot.defaults = {};
 
@@ -384,13 +384,7 @@ function insertBorder(border_type) {
 }
 
 function insertKeyValue(key, value, section, allowXButtons, insertAt) {
-    let new_row = null;
-
-    if (insertAt === undefined) {
-        new_row = table.insertRow(-1);
-    } else {
-        new_row = table.insertRow(insertAt);
-    }
+    let new_row = table.insertRow(insertAt === undefined ? -1 : insertAt);
 
     let keyCell = new_row.insertCell(0);
     let valueCell = new_row.insertCell(1);
@@ -619,7 +613,7 @@ function saveData(data, callback) {
 
     // switch parameters and defaults
     if ('parameters' in node) {
-        for (parameterKey in node.parameters) {
+        for (let parameterKey in node.parameters) {
             if (
                 node.parameters[parameterKey] !== app.bot_before_altering.parameters[parameterKey]
                 && parameterKey in app.defaults
@@ -631,7 +625,7 @@ function saveData(data, callback) {
     }
 
     if ('defaults' in node) {
-        for (defaultsKey in node.defaults) {
+        for (let defaultsKey in node.defaults) {
             if (node.defaults[defaultsKey] !== app.defaults[defaultsKey]) {
                 swapToParameters(node, defaultsKey);
             }
@@ -831,11 +825,10 @@ function initNetwork(includePositions = true) {
 
     let allow_blinking_once = false; // Save Configuration button will not blink when a button is clicked now automatically
     // list of button callbacks in form ["button/settings name"] => function called when clicked receives true/false according to the clicked state
-    let callbacks = [["live", (val) => {
-        reload_queues[val ? "start" : "stop"]();
-    }], ["physics", (val) => {
-        app.network.setOptions({physics: val});
-    }]];
+    let callbacks = [
+        ["live", val => reload_queues[val ? "start" : "stop"]()],
+        ["physics", val => app.network.setOptions({physics: val})],
+    ];
     for (let [name, fn] of callbacks) {
         let $el = $(`.vis-${name}-toggle`, $nc).click(e => {
             // button click will callback and blinks Save Configuration button few times
@@ -905,13 +898,17 @@ function initNetwork(includePositions = true) {
         // refresh shortcuts
         // (it is so hard to click on the 'Add Node' button we rather register click event)
         // We use 't' for 'Add bot' and 'Duplicate' because that's a common letter.
-        $(".vis-add .vis-label", $manipulation).attr("data-accesskey", "t").click(app.network.addNodeMode);
 
-        $(".vis-connect .vis-label", $manipulation).attr("data-accesskey", "q").click(app.network.addEdgeMode);
+        let shortcuts = [
+            ['t', 'add', 'addNodeMode'],
+            ['q', 'connect', 'addEdgeMode'],
+            ['d', 'delete', 'deleteSelected'],
+            ['e', 'edit', 'editNode'],
+        ];
 
-        $(".vis-delete .vis-label", $manipulation).attr("data-accesskey", "d").click(app.network.deleteSelected);
-
-        $(".vis-edit .vis-label", $manipulation).attr("data-accesskey", "e").click(app.network.editNode);
+        for (let [letter, tag, callback_name] in shortcuts) {
+            $(`.vis-${tag} .vis-label`, $manipulation).attr('data-accesskey', letter).click(app.network[callback_name]);
+        }
 
         accesskeyfie();
     };
