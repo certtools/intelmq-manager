@@ -304,7 +304,7 @@ function convert_nodes(nodes, includePositions) {
                 new_node.x = x;
                 new_node.y = y;
             } catch (err) {
-                console.error('positions in file are ignored:', err, index);
+                console.error('positions in file are ignored:', err, node);
                 show_error('Saved positions are not valid or not complete. The configuration has possibly been modified outside of the IntelMQ-Manager.');
                 includePositions = false;
             }
