@@ -537,6 +537,7 @@ $(document).ready(function() {
                 $('#loginErrorField').text("")
                 $('#modalLoginForm').modal('hide');
                 updateLoginStatus();
+                window.location.reload();
             } else if (typeof data.error !== 'undefined') {
                 // If authentication failed, the returned error message is displayed.
                 $('#loginErrorField').text(data.error);
