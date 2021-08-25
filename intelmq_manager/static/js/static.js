@@ -537,6 +537,7 @@ $(document).ready(function() {
                 $('#loginErrorField').text("")
                 $('#modalLoginForm').modal('hide');
                 updateLoginStatus();
+                window.location.reload();
             } else {
                 // If authentication failed, this error message is displayed.
                 $('#loginErrorField').text('Invalid username and/or password');
