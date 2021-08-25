@@ -96,7 +96,7 @@ var NETWORK_OPTIONS = {
             for (let node_name of data.nodes) {
                 delete app.nodes[node_name];
             }
-            $saveButton.blinking();
+            set_pending_change();
         },
         addEdge: function (data, callback) {
             if (data.from === data.to) {
@@ -158,7 +158,7 @@ var NETWORK_OPTIONS = {
 
             add_edge(data.from, data.to, data.path);
 
-            $saveButton.blinking(data.from);
+            set_pending_change(data.from);
             if (edit_needed) {
                 editPath(app, data.id, true);
             }
@@ -168,7 +168,7 @@ var NETWORK_OPTIONS = {
             let queue = app.nodes[from].parameters.destination_queues[path];
             remove_edge(from, to, path);
 
-            $saveButton.blinking(from);
+            set_pending_change(from);
             callback(data);
         }
     },
@@ -202,7 +202,7 @@ function editPath(app, edge, adding=false) {
         }
 
         ok_clicked = true;
-        $saveButton.blinking();
+        set_pending_change();
     }).on("hide.bs.modal", () => {
         let from_queues = app.nodes[from].parameters.destination_queues[new_path] ?? [];
         let duplicate_edge = from_queues.includes(to);
@@ -239,25 +239,27 @@ function duplicateNode(app, bot) {
 
     // deep copy old bot information
     let node = $.extend(true, {}, app.nodes[bot]);
+    app.positions[new_id] = app.positions[bot];
     node.id = new_id;
     node.bot_id = new_id;
     app.nodes[new_id] = node;
     // add to the Vis and focus
-    app.network_data.nodes.add(convert_nodes([node]));
+    app.network_data.nodes.add(convert_nodes([node], true));
     for (let edge of app.network.getConnectedEdges(bot).map(edge => app.network_data.edges.get(edge))) {
-        delete edge.id;
+        let [old_from, old_to, path] = from_edge_id(edge.id);
         if (edge.from === bot) {
             edge.from = new_id;
         }
-        if (edge.to === bot) {
+        else if (edge.to === bot) {
             edge.to = new_id;
         }
+        edge.id = to_edge_id(edge.from, edge.to, path);
         app.network_data.edges.add(edge);
     }
 
     app.network.selectNodes([new_id]);
     app.network.focus(new_id);
-    $saveButton.blinking();
+    set_pending_change();
 }
 
 function remove_edge(from, to, path) {
