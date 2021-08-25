@@ -556,6 +556,10 @@ function saveData(data, callback) {
     }
 
     let current_id = node.bot_id, old_id = app.bot_before_altering.bot_id;
+
+    let old_bot = app.nodes[old_id];
+    node.parameters.destination_queues = old_bot.parameters.destination_queues;
+
     if (current_id !== old_id) {
         if (current_id in app.nodes) {
             alert("A bot with this ID already exists, please select a different ID");
@@ -566,9 +570,6 @@ function saveData(data, callback) {
             if (!confirm("You have edited the bot's ID. Proceed with the operation?")) {
                 return;
             }
-
-            let old_bot = app.nodes[old_id];
-            node.parameters.destination_queues = old_bot.parameters.destination_queues;
 
             app.positions[current_id] = app.positions[old_id];
             app.nodes[current_id] = node;
