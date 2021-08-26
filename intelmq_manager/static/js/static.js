@@ -538,9 +538,25 @@ $(document).ready(function() {
                 $('#modalLoginForm').modal('hide');
                 updateLoginStatus();
                 window.location.reload();
+            } else if (typeof data.error !== 'undefined') {
+                // If authentication failed, the returned error message is displayed.
+                $('#loginErrorField').text(data.error);
             } else {
-                // If authentication failed, this error message is displayed.
-                $('#loginErrorField').text('Invalid username and/or password');
+                // Other error, display the response for easier debugging.
+                $('#loginErrorField').text("Login failed, server response was " + data);
+            }
+        })
+        .fail(function(jqXHR, textStatus) {
+            if (typeof jqXHR.responseJSON !== 'undefined' && typeof jqXHR.responseJSON.errors !== 'undefined') {
+                let concatenated = "";
+                for (let key in jqXHR.responseJSON.errors) {
+                    concatenated += jqXHR.responseJSON.errors[key] + ". "
+                }
+                $('#loginErrorField').text("Login failed, server response was: " + concatenated);
+            } else {
+                $('#loginErrorField').text("Login failed with unknown reason. Please report this bug.");
+                console.log(jqXHR.responseText)
+                console.log(jqXHR.responseJson)
             }
         });
     });
