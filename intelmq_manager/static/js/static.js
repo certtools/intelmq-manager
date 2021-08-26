@@ -3,16 +3,16 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 'use strict';
 
-var CORE_FIELDS = 5;
+const CORE_FIELDS = 5;
 
-var ACCEPTED_NEIGHBORS = {
+const ACCEPTED_NEIGHBORS = {
     Collector: ['Parser', 'Expert', 'Output'],
     Parser: ['Expert', 'Output'],
     Expert: ['Parser', 'Expert', 'Output'],
     Output: []
 }
 
-var REVERSE_ACCEPTED_NEIGHBORS = Object.fromEntries(Object.keys(ACCEPTED_NEIGHBORS).map(key => [key, []]));
+const REVERSE_ACCEPTED_NEIGHBORS = Object.fromEntries(Object.keys(ACCEPTED_NEIGHBORS).map(key => [key, []]));
 
 for (let [from, to_list] of Object.entries(ACCEPTED_NEIGHBORS)) {
     for (let to of to_list) {
@@ -20,18 +20,19 @@ for (let [from, to_list] of Object.entries(ACCEPTED_NEIGHBORS)) {
     }
 }
 
-var CAUTIOUS_NEIGHBORS = {
+const CAUTIOUS_NEIGHBORS = {
     Collector: ['Expert'],
     Expert: ['Parser']
 }
 
-var GROUP_LEVELS = {
+const GROUP_LEVELS = {
     Collector: 0,
     Parser: 1,
     Expert: 2,
     Output: 3
 };
-var GROUPNAME_TO_GROUP = {
+
+const GROUPNAME_TO_GROUP = {
     Collector: "collectors",
     Parser: "parsers",
     Expert: "experts",
@@ -41,14 +42,14 @@ var GROUPNAME_TO_GROUP = {
 /**
  * 1st value is default color of running bot, latter of a stopped bot
  */
-var GROUP_COLORS = {
+const GROUP_COLORS = {
     Collector: ['#ff6666', '#cc6666'],
     Parser: ['#66ff66', '#66cc66'],
     Expert: ['#66a3ff', '#66a3aa'],
     Output: ['#ffff66', '#cccc66']
 }
 
-var LEVEL_CLASS = {
+const LEVEL_CLASS = {
     DEBUG: 'success',
     INFO: 'info',
     WARNING: 'warning',
@@ -56,31 +57,31 @@ var LEVEL_CLASS = {
     CRITICAL: 'danger'
 }
 
-var STARTUP_KEYS = ['group', 'name', 'module', 'description', 'enabled', 'run_mode'];
+const STARTUP_KEYS = ['group', 'name', 'module', 'description', 'enabled', 'run_mode'];
 
-var BOT_ID_REGEX = /^[0-9a-zA-Z.-]+$/;
-var PARAM_KEY_REGEX = /^[0-9a-zA-Z._-]+$/;
+const BOT_ID_REGEX = /^[0-9a-zA-Z.-]+$/;
+const PARAM_KEY_REGEX = /^[0-9a-zA-Z._-]+$/;
 
-var LOAD_CONFIG_SCRIPT = API + "config";
-var MANAGEMENT_SCRIPT = API + "controller";
+const LOAD_CONFIG_SCRIPT = API + "config";
+const MANAGEMENT_SCRIPT = API + "controller";
 
-var BOTS_FILE = API + "bots";
-var HARMONIZATION_FILE = API + "harmonization";
-var RUNTIME_FILE = API + "runtime";
-var POSITIONS_FILE = API + "positions";
+const BOTS_FILE = API + "bots";
+const HARMONIZATION_FILE = API + "harmonization";
+const RUNTIME_FILE = API + "runtime";
+const POSITIONS_FILE = API + "positions";
 
-var RELOAD_QUEUES_EVERY = 1; /* 1 seconds */
-var RELOAD_LOGS_EVERY = 3; /* 3 seconds */
-var RELOAD_STATE_EVERY = 3; /* 3 seconds */
-var LOAD_X_LOG_LINES = 30;
+const RELOAD_QUEUES_EVERY = 1; /* 1 seconds */
+const RELOAD_LOGS_EVERY = 3; /* 3 seconds */
+const RELOAD_STATE_EVERY = 3; /* 3 seconds */
+const LOAD_X_LOG_LINES = 30;
 
-var MESSAGE_LENGTH = 200;
+const MESSAGE_LENGTH = 200;
 
-var MONITOR_BOT_URL = "monitor.html?bot_id={0}";
+const MONITOR_BOT_URL = "monitor.html?bot_id={0}";
 
-var page_is_exiting = false;
+const page_is_exiting = false;
 
-var settings = {
+const settings = {
     physics: null, // by default, physics is on depending on bot count
     live: true, // by default on
 };
@@ -135,7 +136,6 @@ function show_error(string, permit_html=false) {
         string = escape_html(string);
     }
 
-    let d = new Date();
     let time = new Date().toLocaleTimeString().replace(/:\d+ /, ' ');
     let $lwc = $("#log-window .contents");
     let $el = $(`<p><span>${time}</span> <span></span> <span>${string}</span></p>`);
@@ -323,7 +323,7 @@ function click_link(url, event) {
 /**
  * Control buttons to start/stop/... a bot, group or whole botnet
  */
-var BOT_CLASS_DEFINITION = {
+const BOT_CLASS_DEFINITION = {
     starting: 'warning',
     running: 'success',
     stopping: 'warning',
@@ -335,7 +335,7 @@ var BOT_CLASS_DEFINITION = {
     disabled: 'ligth',
     unknown: 'warning'
 };
-var BOT_STATUS_DEFINITION = {
+const BOT_STATUS_DEFINITION = {
     starting: 'starting',
     running: 'running',
     stopping: 'stopping',
