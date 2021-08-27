@@ -558,7 +558,7 @@ function saveData(data, callback) {
     let current_id = node.bot_id, old_id = app.bot_before_altering.bot_id;
 
     let old_bot = app.nodes[old_id];
-    node.parameters.destination_queues = old_bot.parameters.destination_queues;
+    node.parameters.destination_queues = old_bot ? old_bot.parameters.destination_queues : {};
 
     if (current_id !== old_id) {
         if (current_id in app.nodes) {
