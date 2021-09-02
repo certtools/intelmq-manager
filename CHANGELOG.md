@@ -8,13 +8,12 @@ CHANGELOG
 =========
 
 
-3.0.1 (unreleased)
+3.0.1 (2021-09-02)
 ------------------
 
 ### Pages
 - Login: Show error messages as returned from the API instead of a constant string (PR#277 by Sebastian Wagner, fixes intelmq-api#35).
 
-#### Landing page
 #### Configuration
   - Fix working with edges between bots, by transmitting new edges to the server with the new API (PR#264 by Mikk Margus Möll).
   - Correctly hide the `destination_queues` parameter in the bot editor (PR#264 by Mikk Margus Möll).
@@ -30,20 +29,17 @@ CHANGELOG
   - Prohibit the user from creating a bot with an ID collision (PR#276 by Mikk Margus Möll, fixes #152).
   - Ask the user for confirmation to exit the page in case of unsaved changes (PR#276 by Mikk Margus Möll, fixes #212)
 
-#### Management
-
 #### Monitor
 - `ALLOWED_PATH` and `CONTROLLER_CMD` are defined in a separate JavaScript file, rather than being templated into the HTML, fixing Content-Security-Policy issues (PR#264 by Mikk Margus Möll, fixes #183).
 
-#### Check
-
-### Documentation
-
-### Third-party libraries
-
-### Packaging
 
 ### Known issues
+- Graph jumps around on "Add edge" (#148).
+- Monitor page: Automatic log refresh reset log page to first one (#190).
+- Load error if a bot has not optional `parameters` field in runtime configuration (#237).
+- Better error message for missing authentication (#238).
+- Configuration page: Keyboard shortcuts don't work (#260).
+- Edit Defaults: Documentation link just reloads (#261).
 
 
 3.0.0 (2021-07-02)
