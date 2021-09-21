@@ -5,5 +5,6 @@ SPDX-License-Identifier: AGPL-3.0-or-later
 
 """
 import pathlib
+from .version import __version__, __version_info__  # noqa
 
 path = pathlib.Path(__file__).parent

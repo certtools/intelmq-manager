@@ -2,6 +2,13 @@
 %:
 	dh $@ --with python3 --buildsystem=pybuild
 
+override_dh_install:
+	dh_install
+	# build the files. call build.py directly, not the produced executable as that would require an installed instance of intelmq-manager already
+	PYTHONPATH=. python3 ./intelmq_manager/build.py --output-dir debian/intelmq-manager/usr/share/intelmq_manager/html/
+	# remove the generated intelmq-manager-build executable, as it should not be called in deb-installations
+	rm debian/intelmq-manager/usr/bin/intelmq-manager-build
+
 
 override_dh_auto_clean:
 	dh_auto_clean

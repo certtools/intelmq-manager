@@ -3,5 +3,5 @@
 SPDX-FileCopyrightText: 2020-2021 Intelmq Team <intelmq-team@cert.at>
 SPDX-License-Identifier: AGPL-3.0-or-later
 """
-__version_info__ = (3, 1, 0, 'alpha1')
+__version_info__ = (3, 1, 0, 'alpha2')
 __version__ = '.'.join(map(str, __version_info__))

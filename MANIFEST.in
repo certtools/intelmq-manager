@@ -4,4 +4,6 @@
 include CHANGELOG.md CONTRIBUTING.md CONTRIBUTORS.md
 include NEWS.md README.md SECURITY.md
 include LICENSES/*
-recursive-include docs *
+recursive-include contrib *
+graft intelmq_manager/templates/
+graft intelmq_manager/static/
