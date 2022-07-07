@@ -66,7 +66,7 @@ function redraw_logs() {
         let has_button = false;
 
         if (log_row.extended_message) {
-            buttons_cell = `<button type="submit" class="btn btn-default btn-xs" data-toggle="modal" data-target="#extended-message-modal" id="button-extended-message-${index}"><span class="glyphicon glyphicon-plus"></span></button>`;
+            var buttons_cell = `<button type="submit" class="btn btn-default btn-xs" data-toggle="modal" data-target="#extended-message-modal" id="button-extended-message-${index}"><span class="glyphicon glyphicon-plus"></span></button>`;
             has_button = true;
             log_row.actions = buttons_cell;
         } else if (log_row.message.length > MESSAGE_LENGTH) {
@@ -84,7 +84,7 @@ function redraw_logs() {
 
         $('#log-table').dataTable().fnAddData(log_row);
         if (has_button) {
-            extended_message_func = message_index => show_extended_message(message_index);
+            var extended_message_func = message_index => show_extended_message(message_index);
             document.getElementById(`button-extended-message-${index}`).addEventListener('click', function (index) {
                 return function () {
                     extended_message_func(index)
