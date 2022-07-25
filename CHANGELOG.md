@@ -34,6 +34,7 @@ CHANGELOG
 
 #### Monitor
 - `ALLOWED_PATH` and `CONTROLLER_CMD` are defined in a separate JavaScript file, rather than being templated into the HTML, fixing Content-Security-Policy issues (PR#264 by Mikk Margus Möll, fixes #183).
+- Fix undeclared variable for showing multi-line log lines (PR#286 by Jeremias Pretto).
 
 #### Check
 
