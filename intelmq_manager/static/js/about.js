@@ -12,7 +12,7 @@ function get_versions() {
         .done(function (data) {
             intelmq_version_element.innerHTML = data.intelmq;
             intelmq_api_version_element.innerHTML = data['intelmq-api'];
-            intelmq_manager_version_element.innerHTML = '3.1.0.alpha2';
+            intelmq_manager_version_element.innerHTML = '3.1.0.rc1';
         })
         .fail(function (jqxhr, textStatus, error) {
             let err = `${textStatus}, ${error}`;
