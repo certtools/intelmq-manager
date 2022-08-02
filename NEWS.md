@@ -10,6 +10,12 @@ NEWS
 See the changelog for a full list of changes.
 
 
+3.0.1 (2021-09-02)
+------------------
+
+Clear the browser cache for your IntelMQ instance (in Firefox: Ctrl+Shift+R).
+
+
 3.0.0 (2021-07-02)
 ------------------
 
