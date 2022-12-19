@@ -240,11 +240,11 @@ function save_data_on_files() {
     }
 
     // can't parallelize these due to a race condition from them both touching runtime.yaml; TODO lock file in backend?
-    authenticatedAjax({type: "POST", url: `${API}/runtime`, contentType: "application/json", data: generate_runtime_conf(app.nodes, app.defaults)})
+    authenticatedAjax({type: "POST", url: `${RUNTIME_FILE}`, contentType: "application/json", data: generate_runtime_conf(app.nodes, app.defaults)})
     .done(saveSucceeded)
     .fail(() => alert_error('runtime', ...arguments))
     .then(() =>
-            authenticatedAjax({type: "POST", url: `${API}/positions`, contentType: "application/json", data: generate_positions_conf()})
+            authenticatedAjax({type: "POST", url: `${POSITIONS_FILE}`, contentType: "application/json", data: generate_positions_conf()})
             .done(saveSucceeded)
             .fail(() => alert_error('positions', ...arguments) )
     )
