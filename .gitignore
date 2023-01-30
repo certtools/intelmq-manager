@@ -11,3 +11,4 @@ intelmq_manager/html
 nbproject
 /html/
 *.swp
+.vscode/

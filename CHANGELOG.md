@@ -7,6 +7,11 @@ SPDX-License-Identifier: AGPL-3.0-or-later
 CHANGELOG
 =========
 
+Unreleased changes
+------------------
+
+### Configuration
+- Fixed generating paths with doubled slashes when to save configurations.
 
 3.0.1 (2021-09-02)
 ------------------
