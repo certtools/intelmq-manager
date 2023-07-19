@@ -1,3 +1,9 @@
+intelmq-manager (3.2.0-1) stable; urgency=medium
+
+  * Update to 3.2.0
+
+ -- Sebastian Wagner <sebix@sebix.at>  Wed, 19 Jul 2023 13:39:32 +0200
+
 intelmq-manager (3.1.0~rc-1) stable; urgency=medium
 
   * Update to 3.1.0.
