@@ -86,7 +86,15 @@ function load_bots(config) {
         let $bot_group = $("#templates > ul.side-menu > li").clone().prependTo("#side-menu").css("border-bottom-color", GROUP_COLORS[bot_group][0]);
         $bot_group.find("> a").prepend(bot_group);
         let group = config[bot_group];
-        for (let bot_name in group) {
+
+        // Sort bots alphabetically
+        const sortedGroupKeys = Object.keys(group).sort();
+        const sortedGroup = {};
+        sortedGroupKeys.forEach(key => {
+                sortedGroup[key] = group[key];
+        });
+        
+        for (let bot_name in sortedGroup) {
             let bot = group[bot_name];
             let $bot = $bot_group.find("ul > li:first").clone().appendTo($("ul", $bot_group))
                 .attr("title", bot.description)
