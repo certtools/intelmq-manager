@@ -7,6 +7,12 @@ SPDX-License-Identifier: AGPL-3.0-or-later
 CHANGELOG
 =========
 
+Unreleased changes
+------------------
+
+### Configuration
+- Sort bots alphabetically in side menu.
+  
 3.2.0 (2023-07-19)
 ------------------
 
