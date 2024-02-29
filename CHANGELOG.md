@@ -7,6 +7,11 @@ SPDX-License-Identifier: AGPL-3.0-or-later
 CHANGELOG
 =========
 
+3.3.0 (2024-03-01)
+------------------
+
+Bump version to be in sync with the main intelmq release
+
 3.2.0 (2023-07-19)
 ------------------
 
