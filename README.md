@@ -4,7 +4,7 @@ SPDX-FileCopyrightText: 2020 IntelMQ Team
 SPDX-License-Identifier: AGPL-3.0-or-later
 -->
 
-![IntelMQ](https://raw.githubusercontent.com/certtools/intelmq/master/docs/images/Logo_Intel_MQ.png)
+![IntelMQ](https://github.com/certtools/intelmq/raw/develop/docs/static/images/Logo_Intel_MQ.svg)
 
 **IntelMQ Manager** is a graphical interface to manage configurations for the [IntelMQ](https://github.com/certtools/intelmq) framework.
 A IntelMQ configuration is a set of config files which describe which bots and processing steps should be run in which order. It is similar to describing the dataflow in [dataflow oriented](https://en.wikipedia.org/wiki/Dataflow_programming) languages.
