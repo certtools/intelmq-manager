@@ -12,7 +12,7 @@ A IntelMQ configuration is a set of config files which describe which bots and p
 
 ## Documentation
 
-The documentation for IntelMQ-Manager is part of the [IntelMQ documentation on readthedocs](https://intelmq.readthedocs.io/en/latest/user/intelmq-manager.html).
+The documentation for IntelMQ-Manager is part of the [IntelMQ documentation]([https://intelmq.readthedocs.io/en/latest/user/intelmq-manager.html](https://docs.intelmq.org/latest/user/manager/)).
 
 ## Licence
 
