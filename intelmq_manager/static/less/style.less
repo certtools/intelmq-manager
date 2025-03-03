@@ -25,7 +25,7 @@ nav ul.nav.navbar-top-links li.active {
   padding: 5px;
   width: 500px;
   height: 44px;
-  overflow: auto;
+  overflow: hidden; 
   resize: vertical;
   position: absolute;
   top: 0;
@@ -33,12 +33,12 @@ nav ul.nav.navbar-top-links li.active {
   cursor: pointer;
 
   &.extended {
-    height: auto;
+    height: auto;  
     max-height: 100vh;
-    width: auto;
-    cursor: unset;
-    overflow:scroll;
-  }
+    // width: auto;   
+    cursor: unset;  
+    overflow-y: auto;
+  } 
 
   [role=close] {
     float: right;
@@ -61,13 +61,13 @@ nav ul.nav.navbar-top-links li.active {
     font-family: Menlo, Monaco, Consolas, "Courier New", monospace;
   }
 
-    .alert a{
-        text-decoration: underline;
-        display: inline-block;
-        padding: 4px;
-        border: 1px solid #ccc;
-        border-radius: 10px;
-    }
+  .alert a {
+    text-decoration: underline;
+    display: inline-block;
+    padding: 4px;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+  }
 }
 
 .fa {
@@ -81,8 +81,9 @@ nav ul.nav.navbar-top-links li.active {
 /*
  * Management page
  */
-#botnet-panels > .panel[data-botnet-group] {
+#botnet-panels>.panel[data-botnet-group] {
   display: none; // initially, all other panels are hidden
+
   &[data-botnet-group=botnet] {
     display: block;
   }
@@ -119,11 +120,10 @@ nav ul.nav.navbar-top-links li.active {
 
 #templates {
   display: none;
-}
+} 
 
-#side-menu {
-}
-
+#side-menu {} 
+ 
 #network-container {
 
   .control-buttons {
@@ -139,6 +139,7 @@ nav ul.nav.navbar-top-links li.active {
   }
 
   .monitor-button {
+
     //background-image: url('../plugins/vis.js/img/network/rightArrow.png');
     //background-size: 24%;
     div a {
@@ -151,11 +152,12 @@ nav ul.nav.navbar-top-links li.active {
   }
 
   .network-right-menu {
-    > div {
+    >div {
       display: block;
     }
 
-    .vis-live-toggle, .vis-physics-toggle {
+    .vis-live-toggle,
+    .vis-physics-toggle {
       border-radius: 10px;
       position: absolute;
       right: 560px;

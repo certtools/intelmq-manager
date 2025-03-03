@@ -23,7 +23,7 @@ nav ul.nav.navbar-top-links li.active {
   padding: 5px;
   width: 500px;
   height: 44px;
-  overflow: auto;
+  overflow: hidden;
   resize: vertical;
   position: absolute;
   top: 0;
@@ -33,9 +33,8 @@ nav ul.nav.navbar-top-links li.active {
 #wrapper .navbar #log-window.extended {
   height: auto;
   max-height: 100vh;
-  width: auto;
   cursor: unset;
-  overflow: scroll;
+  overflow-y: auto;
 }
 #wrapper .navbar #log-window [role=close] {
   float: right;
@@ -146,4 +145,3 @@ nav ul.nav.navbar-top-links li.active {
 #network-container .network-right-menu .vis-physics-toggle {
   right: 480px;
 }
-/*# sourceMappingURL=style.css.map */
