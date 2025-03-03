@@ -105,28 +105,32 @@ if (!String.prototype.format) {
 let lw_tips = new Set();
 $(function () {
     let $lw = $("#log-window");
+    
+    // close log window on Escape 
+    $(document).on('keydown.close-log-window', event => {
+        if (event.key == "Escape") {
+            $lw.removeClass("extended");
+        }
+    });
+    
+    // toggle log window expanded state - if not selecting text
+    let mDownSelection = 0
+    $lw.on("mousedown", e => {
+        mDownSelection = document.getSelection().toString().length
+    });
+    $lw.on("mouseup", e => {
+        if (mDownSelection == document.getSelection().toString().length) {
+            $lw.toggleClass("extended");
+        }
+    });
+    
+    // close log window via X
     let closeFn = () => {
         $lw.hide();
         $(".contents", $lw).html("");
         lw_tips.clear(); // no tips displayed
         return false;
     };
-
-    $lw.on("click", e => { // clicking enlarges but not shrinks so that we may copy the text
-        let btn = $(e.target);
-        if (!btn.hasClass("extended")) {
-            btn.toggleClass("extended");
-
-            //$(".alert", this).prependTo(btn);
-
-            $(document).on('keydown.close-log-window', event => {
-                if (event.key == "Escape") {
-                    $(document).off('keydown.close-log-window');
-                    $lw.removeClass("extended");
-                }
-            });
-        }
-    });
     $("#log-window [role=close]").click(closeFn);
 });
 

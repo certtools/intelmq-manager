@@ -7,12 +7,20 @@ SPDX-License-Identifier: AGPL-3.0-or-later
 CHANGELOG
 =========
 
-Unreleased changes
+3.3.1 (unreleased)
 ------------------
 
+ * Improve the error popup window to make its contents more readable (PR#304 by Radek Vyhnal).
+ * Tests: Update/Fix Debian package build scripts (PR#305 by Sebastian Wagner).
+
 ### Configuration
-- Sort bots alphabetically in side menu.
-  
+- Sort bots alphabetically in side menu (PR#298 by Psych0meter).
+
+3.3.0 (2024-03-01)
+------------------
+
+Bump version to be in sync with the main intelmq release
+
 3.2.0 (2023-07-19)
 ------------------
 

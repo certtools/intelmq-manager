@@ -107,7 +107,7 @@
                            class="btn btn-primary" style="display: none;">
                 </div>
                 <!-- /.navbar-top-links -->
-                <div title="Click to expand, then escape to minimize again." id='log-window'>
+                <div title="Click to expand, then escape to minimize again." id='log-window' class="extended">
                     <i role="close" class="fa fa-times"></i>
                     <div class="contents"></div>
                 </div>
