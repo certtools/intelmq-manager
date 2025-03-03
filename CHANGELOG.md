@@ -7,6 +7,11 @@ SPDX-License-Identifier: AGPL-3.0-or-later
 CHANGELOG
 =========
 
+3.3.1 (unreleased)
+------------------
+
+ * Improve the error popup window to make its contents more readable (PR#304 by Radek Vyhnal).
+
 3.3.0 (2024-03-01)
 ------------------
 
