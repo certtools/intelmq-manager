@@ -545,7 +545,7 @@ $(document).ready(function() {
 
                 let url = new URL(window.location.href)
                 let redirect = new URLSearchParams(url.search).get('r')
-                window.location.replace(redirect || "/index.html");
+                window.location.replace("./" + redirect || "index.html");
             } else if (typeof data.error !== 'undefined') {
                 // If authentication failed, the returned error message is displayed.
                 $('#loginErrorField').text(data.error);
@@ -575,12 +575,12 @@ $(document).ready(function() {
     });
 });
 
-function requireLogin(destinationUrl){
-    let currentPath = window.location.pathname.substring(1)
-    let loginUrl = "/login.html"
-
-    if ( ! ["login.html", "index.html"].includes(currentPath)){
-        loginUrl += "?r=" + encodeURIComponent(destinationUrl || currentPath)
+function requireLogin(){
+    let currentFile = window.location.pathname.split("/").pop();
+    let loginUrl = "login.html"
+    
+    if ( ! ["login.html", "index.html"].includes(currentFile)){
+        loginUrl += "?r=" + encodeURIComponent(currentFile)
     }
     window.location.href = loginUrl
 }
