@@ -21,7 +21,7 @@ def render_page(pagename: str, **template_args) -> str:
 def buildhtml(outputdir: pathlib.Path = pathlib.Path('html')):
     outputdir.mkdir(parents=True, exist_ok=True)
 
-    htmlfiles = ["configs", "management", "monitor", "check", "about", "index"]
+    htmlfiles = ["login", "configs", "management", "monitor", "check", "about", "index"]
     for filename in htmlfiles:
         print(f"Rendering {filename}.html")
         html = render_page(filename)

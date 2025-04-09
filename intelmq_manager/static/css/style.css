@@ -69,6 +69,30 @@ nav ul.nav.navbar-top-links li.active {
   display: none;
 }
 /*
+ * Login page
+ */
+#login-page {
+  display: flex;
+  justify-content: center;
+  margin: 32px 0;
+}
+#login-page #login-card {
+  display: flex;
+  flex-direction: column;
+  align-content: flex-end;
+  align-items: center;
+}
+#login-page #login-card form {
+  width: 300px;
+  max-width: 300px;
+}
+#login-page #login-card form input {
+  margin-bottom: 15px;
+}
+#login-page #login-card form button {
+  margin: 15px 0 0 0;
+}
+/*
  * Management page
  */
 #botnet-panels > .panel[data-botnet-group] {

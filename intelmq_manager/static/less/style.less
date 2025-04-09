@@ -79,6 +79,36 @@ nav ul.nav.navbar-top-links li.active {
 }
 
 /*
+ * Login page
+ */
+
+#login-page {
+  display: flex;
+  justify-content: center;
+  margin: 32px 0;
+
+  #login-card {
+    display: flex;
+    flex-direction: column;
+    align-content: flex-end;
+    align-items: center;
+
+    form {
+      width: 300px;
+      max-width: 300px;
+
+      input {
+        margin-bottom: 15px;
+      }
+
+      button {
+        margin: 15px 0 0 0;
+      }
+    }
+  }
+}
+
+/*
  * Management page
  */
 #botnet-panels>.panel[data-botnet-group] {
