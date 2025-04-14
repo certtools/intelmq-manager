@@ -164,7 +164,7 @@ function load_bots(config) {
         $bot_group.find("ul li").first().remove(); // get rid of the HTML template
     }
 
-    $('#side-menu').metisMenu({restart: true});
+    $('#side-menu').metisMenu({ restart: true });
     $EDIT_DEFAULT_BUTTON.click(e => {
         create_form('Edit Defaults', $(e.target).attr("id"), undefined);
         fill_editDefault(app.defaults);
@@ -200,7 +200,7 @@ function handleDrop(event) {
     }
     // ---
 
-    let domPointer = app.network.interactionHandler.getPointer({x: event.clientX, y: event.clientY});
+    let domPointer = app.network.interactionHandler.getPointer({ x: event.clientX, y: event.clientY });
     let canvasPointer = app.network.manipulation.canvas.DOMtoCanvas(domPointer);
 
     let clickData = {
@@ -248,16 +248,16 @@ function save_data_on_files() {
     }
 
     // can't parallelize these due to a race condition from them both touching runtime.yaml; TODO lock file in backend?
-    authenticatedAjax({type: "POST", url: `${RUNTIME_FILE}`, contentType: "application/json", data: generate_runtime_conf(app.nodes, app.defaults)})
-    .done(saveSucceeded)
-    .fail(() => alert_error('runtime', ...arguments))
-    .then(() =>
-            authenticatedAjax({type: "POST", url: `${POSITIONS_FILE}`, contentType: "application/json", data: generate_positions_conf()})
-            .done(saveSucceeded)
-            .fail(() => alert_error('positions', ...arguments) )
-    )
-    // all files were correctly saved
-    .then(unset_pending_change);
+    authenticatedAjax({ type: "POST", url: `${RUNTIME_FILE}`, contentType: "application/json", data: generate_runtime_conf(app.nodes, app.defaults) })
+        .done(saveSucceeded)
+        .fail(() => alert_error('runtime', ...arguments))
+        .then(() =>
+            authenticatedAjax({ type: "POST", url: `${POSITIONS_FILE}`, contentType: "application/json", data: generate_positions_conf() })
+                .done(saveSucceeded)
+                .fail(() => alert_error('positions', ...arguments))
+        )
+        // all files were correctly saved
+        .then(unset_pending_change);
 }
 
 
@@ -286,7 +286,7 @@ function convert_edges(nodes) {
                     roundness[hash] = 0;
                 }
                 if (roundness[hash]) {
-                    new_edge.smooth = {type: "curvedCCW", roundness: roundness[hash]};
+                    new_edge.smooth = { type: "curvedCCW", roundness: roundness[hash] };
                 }
 
                 new_edges.push(new_edge);
@@ -308,7 +308,7 @@ function convert_nodes(nodes, includePositions) {
 
         if (includePositions === true) {
             try {
-                let {x, y} = app.positions[node.bot_id];
+                let { x, y } = app.positions[node.bot_id];
                 new_node.x = x;
                 new_node.y = y;
             } catch (err) {
@@ -391,6 +391,15 @@ function insertBorder(border_type) {
     }
 }
 
+// https://stackoverflow.com/questions/175739/how-can-i-check-if-a-string-is-a-valid-number
+function isNumeric(str) {
+    if (typeof str != "string") {
+        return false; // we only process strings!
+    }
+    return !isNaN(str) && // use type coercion to parse the _entirety_ of the string (`parseFloat` alone does not do this)...
+        !isNaN(parseFloat(str)); // ...and ensure strings of whitespace fail
+}
+
 function insertKeyValue(key, value, section, allowXButtons, insertAt) {
     let new_row = table.insertRow(insertAt === undefined ? -1 : insertAt);
 
@@ -430,6 +439,10 @@ function insertKeyValue(key, value, section, allowXButtons, insertAt) {
         value = JSON.stringify(value);
     }
     if (value !== null) {
+        // prevent numeric strings from being converted into numbers when modifying other values
+        if (isNumeric(value)) {
+            value = `"${value}"`;
+        }
         valueInput.setAttribute('value', value);
     }
 }
@@ -548,7 +561,7 @@ function saveFormData() {
 }
 
 function saveData(data, callback) {
-    node = {parameters: {}, defaults: {}};
+    node = { parameters: {}, defaults: {} };
 
     saveFormData();
 
@@ -598,8 +611,8 @@ function saveData(data, callback) {
                     path = undefined;
                 }
 
-                app.network_data.edges.remove({id: edge_id});
-                app.network_data.edges.add({id: new_edge_id, from, to: current_id, label: path});
+                app.network_data.edges.remove({ id: edge_id });
+                app.network_data.edges.add({ id: new_edge_id, from, to: current_id, label: path });
             }
 
             // recreate forward edges
@@ -673,7 +686,7 @@ function popupModal(title, body, callback) {
     let $el = $("#templates > .modal").clone().appendTo("body");
     $(".modal-title", $el).text(title);
     $(".modal-body", $el).html(body);
-    $el.modal({keyboard: false}).on('shown.bs.modal', e => {
+    $el.modal({ keyboard: false }).on('shown.bs.modal', e => {
         let $ee;
         if (($ee = $('input,textarea,button', $(".modal-body", e.target)).first())) {
             $ee.focus();
@@ -761,7 +774,7 @@ function draw() {
 }
 
 function fitNode(nodeId) {
-    app.network.fit({nodes: [nodeId]});
+    app.network.fit({ nodes: [nodeId] });
     app.network.selectNodes([nodeId], true);
     app.network.manipulation.showManipulatorToolbar();
 }
@@ -784,7 +797,7 @@ function initNetwork(includePositions = true) {
     // 'Live' button (by default on when botnet is not too big) and 'Physics' button
     // initially stopped
     let reload_queues = (new Interval(load_live_info, RELOAD_QUEUES_EVERY * 1000, true)).stop();
-    app.network.setOptions({physics: false});
+    app.network.setOptions({ physics: false });
 
     //
     // add custom button to the side menu
@@ -799,14 +812,14 @@ function initNetwork(includePositions = true) {
     let physics_running = true;
     $(".vis-physics-toggle", $nc).click(e => {
         $(e.target).toggleClass("running");
-        app.network.setOptions({physics: (physics_running = !physics_running)});
+        app.network.setOptions({ physics: (physics_running = !physics_running) });
     });
 
     // 'Save Configuration' button blinks and lists all the bots that should be reloaded after successful save.
     $saveButton = $("#vis-save", $nc);
     $saveButton.children().on('click', save_data_on_files);
     $saveButton.data("reloadables", []);
-    $saveButton.blinkOnce = function() {
+    $saveButton.blinkOnce = function () {
         $($saveButton).addClass('blinking-once');
         setTimeout(() => $($saveButton).removeClass('blinking-once'), 2000);
     }
@@ -836,7 +849,7 @@ function initNetwork(includePositions = true) {
     // list of button callbacks in form ["button/settings name"] => function called when clicked receives true/false according to the clicked state
     let callbacks = [
         ["live", val => reload_queues[val ? "start" : "stop"]()],
-        ["physics", val => app.network.setOptions({physics: val})],
+        ["physics", val => app.network.setOptions({ physics: val })],
     ];
     for (let [name, fn] of callbacks) {
         let $el = $(`.vis-${name}-toggle`, $nc).click(e => {
@@ -973,16 +986,16 @@ function refresh_color(bot) {
 
         // change bot color if needed
         if (app.network_data.nodes.get([bot])[0].color !== col) {
-            app.network_data.nodes.update({id: bot, color: col});
+            app.network_data.nodes.update({ id: bot, color: col });
         }
 
         // we dash the border if the status has to be changed (not running or stopping) or is faulty (error, incomplete)
         if ([BOT_STATUS_DEFINITION.running, BOT_STATUS_DEFINITION.stopped].indexOf(bot_status[bot]) === -1) {
-            app.network_data.nodes.update({id: bot, shapeProperties: {borderDashes: [5, 5]}})
+            app.network_data.nodes.update({ id: bot, shapeProperties: { borderDashes: [5, 5] } })
         } else if ([BOT_STATUS_DEFINITION.running, BOT_STATUS_DEFINITION.stopped, undefined].indexOf(bot_status_previous[bot]) === -1) {
             // we remove dash border since bot has been in a dash-border state and is no more
             // (that means that bot wasn't either in a running, stopped or initially undefined state)
-            app.network_data.nodes.update({id: bot, shapeProperties: {borderDashes: false}});
+            app.network_data.nodes.update({ id: bot, shapeProperties: { borderDashes: false } });
         }
 
         bot_status_previous[bot] = bot_status[bot];
@@ -1007,11 +1020,11 @@ function load_live_info() {
                         show_error(`Non-existent bot ${bot} in pipelines.`);
                     } else if (label !== appbot.label) {
                         // update queue count on bot label
-                        app.network_data.nodes.update({id: bot, label});
+                        app.network_data.nodes.update({ id: bot, label });
                     }
                 } else {
                     // https://github.com/certtools/intelmq-manager/issues/158
-                    app.network_data.nodes.update({id: bot, label: bot});
+                    app.network_data.nodes.update({ id: bot, label: bot });
                 }
             }
             for (let bot in bot_status) {
