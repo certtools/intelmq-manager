@@ -100,10 +100,10 @@
                         <h4 id="logs-panel-title">Logs</h4>
                     </div>
                     <div class="panel-body">
-                        <div class="panel-div">Log Level: <select id="log-level-indicator">
-                                <option value="ALL">All</option>
+                        <div class="panel-div">Log Level:
+                            <select id="log-level-indicator">
                                 <option value="DEBUG">Debug</option>
-                                <option value="INFO">Info</option>
+                                <option value="INFO" selected>Info</option>
                                 <option value="WARNING">Warning</option>
                                 <option value="ERROR">Error</option>
                                 <option value="CRITICAL">Critical</option>

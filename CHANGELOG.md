@@ -16,6 +16,9 @@ CHANGELOG
 ### Configuration
 - Sort bots alphabetically in side menu (PR#298 by Psych0meter).
 
+### Monitor
+- Default log level is now INFO, consistent with `intelmqctl log`, removed level `ALL` equivalent to `DEBUG` (PR#308 by Sebastian Wagner)
+
 3.3.0 (2024-03-01)
 ------------------
 
