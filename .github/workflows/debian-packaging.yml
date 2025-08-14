@@ -16,11 +16,11 @@ jobs:
     name: Build Debian packages
     strategy:
       matrix:
-        codename: ['buster', 'bullseye']
+        codename: ['bullseye', 'bookworm']
 
     steps:
     - name: Checkout repository
-      uses: actions/checkout@v2
+      uses: actions/checkout@v5
 
     - name: Build package
       run: bash .github/workflows/scripts/debian-package.sh ${{ matrix.codename }}
