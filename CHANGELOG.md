@@ -15,6 +15,7 @@ CHANGELOG
 
 ### Configuration
 - Sort bots alphabetically in side menu (PR#298 by Psych0meter).
+- Fix link to the bot documentation page (PR#310 by Sebastian Wagner, fixes #307).
 
 3.3.0 (2024-03-01)
 ------------------

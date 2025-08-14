@@ -93,7 +93,7 @@ function load_bots(config) {
         sortedGroupKeys.forEach(key => {
                 sortedGroup[key] = group[key];
         });
-        
+
         for (let bot_name in sortedGroup) {
             let bot = group[bot_name];
             let $bot = $bot_group.find("ul > li:first").clone().appendTo($("ul", $bot_group))
@@ -356,8 +356,7 @@ function fill_bot(id, group, name) {
         insertKeyValue(key, value, BORDER_TYPES.RUNTIME, true);
     }
 
-    const modulename = bot.module.replace(/\./g, "-").replace(/_/g, "-");
-    documentation.href = `https://intelmq.readthedocs.org/en/maintenance/user/bots.html#${modulename}`;
+    documentation.href = `https://docs.intelmq.org/latest/user/bots/#${bot.module}`;
     popup.setAttribute('class', "with-bot");
 }
 
