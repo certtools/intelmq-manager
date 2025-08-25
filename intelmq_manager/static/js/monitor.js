@@ -53,11 +53,13 @@ function redraw() {
 }
 
 function redraw_logs() {
-    $('#log-table').dataTable().fnClearTable();
+    let logTable = $('#log-table').dataTable();
+    let tPage = logTable.api().page();
+    logTable.fnClearTable()
 
     if (bot_logs == {}) {
-        $('#log-table').dataTable().fnAdjustColumnSizing();
-        $('#log-table').dataTable().fnDraw();
+        logTable.fnAdjustColumnSizing();
+        logTable.fnDraw();
         return;
     }
 
@@ -82,7 +84,7 @@ function redraw_logs() {
         log_row.DT_RowClass = LEVEL_CLASS[log_row.log_level];
 
 
-        $('#log-table').dataTable().fnAddData(log_row);
+        logTable.fnAddData(log_row);
         if (has_button) {
             var extended_message_func = message_index => show_extended_message(message_index);
             document.getElementById(`button-extended-message-${index}`).addEventListener('click', function (index) {
@@ -92,9 +94,9 @@ function redraw_logs() {
             }(index))
         }
     }
-
-    $('#log-table').dataTable().fnAdjustColumnSizing();
-    $('#log-table').dataTable().fnDraw();
+    logTable.fnAdjustColumnSizing();
+    logTable.fnDraw();
+    logTable.fnPageChange(tPage);
 }
 
 function redraw_queues() {
