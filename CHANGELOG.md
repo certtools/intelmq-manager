@@ -12,6 +12,7 @@ CHANGELOG
 
  * Improve the error popup window to make its contents more readable (PR#304 by Radek Vyhnal).
  * Tests: Update/Fix Debian package build scripts (PR#305 by Sebastian Wagner).
+ * Fix the controller command shown in Monitor tab (PR#311 by Sebastian Wagner)
 
 ### Configuration
 - Sort bots alphabetically in side menu (PR#298 by Psych0meter).
