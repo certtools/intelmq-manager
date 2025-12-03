@@ -37,7 +37,7 @@ def buildhtml(outputdir: pathlib.Path = pathlib.Path('html')):
         shutil.copytree(src, dst)
 
     print('rendering dynvar.js')
-    rendered = render_page('dynvar', allowed_path='/opt/intelmq/var/lib/bots/', controller_cmd='intelmq')
+    rendered = render_page('dynvar', allowed_path='/opt/intelmq/var/lib/bots/', controller_cmd='intelmqctl')
     outputdir.joinpath('js/dynvar.js').write_text(rendered)
 
 
