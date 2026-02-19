@@ -24,7 +24,7 @@
 <div id="network-popUp" class="without-bot">
     <span id="network-popUp-title">node</span>
     <a id="documentationButton" class="btn btn-default" title="open documentation" href="" target="_blank">
-	<span class="glyphicon glyphicon-question-sign"></span>
+        <span class="glyphicon glyphicon-question-sign"></span>
     </a>
     <table id="network-popUp-fields" class="table table-striped" style="margin:auto;">
         <tr>
@@ -46,7 +46,7 @@
             <td>run_mode</td><td><input id="node-run_mode" value=""></td>
         </tr>
     </table>
-    <div>
+    <div class="popup-buttons">
         <form>
             <input type="button" class="btn-danger btn-block" value="cancel" id="network-popUp-cancel">
         </form>
