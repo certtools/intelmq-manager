@@ -182,7 +182,7 @@ function load_bots(config) {
     $('#side-menu').metisMenu({restart: true});
 
     // Filter logic
-    $('#bot-filter').on('keyup input', function() {
+    $('#bot-filter').on('input', function() {
         let filter = $(this).val().toLowerCase();
 
         // Handle clear button visibility
