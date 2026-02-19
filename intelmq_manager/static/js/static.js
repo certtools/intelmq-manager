@@ -175,6 +175,10 @@ function show_error(string, permit_html=false) {
 
 function ajax_fail_callback(str) {
     return function (jqXHR, textStatus, message) {
+        if (jqXHR.status === 401) {
+            // Unauthorized access - call logout
+            logout();
+        }
         if (textStatus === "timeout") {
             // this is just a timeout, no other info needed
             show_error(`${str} timeout`);
@@ -498,11 +502,20 @@ function authenticatedGetJson(url) {
 
 function authenticatedAjax(settings) {
     let token = sessionStorage.getItem("login_token");
-    if (token !== null) {
-        settings.headers = {
-            Authorization: token
-        };
+
+    if (token === null) {
+        // Avoid requests without token
+        return $.Deferred().reject({
+            status: 401,
+            statusText: "Unauthorized",
+            responseText: JSON.stringify({message: "No login token available. Please log in."})
+        }, "error", "Unauthorized").promise();
     }
+
+    settings.headers = {
+        Authorization: token
+    };
+
     return $.ajax(settings);
 }
 
