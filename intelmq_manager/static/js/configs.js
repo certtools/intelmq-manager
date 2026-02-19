@@ -81,6 +81,21 @@ function load_html_elements() {
 
 
 function load_bots(config) {
+    // Filter input
+    if ($("#bot-filter-container").length === 0) {
+        $('<div id="bot-filter-container" style="padding: 10px 15px;">' +
+            '<div class="input-group">' +
+                '<input type="text" id="bot-filter" class="form-control" placeholder="Filter bots..." autocomplete="off">' +
+                '<span class="input-group-btn">' +
+                    // Search button (magnifying glass)
+                    '<button class="btn btn-default" type="button"><i class="fa fa-search"></i></button>' +
+                    // NEW: Clear button (X), hidden by default
+                    '<button id="bot-filter-clear" class="btn btn-default" type="button" style="display:none;"><i class="fa fa-times"></i></button>' +
+                '</span>' +
+            '</div>' +
+          '</div>').insertBefore("#side-menu");
+    }
+
     // Build side menu
     for (let bot_group of Object.keys(config).reverse()) {
         let $bot_group = $("#templates > ul.side-menu > li").clone().prependTo("#side-menu").css("border-bottom-color", GROUP_COLORS[bot_group][0]);
@@ -165,6 +180,55 @@ function load_bots(config) {
     }
 
     $('#side-menu').metisMenu({restart: true});
+
+    // Filter logic
+    $('#bot-filter').on('keyup input', function() {
+        let filter = $(this).val().toLowerCase();
+
+        // Handle clear button visibility
+        if (filter.length > 0) {
+            $('#bot-filter-clear').show();
+            // Optional: hide search icon if you want the button to change
+            $(this).next('.input-group-btn').find('.fa-search').closest('button').hide();
+        } else {
+            $('#bot-filter-clear').hide();
+            $(this).next('.input-group-btn').find('.fa-search').closest('button').show();
+        }
+
+        $('#side-menu > li').each(function() {
+            let $group = $(this);
+            let groupMatch = false;
+
+            // Search in list items that contain bot names
+            $group.find("ul > li").each(function() {
+                let $bot = $(this);
+                // Use the data-name attribute defined above
+                let name = ($bot.attr("data-name") || "").toLowerCase();
+                if (name.includes(filter)) {
+                    $bot.show();
+                    groupMatch = true;
+                } else {
+                    $bot.hide();
+                }
+            });
+
+            if (groupMatch) {
+                $group.show();
+                // If there is text in the filter, force open the group
+                if (filter.length > 0 && !$group.hasClass('active')) {
+                    $group.addClass('active').find('ul').addClass('in').height('auto');
+                }
+            } else {
+                $group.hide();
+            }
+        });
+    });
+
+    // Filter clear button
+    $('#bot-filter-clear').on('click', function() {
+        $('#bot-filter').val('').trigger('input').focus();
+    });
+
     $EDIT_DEFAULT_BUTTON.click(e => {
         create_form('Edit Defaults', $(e.target).attr("id"), undefined);
         fill_editDefault(app.defaults);
