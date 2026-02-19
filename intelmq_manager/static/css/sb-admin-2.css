@@ -434,4 +434,31 @@ form {
   display: block;
   box-shadow: 1px 1px 16px rgba(0, 0, 0, 0.2);
 }
+/* 1. Main container remains full width to act as a solid background "shield" */
+#network-popUp .popup-buttons {
+    position: sticky;
+    bottom: -10px;
+    background: #fff;
+    padding: 15px 0;
+    margin-top: 10px;
+    z-index: 10;
+    /* Layout logic */
+    display: flex;
+    justify-content: center; /* Centers the buttons horizontally */
+    gap: 15px;               /* Space between Cancel and OK */
+    width: 100%;             /* Spans the full width of the popup */
+    /* Added a border-top for better definition */
+    border-top: 1px solid #428bca;
+}
+/* 2. Style for the forms/buttons to make them narrower */
+#network-popUp .popup-buttons form {
+    /* Limit the width of each individual button */
+    width: 120px;            /* Fixed width for a more consistent look */
+    flex: none;              /* Prevents them from stretching to fill the container */
+    margin-bottom: 0;
+    display: block;
+}
+#network-popUp .popup-buttons .btn-block {
+    padding: 2px 12px;
+}
 /*# sourceMappingURL=sb-admin-2.css.map */
