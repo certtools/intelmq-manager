@@ -397,15 +397,29 @@ function insertKeyValue(key, value, section, allowXButtons, insertAt) {
     let keyCell = new_row.insertCell(0);
     let valueCell = new_row.insertCell(1);
     let xButtonCell = new_row.insertCell(2);
-    let valueInput = document.createElement("input");
+
+    let valueInput;
+
+    // Check the section to decide between textarea or input
+    if (section === BORDER_TYPES.RUNTIME) {
+        valueInput = document.createElement("textarea");
+        valueInput.setAttribute('rows', '2'); // Default height for multiline
+        valueInput.style.resize = 'vertical';
+    } else {
+        valueInput = document.createElement("input");
+        valueInput.setAttribute('type', 'text');
+    }
 
     keyCell.setAttribute('class', 'node-key');
-    keyCell.setAttribute('id', section)
+    keyCell.setAttribute('id', section);
     valueCell.setAttribute('class', 'node-value');
-    valueInput.setAttribute('type', 'text');
+    
     valueInput.setAttribute('id', key);
+    valueInput.className = 'form-control'; // Standard Bootstrap styling
+    valueInput.style.width = '100%';
 
-    if (section === 'generic' && disabledKeys.includes(key) === true) {
+    // Handle disabled keys for 'id' and 'GENERIC' sections
+    if ((section === 'id' || section === BORDER_TYPES.GENERIC) && disabledKeys.includes(key) === true) {
         valueInput.setAttribute('disabled', "true");
     }
 
@@ -426,11 +440,16 @@ function insertKeyValue(key, value, section, allowXButtons, insertAt) {
     valueCell.appendChild(valueInput);
 
     keyCell.innerHTML = key;
+
+    // Format value
+    let displayValue = value;
     if (value !== null && typeof value === "object") {
-        value = JSON.stringify(value);
+        displayValue = JSON.stringify(value, null, 2); // Pretty print JSON
     }
-    if (value !== null) {
-        valueInput.setAttribute('value', value);
+
+    if (displayValue !== null) {
+        // Use .value for both input and textarea
+        valueInput.value = displayValue;
     }
 }
 
@@ -495,9 +514,14 @@ $(document).keydown(function (event) {
         }
     }
     if (event.keyCode === 13 && $('#network-popUp').is(':visible') && $('#network-popUp :focus').length) {
-        // till network popup is not unified with the popupModal function that can handle Enter by default,
-        // let's make it possible to hit "Ok" by Enter as in any standard form
-        $('#network-popUp-ok').click();
+        // If the focused element is a textarea, allow the default behavior (new line)
+        if ($(event.target).is("textarea")) {
+            return; 
+        }
+        // Otherwise, if focus is on a standard input or button, trigger OK
+        if ($('#network-popUp :focus').length) {
+            $('#network-popUp-ok').click();
+        }
     }
 });
 
@@ -512,10 +536,10 @@ function saveFormData() {
     for (let i = 0; i < table.rows.length; i++) {
         let keyCell = table.rows[i].cells[0];
         let valueCell = table.rows[i].cells[1];
-        let valueInput = valueCell.getElementsByTagName('input')[0];
+        // Target both types of elements
+        let valueInput = valueCell.querySelector('input, textarea');
 
-        if (valueInput === undefined)
-            continue;
+        if (!valueInput) continue;
 
         let key = keyCell.innerText;
         let value = null;
