@@ -331,7 +331,7 @@ function fill_bot(id, group, name) {
     if (id === undefined) {
         bot = app.bots[group][name];
 
-        name = bot.name.replace(/\ /g, '-').replace(/[^A-Za-z0-9-]/g, '');
+        name = bot.name;
         group = bot.group.replace(/\ /g, '-');
         let default_id = gen_new_id(`${name}-${group}`);
         bot.bot_id = bot.id = default_id;
