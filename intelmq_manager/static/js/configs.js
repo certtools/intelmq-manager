@@ -357,7 +357,7 @@ function fill_bot(id, group, name) {
     }
 
     const modulename = bot.module.replace(/\./g, "-").replace(/_/g, "-");
-    documentation.href = `https://intelmq.readthedocs.org/en/maintenance/user/bots.html#${modulename}`;
+    documentation.href = `https://docs.intelmq.org/en/maintenance/user/bots.html#${modulename}`;
     popup.setAttribute('class', "with-bot");
 }
 
