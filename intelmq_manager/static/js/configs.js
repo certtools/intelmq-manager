@@ -331,7 +331,7 @@ function fill_bot(id, group, name) {
     if (id === undefined) {
         bot = app.bots[group][name];
 
-        name = bot.name.replace(/\ /g, '-').replace(/[^A-Za-z0-9-]/g, '');
+        name = bot.name;
         group = bot.group.replace(/\ /g, '-');
         let default_id = gen_new_id(`${name}-${group}`);
         bot.bot_id = bot.id = default_id;
@@ -357,7 +357,7 @@ function fill_bot(id, group, name) {
     }
 
     const modulename = bot.module.replace(/\./g, "-").replace(/_/g, "-");
-    documentation.href = `https://intelmq.readthedocs.org/en/maintenance/user/bots.html#${modulename}`;
+    documentation.href = `https://docs.intelmq.org/en/maintenance/user/bots.html#${modulename}`;
     popup.setAttribute('class', "with-bot");
 }
 
